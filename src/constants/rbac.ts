@@ -1,0 +1,145 @@
+import { Permission, UserRole } from '../types';
+
+export interface RoleMeta {
+  role: UserRole;
+  titleFa: string;
+  titleEn: string;
+  badgeClass: string;
+  bgLight: string;
+  description: string;
+  permissions: Permission[];
+}
+
+export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
+  super_admin: {
+    role: 'super_admin',
+    titleFa: 'مدیر کل پلتفرم دیدار',
+    titleEn: 'Super Admin',
+    badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+    bgLight: 'bg-purple-50',
+    description: 'دسترسی کامل به تمام سازمان‌ها، پیکربندی سیستم، ممیزی و نظارت بر کل پلتفرم دیدار',
+    permissions: [
+      'MANAGE_ORGANIZATIONS',
+      'MANAGE_ROOMS',
+      'APPROVE_BOOKINGS',
+      'CANCEL_ANY_BOOKING',
+      'BOOK_ROOM',
+      'MANAGE_USERS_ROLES',
+      'VIEW_ANALYTICS',
+      'MANAGE_CATERING',
+      'MANAGE_ORG_SETTINGS',
+    ],
+  },
+  org_admin: {
+    role: 'org_admin',
+    titleFa: 'مدیر ارشد سازمان',
+    titleEn: 'Organization Admin',
+    badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+    bgLight: 'bg-blue-50',
+    description: 'مدیریت تمام اتاق‌ها، پرسنل، تأیید درخواست‌های رزرو، ساعات کاری و قوانین سازمانی',
+    permissions: [
+      'MANAGE_ROOMS',
+      'APPROVE_BOOKINGS',
+      'CANCEL_ANY_BOOKING',
+      'BOOK_ROOM',
+      'MANAGE_USERS_ROLES',
+      'VIEW_ANALYTICS',
+      'MANAGE_CATERING',
+      'MANAGE_ORG_SETTINGS',
+    ],
+  },
+  room_manager: {
+    role: 'room_manager',
+    titleFa: 'مدیر تشریفات و اتاق‌ها',
+    titleEn: 'Room & Facility Manager',
+    badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+    bgLight: 'bg-teal-50',
+    description: 'مدیریت تجهیزات فیزیکی اتاق‌ها، تعیین وضعیت تعمیرات، بررسی تشریفات و پذیرایی جلسات',
+    permissions: [
+      'MANAGE_ROOMS',
+      'APPROVE_BOOKINGS',
+      'BOOK_ROOM',
+      'MANAGE_CATERING',
+      'VIEW_ANALYTICS',
+    ],
+  },
+  employee: {
+    role: 'employee',
+    titleFa: 'کارمند سازمان (کاربر عادی)',
+    titleEn: 'Employee',
+    badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+    bgLight: 'bg-slate-50',
+    description: 'مشاهده اتاق‌های آزاد، ثبت رزرو جلسات کاری، دعوت از همکاران و مدیریت جلسات شخصی خود',
+    permissions: ['BOOK_ROOM'],
+  },
+};
+
+export interface PermissionMeta {
+  key: Permission;
+  titleFa: string;
+  description: string;
+  category: 'سازمان' | 'اتاق‌ها' | 'رزرواسیون' | 'کاربران و امنیت';
+}
+
+export const PERMISSION_LIST: PermissionMeta[] = [
+  {
+    key: 'MANAGE_ORGANIZATIONS',
+    titleFa: 'مدیریت کل سازمان‌ها',
+    description: 'افزودن، ویرایش و راه‌اندازی اشتراک برای سازمان‌های مختلف در دیدار',
+    category: 'سازمان',
+  },
+  {
+    key: 'MANAGE_ROOMS',
+    titleFa: 'مدیریت اتاق‌های جلسات',
+    description: 'تعریف اتاق جدید، تغییر ظرفیت و تجهیزات، و فعال‌سازی حالت تعمیرات',
+    category: 'اتاق‌ها',
+  },
+  {
+    key: 'APPROVE_BOOKINGS',
+    titleFa: 'بررسی و تأیید رزروها',
+    description: 'تأیید یا رد جلسات مهم (مانند سالن هیئت مدیره) نیازمند تأیید مدیریت',
+    category: 'رزرواسیون',
+  },
+  {
+    key: 'CANCEL_ANY_BOOKING',
+    titleFa: 'لغو اضطراری جلسات',
+    description: 'لغو یا آزادسازی هرگونه جلسه ثبت‌شده توسط پرسنل دیگر در سازمان',
+    category: 'رزرواسیون',
+  },
+  {
+    key: 'BOOK_ROOM',
+    titleFa: 'ثبت رزرو جلسه',
+    description: 'رزرو اتاق جلسات آزاد، تعیین دستور جلسه و ارسال دعوت‌نامه',
+    category: 'رزرواسیون',
+  },
+  {
+    key: 'MANAGE_USERS_ROLES',
+    titleFa: 'مدیریت کاربران و نقش‌های RBAC',
+    description: 'تخصیص نقش‌ها، تغییر دسترسی‌ها و غیرفعال‌سازی حساب‌های کاربری',
+    category: 'کاربران و امنیت',
+  },
+  {
+    key: 'VIEW_ANALYTICS',
+    titleFa: 'مشاهده داشبورد تحلیلی',
+    description: 'دسترسی به گزارشات نرخ اشغال، ساعات اوج ترافیک و آمار جلسات',
+    category: 'سازمان',
+  },
+  {
+    key: 'MANAGE_CATERING',
+    titleFa: 'مدیریت تشریفات و پذیرایی',
+    description: 'پیگیری و تایید درخواست‌های پذیرایی، قهوه و چیدمان سالن جلسات',
+    category: 'اتاق‌ها',
+  },
+  {
+    key: 'MANAGE_ORG_SETTINGS',
+    titleFa: 'پیکربندی تنظیمات سازمان',
+    description: 'تنظیم برند، رنگ، ساعات کاری مجاز و سیاست‌های تأیید خودکار',
+    category: 'سازمان',
+  },
+];
+
+export const hasPermission = (role: UserRole, permission: Permission): boolean => {
+  const meta = ROLE_DEFINITIONS[role];
+  if (!meta) return false;
+  return meta.permissions.includes(permission);
+};

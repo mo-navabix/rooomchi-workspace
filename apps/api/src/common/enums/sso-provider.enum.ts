@@ -1,0 +1,6 @@
+export enum SsoProvider {
+  LOCAL = 'LOCAL',
+  MICROSOFT_ENTRA_ID = 'MICROSOFT_ENTRA_ID',
+  GOOGLE_WORKSPACE = 'GOOGLE_WORKSPACE',
+  SAML = 'SAML',
+}
