@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import React, { useState } from "react";
+import { useApp } from "../../context/AppContext";
 import {
   Search,
   Bell,
@@ -8,7 +8,7 @@ import {
   ChevronDown,
   LogOut,
   Building,
-} from 'lucide-react';
+} from "lucide-react";
 
 export const TopHeader: React.FC = () => {
   const {
@@ -54,7 +54,11 @@ export const TopHeader: React.FC = () => {
           className="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors cursor-pointer"
           title="تغییر تم"
         >
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+          {theme === "dark" ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-slate-600" />
+          )}
         </button>
 
         {/* User Card */}
@@ -70,16 +74,16 @@ export const TopHeader: React.FC = () => {
                   alt="avatar"
                   className="w-full h-full object-cover"
                   onError={(e: any) => {
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               </div>
               <div className="hidden sm:flex flex-col text-right">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                  {currentUser.name || 'علی محمدی'}
+                  {currentUser.name || "علی محمدی"}
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium">
-                  {currentUser.department || 'مدیر کل'}
+                  {currentUser.department || "مدیر کل"}
                 </span>
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -87,7 +91,10 @@ export const TopHeader: React.FC = () => {
 
             {isDropdownOpen && (
               <>
-                <div className="fixed inset-0 z-20" onClick={() => setIsDropdownOpen(false)} />
+                <div
+                  className="fixed inset-0 z-20"
+                  onClick={() => setIsDropdownOpen(false)}
+                />
                 <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-2xl shadow-xl py-2 z-30 divide-y divide-slate-100 dark:divide-[#334155]">
                   <div className="px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100">
                     {currentUser.name}
@@ -110,7 +117,7 @@ export const TopHeader: React.FC = () => {
           </div>
         ) : (
           <button
-            onClick={() => openAuthModal('login')}
+            onClick={() => openAuthModal("login")}
             className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] transition-colors"
           >
             ورود به سیستم

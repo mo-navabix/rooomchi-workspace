@@ -58,7 +58,9 @@ const MainContent: React.FC = () => {
                     {activeTab === "admin-bookings" && <AdminBookingsView />}
                     {activeTab === "admin-rbac" && <AdminRbacView />}
                     {activeTab === "admin-settings" && <AdminSettingsView />}
-                    {activeTab === "admin-support-tickets" && <AdminSupportTicketsView />}
+                    {activeTab === "admin-support-tickets" && (
+                      <AdminSupportTicketsView />
+                    )}
                     {activeTab === "profile" && <ProfileView />}
                     {activeTab === "support-ticket" && <SupportTicketView />}
                   </div>

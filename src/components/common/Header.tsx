@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
-import { getRoleMeta } from '../../constants/rbac';
-import { Logo } from './Logo';
+import React, { useState } from "react";
+import { useApp } from "../../context/AppContext";
+import { getRoleMeta } from "../../constants/rbac";
+import { Logo } from "./Logo";
 import {
   Plus,
   ChevronDown,
@@ -15,26 +15,43 @@ import {
   Bell,
   Search,
   User,
-} from 'lucide-react';
-import { ActiveTab } from '../../types';
+} from "lucide-react";
+import { ActiveTab } from "../../types";
 
 type HeaderProps = {
   onOpenSidebar: () => void;
 };
 
-const PAGE_META: Partial<Record<ActiveTab, { title: string; subtitle: string }>> = {
-  dashboard: { title: 'داشبورد', subtitle: 'نمای کلی جلسات و وضعیت فضاها' },
-  calendar: { title: 'تقویم', subtitle: 'برنامه زمانی اتاق‌ها و جلسات' },
-  rooms: { title: 'اتاق‌ها', subtitle: 'جستجو و رزرو سالن‌های جلسه' },
-  'my-bookings': { title: 'جلسات من', subtitle: 'رزروها و جلسات شما' },
-  analytics: { title: 'گزارش‌ها', subtitle: 'تحلیل بهره‌وری و استفاده از فضا' },
-  'admin-rooms': { title: 'مدیریت اتاق‌ها', subtitle: 'تعریف و ویرایش اتاق‌های سازمان' },
-  'admin-bookings': { title: 'نظارت رزروها', subtitle: 'تأیید و پیگیری درخواست‌ها' },
-  'admin-rbac': { title: 'کاربران', subtitle: 'نقش‌ها و دسترسی پرسنل' },
-  'admin-settings': { title: 'تنظیمات سازمان', subtitle: 'پیکربندی سیاست‌ها و برندینگ' },
-  'admin-support-tickets': { title: 'تیکت‌های پشتیبانی', subtitle: 'بررسی و پاسخ به درخواست‌های پرسنل' },
-  profile: { title: 'پروفایل من', subtitle: 'اطلاعات شخصی و حساب کاربری' },
-  'support-ticket': { title: 'پشتیبانی', subtitle: 'ثبت و پیگیری تیکت‌های پشتیبانی' },
+const PAGE_META: Partial<
+  Record<ActiveTab, { title: string; subtitle: string }>
+> = {
+  dashboard: { title: "داشبورد", subtitle: "نمای کلی جلسات و وضعیت فضاها" },
+  calendar: { title: "تقویم", subtitle: "برنامه زمانی اتاق‌ها و جلسات" },
+  rooms: { title: "اتاق‌ها", subtitle: "جستجو و رزرو سالن‌های جلسه" },
+  "my-bookings": { title: "جلسات من", subtitle: "رزروها و جلسات شما" },
+  analytics: { title: "گزارش‌ها", subtitle: "تحلیل بهره‌وری و استفاده از فضا" },
+  "admin-rooms": {
+    title: "مدیریت اتاق‌ها",
+    subtitle: "تعریف و ویرایش اتاق‌های سازمان",
+  },
+  "admin-bookings": {
+    title: "نظارت رزروها",
+    subtitle: "تأیید و پیگیری درخواست‌ها",
+  },
+  "admin-rbac": { title: "کاربران", subtitle: "نقش‌ها و دسترسی پرسنل" },
+  "admin-settings": {
+    title: "تنظیمات سازمان",
+    subtitle: "پیکربندی سیاست‌ها و برندینگ",
+  },
+  "admin-support-tickets": {
+    title: "تیکت‌های پشتیبانی",
+    subtitle: "بررسی و پاسخ به درخواست‌های پرسنل",
+  },
+  profile: { title: "پروفایل من", subtitle: "اطلاعات شخصی و حساب کاربری" },
+  "support-ticket": {
+    title: "پشتیبانی",
+    subtitle: "ثبت و پیگیری تیکت‌های پشتیبانی",
+  },
 };
 
 export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
@@ -56,7 +73,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
 
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  const page = PAGE_META[activeTab] ?? { title: 'دیدار', subtitle: 'سامانه رزرو اتاق جلسات' };
+  const page = PAGE_META[activeTab] ?? {
+    title: "دیدار",
+    subtitle: "سامانه رزرو اتاق جلسات",
+  };
   const currentRoleMeta = getRoleMeta(userRole);
 
   return (
@@ -77,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
 
             <button
               type="button"
-              onClick={() => setActiveTab('dashboard')}
+              onClick={() => setActiveTab("dashboard")}
               className="lg:hidden shrink-0 cursor-pointer"
               aria-label="دیدار"
             >
@@ -127,7 +147,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
               className="p-2.5 rounded-xl text-slate-600 dark:text-amber-400 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] hover:bg-slate-50 dark:hover:bg-[#334155] cursor-pointer shadow-sm"
               aria-label="تغییر تم"
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4 text-[#0F786E]" />}
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4 text-[#0F786E]" />
+              )}
             </button>
 
             <button
@@ -163,11 +187,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                     />
                     <div className="absolute left-0 mt-2 w-64 bg-white dark:bg-[#1E293B] rounded-2xl shadow-xl border border-slate-200 dark:border-[#334155] py-2 z-30">
                       <div className="px-4 py-3 border-b border-slate-100 dark:border-[#334155]">
-                        <p className="text-sm font-bold text-slate-900 dark:text-white">{currentUser.name}</p>
-                        <p className="text-[11px] text-slate-500 font-mono mt-0.5" dir="ltr">
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">
+                          {currentUser.name}
+                        </p>
+                        <p
+                          className="text-[11px] text-slate-500 font-mono mt-0.5"
+                          dir="ltr"
+                        >
                           {currentUser.email}
                         </p>
-                        <span className={`inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${currentRoleMeta.badgeClass}`}>
+                        <span
+                          className={`inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${currentRoleMeta.badgeClass}`}
+                        >
                           {currentRoleMeta.titleFa}
                         </span>
                       </div>
@@ -176,7 +207,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                           type="button"
                           onClick={() => {
                             setIsUserDropdownOpen(false);
-                            setActiveTab('profile');
+                            setActiveTab("profile");
                           }}
                           className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-[#334155] cursor-pointer"
                         >
@@ -187,7 +218,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                           type="button"
                           onClick={() => {
                             setIsUserDropdownOpen(false);
-                            setViewMode('landing');
+                            setViewMode("landing");
                           }}
                           className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0F786E] dark:text-emerald-400 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/30 cursor-pointer"
                         >
@@ -214,7 +245,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
               <div className="flex items-center gap-1">
                 <button
                   type="button"
-                  onClick={() => openAuthModal('login')}
+                  onClick={() => openAuthModal("login")}
                   className="p-2.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] cursor-pointer"
                 >
                   <LogIn className="w-4 h-4 sm:hidden" />
@@ -222,7 +253,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => openAuthModal('register')}
+                  onClick={() => openAuthModal("register")}
                   className="hidden sm:flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer"
                 >
                   <UserPlus className="w-4 h-4" />
@@ -235,8 +266,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
 
         {/* Mobile page title */}
         <div className="sm:hidden pb-3 -mt-1">
-          <h1 className="text-base font-black text-slate-900 dark:text-white">{page.title}</h1>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">{page.subtitle}</p>
+          <h1 className="text-base font-black text-slate-900 dark:text-white">
+            {page.title}
+          </h1>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+            {page.subtitle}
+          </p>
         </div>
       </div>
     </header>

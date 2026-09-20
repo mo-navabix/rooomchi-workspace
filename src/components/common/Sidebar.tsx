@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useApp } from '../../context/AppContext';
-import { getRoleMeta } from '../../constants/rbac';
-import { Logo } from './Logo';
+import React, { useEffect, useMemo, useState } from "react";
+import { useApp } from "../../context/AppContext";
+import { getRoleMeta } from "../../constants/rbac";
+import { Logo } from "./Logo";
 import {
   LayoutDashboard,
   Calendar,
@@ -18,10 +18,10 @@ import {
   Layers,
   User,
   Ticket,
-} from 'lucide-react';
-import { ActiveTab } from '../../types';
+} from "lucide-react";
+import { ActiveTab } from "../../types";
 
-const SIDEBAR_COLLAPSED_KEY = 'didar-portal-sidebar-collapsed';
+const SIDEBAR_COLLAPSED_KEY = "didar-portal-sidebar-collapsed";
 
 type SidebarProps = {
   mobileOpen: boolean;
@@ -61,11 +61,11 @@ function NavLinkButton({
       title={collapsed ? item.label : undefined}
       onClick={onClick}
       className={`group relative w-full flex items-center gap-3 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
-        collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
+        collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
       } ${
         isActive
-          ? 'bg-gradient-to-l from-emerald-500/15 via-emerald-500/10 to-transparent text-[#0F786E] dark:from-emerald-500/20 dark:text-emerald-300'
-          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5'
+          ? "bg-gradient-to-l from-emerald-500/15 via-emerald-500/10 to-transparent text-[#0F786E] dark:from-emerald-500/20 dark:text-emerald-300"
+          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5"
       }`}
     >
       {isActive && (
@@ -77,11 +77,13 @@ function NavLinkButton({
       <Icon
         className={`w-[18px] h-[18px] shrink-0 ${
           isActive
-            ? 'text-[#0F786E] dark:text-emerald-400'
-            : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'
+            ? "text-[#0F786E] dark:text-emerald-400"
+            : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200"
         }`}
       />
-      {!collapsed && <span className="flex-1 text-right truncate">{item.label}</span>}
+      {!collapsed && (
+        <span className="flex-1 text-right truncate">{item.label}</span>
+      )}
     </button>
   );
 }
@@ -99,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
 
   const [collapsed, setCollapsed] = useState(() => {
     try {
-      return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
+      return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
     } catch {
       return false;
     }
@@ -112,76 +114,76 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   });
   useEffect(() => {
     try {
-      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? '1' : '0');
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
     } catch {
       /* ignore */
     }
   }, [collapsed]);
 
   const primaryItems: NavItem[] = [
-    { id: 'dashboard', label: 'داشبورد', icon: LayoutDashboard },
-    { id: 'calendar', label: 'تقویم', icon: Calendar },
-    { id: 'rooms', label: 'اتاق‌ها', icon: DoorOpen },
-    { id: 'my-bookings', label: 'جلسات من', icon: CalendarCheck },
-    { id: 'profile', label: 'پروفایل من', icon: User },
+    { id: "dashboard", label: "داشبورد", icon: LayoutDashboard },
+    { id: "calendar", label: "تقویم", icon: Calendar },
+    { id: "rooms", label: "اتاق‌ها", icon: DoorOpen },
+    { id: "my-bookings", label: "جلسات من", icon: CalendarCheck },
+    { id: "profile", label: "پروفایل من", icon: User },
   ];
 
   const groups: NavGroup[] = useMemo(() => {
     const raw: NavGroup[] = [
       {
-        key: 'reports',
-        label: 'گزارش‌ها',
+        key: "reports",
+        label: "گزارش‌ها",
         icon: BarChart3,
-        items: [{ id: 'analytics', label: 'گزارش‌ها و آمار', icon: BarChart3 }],
+        items: [{ id: "analytics", label: "گزارش‌ها و آمار", icon: BarChart3 }],
       },
       {
-        key: 'users',
-        label: 'کاربران',
+        key: "users",
+        label: "کاربران",
         icon: ShieldCheck,
         items: [
           {
-            id: 'admin-rbac',
-            label: 'مدیریت کاربران',
+            id: "admin-rbac",
+            label: "مدیریت کاربران",
             icon: ShieldCheck,
-            permissionCheck: can('MANAGE_USERS_ROLES'),
+            permissionCheck: can("MANAGE_USERS_ROLES"),
           },
         ],
       },
       {
-        key: 'org',
-        label: 'سازمان',
+        key: "org",
+        label: "سازمان",
         icon: Building2,
         items: [
           {
-            id: 'admin-rooms',
-            label: 'مدیریت اتاق‌ها',
+            id: "admin-rooms",
+            label: "مدیریت اتاق‌ها",
             icon: Layers,
-            permissionCheck: can('MANAGE_ROOMS'),
+            permissionCheck: can("MANAGE_ROOMS"),
           },
           {
-            id: 'admin-bookings',
-            label: 'نظارت بر رزروها',
+            id: "admin-bookings",
+            label: "نظارت بر رزروها",
             icon: Calendar,
-            permissionCheck: can('APPROVE_BOOKINGS'),
+            permissionCheck: can("APPROVE_BOOKINGS"),
           },
           {
-            id: 'admin-support-tickets',
-            label: 'تیکت‌های پشتیبانی',
+            id: "admin-support-tickets",
+            label: "تیکت‌های پشتیبانی",
             icon: Ticket,
-            permissionCheck: can('MANAGE_ORG_SETTINGS'),
+            permissionCheck: can("MANAGE_ORG_SETTINGS"),
           },
         ],
       },
       {
-        key: 'settings',
-        label: 'تنظیمات',
+        key: "settings",
+        label: "تنظیمات",
         icon: Sliders,
         items: [
           {
-            id: 'admin-settings',
-            label: 'تنظیمات سازمان',
+            id: "admin-settings",
+            label: "تنظیمات سازمان",
             icon: Sliders,
-            permissionCheck: can('MANAGE_ORG_SETTINGS'),
+            permissionCheck: can("MANAGE_ORG_SETTINGS"),
           },
         ],
       },
@@ -190,14 +192,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     return raw
       .map((g) => ({
         ...g,
-        items: g.items.filter((i) => i.permissionCheck === undefined || i.permissionCheck),
+        items: g.items.filter(
+          (i) => i.permissionCheck === undefined || i.permissionCheck,
+        ),
       }))
       .filter((g) => g.items.length > 0);
   }, [can]);
 
   const roleMeta = getRoleMeta(userRole);
-  const displayName = currentUser?.name || 'کاربر دیدار';
-  const displayRole = roleMeta?.titleFa?.split(' ').slice(0, 2).join(' ') || 'مدیر سیستم';
+  const displayName = currentUser?.name || "کاربر دیدار";
+  const displayRole =
+    roleMeta?.titleFa?.split(" ").slice(0, 2).join(" ") || "مدیر سیستم";
 
   const goTo = (id: ActiveTab) => {
     setActiveTab(id);
@@ -209,9 +214,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const isGroupActive = (group: NavGroup) => group.items.some((i) => i.id === activeTab);
+  const isGroupActive = (group: NavGroup) =>
+    group.items.some((i) => i.id === activeTab);
 
-  const shellWidth = collapsed ? 'w-[4.5rem]' : 'w-[260px]';
+  const shellWidth = collapsed ? "w-[4.5rem]" : "w-[260px]";
 
   return (
     <>
@@ -227,25 +233,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       <aside
         id="portal-sidebar"
         className={`fixed top-0 bottom-0 right-0 z-50 shrink-0 flex flex-col bg-white dark:bg-[#0A0F1A] border-s border-slate-200 dark:border-white/[0.06] text-slate-700 dark:text-slate-200 shadow-sm dark:shadow-none select-none transition-[width,transform] duration-300 ease-out lg:sticky lg:top-0 lg:h-screen lg:max-h-screen ${shellWidth} ${
-          mobileOpen ? 'translate-x-0 shadow-2xl' : 'translate-x-full lg:translate-x-0'
-        } ${mobileOpen ? 'flex' : 'hidden lg:flex'}`}
+          mobileOpen
+            ? "translate-x-0 shadow-2xl"
+            : "translate-x-full lg:translate-x-0"
+        } ${mobileOpen ? "flex" : "hidden lg:flex"}`}
       >
         {/* Header: logo + collapse */}
         <div
           className={`flex items-center gap-2 border-b border-slate-200 dark:border-white/[0.06] shrink-0 ${
-            collapsed ? 'flex-col py-4 px-2' : 'justify-between px-4 py-4'
+            collapsed ? "flex-col py-4 px-2" : "justify-between px-4 py-4"
           }`}
         >
           <button
             type="button"
-            onClick={() => goTo('dashboard')}
-            className={`flex items-center min-w-0 cursor-pointer ${collapsed ? 'justify-center' : 'justify-start w-full px-0.5'}`}
+            onClick={() => goTo("dashboard")}
+            className={`flex items-center min-w-0 cursor-pointer ${collapsed ? "justify-center" : "justify-start w-full px-0.5"}`}
             aria-label="اتاق — دیدار"
           >
             {collapsed ? (
               <Logo variant="mark" size="sm" theme="auto" />
             ) : (
-              <Logo variant="horizontal" size="md" theme="auto" className="max-w-[148px]" />
+              <Logo
+                variant="horizontal"
+                size="md"
+                theme="auto"
+                className="max-w-[148px]"
+              />
             )}
           </button>
 
@@ -293,7 +306,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             ))}
 
             {groups.length > 0 && (
-              <div className="my-3 border-t border-slate-200 dark:border-white/[0.06]" aria-hidden />
+              <div
+                className="my-3 border-t border-slate-200 dark:border-white/[0.06]"
+                aria-hidden
+              />
             )}
 
             {groups.map((group) => {
@@ -322,21 +338,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                     onClick={() => toggleGroup(group.key)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold cursor-pointer transition-colors ${
                       groupActive
-                        ? 'text-[#0F786E] dark:text-emerald-300'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5'
+                        ? "text-[#0F786E] dark:text-emerald-300"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5"
                     }`}
                   >
                     <GroupIcon className="w-[18px] h-[18px] shrink-0 text-slate-400 dark:text-slate-400" />
                     <span className="flex-1 text-right">{group.label}</span>
                     <ChevronDown
                       className={`w-4 h-4 text-slate-500 transition-transform ${
-                        expanded ? 'rotate-180' : ''
+                        expanded ? "rotate-180" : ""
                       }`}
                     />
                   </button>
                   {expanded &&
                     group.items.map((item) => (
-                      <div key={item.id} className="pr-2 mr-1 border-r border-slate-200 dark:border-white/[0.06]">
+                      <div
+                        key={item.id}
+                        className="pr-2 mr-1 border-r border-slate-200 dark:border-white/[0.06]"
+                      >
                         <NavLinkButton
                           item={item}
                           isActive={activeTab === item.id}
@@ -355,7 +374,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         <div className="border-t border-slate-200 dark:border-white/[0.06] p-2 shrink-0">
           <div
             className={`w-full flex items-center gap-2.5 rounded-xl p-2 ${
-              collapsed ? 'justify-center' : ''
+              collapsed ? "justify-center" : ""
             }`}
           >
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0F786E] to-emerald-500 dark:from-slate-600 dark:to-slate-800 border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0">
@@ -363,8 +382,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0 text-right">
-                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">{displayName}</div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-500 truncate">{displayRole}</div>
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                  {displayName}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-500 truncate">
+                  {displayRole}
+                </div>
               </div>
             )}
           </div>
@@ -373,7 +396,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             <button
               type="button"
               onClick={() => {
-                setViewMode('landing');
+                setViewMode("landing");
                 onClose();
               }}
               className="mt-1 w-full flex items-center justify-center gap-1.5 py-2 text-[10px] font-bold text-slate-500 hover:text-[#0F786E] dark:hover:text-emerald-400 transition-colors cursor-pointer"

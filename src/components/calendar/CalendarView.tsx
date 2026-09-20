@@ -351,12 +351,10 @@ export const CalendarView: React.FC = () => {
               return (
                 <div
                   key={d.isoDate}
-                  className={`relative border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 cursor-pointer ${
+                  className={`relative border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 ${
                     d.isToday ? 'bg-emerald-50/25 dark:bg-emerald-950/15' : 'bg-white dark:bg-[#1E293B]'
                   }`}
                   style={{ height: GRID_HEIGHT_PX }}
-                  onClick={() => openBookingModal()}
-                  title="کلیک برای رزرو جدید"
                 >
                   {/* Hour grid lines */}
                   {HOUR_LABELS.map((hour, index) => (
@@ -396,8 +394,6 @@ export const CalendarView: React.FC = () => {
                     return (
                       <div
                         key={bk.id}
-                        role="button"
-                        tabIndex={0}
                         style={{
                           top: topPx,
                           height: heightPx,
@@ -406,11 +402,7 @@ export const CalendarView: React.FC = () => {
                           borderRightColor: accentColor,
                           zIndex: 10 + column,
                         }}
-                        className={`absolute rounded-lg px-2 py-1.5 text-right overflow-hidden hover:brightness-[0.98] dark:hover:brightness-110 transition-[filter,box-shadow] hover:shadow-md ${styleClass}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openBookingModal();
-                        }}
+                        className={`absolute rounded-lg px-2 py-1.5 text-right overflow-hidden ${styleClass}`}
                         title={`${bk.title}\n${bk.roomName}\n${bk.startTime} – ${bk.endTime}`}
                       >
                         <p
@@ -459,10 +451,11 @@ export const CalendarView: React.FC = () => {
           </span>
         </div>
         <button
+          type="button"
           onClick={() => openBookingModal()}
           className="text-emerald-600 dark:text-emerald-300 font-bold hover:underline cursor-pointer"
         >
-          + ثبت رزرو برای ساعت‌های خالی
+          + رزرو جلسه جدید
         </button>
       </div>
     </div>
