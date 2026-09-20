@@ -9,11 +9,11 @@ import {
   CalendarCheck,
   BarChart3,
   Sliders,
-  Sparkles,
   ShieldCheck,
   X,
   ChevronDown,
   ChevronLeft,
+  ChevronRight,
   Building2,
   Layers,
   User,
@@ -93,7 +93,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     activeTab,
     setActiveTab,
     currentOrg,
-    setViewMode,
     can,
     currentUser,
     userRole,
@@ -269,7 +268,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               className="hidden lg:flex p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-400 dark:hover:text-white cursor-pointer border border-slate-200 dark:border-white/10"
               aria-label="جمع کردن منو"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           )}
           <button
@@ -289,9 +288,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             className="hidden lg:flex mx-auto mt-2 p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-400 cursor-pointer border border-slate-200 dark:border-white/10"
             aria-label="باز کردن منو"
           >
-            <ChevronLeft className="w-4 h-4 rotate-180" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
         )}
+
+        <div className="border-b border-slate-200 dark:border-white/[0.06] p-2 shrink-0">
+          <div
+            className={`w-full flex items-center gap-2.5 rounded-xl p-2 ${
+              collapsed ? "justify-center" : ""
+            }`}
+          >
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[var(--brand-primary)] to-[var(--brand-primary-light)] dark:from-slate-600 dark:to-slate-800 border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0">
+              {currentOrg?.name?.charAt(0) || displayName.charAt(0)}
+            </div>
+            {!collapsed && (
+              <div className="flex-1 min-w-0 text-right">
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                  {displayName}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-500 truncate">
+                  {displayRole}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className="flex-1 flex flex-col min-h-0 overflow-y-auto overflow-x-hidden px-2 py-3">
           <nav className="space-y-1">
@@ -368,43 +389,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               );
             })}
           </nav>
-        </div>
-
-        {/* User profile (display only — settings via header / پروفایل من) */}
-        <div className="border-t border-slate-200 dark:border-white/[0.06] p-2 shrink-0">
-          <div
-            className={`w-full flex items-center gap-2.5 rounded-xl p-2 ${
-              collapsed ? "justify-center" : ""
-            }`}
-          >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0F786E] to-emerald-500 dark:from-slate-600 dark:to-slate-800 border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0">
-              {currentOrg?.name?.charAt(0) || displayName.charAt(0)}
-            </div>
-            {!collapsed && (
-              <div className="flex-1 min-w-0 text-right">
-                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                  {displayName}
-                </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-500 truncate">
-                  {displayRole}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {!collapsed && (
-            <button
-              type="button"
-              onClick={() => {
-                setViewMode("landing");
-                onClose();
-              }}
-              className="mt-1 w-full flex items-center justify-center gap-1.5 py-2 text-[10px] font-bold text-slate-500 hover:text-[#0F786E] dark:hover:text-emerald-400 transition-colors cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>صفحه معرفی دیدار</span>
-            </button>
-          )}
         </div>
       </aside>
     </>
