@@ -1,10 +1,13 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { TenantResolverService } from './tenant-resolver.service';
 
 @Injectable()
 export class TenantResolverMiddleware implements NestMiddleware {
-  constructor(private readonly tenantResolverService: TenantResolverService) {}
+  constructor(
+    @Inject(TenantResolverService)
+    private readonly tenantResolverService: TenantResolverService,
+  ) {}
 
   async use(req: Request, _res: Response, next: NextFunction): Promise<void> {
     const host = (req.headers['x-forwarded-host'] as string) || req.headers['host'];

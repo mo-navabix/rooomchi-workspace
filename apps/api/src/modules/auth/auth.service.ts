@@ -3,25 +3,32 @@ import {
   UnauthorizedException,
   BadRequestException,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { RoleEnum } from '../../common/enums/role.enum';
 import { JwtPayload } from '../../config/jwt.config';
 import { UserStatus } from '../../common/enums/user-status.enum';
 import { OrganizationStatus } from '../../common/enums/organization-status.enum';
 import { User } from '../users/entities/user.entity';
 import { Organization } from '../organizations/entities/organization.entity';
 import { TenantContext } from '../../common/tenant/tenant-context.interface';
+import { toClientUser } from '../users/user-client.mapper';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(UsersService)
     private readonly usersService: UsersService,
+    @Inject(OrganizationsService)
     private readonly organizationsService: OrganizationsService,
+    @Inject(JwtService)
     private readonly jwtService: JwtService,
   ) {}
 
@@ -149,18 +156,10 @@ export class AuthService {
 
     return {
       accessToken,
+      token: accessToken,
       tokenType: 'Bearer',
       requiresPasswordChange: user.status === UserStatus.INVITED,
-      user: {
-        id: user.id,
-        employeeNumber: user.employeeNumber,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        organizationId: user.organizationId,
-        role: roleName,
-        status: user.status,
-      },
+      user: toClientUser(user),
       organization: {
         id: targetOrg.id,
         name: targetOrg.name,
@@ -169,6 +168,45 @@ export class AuthService {
         logo: targetOrg.logo,
       },
     };
+  }
+
+  /**
+   * POST /auth/register
+   * Org-scoped self-registration for demo / onboarding (not open public SaaS signup).
+   */
+  async register(registerDto: RegisterDto) {
+    const nameParts = registerDto.name.trim().split(/\s+/);
+    const firstName = nameParts[0] || 'کاربر';
+    const lastName = nameParts.slice(1).join(' ') || firstName;
+
+    await this.usersService.registerForOrganization({
+      organizationId: registerDto.orgId,
+      firstName,
+      lastName,
+      email: registerDto.email,
+      password: registerDto.password,
+      requestedRole: this.mapClientRole(registerDto.role),
+    });
+
+    return this.login(
+      { email: registerDto.email, password: registerDto.password },
+      null,
+    );
+  }
+
+  private mapClientRole(role?: string): RoleEnum | undefined {
+    if (!role) return undefined;
+    const r = role.toLowerCase();
+    if (r === 'super_admin') {
+      throw new ForbiddenException('Public registration cannot assign super admin role');
+    }
+    if (r === 'org_admin' || r === 'organization_admin') {
+      return RoleEnum.ORGANIZATION_ADMIN;
+    }
+    if (r === 'room_manager' || r === 'manager') {
+      return RoleEnum.MANAGER;
+    }
+    return RoleEnum.EMPLOYEE;
   }
 
   /**

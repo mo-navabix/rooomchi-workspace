@@ -507,7 +507,7 @@ export const AdminRbacView: React.FC = () => {
                     onChange={(e) => setNewDept(e.target.value)}
                     className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
                   >
-                    {currentOrg?.departments.map((d) => (
+                    {(currentOrg?.departments ?? []).map((d) => (
                       <option key={d} value={d}>
                         {d}
                       </option>

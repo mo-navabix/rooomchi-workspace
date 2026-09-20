@@ -157,7 +157,7 @@ export const AdminSettingsView: React.FC = () => {
         </div>
 
         <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-[#2563EB] dark:text-[#60A5FA] border border-blue-200 dark:border-blue-900/50">
-          اشتراک: {currentOrg?.plan.toUpperCase()}
+          اشتراک: {(currentOrg?.plan ?? 'business').toUpperCase()}
         </span>
       </div>
 

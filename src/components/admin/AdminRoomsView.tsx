@@ -60,7 +60,7 @@ export const AdminRoomsView: React.FC = () => {
     setCode(`RM-${Math.floor(100 + Math.random() * 900)}`);
     setCapacity(10);
     setFloor(1);
-    setBuilding(currentOrg?.buildings[0] || 'ساختمان اصلی');
+    setBuilding(currentOrg?.buildings?.[0] || 'ساختمان اصلی');
     setSelectedAmenities(['projector', 'whiteboard', 'wifi']);
     setRequiresApproval(false);
     setImageUrl(
@@ -387,7 +387,7 @@ export const AdminRoomsView: React.FC = () => {
                   onChange={(e) => setBuilding(e.target.value)}
                   className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
                 >
-                  {currentOrg?.buildings.map((b) => (
+                  {(currentOrg?.buildings ?? []).map((b) => (
                     <option key={b} value={b}>
                       {b}
                     </option>

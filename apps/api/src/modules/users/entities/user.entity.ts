@@ -21,42 +21,36 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  /**
-   * Multi-Tenant Foreign Key:
-   * A user without an organization is strictly disallowed.
-   */
   @Index()
-  @Column({ type: 'uuid', name: 'organization_id', nullable: false })
+  @Column({ type: 'uuid' })
   organizationId!: string;
 
   @ManyToOne('Organization', 'users', { onDelete: 'CASCADE', nullable: false })
-  @JoinColumn({ name: 'organization_id' })
+  @JoinColumn({ name: 'organizationId' })
   organization?: Organization;
 
-  @Column({ type: 'varchar', length: 50, name: 'employee_number' })
+  @Column({ type: 'varchar', length: 50 })
   employeeNumber!: string;
 
-  @Column({ type: 'varchar', length: 100, name: 'first_name' })
+  @Column({ type: 'varchar', length: 100 })
   firstName!: string;
 
-  @Column({ type: 'varchar', length: 100, name: 'last_name' })
+  @Column({ type: 'varchar', length: 100 })
   lastName!: string;
 
   @Index({ unique: true })
   @Column({ type: 'varchar', length: 255, unique: true })
   email!: string;
 
-  @Column({ type: 'varchar', length: 255, name: 'password_hash', select: false })
-  passwordHash!: string;
+  @Column({ type: 'varchar', length: 255, select: false })
+  password!: string;
 
-  /**
-   * Compatibility accessor for password
-   */
-  get password(): string {
-    return this.passwordHash;
+  /** @deprecated use `password` — kept for service-layer compatibility */
+  get passwordHash(): string {
+    return this.password;
   }
-  set password(val: string) {
-    this.passwordHash = val;
+  set passwordHash(val: string) {
+    this.password = val;
   }
 
   @Column({
@@ -67,31 +61,26 @@ export class User {
   })
   status!: UserStatus;
 
-  @Column({ type: 'uuid', name: 'role_id', nullable: true })
-  roleId?: string;
+  @Column({ type: 'uuid' })
+  roleId!: string;
 
-  @ManyToOne('Role', 'users', { eager: true, nullable: true })
-  @JoinColumn({ name: 'role_id' })
+  @ManyToOne('Role', 'users', { eager: true, nullable: false })
+  @JoinColumn({ name: 'roleId' })
   role?: Role;
 
-  @Column({
-    type: 'varchar',
-    length: 32,
-    enum: RoleEnum,
-    default: RoleEnum.EMPLOYEE,
-    name: 'role_name',
-  })
-  roleName!: RoleEnum;
+  get roleName(): RoleEnum {
+    return (this.role?.name as RoleEnum) ?? RoleEnum.EMPLOYEE;
+  }
 
-  @Column({ type: 'timestamp with time zone', nullable: true, name: 'last_login_at' })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   lastLoginAt?: Date | null;
 
   @OneToMany('Reservation', 'user')
   reservations?: Reservation[];
 
-  @CreateDateColumn({ type: 'timestamp with time zone', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone', name: 'updated_at' })
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt!: Date;
 }

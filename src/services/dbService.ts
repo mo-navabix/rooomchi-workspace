@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { getDatabaseSsl } from '../config/database';
 
 const { Pool } = pg;
 
@@ -10,10 +11,24 @@ export function getDbPool(): pg.Pool | null {
   if (pool) return pool;
 
   const connectionString = process.env.DATABASE_URL;
-  const host = process.env.DB_HOST || process.env.PGHOST;
-  const database = process.env.DB_DATABASE || process.env.DB_NAME || process.env.PGDATABASE;
-  const user = process.env.DB_USERNAME || process.env.DB_USER || process.env.PGUSER;
-  const password = process.env.DB_PASSWORD || process.env.PGPASSWORD;
+  const host =
+    process.env.DB_HOST ||
+    process.env.DATABASE_HOST ||
+    process.env.PGHOST;
+  const database =
+    process.env.DB_DATABASE ||
+    process.env.DATABASE_NAME ||
+    process.env.DB_NAME ||
+    process.env.PGDATABASE;
+  const user =
+    process.env.DB_USERNAME ||
+    process.env.DATABASE_USER ||
+    process.env.DB_USER ||
+    process.env.PGUSER;
+  const password =
+    process.env.DB_PASSWORD ||
+    process.env.DATABASE_PASSWORD ||
+    process.env.PGPASSWORD;
   const port = Number(process.env.DB_PORT || process.env.PGPORT) || 5432;
 
   // Only initialize if connection config is provided
@@ -22,14 +37,16 @@ export function getDbPool(): pg.Pool | null {
   }
 
   try {
+    const ssl = getDatabaseSsl();
     pool = connectionString
-      ? new Pool({ connectionString, ssl: process.env.PGSSL === 'true' || process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false })
+      ? new Pool({ connectionString, ...(ssl ? { ssl } : {}) })
       : new Pool({
           host: host || 'localhost',
           port,
           database: database || 'didar_db',
           user: user || 'postgres',
           password: password || '',
+          ...(ssl ? { ssl } : {}),
         });
 
     pool.on('error', (err) => {

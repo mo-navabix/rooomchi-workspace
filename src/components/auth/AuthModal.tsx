@@ -87,7 +87,7 @@ export const AuthModal: React.FC = () => {
         name: name.trim(),
         email: email.trim(),
         password,
-        department: department.trim() || currentOrg?.departments[0] || 'فنی و مهندسی',
+        department: department.trim() || currentOrg?.departments?.[0] || 'فنی و مهندسی',
         jobTitle: jobTitle.trim() || 'کارشناس',
         phone: phone.trim(),
         role: regRole,
@@ -372,7 +372,7 @@ export const AuthModal: React.FC = () => {
                     onChange={(e) => setDepartment(e.target.value)}
                     className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white rounded-xl focus:bg-white"
                   >
-                    {currentOrg?.departments.map((d) => (
+                    {(currentOrg?.departments ?? []).map((d) => (
                       <option key={d} value={d}>
                         {d}
                       </option>

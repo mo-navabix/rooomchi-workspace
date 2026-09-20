@@ -279,7 +279,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const login = async (credentials: { email: string; password: string }) => {
     const res = await ApiService.login(credentials);
-    saveUserSession(res.user, res.token);
+    const token = res.token || (res as { accessToken?: string }).accessToken;
+    if (!token) {
+      throw new Error('توکن احراز هویت از سرور دریافت نشد');
+    }
+    saveUserSession(res.user, token);
     closeAuthModal();
     setViewMode('app');
     showToast(`خوش آمدید، ${res.user.name}`, 'success');
@@ -301,11 +305,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     phone?: string;
     role?: UserRole;
   }) => {
+    const orgId = data.orgId || currentOrg?.id;
+    if (!orgId) {
+      throw new Error('لطفاً ابتدا یک سازمان را انتخاب یا راه‌اندازی کنید، سپس ثبت‌نام کنید');
+    }
     const res = await ApiService.register({
       ...data,
-      orgId: data.orgId || currentOrg?.id,
+      orgId,
     });
-    saveUserSession(res.user, res.token);
+    const token = res.token || (res as { accessToken?: string }).accessToken;
+    if (!token) {
+      throw new Error('توکن احراز هویت از سرور دریافت نشد');
+    }
+    saveUserSession(res.user, token);
     closeAuthModal();
     setViewMode('app');
     showToast(`ثبت‌نام با موفقیت انجام شد. به سامانه دیدار خوش آمدید`, 'success');

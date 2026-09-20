@@ -8,36 +8,50 @@ import {
   UseGuards,
   ValidationPipe,
   UsePipes,
+  Inject,
 } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { ProvisionOrganizationDto } from './dto/provision-organization.dto';
+import {
+  toClientOrganization,
+  toClientOrganizationFromEntity,
+} from './organization-response.util';
 import { CreateOrgAdminDto } from './dto/create-org-admin.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
 import { TenantGuard } from '../../common/guards/tenant.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { RoleEnum } from '../../common/enums/role.enum';
+import { Public } from '../../common/decorators/public.decorator';
 import type { JwtPayload } from '../../config/jwt.config';
 
 @Controller('organizations')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    transform: true,
+    forbidNonWhitelisted: false,
+  }),
+)
 export class OrganizationsController {
-  constructor(private readonly organizationsService: OrganizationsService) {}
+  constructor(
+    @Inject(OrganizationsService)
+    private readonly organizationsService: OrganizationsService,
+  ) {}
 
   /**
    * POST /organizations
-   * SaaS Requirement: Super Admin onboards an Organization.
+   * Public SaaS onboarding (matches legacy Express provisioning wizard).
    */
+  @Public()
   @Post()
-  @Roles(RoleEnum.SUPER_ADMIN)
-  async create(@Body() createDto: CreateOrganizationDto) {
+  async create(@Body() createDto: ProvisionOrganizationDto) {
     const org = await this.organizationsService.create(createDto);
+    const clientOrg = toClientOrganization(org, createDto);
     return {
-      message: 'Organization workspace created successfully',
-      organization: org,
+      message: 'Organization created successfully',
+      organization: clientOrg,
+      ...clientOrg,
     };
   }
 
@@ -64,12 +78,13 @@ export class OrganizationsController {
 
   /**
    * GET /organizations
-   * Super Admin lists all enterprise workspaces.
+   * Public list for org switcher / landing (matches legacy Express API).
    */
+  @Public()
   @Get()
-  @Roles(RoleEnum.SUPER_ADMIN)
   async findAll() {
-    return this.organizationsService.findAll();
+    const orgs = await this.organizationsService.findAll();
+    return orgs.map((org) => toClientOrganizationFromEntity(org));
   }
 
   /**

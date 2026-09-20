@@ -49,8 +49,8 @@ export const RoomBrowser: React.FC = () => {
           ApiService.getRooms({ orgId: currentOrg.id }),
           ApiService.getBookings({ orgId: currentOrg.id, date: filterDate }),
         ]);
-        setRooms(roomsData);
-        setBookings(bookingsData);
+        setRooms(Array.isArray(roomsData) ? roomsData : []);
+        setBookings(Array.isArray(bookingsData) ? bookingsData : []);
       } catch (err) {
         console.error('Error fetching rooms', err);
       } finally {
@@ -78,7 +78,8 @@ export const RoomBrowser: React.FC = () => {
     if (selectedCapacity === 'large' && room.capacity <= 12) return false;
 
     // Amenity
-    if (selectedAmenity !== 'all' && !room.amenities.includes(selectedAmenity)) return false;
+    if (selectedAmenity !== 'all' && !(room.amenities ?? []).includes(selectedAmenity))
+      return false;
 
     // Building
     if (selectedBuilding !== 'all' && room.building !== selectedBuilding) return false;
@@ -180,7 +181,7 @@ export const RoomBrowser: React.FC = () => {
               className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#2563EB] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
             >
               <option value="all">همه ساختمان‌ها</option>
-              {currentOrg?.buildings.map((b) => (
+              {(currentOrg?.buildings ?? []).map((b) => (
                 <option key={b} value={b}>
                   {b}
                 </option>

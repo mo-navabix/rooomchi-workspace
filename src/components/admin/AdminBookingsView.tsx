@@ -32,7 +32,7 @@ export const AdminBookingsView: React.FC = () => {
     try {
       setIsLoading(true);
       const data = await ApiService.getBookings({ orgId: currentOrg.id });
-      setBookings(data);
+      setBookings(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -112,7 +112,7 @@ export const AdminBookingsView: React.FC = () => {
               className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#2563EB] cursor-pointer"
             >
               <option value="all">همه دپارتمان‌ها و واحدها</option>
-              {currentOrg?.departments.map((d) => (
+              {(currentOrg?.departments ?? []).map((d) => (
                 <option key={d} value={d}>
                   {d}
                 </option>

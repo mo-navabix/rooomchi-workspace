@@ -4,19 +4,14 @@ import {
   ExecutionContext,
   ForbiddenException,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { RoleEnum } from '../enums/role.enum';
+import { getRouteMetadata } from '../utils/metadata.util';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
-
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<(RoleEnum | string)[]>(
-      ROLES_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredRoles = getRouteMetadata<(RoleEnum | string)[]>(ROLES_KEY, context);
 
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
@@ -29,7 +24,6 @@ export class RolesGuard implements CanActivate {
 
     const userRole: string = typeof user.role === 'object' ? user.role.name : user.role;
 
-    // Super Admin has universal access
     if (userRole === RoleEnum.SUPER_ADMIN) {
       return true;
     }

@@ -56,9 +56,9 @@ export class Organization {
   @OneToMany('Reservation', 'organization')
   reservations?: Reservation[];
 
-  @CreateDateColumn({ type: 'timestamp with time zone', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone', name: 'updated_at' })
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt!: Date;
 }

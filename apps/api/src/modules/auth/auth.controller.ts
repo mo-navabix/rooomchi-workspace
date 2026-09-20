@@ -9,12 +9,13 @@ import {
   HttpStatus,
   ForbiddenException,
   Req,
+  Inject,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import type { JwtPayload } from '../../config/jwt.config';
@@ -22,7 +23,10 @@ import type { JwtPayload } from '../../config/jwt.config';
 @Controller('auth')
 @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    @Inject(AuthService)
+    private readonly authService: AuthService,
+  ) {}
 
   /**
    * POST /auth/login
@@ -43,7 +47,6 @@ export class AuthController {
    * POST /auth/change-password
    * Authenticated endpoint for changing initial/temporary password.
    */
-  @UseGuards(JwtAuthGuard)
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
   async changePassword(
@@ -55,18 +58,12 @@ export class AuthController {
 
   /**
    * POST /auth/register
-   * Requirement: Public registration is strictly disabled.
-   * "The system is not a public registration platform.
-   *  Companies purchase the system and an organization administrator manages employees."
+   * Registers a user into the selected organization (first user = org admin).
    */
   @Public()
   @Post('register')
-  async register() {
-    throw new ForbiddenException({
-      statusCode: HttpStatus.FORBIDDEN,
-      error: 'Public Registration Disabled',
-      message:
-        'Didar is a multi-tenant B2B enterprise platform. Public self-registration is disabled. Employees can only be created or invited by their Organization Administrator via POST /organizations/:id/users.',
-    });
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
   }
 }

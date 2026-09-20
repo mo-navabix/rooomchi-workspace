@@ -5,28 +5,50 @@ import {
   Patch,
   Param,
   Body,
+  Query,
   UseGuards,
   ValidationPipe,
   UsePipes,
+  Inject,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { AssignRoleDto } from './dto/assign-role.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
 import { TenantGuard } from '../../common/guards/tenant.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { RoleEnum } from '../../common/enums/role.enum';
+import { Public } from '../../common/decorators/public.decorator';
 import type { JwtPayload } from '../../config/jwt.config';
+import { toClientUser } from './user-client.mapper';
 
 @Controller()
-@UseGuards(JwtAuthGuard, RolesGuard)
 @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(UsersService)
+    private readonly usersService: UsersService,
+  ) {}
+
+  /**
+   * GET /users?orgId=
+   * Legacy list endpoint (public when orgId is set — same as in-memory Express).
+   */
+  @Public()
+  @Get('users')
+  async listUsers(@Query('orgId') orgId: string | undefined) {
+    const organizationId = orgId?.trim();
+    if (!organizationId || organizationId === 'all') {
+      throw new BadRequestException('Query parameter orgId is required');
+    }
+
+    const users = await this.usersService.listEmployeesByOrganizationId(organizationId);
+    return users.map((u) => toClientUser(u));
+  }
 
   /**
    * POST /organizations/:id/users

@@ -110,7 +110,7 @@ export const DashboardView: React.FC = () => {
             <span className="w-2 h-2 rounded-full bg-[#14B8A6] animate-pulse"></span>
             <span>داشبورد اختصاصی مدیریت جلسات</span>
             <span>•</span>
-            <span>{currentOrg?.buildings[0] || 'شعبه مرکزی'}</span>
+            <span>{currentOrg?.buildings?.[0] || 'شعبه مرکزی'}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
             خوش‌آمدید به سامانه جلسات {currentOrg?.name}

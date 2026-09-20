@@ -2,6 +2,18 @@ import { Booking, Organization, Room, Stats, User, UserRole } from '../types';
 
 const API_BASE = '/api';
 
+function getAuthHeaders(contentJson = false): HeadersInit {
+  const headers: Record<string, string> = {};
+  if (contentJson) {
+    headers['Content-Type'] = 'application/json';
+  }
+  const token = localStorage.getItem('didar_auth_token');
+  if (token && token !== 'guest_token' && token !== 'session_token') {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 export class ApiService {
   // Organizations
   static async getOrganizations(): Promise<Organization[]> {
@@ -29,16 +41,29 @@ export class ApiService {
     settings?: { autoApprove: boolean; maxBookingHours: number; allowWeekend: boolean };
     initialRooms?: Partial<Room>[];
   }): Promise<Organization> {
+    const token = localStorage.getItem('didar_auth_token');
     const res = await fetch(`${API_BASE}/organizations`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'خطا در راه‌اندازی سازمان' }));
-      throw new Error(err.error || 'خطا در ثبت و راه‌اندازی سازمان');
+      const message =
+        err.message ||
+        err.error ||
+        (Array.isArray(err.message) ? err.message.join(', ') : null) ||
+        'خطا در ثبت و راه‌اندازی سازمان';
+      throw new Error(message);
     }
-    return res.json();
+    const body = await res.json();
+    if (body.organization) {
+      return { ...body.organization, ...body } as Organization;
+    }
+    return body as Organization;
   }
 
   static async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
@@ -167,9 +192,20 @@ export class ApiService {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'خطا در ورود به سامانه' }));
-      throw new Error(err.error || 'اطلاعات کاربری نادرست است');
+      throw new Error(err.message || err.error || 'اطلاعات کاربری نادرست است');
     }
-    return res.json();
+    const body = await res.json();
+    const token = body.accessToken || body.token;
+    const user = body.user
+      ? {
+          ...body.user,
+          orgId: body.user.orgId || body.user.organizationId,
+          name:
+            body.user.name ||
+            [body.user.firstName, body.user.lastName].filter(Boolean).join(' '),
+        }
+      : body.user;
+    return { ...body, token, user, message: body.message || 'ورود موفق' };
   }
 
   static async register(data: {
@@ -189,9 +225,25 @@ export class ApiService {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'خطا در ثبت‌نام' }));
-      throw new Error(err.error || 'خطا در ثبت‌نام');
+      const message =
+        err.message ||
+        err.error ||
+        (Array.isArray(err.message) ? err.message.join(', ') : null) ||
+        'خطا در ثبت‌نام';
+      throw new Error(message);
     }
-    return res.json();
+    const body = await res.json();
+    const token = body.accessToken || body.token;
+    const user = body.user
+      ? {
+          ...body.user,
+          orgId: body.user.orgId || body.user.organizationId,
+          name:
+            body.user.name ||
+            [body.user.firstName, body.user.lastName].filter(Boolean).join(' '),
+        }
+      : body.user;
+    return { ...body, token, user, message: body.message || 'ثبت‌نام موفق' };
   }
 
   static async forgotPassword(email: string): Promise<{ success: boolean; message: string; simulatedCode?: string }> {
@@ -227,9 +279,12 @@ export class ApiService {
   // --- User Management (RBAC) ---
   static async getUsers(orgId?: string): Promise<User[]> {
     const params = orgId ? `?orgId=${orgId}` : '';
-    const res = await fetch(`${API_BASE}/users${params}`);
+    const res = await fetch(`${API_BASE}/users${params}`, {
+      headers: getAuthHeaders(),
+    });
     if (!res.ok) throw new Error('خطا در دریافت لیست کاربران');
-    return res.json();
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
   }
 
   static async createUser(data: {
@@ -243,7 +298,7 @@ export class ApiService {
   }): Promise<User> {
     const res = await fetch(`${API_BASE}/users`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(true),
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -256,7 +311,7 @@ export class ApiService {
   static async updateUserRole(userId: string, role: UserRole): Promise<User> {
     const res = await fetch(`${API_BASE}/users/${userId}/role`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(true),
       body: JSON.stringify({ role }),
     });
     if (!res.ok) throw new Error('خطا در تغییر نقش کاربر');
@@ -266,7 +321,7 @@ export class ApiService {
   static async updateUserStatus(userId: string, status: 'active' | 'suspended'): Promise<User> {
     const res = await fetch(`${API_BASE}/users/${userId}/status`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(true),
       body: JSON.stringify({ status }),
     });
     if (!res.ok) throw new Error('خطا در تغییر وضعیت کاربر');
@@ -274,7 +329,10 @@ export class ApiService {
   }
 
   static async deleteUser(userId: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/users/${userId}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/users/${userId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
     if (!res.ok) throw new Error('خطا در حذف کاربر');
   }
 }

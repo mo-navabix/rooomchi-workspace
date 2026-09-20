@@ -1,11 +1,15 @@
+import "dotenv/config";
+import "reflect-metadata";
 import express, { Request, Response } from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { JwtService } from "@nestjs/jwt";
-import { checkDbStatus } from "./src/services/dbService";
+import { checkDbStatus, getDbPool } from "./src/services/dbService";
+import { isDatabaseConfigured } from "./src/config/database";
+import { attachNestApiToExpress } from "./apps/api/src/nest-express";
 
 const jwtService = new JwtService({
-  secret: "didar_enterprise_jwt_super_secret_key_2026",
+  secret: process.env.JWT_SECRET || "didar_enterprise_jwt_super_secret_key_2026",
 });
 
 interface Amenity {
@@ -424,13 +428,18 @@ const passwordResetCodes: Record<string, { code: string; expiresAt: number }> = 
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
+  const useDatabase = isDatabaseConfigured();
 
   app.use(express.json());
 
   // API Routes
   app.get("/api/health", (req: Request, res: Response) => {
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
+    res.json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      database: useDatabase ? "postgresql" : "in-memory",
+    });
   });
 
   // Check PostgreSQL Database Connection Status
@@ -439,7 +448,16 @@ async function startServer() {
     res.json(status);
   });
 
-  // --- Organizations APIs ---
+  if (useDatabase) {
+    getDbPool();
+  } else {
+    console.warn(
+      "⚠️ No DATABASE_URL / DATABASE_HOST in .env — org/auth APIs use in-memory data",
+    );
+  }
+
+  if (!useDatabase) {
+  // --- Organizations APIs (in-memory only) ---
   app.get("/api/organizations", (req: Request, res: Response) => {
     res.json(organizations);
   });
@@ -660,6 +678,8 @@ async function startServer() {
     };
     res.json(organizations[index]);
   });
+
+  } // end in-memory organizations
 
   // --- Rooms APIs ---
   app.get("/api/rooms", (req: Request, res: Response) => {
@@ -940,8 +960,20 @@ async function startServer() {
     });
   });
 
+  // Nest mounts after rooms/bookings/stats so Express handles those paths first.
+  if (useDatabase) {
+    try {
+      await attachNestApiToExpress(app);
+      console.log("✅ PostgreSQL mode: org/auth/users APIs → NestJS + TypeORM (.env)");
+    } catch (err) {
+      console.error("❌ Failed to start NestJS with PostgreSQL:", err);
+      process.exit(1);
+    }
+  }
+
+  if (!useDatabase) {
   // ==========================================
-  // --- AUTHENTICATION & RBAC APIS ---
+  // --- AUTHENTICATION & RBAC APIS (in-memory) ---
   // ==========================================
 
   // Multi-Tenant Subdomain & Dual-Option Login:
@@ -1475,6 +1507,8 @@ async function startServer() {
     const deleted = users.splice(idx, 1)[0];
     res.json({ message: `کاربر ${deleted.name} حذف شد` });
   });
+
+  } // end in-memory auth / users
 
   // Vite middleware for development vs static serve for production
   if (process.env.NODE_ENV !== "production") {

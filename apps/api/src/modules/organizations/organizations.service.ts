@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { Organization } from './entities/organization.entity';
 import { OrganizationAuthSettings } from './entities/organization-auth-settings.entity';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { ProvisionOrganizationDto } from './dto/provision-organization.dto';
 import { CreateOrgAdminDto } from './dto/create-org-admin.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { OrganizationStatus } from '../../common/enums/organization-status.enum';
@@ -35,8 +36,22 @@ export class OrganizationsService {
    * Super Admin creates a new Organization workspace.
    * Enforces slug uniqueness and initializes SSO architecture settings.
    */
-  async create(createDto: CreateOrganizationDto): Promise<Organization> {
-    const normalizedSlug = createDto.slug.trim().toLowerCase();
+  private slugifyName(name: string): string {
+    const slug = name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 100);
+    return slug.length >= 2 ? slug : `org-${Date.now()}`;
+  }
+
+  async create(
+    createDto: CreateOrganizationDto | ProvisionOrganizationDto,
+  ): Promise<Organization> {
+    const normalizedSlug = (
+      createDto.slug?.trim() || this.slugifyName(createDto.name)
+    ).toLowerCase();
 
     // 1. Verify slug uniqueness
     const existingSlug = await this.organizationRepository.findOne({

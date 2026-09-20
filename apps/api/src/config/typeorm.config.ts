@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { getDatabaseSsl, isDatabaseConfigured } from '../../../../src/config/database';
 import { Organization } from '../modules/organizations/entities/organization.entity';
 import { OrganizationAuthSettings } from '../modules/organizations/entities/organization-auth-settings.entity';
 import { User } from '../modules/users/entities/user.entity';
@@ -6,21 +7,25 @@ import { Role } from '../modules/roles/entities/role.entity';
 import { Room } from '../modules/rooms/entities/room.entity';
 import { Reservation } from '../modules/reservations/entities/reservation.entity';
 import { InitialMultiTenantSchema1700000000000 } from '../database/migrations/1700000000000-InitialMultiTenantSchema';
+import { AlignOrganizationSchema1700000000001 } from '../database/migrations/1700000000001-AlignOrganizationSchema';
 
 export const getTypeOrmConfig = (): TypeOrmModuleOptions => {
-  const isPostgresConfigured = !!process.env.DATABASE_URL || !!process.env.DATABASE_HOST;
+  const isPostgresConfigured = isDatabaseConfigured();
 
   return {
     type: 'postgres',
-    host: process.env.DATABASE_HOST || 'localhost',
-    port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-    username: process.env.DATABASE_USER || 'postgres',
-    password: process.env.DATABASE_PASSWORD || 'postgres',
-    database: process.env.DATABASE_NAME || 'didar_enterprise_db',
+    host: process.env.DATABASE_HOST || process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DATABASE_PORT || process.env.DB_PORT || '5432', 10),
+    username: process.env.DATABASE_USER || process.env.DB_USERNAME || 'postgres',
+    password: process.env.DATABASE_PASSWORD || process.env.DB_PASSWORD || 'postgres',
+    database: process.env.DATABASE_NAME || process.env.DB_DATABASE || 'didar_enterprise_db',
     url: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
+    ssl: getDatabaseSsl(),
     entities: [Organization, OrganizationAuthSettings, User, Role, Room, Reservation],
-    migrations: [InitialMultiTenantSchema1700000000000],
+    migrations: [
+      InitialMultiTenantSchema1700000000000,
+      AlignOrganizationSchema1700000000001,
+    ],
     migrationsRun: process.env.TYPEORM_MIGRATIONS_RUN === 'true',
     synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true' || !isPostgresConfigured,
     autoLoadEntities: true,

@@ -105,10 +105,9 @@ export class UsersService {
       firstName: adminDto.firstName.trim(),
       lastName: adminDto.lastName.trim(),
       email: normalizedEmail,
-      passwordHash,
+      password: passwordHash,
       roleId: role.id,
       role,
-      roleName: RoleEnum.ORGANIZATION_ADMIN,
       status: UserStatus.ACTIVE,
     });
 
@@ -194,11 +193,10 @@ export class UsersService {
       firstName: createDto.firstName.trim(),
       lastName: createDto.lastName.trim(),
       email: normalizedEmail,
-      passwordHash,
+      password: passwordHash,
       status: createDto.status || UserStatus.ACTIVE,
       roleId: role.id,
       role,
-      roleName: targetRoleName,
     });
 
     const saved = await this.userRepository.save(newUser);
@@ -228,6 +226,103 @@ export class UsersService {
   }
 
   /**
+   * POST /auth/register — create user in an organization without an admin session.
+   * First user in the org becomes ORGANIZATION_ADMIN; others join as EMPLOYEE.
+   */
+  async registerForOrganization(params: {
+    organizationId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    employeeNumber?: string;
+    requestedRole?: RoleEnum;
+  }): Promise<Omit<User, 'password' | 'passwordHash'>> {
+    const organization = await this.organizationRepository.findOne({
+      where: { id: params.organizationId },
+    });
+    if (!organization) {
+      throw new NotFoundException(`Organization with ID '${params.organizationId}' not found`);
+    }
+
+    const normalizedEmail = params.email.trim().toLowerCase();
+    const existingEmail = await this.userRepository.findOne({
+      where: { email: normalizedEmail },
+    });
+    if (existingEmail) {
+      throw new ConflictException(
+        `User with email '${normalizedEmail}' is already registered in the system`,
+      );
+    }
+
+    const userCount = await this.userRepository.count({
+      where: { organizationId: params.organizationId },
+    });
+
+    let targetRoleName = RoleEnum.EMPLOYEE;
+    if (userCount === 0) {
+      targetRoleName = RoleEnum.ORGANIZATION_ADMIN;
+    } else if (
+      params.requestedRole &&
+      params.requestedRole !== RoleEnum.SUPER_ADMIN &&
+      params.requestedRole !== RoleEnum.ORGANIZATION_ADMIN
+    ) {
+      targetRoleName = params.requestedRole;
+    }
+
+    const employeeNumber =
+      params.employeeNumber?.trim() || `EMP-${Date.now().toString().slice(-6)}`;
+
+    const existingEmployeeNumber = await this.userRepository.findOne({
+      where: { organizationId: params.organizationId, employeeNumber },
+    });
+    if (existingEmployeeNumber) {
+      throw new ConflictException(
+        `Employee number '${employeeNumber}' is already in use within this organization`,
+      );
+    }
+
+    let role = await this.roleRepository.findOne({ where: { name: targetRoleName } });
+    if (!role) {
+      role = await this.roleRepository.save(
+        this.roleRepository.create({
+          name: targetRoleName,
+          description: `${targetRoleName} role`,
+        }),
+      );
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(params.password, salt);
+
+    const newUser = this.userRepository.create({
+      organizationId: params.organizationId,
+      employeeNumber,
+      firstName: params.firstName.trim(),
+      lastName: params.lastName.trim(),
+      email: normalizedEmail,
+      password: passwordHash,
+      status: UserStatus.ACTIVE,
+      roleId: role.id,
+      role,
+    });
+
+    const saved = await this.userRepository.save(newUser);
+    return this.sanitize(saved);
+  }
+
+  /**
+   * Public org-scoped list (legacy Express GET /api/users?orgId=).
+   */
+  async listEmployeesByOrganizationId(organizationId: string): Promise<User[]> {
+    return this.userRepository.find({
+      where: { organizationId },
+      relations: { role: true, organization: true },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  /**
    * GET /organizations/:id/users
    * Lists employees strictly scoped by organizationId.
    */
@@ -239,7 +334,7 @@ export class UsersService {
 
     const users = await this.userRepository.find({
       where: { organizationId },
-      relations: { role: true },
+      relations: { role: true, organization: true },
       order: { createdAt: 'DESC' },
     });
 
@@ -311,7 +406,6 @@ export class UsersService {
 
     user.roleId = role.id;
     user.role = role;
-    user.roleName = assignRoleDto.role;
 
     const updated = await this.userRepository.save(user);
     return this.sanitize(updated);
@@ -333,7 +427,7 @@ export class UsersService {
   async findByEmailWithPassword(email: string, organizationId?: string): Promise<User | null> {
     const query = this.userRepository
       .createQueryBuilder('user')
-      .addSelect('user.passwordHash')
+      .addSelect('user.password')
       .leftJoinAndSelect('user.role', 'role')
       .leftJoinAndSelect('user.organization', 'organization')
       .where('LOWER(user.email) = LOWER(:email)', { email: email.trim() });
@@ -354,7 +448,7 @@ export class UsersService {
   ): Promise<User | null> {
     return this.userRepository
       .createQueryBuilder('user')
-      .addSelect('user.passwordHash')
+      .addSelect('user.password')
       .leftJoinAndSelect('user.role', 'role')
       .leftJoinAndSelect('user.organization', 'organization')
       .where('user.employeeNumber = :employeeNumber', { employeeNumber: employeeNumber.trim() })
@@ -368,7 +462,7 @@ export class UsersService {
   async findByIdWithPassword(userId: string): Promise<User | null> {
     return this.userRepository
       .createQueryBuilder('user')
-      .addSelect('user.passwordHash')
+      .addSelect('user.password')
       .leftJoinAndSelect('user.role', 'role')
       .where('user.id = :userId', { userId })
       .getOne();
@@ -381,7 +475,7 @@ export class UsersService {
     await this.userRepository.update(
       { id: userId },
       {
-        passwordHash: newHashedPassword,
+        password: newHashedPassword,
         status: UserStatus.ACTIVE,
       },
     );
