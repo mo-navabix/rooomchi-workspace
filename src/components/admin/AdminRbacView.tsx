@@ -153,10 +153,7 @@ export const AdminRbacView: React.FC = () => {
             <ShieldCheck className="w-4 h-4 text-[#10B981]" />
             <span>مدیریت دسترسی‌های مبتنی بر نقش (RBAC)</span>
           </div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
-            کنترل سطح دسترسی‌ها و کاربران {currentOrg?.name}
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             تخصیص نقش‌های چهارگانه سازمانی، تعیین مجوزهای امنیتی و نظارت بر پرسنل
           </p>
         </div>

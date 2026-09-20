@@ -99,13 +99,6 @@ export const SupportTicketView: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-2xl" id="support-ticket-view">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">ثبت تیکت پشتیبانی</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          درخواست خود را ثبت کنید؛ تیم پشتیبانی دیدار در ساعات اداری پاسخ می‌دهد.
-        </p>
-      </div>
-
       <form onSubmit={handleSubmit} className="dark-surface-card rounded-3xl p-5 sm:p-6 space-y-4">
         <label className="block space-y-1.5">
           <span className="text-xs font-bold text-slate-600 dark:text-slate-400">عنوان تیکت</span>

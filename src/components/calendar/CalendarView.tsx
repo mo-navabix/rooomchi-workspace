@@ -167,18 +167,7 @@ export const CalendarView: React.FC = () => {
 
   return (
     <div className="space-y-5 select-none" id="calendar-view">
-      {/* Top Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-            تقویم جلسات
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
-            مشاهده تقویم هفتگی و وضعیت اشغال اتاق‌های {currentOrg?.name}
-          </p>
-        </div>
-
-        {/* View mode switcher tabs */}
+      <div className="flex justify-end">
         <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#1E293B] rounded-xl border border-slate-200/70 dark:border-[#334155]">
           <button
             onClick={() => setViewMode('day')}

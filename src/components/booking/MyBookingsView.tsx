@@ -106,15 +106,8 @@ export const MyBookingsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header & Filter Tabs */}
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
-        <div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">جلسات و رزروهای من</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            مدیریت، پیگیری وضعیت و لغو جلسات ثبت‌شده در {currentOrg?.name}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
+      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-4 transition-colors">
+        <div className="flex items-center gap-2 sm:ms-auto">
           {/* Tabs */}
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#0F172A] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#334155]">
             <button

@@ -79,18 +79,7 @@ export const AnalyticsView: React.FC = () => {
 
   return (
     <div className="space-y-6 select-none" id="analytics-view">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-            گزارش‌ها و آمار
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
-            تحلیل هوشمند و بررسی وضعیت استفاده از اتاق‌های سازمان {currentOrg?.name}
-          </p>
-        </div>
-
-        {/* Time Filter & Reload */}
+      <div className="flex justify-end">
         <div className="flex items-center gap-2">
           <button
             onClick={loadData}

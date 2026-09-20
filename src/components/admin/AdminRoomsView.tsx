@@ -171,10 +171,7 @@ export const AdminRoomsView: React.FC = () => {
             <Layers className="w-3.5 h-3.5 text-[#10B981]" />
             <span>پنل مدیریت منابع فیزیکی</span>
           </div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
-            مدیریت اتاق‌های جلسات {currentOrg?.name}
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             تعریف ظرفیت، تجهیزات هوشمند، سیاست‌های دسترسی و وضعیت فعال/تعمیرات
           </p>
         </div>

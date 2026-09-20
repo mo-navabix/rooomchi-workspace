@@ -63,21 +63,16 @@ function NavLinkButton({
       className={`group relative w-full flex items-center gap-3 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
         collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
       } ${
-        isActive
-          ? "bg-gradient-to-l from-emerald-500/15 via-emerald-500/10 to-transparent text-[#0F786E] dark:from-emerald-500/20 dark:text-emerald-300"
-          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5"
+        isActive ? "sidebar-nav-item--active" : "sidebar-nav-item"
       }`}
     >
       {isActive && (
-        <span
-          className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-full bg-[#0F786E] dark:bg-emerald-400 shadow-[0_0_12px_rgba(15,120,110,0.35)] dark:shadow-[0_0_12px_rgba(52,211,153,0.6)]"
-          aria-hidden
-        />
+        <span className="sidebar-nav-indicator" aria-hidden />
       )}
       <Icon
         className={`w-[18px] h-[18px] shrink-0 ${
           isActive
-            ? "text-[#0F786E] dark:text-emerald-400"
+            ? "text-[#0F786E] dark:text-[#5eead4]"
             : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200"
         }`}
       />
@@ -231,7 +226,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
 
       <aside
         id="portal-sidebar"
-        className={`fixed top-0 bottom-0 right-0 z-50 shrink-0 flex flex-col bg-white dark:bg-[#0A0F1A] border-s border-slate-200 dark:border-white/[0.06] text-slate-700 dark:text-slate-200 shadow-sm dark:shadow-none select-none transition-[width,transform] duration-300 ease-out lg:sticky lg:top-0 lg:h-screen lg:max-h-screen ${shellWidth} ${
+        className={`portal-sidebar fixed top-0 bottom-0 right-0 z-50 shrink-0 flex flex-col shadow-sm dark:shadow-none select-none transition-[width,transform] duration-300 ease-out lg:sticky lg:top-0 lg:h-screen lg:max-h-screen ${shellWidth} ${
           mobileOpen
             ? "translate-x-0 shadow-2xl"
             : "translate-x-full lg:translate-x-0"
@@ -239,7 +234,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       >
         {/* Header: logo + collapse */}
         <div
-          className={`flex items-center gap-2 border-b border-slate-200 dark:border-white/[0.06] shrink-0 ${
+          className={`flex items-center gap-2 border-b border-slate-200 dark:border-[#26364D] shrink-0 ${
             collapsed ? "flex-col py-4 px-2" : "justify-between px-4 py-4"
           }`}
         >
@@ -292,7 +287,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
           </button>
         )}
 
-        <div className="border-b border-slate-200 dark:border-white/[0.06] p-2 shrink-0">
+        <div className="border-b border-slate-200 dark:border-[#26364D] p-2 shrink-0">
           <div
             className={`w-full flex items-center gap-2.5 rounded-xl p-2 ${
               collapsed ? "justify-center" : ""
@@ -359,8 +354,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                     onClick={() => toggleGroup(group.key)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold cursor-pointer transition-colors ${
                       groupActive
-                        ? "text-[#0F786E] dark:text-emerald-300"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5"
+                        ? "text-[#0F786E] dark:text-[#99f6e4]"
+                        : "sidebar-nav-item"
                     }`}
                   >
                     <GroupIcon className="w-[18px] h-[18px] shrink-0 text-slate-400 dark:text-slate-400" />

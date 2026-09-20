@@ -94,15 +94,6 @@ export const ProfileView: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-3xl" id="profile-view">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-          پروفایل من
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          اطلاعات شخصی و حساب کاربری شما در سامانه دیدار
-        </p>
-      </div>
-
       <div className="dark-surface-card rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-5">
         <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#0F786E] to-emerald-500 text-white flex items-center justify-center text-2xl font-black shrink-0 shadow-md">
           {name.charAt(0) || "?"}

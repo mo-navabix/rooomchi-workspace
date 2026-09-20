@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
-import { ApiService } from '../../services/apiService';
-import { Booking, Room, Stats } from '../../types';
-import {
-  Calendar,
-  Clock,
-  DoorOpen,
-  Users,
-  Building,
-  Plus,
-} from 'lucide-react';
-import { toPersianDigits } from '../../utils/jalali';
-import { UnifiedDashboardSkeleton } from '../common/Skeletons';
+import React, { useState, useEffect } from "react";
+import { useApp } from "../../context/AppContext";
+import { ApiService } from "../../services/apiService";
+import { Booking, Room, Stats } from "../../types";
+import { Calendar, Clock, DoorOpen, Users, Plus, TrendingUp } from "lucide-react";
+import { toPersianDigits } from "../../utils/jalali";
+import { UnifiedDashboardSkeleton } from "../common/Skeletons";
 
 export const UnifiedDashboardView: React.FC = () => {
   const { currentOrg, openBookingModal, setActiveTab } = useApp();
@@ -19,9 +12,9 @@ export const UnifiedDashboardView: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [chartRange, setChartRange] = useState<'week' | 'month'>('week');
+  const [chartRange, setChartRange] = useState<"week" | "month">("week");
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     if (!currentOrg) return;
@@ -35,9 +28,9 @@ export const UnifiedDashboardView: React.FC = () => {
         ]);
         setStats(statsData);
         setRooms(roomsData);
-        setTodayBookings(bookingsData.filter((b) => b.status !== 'cancelled'));
+        setTodayBookings(bookingsData.filter((b) => b.status !== "cancelled"));
       } catch (err) {
-        console.error('Error loading dashboard data:', err);
+        console.error("Error loading dashboard data:", err);
       } finally {
         setIsLoading(false);
       }
@@ -46,79 +39,82 @@ export const UnifiedDashboardView: React.FC = () => {
   }, [currentOrg, todayStr]);
 
   // Weekly bar chart heights: use real API distribution if available, or fallback
-  const weeklyUsage = stats?.weeklyUsage && stats.weeklyUsage.length > 0
-    ? stats.weeklyUsage.map((w) => ({
-        day: w.day,
-        height: `${Math.max(15, w.percentage)}%`,
-        count: w.count,
-      }))
-    : [
-        { day: 'شنبه', height: '65%', count: 4 },
-        { day: 'یکشنبه', height: '40%', count: 2 },
-        { day: 'دوشنبه', height: '80%', count: 5 },
-        { day: 'سه‌شنبه', height: '55%', count: 3 },
-        { day: 'چهارشنبه', height: '90%', count: 6 },
-        { day: 'پنج‌شنبه', height: '30%', count: 2 },
-        { day: 'جمعه', height: '10%', count: 1 },
-      ];
+  const weeklyUsage =
+    stats?.weeklyUsage && stats.weeklyUsage.length > 0
+      ? stats.weeklyUsage.map((w) => ({
+          day: w.day,
+          height: `${Math.max(15, w.percentage)}%`,
+          count: w.count,
+        }))
+      : [
+          { day: "شنبه", height: "65%", count: 4 },
+          { day: "یکشنبه", height: "40%", count: 2 },
+          { day: "دوشنبه", height: "80%", count: 5 },
+          { day: "سه‌شنبه", height: "55%", count: 3 },
+          { day: "چهارشنبه", height: "90%", count: 6 },
+          { day: "پنج‌شنبه", height: "30%", count: 2 },
+          { day: "جمعه", height: "10%", count: 1 },
+        ];
 
-  // Dynamic / fallback meetings
-  const displayMeetings = todayBookings.length > 0
-    ? todayBookings.map((b, idx) => ({
-        id: b.id,
-        title: b.title,
-        room: b.roomName,
-        time: `${b.startTime} - ${b.endTime}`,
-        avatars: [
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80',
-        ],
-        borderClass: idx % 4 === 0
-          ? 'border-r-4 border-r-[#0F786E]'
-          : idx % 4 === 1
-          ? 'border-r-4 border-r-emerald-500'
-          : idx % 4 === 2
-          ? 'border-r-4 border-r-emerald-500'
-          : 'border-r-4 border-r-amber-500',
-      }))
-    : [
-        {
-          id: '1',
-          title: 'جلسه هماهنگی اسپرینت ۲۴',
-          room: 'اتاق نوآوری البرز',
-          time: '۱۰:۰۰ - ۱۱:۳۰',
+  const displayMeetings =
+    todayBookings.length > 0
+      ? todayBookings.map((b, idx) => ({
+          id: b.id,
+          title: b.title,
+          room: b.roomName,
+          time: `${b.startTime} - ${b.endTime}`,
           avatars: [
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80',
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80",
           ],
-          borderClass: 'border-r-4 border-r-[#0F786E]',
-        },
-        {
-          id: '2',
-          title: 'ارائه نتایج کمپین و برنامه‌ریزی',
-          room: 'اتاق نوآوری البرز',
-          time: '۱۴:۰۰ - ۱۵:۳۰',
-          avatars: [
-            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80',
-          ],
-          borderClass: 'border-r-4 border-r-emerald-500',
-        },
-        {
-          id: '3',
-          title: 'جلسه هیئت مدیره و گزارش مالی',
-          room: 'تالار هیئت مدیره دماوند',
-          time: '۱۱:۰۰ - ۱۳:۰۰',
-          avatars: [
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80',
-          ],
-          borderClass: 'border-r-4 border-r-emerald-500',
-        },
-      ];
+          borderClass:
+            idx % 4 === 0
+              ? "border-r-4 border-r-[#0F786E]"
+              : idx % 4 === 1
+                ? "border-r-4 border-r-emerald-500"
+                : idx % 4 === 2
+                  ? "border-r-4 border-r-emerald-500"
+                  : "border-r-4 border-r-amber-500",
+        }))
+      : [
+          {
+            id: "1",
+            title: "جلسه هماهنگی اسپرینت ۲۴",
+            room: "اتاق نوآوری البرز",
+            time: "۱۰:۰۰ - ۱۱:۳۰",
+            avatars: [
+              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80",
+              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80",
+            ],
+            borderClass: "border-r-4 border-r-[#0F786E]",
+          },
+          {
+            id: "2",
+            title: "ارائه نتایج کمپین و برنامه‌ریزی",
+            room: "اتاق نوآوری البرز",
+            time: "۱۴:۰۰ - ۱۵:۳۰",
+            avatars: [
+              "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80",
+              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80",
+            ],
+            borderClass: "border-r-4 border-r-emerald-500",
+          },
+          {
+            id: "3",
+            title: "جلسه هیئت مدیره و گزارش مالی",
+            room: "تالار هیئت مدیره دماوند",
+            time: "۱۱:۰۰ - ۱۳:۰۰",
+            avatars: [
+              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80",
+            ],
+            borderClass: "border-r-4 border-r-emerald-500",
+          },
+        ];
 
-  const popularRoomsData = stats?.popularRooms && stats.popularRooms.length > 0
-    ? stats.popularRooms.slice(0, 3)
-    : rooms.slice(0, 3).map((r, i) => ({ name: r.name, count: 4 - i }));
+  const popularRoomsData =
+    stats?.popularRooms && stats.popularRooms.length > 0
+      ? stats.popularRooms.slice(0, 3)
+      : rooms.slice(0, 3).map((r, i) => ({ name: r.name, count: 4 - i }));
 
   const maxPopular = Math.max(...popularRoomsData.map((p) => p.count), 1);
 
@@ -128,21 +124,11 @@ export const UnifiedDashboardView: React.FC = () => {
 
   return (
     <div className="space-y-6 select-none" id="unified-dashboard-view">
-      {/* Page Title and Subtitle matching UI screenshot */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-            داشبورد
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
-            مروری بر وضعیت جلسات و فضای کاری سازمان {currentOrg?.name}
-          </p>
-        </div>
-
-        {/* Quick Reserve CTA */}
+      <div className="flex justify-end">
         <button
+          type="button"
           onClick={() => openBookingModal()}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] shadow-xs transition-colors cursor-pointer"
+          className="portal-btn-primary flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>رزرو جلسه جدید</span>
@@ -154,7 +140,7 @@ export const UnifiedDashboardView: React.FC = () => {
         {/* Stat 1: میزان استفاده */}
         <div className="dark-surface-card rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+            <span className="text-xs font-semibold text-slate-500 dark:text-[#94A3B8]">
               میزان استفاده
             </span>
             <div className="brand-icon-tile brand-icon-tile--md">
@@ -162,9 +148,13 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 dark:text-slate-100 font-mono">
+            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
               {toPersianDigits(stats?.utilizationRate || 86)}%
             </div>
+            <p className="stat-trend-up mt-1 flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />
+              +{toPersianDigits(4)}٪ نسبت به هفته قبل
+            </p>
           </div>
         </div>
 
@@ -179,9 +169,10 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 dark:text-slate-100 font-mono">
+            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
               {toPersianDigits(stats?.totalRooms || rooms.length || 6)}
             </div>
+            <p className="stat-trend-neutral mt-1">بدون تغییر</p>
           </div>
         </div>
 
@@ -196,9 +187,13 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 dark:text-slate-100 font-mono">
+            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
               {toPersianDigits(stats?.totalHistoricalBookings || 24)}
             </div>
+            <p className="stat-trend-up mt-1 flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />
+              +{toPersianDigits(3)} رزرو
+            </p>
           </div>
         </div>
 
@@ -213,23 +208,26 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 dark:text-slate-100 font-mono">
-              {toPersianDigits(todayBookings.length || stats?.todayBookingsCount || 4)}
+            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
+              {toPersianDigits(
+                todayBookings.length || stats?.todayBookingsCount || 4,
+              )}
             </div>
+            <p className="stat-trend-neutral mt-1">برنامه امروز</p>
           </div>
         </div>
       </div>
 
       {/* Main 2-Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Right Column (6/12 in RTL): جلسات امروز */}
         <div className="lg:col-span-6 dark-surface-card rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+            <h3 className="font-bold text-slate-900 dark:text-[#F8FAFC] text-sm sm:text-base">
               جلسات امروز
             </h3>
             <button
-              onClick={() => setActiveTab('calendar')}
+              type="button"
+              onClick={() => setActiveTab("calendar")}
               className="text-xs font-bold dark-link-accent cursor-pointer"
             >
               مشاهده تقویم کامل
@@ -243,25 +241,24 @@ export const UnifiedDashboardView: React.FC = () => {
                 className={`p-3.5 rounded-2xl dark-surface-inset flex items-center justify-between gap-3 ${item.borderClass}`}
               >
                 <div className="space-y-1">
-                  <div className="text-xs font-bold text-slate-800 dark:text-slate-100">
+                  <div className="text-xs font-bold text-slate-800 dark:text-[#F8FAFC]">
                     {item.title}
                   </div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                  <div className="text-[11px] text-slate-500 dark:text-[#94A3B8] font-medium">
                     {item.room}
                   </div>
-                  <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                  <div className="text-[10px] font-mono text-slate-500 dark:text-[#94A3B8]">
                     {item.time}
                   </div>
                 </div>
 
-                {/* Attendees Avatar Stack */}
                 <div className="flex items-center -space-x-2 -space-x-reverse">
                   {item.avatars.map((av, idx) => (
                     <img
                       key={idx}
                       src={av}
-                      alt="attendee"
-                      className="w-7 h-7 rounded-full border-2 border-white dark:border-[#334155] object-cover"
+                      alt=""
+                      className="w-7 h-7 rounded-full border-2 border-white dark:border-[#26364D] object-cover"
                     />
                   ))}
                 </div>
@@ -273,15 +270,17 @@ export const UnifiedDashboardView: React.FC = () => {
         {/* Left Column (6/12): نمودار استفاده از اتاق‌ها + اتاق‌های پرتقاضا */}
         <div className="lg:col-span-6 space-y-6">
           {/* Card 1: نمودار استفاده از اتاق‌ها */}
-          <div className="dark-surface-card rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="dark-surface-card p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+              <h3 className="font-semibold text-slate-900 dark:text-[#F8FAFC] text-sm">
                 نمودار استفاده از اتاق‌ها
               </h3>
               <select
                 value={chartRange}
-                onChange={(e: any) => setChartRange(e.target.value)}
-                className="text-[11px] font-bold bg-slate-100 dark:bg-slate-800 border border-transparent dark:border-slate-600/50 rounded-lg px-2 py-1 text-slate-600 dark:text-slate-200"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setChartRange(e.target.value as "week" | "month")
+                }
+                className="text-[11px] font-semibold bg-slate-100 dark:bg-[#172338] border border-slate-200 dark:border-[#26364D] rounded-lg px-2 py-1 text-slate-600 dark:text-[#94A3B8]"
               >
                 <option value="week">این هفته</option>
                 <option value="month">این ماه</option>
@@ -289,17 +288,20 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
 
             {/* Vertical Bar Chart */}
-            <div className="h-44 pt-4 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-slate-600/50 pb-2">
+            <div className="h-44 pt-4 flex items-end justify-between gap-2 chart-grid-line pb-2">
               {weeklyUsage.map((w) => (
-                <div key={w.day} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-                  <div className="w-full max-w-[28px] bg-emerald-100 dark:bg-slate-700/60 rounded-t-xl overflow-hidden relative flex items-end h-full">
+                <div
+                  key={w.day}
+                  className="flex-1 flex flex-col items-center gap-2 h-full justify-end"
+                >
+                  <div className="w-full max-w-[28px] chart-bar-track overflow-hidden relative flex items-end h-full">
                     <div
-                      className="w-full bg-[#10B981] dark:bg-[#34D399] rounded-t-xl transition-all duration-500"
+                      className="chart-bar-fill transition-all duration-500"
                       style={{ height: w.height }}
                       title={`${w.count} جلسه`}
                     />
                   </div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                  <span className="text-[10px] text-slate-500 dark:text-[#64748B] font-medium">
                     {w.day}
                   </span>
                 </div>
@@ -308,31 +310,30 @@ export const UnifiedDashboardView: React.FC = () => {
           </div>
 
           {/* Card 2: اتاق‌های پرتقاضا (Progress Bars) */}
-          <div className="dark-surface-card rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
-            <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+          <div className="dark-surface-card p-5 sm:p-6 space-y-4">
+            <h3 className="font-semibold text-slate-900 dark:text-[#F8FAFC] text-sm">
               اتاق‌های پرتقاضا
             </h3>
 
             <div className="space-y-3 pt-1">
-              {popularRoomsData.map((pr, pIdx) => {
-                const pct = Math.min(96, Math.round((pr.count / maxPopular) * 90 + 8));
-                const colors = ['bg-[#0F786E]', 'bg-[#10B981]', 'bg-[#34D399]'];
-                const textColor = [
-                  'text-[#0F786E] dark:text-emerald-300',
-                  'text-[#10B981] dark:text-emerald-300',
-                  'text-[#34D399] dark:text-teal-300',
-                ];
+              {popularRoomsData.map((pr) => {
+                const pct = Math.min(
+                  96,
+                  Math.round((pr.count / maxPopular) * 90 + 8),
+                );
                 return (
                   <div key={pr.name}>
-                    <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
-                      <span className="text-slate-700 dark:text-slate-300">{pr.name}</span>
-                      <span className={`${textColor[pIdx % 3]} font-mono`}>
+                    <div className="flex items-center justify-between text-xs mb-1.5 font-semibold">
+                      <span className="text-slate-700 dark:text-[#94A3B8]">
+                        {pr.name}
+                      </span>
+                      <span className="text-[#0F786E] dark:text-[#5eead4] font-mono">
                         {toPersianDigits(pct)}%
                       </span>
                     </div>
-                    <div className="w-full h-2 bg-slate-100 dark:bg-slate-700/70 rounded-full overflow-hidden">
+                    <div className="progress-track">
                       <div
-                        className={`h-full ${colors[pIdx % 3]} rounded-full transition-all duration-500`}
+                        className="progress-fill-teal transition-all duration-500"
                         style={{ width: `${pct}%` }}
                       />
                     </div>

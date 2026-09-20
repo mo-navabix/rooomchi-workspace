@@ -142,10 +142,7 @@ export const AdminSupportTicketsView: React.FC = () => {
             <Ticket className="w-3.5 h-3.5" />
             <span>پشتیبانی سازمان</span>
           </div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
-            مدیریت تیکت‌های {currentOrg?.name ?? 'سازمان'}
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             بررسی درخواست‌های پرسنل، تغییر وضعیت و ثبت یادداشت داخلی
           </p>
         </div>

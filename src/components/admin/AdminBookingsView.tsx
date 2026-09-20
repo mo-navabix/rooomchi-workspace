@@ -85,10 +85,7 @@ export const AdminBookingsView: React.FC = () => {
             <Calendar className="w-3.5 h-3.5 text-[#10B981]" />
             <span>نظارت جامع رزروهای سازمانی</span>
           </div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
-            مدیریت تمام جلسات و درخواست‌های {currentOrg?.name}
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             بررسی و تأیید جلسات هیئت مدیره، جلسات پرسنل و نظارت بر تداخل‌ها
           </p>
         </div>

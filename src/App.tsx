@@ -29,7 +29,7 @@ const MainContent: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAF9] dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 font-sans transition-colors overflow-x-clip w-full max-w-full">
+    <div className="portal-shell min-h-screen flex flex-col font-sans transition-colors overflow-x-clip w-full max-w-full">
       {viewMode === "landing" ? (
         // Dedicated Standalone Landing Page View
         <LandingView />

@@ -1,0 +1,540 @@
+{
+  "version": "6.0",
+  "nxVersion": "23.2.1",
+  "pathMappings": {
+    "@/*": [
+      "./*"
+    ],
+    "@didar/shared-types": [
+      "./libs/shared-types/src/index.ts"
+    ],
+    "@didar/api/*": [
+      "./apps/api/src/*"
+    ],
+    "@didar/web/*": [
+      "./src/*"
+    ]
+  },
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "nonProjectFiles": [
+      {
+        "file": "public/didar-logo.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "src/services/supportTickets.ts",
+        "hash": "10971733525526439161"
+      },
+      {
+        "file": ".env.example",
+        "hash": "6069877809152049850"
+      },
+      {
+        "file": "src/components/common/OrgLogoBadge.tsx",
+        "hash": "2871024162602382102"
+      },
+      {
+        "file": "src/components/auth/AuthModal.tsx",
+        "hash": "2996508865040443021"
+      },
+      {
+        "file": "src/index.css",
+        "hash": "3670775242498573567"
+      },
+      {
+        "file": "src/constants/amenities.ts",
+        "hash": "16620284894806586952"
+      },
+      {
+        "file": "src/components/dashboard/ModernDashboardView.tsx",
+        "hash": "5579813701025275199"
+      },
+      {
+        "file": "src/constants/rbac.ts",
+        "hash": "15067783418552374685"
+      },
+      {
+        "file": "vite.config.ts",
+        "hash": "5654843495349359336"
+      },
+      {
+        "file": "bun.lock",
+        "hash": "17156835045325904037"
+      },
+      {
+        "file": "src/components/common/SupportChipsBar.tsx",
+        "hash": "927550939669019773"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-light.png",
+        "hash": "6413593523200156179"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "10363272147692158867"
+      },
+      {
+        "file": "src/components/common/Skeletons.tsx",
+        "hash": "12638277899791067128"
+      },
+      {
+        "file": "src/constants/brand.ts",
+        "hash": "18226872504396331697"
+      },
+      {
+        "file": "src/components/landing/LandingView.tsx",
+        "hash": "571877144013564843"
+      },
+      {
+        "file": "src/components/common/Logo.tsx",
+        "hash": "8892165566445564062"
+      },
+      {
+        "file": "src/utils/jalali.ts",
+        "hash": "3772337549594685034"
+      },
+      {
+        "file": "src/components/common/DidarBrandMark.tsx",
+        "hash": "5308936050211495252"
+      },
+      {
+        "file": "public/assets/logo/didar-mark.svg",
+        "hash": "17636256619075756940"
+      },
+      {
+        "file": "src/context/AppContext.tsx",
+        "hash": "18302716236807789385"
+      },
+      {
+        "file": "src/types/index.ts",
+        "hash": "14252912641104858749"
+      },
+      {
+        "file": "server.ts",
+        "hash": "6186463112317339174"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-dark.svg",
+        "hash": "13472721104218695765"
+      },
+      {
+        "file": "src/components/common/Sidebar.tsx",
+        "hash": "7039295051452107328"
+      },
+      {
+        "file": "metadata.json",
+        "hash": "14806373625807601759"
+      },
+      {
+        "file": "src/components/common/Header.tsx",
+        "hash": "12656099860524694154"
+      },
+      {
+        "file": "src/components/admin/AdminRoomsView.tsx",
+        "hash": "9056047606678909902"
+      },
+      {
+        "file": "src/components/support/SupportTicketView.tsx",
+        "hash": "13216076782666709269"
+      },
+      {
+        "file": "src/App.tsx",
+        "hash": "10738329362002004524"
+      },
+      {
+        "file": "schema.sql",
+        "hash": "4522071227082547507"
+      },
+      {
+        "file": "src/components/admin/AdminBookingsView.tsx",
+        "hash": "15611671908975617773"
+      },
+      {
+        "file": "nx.json",
+        "hash": "12230589572780083299"
+      },
+      {
+        "file": "src/services/apiService.ts",
+        "hash": "18240114723127951102"
+      },
+      {
+        "file": "src/components/rooms/ModernRoomView.tsx",
+        "hash": "7839382771317556244"
+      },
+      {
+        "file": "src/components/common/DidarLogo.tsx",
+        "hash": "17581016910482897960"
+      },
+      {
+        "file": "src/components/admin/AdminSettingsView.tsx",
+        "hash": "3435368985266553683"
+      },
+      {
+        "file": "src/components/booking/RoomBrowser.tsx",
+        "hash": "815682038372518451"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "17896632225343464329"
+      },
+      {
+        "file": "src/services/dbService.ts",
+        "hash": "8991414864851831377"
+      },
+      {
+        "file": "src/components/booking/MyBookingsView.tsx",
+        "hash": "2445503372838898542"
+      },
+      {
+        "file": "src/components/booking/BookingModal.tsx",
+        "hash": "1378814563889717278"
+      },
+      {
+        "file": "src/components/onboarding/OrgProvisioningModal.tsx",
+        "hash": "14784989920274721372"
+      },
+      {
+        "file": "package.json",
+        "hash": "3944100150135221002"
+      },
+      {
+        "file": "src/components/common/Toast.tsx",
+        "hash": "6584049304193790072"
+      },
+      {
+        "file": "src/components/dashboard/UnifiedDashboardView.tsx",
+        "hash": "5054807984129445050"
+      },
+      {
+        "file": "src/components/booking/StepperBookingModal.tsx",
+        "hash": "2741007364722500361"
+      },
+      {
+        "file": "index.html",
+        "hash": "8625890161193432741"
+      },
+      {
+        "file": "public/assets/logo/didar-logo.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "src/components/common/PortalFooter.tsx",
+        "hash": "2607716766189289447"
+      },
+      {
+        "file": "src/main.tsx",
+        "hash": "10886610349449672931"
+      },
+      {
+        "file": "src/components/admin/AdminSupportTicketsView.tsx",
+        "hash": "7810913765736886663"
+      },
+      {
+        "file": "src/components/profile/ProfileView.tsx",
+        "hash": "3833501910611842603"
+      },
+      {
+        "file": "public/assets/logo/didar-logo.svg",
+        "hash": "16680815604848713831"
+      },
+      {
+        "file": "src/components/common/PersianDatePicker.tsx",
+        "hash": "1660564634462053124"
+      },
+      {
+        "file": "src/components/admin/AdminRbacView.tsx",
+        "hash": "9074313200176061603"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-dark.png",
+        "hash": "16624322072818249364"
+      },
+      {
+        "file": "src/components/analytics/AnalyticsView.tsx",
+        "hash": "4609090095618468279"
+      },
+      {
+        "file": "src/components/common/TopHeader.tsx",
+        "hash": "13940251727972853170"
+      },
+      {
+        "file": "src/config/database.ts",
+        "hash": "11615344952812549424"
+      },
+      {
+        "file": "src/components/dashboard/DashboardView.tsx",
+        "hash": "9317760187206534188"
+      },
+      {
+        "file": "public/didar-logo.svg",
+        "hash": "4543980933865034417"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "3839412590828012493"
+      },
+      {
+        "file": "src/components/calendar/CalendarView.tsx",
+        "hash": "7598583805119391191"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-stacked.png",
+        "hash": "13324147746472467439"
+      }
+    ],
+    "projectFileMap": {
+      "web": [
+        {
+          "file": "apps/web/project.json",
+          "hash": "4945047285506040260"
+        }
+      ],
+      "api": [
+        {
+          "file": "apps/api/project.json",
+          "hash": "2340763384447420760"
+        },
+        {
+          "file": "apps/api/src/app.module.ts",
+          "hash": "724885222314207158"
+        },
+        {
+          "file": "apps/api/src/common/decorators/current-tenant.decorator.ts",
+          "hash": "17640248325521556858"
+        },
+        {
+          "file": "apps/api/src/common/decorators/current-user.decorator.ts",
+          "hash": "18059717147668392711"
+        },
+        {
+          "file": "apps/api/src/common/decorators/public.decorator.ts",
+          "hash": "10376415826596655091"
+        },
+        {
+          "file": "apps/api/src/common/decorators/roles.decorator.ts",
+          "hash": "7308680926893316688"
+        },
+        {
+          "file": "apps/api/src/common/enums/organization-status.enum.ts",
+          "hash": "4842154614630264962"
+        },
+        {
+          "file": "apps/api/src/common/enums/role.enum.ts",
+          "hash": "14230228989060692862"
+        },
+        {
+          "file": "apps/api/src/common/enums/sso-provider.enum.ts",
+          "hash": "3562928272451046902"
+        },
+        {
+          "file": "apps/api/src/common/enums/user-status.enum.ts",
+          "hash": "2479447987471214770"
+        },
+        {
+          "file": "apps/api/src/common/filters/http-exception.filter.ts",
+          "hash": "3995345149422165057"
+        },
+        {
+          "file": "apps/api/src/common/guards/jwt-auth.guard.ts",
+          "hash": "4735502888524527474"
+        },
+        {
+          "file": "apps/api/src/common/guards/roles.guard.ts",
+          "hash": "9613424522843406173"
+        },
+        {
+          "file": "apps/api/src/common/guards/tenant.guard.ts",
+          "hash": "13907601233663211695"
+        },
+        {
+          "file": "apps/api/src/common/tenant/tenant-context.interface.ts",
+          "hash": "6272736997333703335"
+        },
+        {
+          "file": "apps/api/src/common/tenant/tenant-resolver.middleware.ts",
+          "hash": "384388863226555815"
+        },
+        {
+          "file": "apps/api/src/common/tenant/tenant-resolver.service.ts",
+          "hash": "11018326109962152803"
+        },
+        {
+          "file": "apps/api/src/common/tenant/tenant.module.ts",
+          "hash": "13033369780878139352"
+        },
+        {
+          "file": "apps/api/src/common/utils/metadata.util.ts",
+          "hash": "4780347149124898908"
+        },
+        {
+          "file": "apps/api/src/config/jwt.config.ts",
+          "hash": "1320579403860937034"
+        },
+        {
+          "file": "apps/api/src/config/typeorm.config.ts",
+          "hash": "11368457608728954326"
+        },
+        {
+          "file": "apps/api/src/database/data-source.ts",
+          "hash": "2300048273050230496"
+        },
+        {
+          "file": "apps/api/src/database/migrations/1700000000000-InitialMultiTenantSchema.ts",
+          "hash": "9972718517664170079"
+        },
+        {
+          "file": "apps/api/src/database/migrations/1700000000001-AlignOrganizationSchema.ts",
+          "hash": "1659166260684525950"
+        },
+        {
+          "file": "apps/api/src/index.ts",
+          "hash": "794049329731316810"
+        },
+        {
+          "file": "apps/api/src/main.ts",
+          "hash": "18179509460515243958"
+        },
+        {
+          "file": "apps/api/src/modules/auth/auth.controller.ts",
+          "hash": "14719783383337893049"
+        },
+        {
+          "file": "apps/api/src/modules/auth/auth.module.ts",
+          "hash": "16246976268199481251"
+        },
+        {
+          "file": "apps/api/src/modules/auth/auth.service.ts",
+          "hash": "11104267677213847547"
+        },
+        {
+          "file": "apps/api/src/modules/auth/dto/change-password.dto.ts",
+          "hash": "4135270689451443254"
+        },
+        {
+          "file": "apps/api/src/modules/auth/dto/login.dto.ts",
+          "hash": "8826431687745202189"
+        },
+        {
+          "file": "apps/api/src/modules/auth/dto/register.dto.ts",
+          "hash": "5479746212388401480"
+        },
+        {
+          "file": "apps/api/src/modules/auth/strategies/jwt.strategy.ts",
+          "hash": "15027991388064586761"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/dto/create-org-admin.dto.ts",
+          "hash": "850090993189002115"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/dto/create-organization.dto.ts",
+          "hash": "4025643303355835901"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/dto/provision-organization.dto.ts",
+          "hash": "13751360869436831750"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/dto/update-organization.dto.ts",
+          "hash": "702071182945303612"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/entities/organization-auth-settings.entity.ts",
+          "hash": "8835308516431582722"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/entities/organization.entity.ts",
+          "hash": "8157952622349200768"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/organization-response.util.ts",
+          "hash": "11946032353387083797"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/organizations.controller.ts",
+          "hash": "6665686130288841893"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/organizations.module.ts",
+          "hash": "5680328323564842737"
+        },
+        {
+          "file": "apps/api/src/modules/organizations/organizations.service.ts",
+          "hash": "13240697915588020445"
+        },
+        {
+          "file": "apps/api/src/modules/reservations/entities/reservation.entity.ts",
+          "hash": "16753085639735653843"
+        },
+        {
+          "file": "apps/api/src/modules/roles/entities/role.entity.ts",
+          "hash": "16195258842909057057"
+        },
+        {
+          "file": "apps/api/src/modules/roles/roles.module.ts",
+          "hash": "11414110493645672580"
+        },
+        {
+          "file": "apps/api/src/modules/roles/roles.service.ts",
+          "hash": "8896981565305213178"
+        },
+        {
+          "file": "apps/api/src/modules/rooms/entities/room.entity.ts",
+          "hash": "11183210387008431529"
+        },
+        {
+          "file": "apps/api/src/modules/users/dto/assign-role.dto.ts",
+          "hash": "15369378959791981340"
+        },
+        {
+          "file": "apps/api/src/modules/users/dto/create-user.dto.ts",
+          "hash": "3035358794718117032"
+        },
+        {
+          "file": "apps/api/src/modules/users/dto/invite-user.dto.ts",
+          "hash": "16348766866942012624"
+        },
+        {
+          "file": "apps/api/src/modules/users/dto/update-user-status.dto.ts",
+          "hash": "13113081125485232892"
+        },
+        {
+          "file": "apps/api/src/modules/users/entities/user.entity.ts",
+          "hash": "8902728353932592787"
+        },
+        {
+          "file": "apps/api/src/modules/users/user-client.mapper.ts",
+          "hash": "2143516837851836000"
+        },
+        {
+          "file": "apps/api/src/modules/users/users.controller.ts",
+          "hash": "14482042267819562209"
+        },
+        {
+          "file": "apps/api/src/modules/users/users.module.ts",
+          "hash": "7233826720471819592"
+        },
+        {
+          "file": "apps/api/src/modules/users/users.service.ts",
+          "hash": "11617359547677237098"
+        },
+        {
+          "file": "apps/api/src/nest-express.ts",
+          "hash": "9182794076015870176"
+        }
+      ],
+      "shared-types": [
+        {
+          "file": "libs/shared-types/project.json",
+          "hash": "8703531464235155899"
+        },
+        {
+          "file": "libs/shared-types/src/index.ts",
+          "hash": "16940870678708861625"
+        }
+      ]
+    }
+  },
+  "externalNodesHash": "158879565490756417"
+}

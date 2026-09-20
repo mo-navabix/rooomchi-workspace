@@ -96,11 +96,7 @@ export const TableSkeleton: React.FC<{
  */
 export const UnifiedDashboardSkeleton: React.FC = () => (
   <PageSkeletonShell id="unified-dashboard-skeleton">
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div className="space-y-2 w-full max-w-md">
-        <Skeleton className="h-7 w-32" />
-        <Skeleton className="h-4 w-56" />
-      </div>
+    <div className="flex justify-end">
       <Skeleton className="h-10 w-36" rounded="xl" />
     </div>
 
@@ -150,15 +146,9 @@ export const UnifiedDashboardSkeleton: React.FC = () => (
 
 export const CalendarSkeleton: React.FC = () => (
   <PageSkeletonShell id="calendar-skeleton">
-    <div className="flex flex-col sm:flex-row justify-between gap-4">
-      <div className="space-y-2">
-        <Skeleton className="h-7 w-36" />
-        <Skeleton className="h-4 w-64" />
-      </div>
-      <div className="flex gap-2">
-        <Skeleton className="h-9 w-48" rounded="xl" />
-        <Skeleton className="h-9 w-28" rounded="xl" />
-      </div>
+    <div className="flex justify-end gap-2">
+      <Skeleton className="h-9 w-48" rounded="xl" />
+      <Skeleton className="h-9 w-28" rounded="xl" />
     </div>
     <Skeleton className="h-14 w-full" rounded="2xl" />
     <div className="dark-surface-card rounded-3xl p-4 min-h-[520px] space-y-3">
@@ -171,15 +161,9 @@ export const CalendarSkeleton: React.FC = () => (
 
 export const AnalyticsSkeleton: React.FC = () => (
   <PageSkeletonShell id="analytics-skeleton">
-    <div className="flex flex-col sm:flex-row justify-between gap-4">
-      <div className="space-y-2">
-        <Skeleton className="h-7 w-40" />
-        <Skeleton className="h-4 w-72" />
-      </div>
-      <div className="flex gap-2">
-        <Skeleton className="h-10 w-10" rounded="xl" />
-        <Skeleton className="h-10 w-32" rounded="xl" />
-      </div>
+    <div className="flex justify-end gap-2">
+      <Skeleton className="h-10 w-10" rounded="xl" />
+      <Skeleton className="h-10 w-32" rounded="xl" />
     </div>
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {[1, 2, 3].map((i) => (
