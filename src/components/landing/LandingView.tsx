@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { DidarBrandMark } from '../common/DidarBrandMark';
 import {
   LogIn,
   Calendar,
@@ -125,24 +126,17 @@ export const LandingView: React.FC = () => {
         {/* 1. TOP NAVIGATION BAR (STICKY FIXED AT TOP) */}
         <header className="sticky top-0 z-50 flex items-center justify-between h-20 px-4 sm:px-6 lg:px-12 w-full rtl bg-white/95 dark:bg-[#0b1326]/95 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/60 shadow-md transition-colors">
           <div className="flex items-center gap-6 lg:gap-10">
-            {/* Brand Logo & Identity */}
-            <a href="#" className="flex items-center gap-3.5 group">
-              <div className="w-11 h-11 rounded-xl bg-slate-900 border border-slate-700/40 flex items-center justify-center p-1 shadow-sm transition-transform duration-200 group-hover:scale-105 shrink-0">
-                <img
-                  src={didarLogoUrl}
-                  alt="لوگوی پلتفرم دیدار"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-teal-400 transition-colors">
-                  دیدار
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 -mt-1 font-medium">
-                  مدیریت هوشمند فضا
-                </span>
-              </div>
-            </a>
+            {/* Brand Logo & Identity with modern DidarBrandMark */}
+            <div
+              onClick={() => {
+                setViewMode('app');
+                setActiveTab('dashboard');
+              }}
+              className="flex items-center gap-3 group cursor-pointer transition-transform hover:scale-[1.02]"
+              title="ورود به سامانه دیدار"
+            >
+              <DidarBrandMark size="lg" showText={true} />
+            </div>
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-7">

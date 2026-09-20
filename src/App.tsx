@@ -3,14 +3,18 @@ import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/common/Header';
 import { Toast } from './components/common/Toast';
 import { LandingView } from './components/landing/LandingView';
-import { DashboardView } from './components/dashboard/DashboardView';
+import { UnifiedDashboardView } from './components/dashboard/UnifiedDashboardView';
+import { CalendarView } from './components/calendar/CalendarView';
+import { AnalyticsView } from './components/analytics/AnalyticsView';
 import { RoomBrowser } from './components/booking/RoomBrowser';
 import { MyBookingsView } from './components/booking/MyBookingsView';
 import { AdminRoomsView } from './components/admin/AdminRoomsView';
 import { AdminBookingsView } from './components/admin/AdminBookingsView';
 import { AdminRbacView } from './components/admin/AdminRbacView';
 import { AdminSettingsView } from './components/admin/AdminSettingsView';
+import { ApiDocsView } from './components/docs/ApiDocsView';
 import { BookingModal } from './components/booking/BookingModal';
+import { StepperBookingModal } from './components/booking/StepperBookingModal';
 import { OrgProvisioningModal } from './components/onboarding/OrgProvisioningModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { AppLoadingSkeleton } from './components/common/Skeletons';
@@ -21,11 +25,13 @@ import {
   Layers,
   HeartHandshake,
   Building2,
+  FileCode2,
 } from 'lucide-react';
 
 const MainContent: React.FC = () => {
   const {
     activeTab,
+    setActiveTab,
     currentOrg,
     isLoading,
     openProvisioningModal,
@@ -52,13 +58,16 @@ const MainContent: React.FC = () => {
               <AppLoadingSkeleton tab={activeTab} />
             ) : (
               <>
-                {activeTab === 'dashboard' && <DashboardView />}
+                {activeTab === 'dashboard' && <UnifiedDashboardView />}
+                {activeTab === 'calendar' && <CalendarView />}
                 {activeTab === 'rooms' && <RoomBrowser />}
                 {activeTab === 'my-bookings' && <MyBookingsView />}
+                {activeTab === 'analytics' && <AnalyticsView />}
                 {activeTab === 'admin-rooms' && <AdminRoomsView />}
                 {activeTab === 'admin-bookings' && <AdminBookingsView />}
                 {activeTab === 'admin-rbac' && <AdminRbacView />}
                 {activeTab === 'admin-settings' && <AdminSettingsView />}
+                {activeTab === 'api-docs' && <ApiDocsView />}
               </>
             )}
           </main>
@@ -84,6 +93,19 @@ const MainContent: React.FC = () => {
 
                 {/* Quick Action Pills & Portal Links */}
                 <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+                  <button
+                    onClick={() => setActiveTab('api-docs')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer border ${
+                      activeTab === 'api-docs'
+                        ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                        : 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border-emerald-200/50 dark:border-emerald-900/40'
+                    }`}
+                    title="مستندات تعاملی وب‌سرویس‌ها و Swagger"
+                  >
+                    <FileCode2 className="w-3.5 h-3.5" />
+                    <span>مستندات API (Swagger)</span>
+                  </button>
+
                   <button
                     onClick={() => setViewMode('landing')}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#60A5FA] font-bold hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer border border-blue-200/50 dark:border-blue-900/40"

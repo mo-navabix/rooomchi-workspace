@@ -29,13 +29,16 @@ export interface User {
 export type ActiveTab =
   | 'landing'
   | 'dashboard'
+  | 'calendar'
   | 'rooms'
   | 'my-bookings'
   | 'admin-rooms'
   | 'admin-bookings'
   | 'admin-rbac'
+  | 'analytics'
   | 'admin-settings'
-  | 'provisioning';
+  | 'provisioning'
+  | 'api-docs';
 
 export interface Amenity {
   id: string;
@@ -112,4 +115,10 @@ export interface Stats {
   totalHistoricalBookings: number;
   popularRooms: { name: string; count: number }[];
   departmentStats: Record<string, number>;
+  // Extended Analytics
+  utilizationRate?: number; // e.g. 86
+  weeklyUsage?: { day: string; date: string; count: number; percentage: number }[];
+  avgMeetingDurationMinutes?: number;
+  topRoom?: { name: string; occupancyRate: number; bookingsCount: number };
+  monthlyTrend?: { label: string; count: number }[];
 }

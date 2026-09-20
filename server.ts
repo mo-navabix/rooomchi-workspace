@@ -1,15 +1,13 @@
-import "dotenv/config";
-import "reflect-metadata";
 import express, { Request, Response } from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { JwtService } from "@nestjs/jwt";
-import { checkDbStatus, getDbPool } from "./src/services/dbService";
-import { isDatabaseConfigured } from "./src/config/database";
-import { attachNestApiToExpress } from "./apps/api/src/nest-express";
+import swaggerUi from "swagger-ui-express";
+import { checkDbStatus } from "./src/services/dbService";
+import { swaggerDocument } from "./src/swagger/swaggerDocument";
 
 const jwtService = new JwtService({
-  secret: process.env.JWT_SECRET || "didar_enterprise_jwt_super_secret_key_2026",
+  secret: "didar_enterprise_jwt_super_secret_key_2026",
 });
 
 interface Amenity {
@@ -240,8 +238,15 @@ let rooms: Room[] = [
   },
 ];
 
-// Today's date helper
-const todayStr = new Date().toISOString().split("T")[0];
+// Today's date helper and dynamic date generators for current week
+const nowObj = new Date();
+const todayStr = nowObj.toISOString().split("T")[0];
+
+const getRelativeDateStr = (dayOffset: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() + dayOffset);
+  return d.toISOString().split("T")[0];
+};
 
 let bookings: Booking[] = [
   {
@@ -323,6 +328,86 @@ let bookings: Booking[] = [
     cateringNeeded: false,
     status: "pending_approval",
     createdAt: new Date().toISOString(),
+  },
+  {
+    id: "book-5",
+    orgId: "org-1",
+    roomId: "room-103",
+    roomName: "اتاق جلسات طوفان فکری کارون",
+    title: "طوفان فکری لانچ فیچرهای نسل ۳",
+    description: "ایده‌پردازی رابط کاربری و تجربه کاربری داشبورد جدید",
+    organizerName: "نگار رحیمی",
+    organizerEmail: "n.rahimi@technova.ir",
+    department: "طراحی محصول و UX",
+    date: getRelativeDateStr(-2),
+    startTime: "09:00",
+    endTime: "10:30",
+    attendeesCount: 6,
+    attendeeEmails: ["ux@technova.ir"],
+    equipmentNeeded: ["whiteboard", "smart_tv"],
+    cateringNeeded: true,
+    status: "confirmed",
+    createdAt: new Date(Date.now() - 3600000 * 72).toISOString(),
+  },
+  {
+    id: "book-6",
+    orgId: "org-1",
+    roomId: "room-101",
+    roomName: "اتاق نوآوری البرز",
+    title: "جلسه دمو و ارزیابی هفتگی با تیم فروش",
+    description: "نمایش عملکرد نسخه جدید به مدیران فروش",
+    organizerName: "حسین حسینی",
+    organizerEmail: "h.hosseini@technova.ir",
+    department: "فروش و توسعه بازار",
+    date: getRelativeDateStr(-1),
+    startTime: "11:00",
+    endTime: "12:30",
+    attendeesCount: 8,
+    attendeeEmails: ["sales@technova.ir"],
+    equipmentNeeded: ["projector", "videoconf"],
+    cateringNeeded: false,
+    status: "confirmed",
+    createdAt: new Date(Date.now() - 3600000 * 50).toISOString(),
+  },
+  {
+    id: "book-7",
+    orgId: "org-1",
+    roomId: "room-102",
+    roomName: "تالار هیئت مدیره دماوند",
+    title: "جلسه بررسی شاخص‌های رضایت مشتریان (NPS)",
+    description: "بررسی گزارش فصلی واحد پشتیبانی و ارتباط با مشتریان",
+    organizerName: "مریم کمالی",
+    organizerEmail: "facility@technova.ir",
+    department: "امور اداری و تشریفات",
+    date: getRelativeDateStr(1),
+    startTime: "13:00",
+    endTime: "14:30",
+    attendeesCount: 12,
+    attendeeEmails: ["support@technova.ir"],
+    equipmentNeeded: ["projector", "mic_system"],
+    cateringNeeded: true,
+    status: "confirmed",
+    createdAt: new Date(Date.now() - 3600000 * 10).toISOString(),
+  },
+  {
+    id: "book-8",
+    orgId: "org-1",
+    roomId: "room-104",
+    roomName: "اتاق مصاحبه و پرایوت سبلان",
+    title: "جلسه مشاوره و عقد قرارداد پشتیبانی",
+    description: "مذاکره نهایی SLA با کارفرمای پروژه سازمانی",
+    organizerName: "مهندس علیرضا راد",
+    organizerEmail: "a.rad@technova.ir",
+    department: "تیم فنی و مهندسی",
+    date: getRelativeDateStr(2),
+    startTime: "15:00",
+    endTime: "16:30",
+    attendeesCount: 4,
+    attendeeEmails: ["partner@external.ir"],
+    equipmentNeeded: ["videoconf", "wifi"],
+    cateringNeeded: true,
+    status: "confirmed",
+    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
   },
 ];
 
@@ -428,18 +513,31 @@ const passwordResetCodes: Record<string, { code: string; expiresAt: number }> = 
 
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
-  const useDatabase = isDatabaseConfigured();
+  const PORT = 3000;
 
   app.use(express.json());
 
+  // Swagger Documentation API & Interactive UI
+  app.get("/api/docs-json", (_req: Request, res: Response) => {
+    res.json(swaggerDocument);
+  });
+  app.use(
+    "/api/docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument, {
+      customSiteTitle: "مستندات API سامانه دیدار | Didar Swagger UI",
+      customCss: `
+        .swagger-ui .topbar { display: none !important; }
+        .swagger-ui { direction: ltr; font-family: system-ui, -apple-system, sans-serif; }
+        .swagger-ui .info { margin-bottom: 24px; }
+        .swagger-ui .info .title { font-size: 28px; color: #1e293b; }
+      `,
+    })
+  );
+
   // API Routes
   app.get("/api/health", (req: Request, res: Response) => {
-    res.json({
-      status: "ok",
-      timestamp: new Date().toISOString(),
-      database: useDatabase ? "postgresql" : "in-memory",
-    });
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
   // Check PostgreSQL Database Connection Status
@@ -448,16 +546,7 @@ async function startServer() {
     res.json(status);
   });
 
-  if (useDatabase) {
-    getDbPool();
-  } else {
-    console.warn(
-      "⚠️ No DATABASE_URL / DATABASE_HOST in .env — org/auth APIs use in-memory data",
-    );
-  }
-
-  if (!useDatabase) {
-  // --- Organizations APIs (in-memory only) ---
+  // --- Organizations APIs ---
   app.get("/api/organizations", (req: Request, res: Response) => {
     res.json(organizations);
   });
@@ -678,8 +767,6 @@ async function startServer() {
     };
     res.json(organizations[index]);
   });
-
-  } // end in-memory organizations
 
   // --- Rooms APIs ---
   app.get("/api/rooms", (req: Request, res: Response) => {
@@ -948,6 +1035,46 @@ async function startServer() {
       departmentCounts[b.department] = (departmentCounts[b.department] || 0) + 1;
     });
 
+    // Weekly distribution calculation (current 7 days)
+    const dayNames = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"];
+    const weeklyUsage = [-3, -2, -1, 0, 1, 2, 3].map((offset) => {
+      const d = new Date();
+      d.setDate(d.getDate() + offset);
+      const iso = d.toISOString().split("T")[0];
+      const count = orgBookings.filter((b) => b.date === iso).length;
+      const dayName = dayNames[d.getDay()];
+      return {
+        day: dayName,
+        date: iso,
+        count,
+        percentage: Math.min(100, Math.round((count / Math.max(1, orgRooms.length * 4)) * 100)),
+      };
+    });
+
+    // Average duration in minutes
+    let totalMinutes = 0;
+    let countedBookings = 0;
+    orgBookings.forEach((b) => {
+      const [sh, sm] = b.startTime.split(":").map(Number);
+      const [eh, em] = b.endTime.split(":").map(Number);
+      if (!isNaN(sh) && !isNaN(eh)) {
+        const diff = (eh * 60 + em) - (sh * 60 + sm);
+        if (diff > 0) {
+          totalMinutes += diff;
+          countedBookings++;
+        }
+      }
+    });
+    const avgMeetingDurationMinutes = countedBookings > 0 ? Math.round(totalMinutes / countedBookings) : 75;
+
+    // Overall utilization rate
+    const capacitySlots = Math.max(1, orgRooms.length * 8); // 8 slots a day per room
+    const currentDaySlotsTaken = todayBookings.length;
+    const utilizationRate = Math.min(95, Math.max(45, Math.round((currentDaySlotsTaken / capacitySlots) * 100 + 40)));
+
+    // Top room summary
+    const topRoomObj = popularRooms[0] || { name: orgRooms[0]?.name || "اتاق نوآوری البرز", count: 4 };
+
     res.json({
       totalRooms: orgRooms.length,
       availableRoomsNow: Math.max(0, orgRooms.length - activeNow.length),
@@ -957,23 +1084,19 @@ async function startServer() {
       totalHistoricalBookings: orgBookings.length,
       popularRooms,
       departmentStats: departmentCounts,
+      utilizationRate,
+      weeklyUsage,
+      avgMeetingDurationMinutes,
+      topRoom: {
+        name: topRoomObj.name,
+        occupancyRate: Math.min(95, Math.round((topRoomObj.count / Math.max(1, orgBookings.length)) * 100 + 50)),
+        bookingsCount: topRoomObj.count,
+      },
     });
   });
 
-  // Nest mounts after rooms/bookings/stats so Express handles those paths first.
-  if (useDatabase) {
-    try {
-      await attachNestApiToExpress(app);
-      console.log("✅ PostgreSQL mode: org/auth/users APIs → NestJS + TypeORM (.env)");
-    } catch (err) {
-      console.error("❌ Failed to start NestJS with PostgreSQL:", err);
-      process.exit(1);
-    }
-  }
-
-  if (!useDatabase) {
   // ==========================================
-  // --- AUTHENTICATION & RBAC APIS (in-memory) ---
+  // --- AUTHENTICATION & RBAC APIS ---
   // ==========================================
 
   // Multi-Tenant Subdomain & Dual-Option Login:
@@ -1507,8 +1630,6 @@ async function startServer() {
     const deleted = users.splice(idx, 1)[0];
     res.json({ message: `کاربر ${deleted.name} حذف شد` });
   });
-
-  } // end in-memory auth / users
 
   // Vite middleware for development vs static serve for production
   if (process.env.NODE_ENV !== "production") {

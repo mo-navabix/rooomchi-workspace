@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ROLE_DEFINITIONS } from '../../constants/rbac';
-import { DidarLogo } from './DidarLogo';
+import { DidarBrandMark } from './DidarBrandMark';
 import { OrgLogoBadge } from './OrgLogoBadge';
 import {
   Building2,
@@ -24,6 +24,7 @@ import {
   Sun,
   Moon,
   ExternalLink,
+  BarChart3,
 } from 'lucide-react';
 import { ActiveTab, UserRole } from '../../types';
 
@@ -54,8 +55,10 @@ export const Header: React.FC = () => {
   // Modular Navigation Tabs based on RBAC permissions
   const navItems: { id: ActiveTab; label: string; icon: any; permissionCheck?: boolean }[] = [
     { id: 'dashboard', label: 'داشبورد', icon: LayoutDashboard },
-    { id: 'rooms', label: 'کاوش اتاق‌ها', icon: DoorOpen },
+    { id: 'calendar', label: 'تقویم', icon: Calendar },
+    { id: 'rooms', label: 'اتاق‌ها', icon: DoorOpen },
     { id: 'my-bookings', label: 'جلسات من', icon: CalendarCheck },
+    { id: 'analytics', label: 'گزارش‌ها', icon: BarChart3 },
     {
       id: 'admin-rooms',
       label: 'مدیریت اتاق‌ها',
@@ -70,13 +73,13 @@ export const Header: React.FC = () => {
     },
     {
       id: 'admin-rbac',
-      label: 'کنترل دسترسی (RBAC)',
+      label: 'کاربران (RBAC)',
       icon: ShieldCheck,
       permissionCheck: can('MANAGE_USERS_ROLES'),
     },
     {
       id: 'admin-settings',
-      label: 'تنظیمات سازمان',
+      label: 'تنظیمات',
       icon: Sliders,
       permissionCheck: can('MANAGE_ORG_SETTINGS'),
     },
@@ -95,13 +98,13 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between h-14 sm:h-20 gap-2 sm:gap-3 w-full">
           {/* Right Brand & Organization (RTL Start) */}
           <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 shrink">
-            {/* Corporate Brand with DidarLogo */}
+            {/* Corporate Brand with DidarBrandMark */}
             <div
               className="cursor-pointer flex items-center gap-1 sm:gap-2.5 transition-transform hover:scale-[1.02] shrink-0"
               onClick={() => setActiveTab('dashboard')}
               title="سامانه مدیریت اتاق جلسات دیدار"
             >
-              <DidarLogo size="md" showText={true} hideSubtitleOnMobile={true} />
+              <DidarBrandMark size="md" showText={true} />
             </div>
 
             <span className="h-5 w-px bg-slate-200 dark:bg-[#1E2E50] hidden sm:block shrink-0"></span>
