@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { ActiveTab, Organization, Permission, Room, User, UserRole } from '../types';
 import { ApiService } from '../services/apiService';
-import { hasPermission } from '../constants/rbac';
+import { hasPermission, normalizeUserRole } from '../constants/rbac';
 
 interface ToastInfo {
   id: string;
@@ -62,6 +62,7 @@ interface AppContextType {
   setSearchQuery: (q: string) => void;
   refreshOrganizations: () => Promise<void>;
   updateCurrentOrgData: (updated: Partial<Organization>) => void;
+  updateCurrentUser: (updated: Partial<User>) => void;
 
   // Auth Actions
   openAuthModal: (view?: AuthModalView) => void;
@@ -149,7 +150,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
-      return saved ? JSON.parse(saved) : null;
+      if (!saved) return null;
+      const parsed = JSON.parse(saved) as User;
+      return { ...parsed, role: normalizeUserRole(parsed.role) };
     } catch {
       return null;
     }
@@ -160,7 +163,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [pendingResetEmail, setPendingResetEmail] = useState<string>('');
 
   // If currentUser exists, use their role, else fallback to 'employee'
-  const userRole: UserRole = currentUser?.role || 'employee';
+  const userRole: UserRole = normalizeUserRole(currentUser?.role);
   const isAuthenticated = !!currentUser;
 
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -211,9 +214,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Sync user state with localStorage
   const saveUserSession = (user: User, token: string) => {
-    setCurrentUser(user);
+    const normalized = { ...user, role: normalizeUserRole(user.role) };
+    setCurrentUser(normalized);
     try {
-      localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(user));
+      localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(normalized));
       localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token);
     } catch (e) {
       console.error('Failed to write to localStorage', e);
@@ -265,6 +269,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const newOrg = { ...currentOrg, ...updated };
     setCurrentOrg(newOrg);
     setOrganizations((prev) => prev.map((o) => (o.id === newOrg.id ? newOrg : o)));
+  };
+
+  const updateCurrentUser = (updated: Partial<User>) => {
+    if (!currentUser) return;
+    let token = 'session_token';
+    try {
+      token = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY) || token;
+    } catch {
+      /* ignore */
+    }
+    saveUserSession({ ...currentUser, ...updated }, token);
   };
 
   // Auth Operations
@@ -418,6 +433,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setSearchQuery,
         refreshOrganizations,
         updateCurrentOrgData,
+        updateCurrentUser,
 
         // Auth Operations
         openAuthModal,

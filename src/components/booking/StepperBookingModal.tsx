@@ -66,9 +66,9 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs select-none">
-      <div className="bg-white dark:bg-[#111A2E] rounded-3xl border border-slate-200 dark:border-[#1E2E50] shadow-2xl max-w-3xl w-full overflow-hidden flex flex-col md:flex-row min-h-[480px]">
+      <div className="bg-white dark:bg-[#1E293B] rounded-3xl border border-slate-200 dark:border-[#334155] shadow-2xl max-w-3xl w-full overflow-hidden flex flex-col md:flex-row min-h-[480px]">
         {/* Right Stepper Sidebar matching screenshot (vertical numbered steps with active purple circle) */}
-        <div className="w-full md:w-60 bg-slate-50 dark:bg-[#0E1729] p-6 border-b md:border-b-0 md:border-l border-slate-200/80 dark:border-[#1E2E50] flex flex-col justify-between shrink-0">
+        <div className="w-full md:w-60 bg-slate-50 dark:bg-[#0F172A] p-6 border-b md:border-b-0 md:border-l border-slate-200/80 dark:border-[#334155] flex flex-col justify-between shrink-0">
           <div>
             <div className="text-right mb-6">
               <h3 className="font-black text-slate-900 dark:text-slate-100 text-base">
@@ -90,10 +90,10 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                     <div
                       className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${
                         isActive
-                          ? 'bg-[#4F46E5] text-white shadow-xs'
+                          ? 'bg-[#0F786E] text-white shadow-xs'
                           : isPassed
                           ? 'bg-emerald-500 text-white'
-                          : 'bg-slate-200 dark:bg-[#1E2E50] text-slate-500'
+                          : 'bg-slate-200 dark:bg-[#334155] text-slate-500'
                       }`}
                     >
                       {isPassed ? <Check className="w-3.5 h-3.5" /> : s.num}
@@ -101,7 +101,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                     <span
                       className={`text-xs font-bold ${
                         isActive
-                          ? 'text-[#4F46E5] dark:text-indigo-400'
+                          ? 'text-[#0F786E] dark:text-emerald-300'
                           : 'text-slate-600 dark:text-slate-400'
                       }`}
                     >
@@ -113,7 +113,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
             </div>
           </div>
 
-          <div className="hidden md:block pt-4 border-t border-slate-200/60 dark:border-[#1E2E50]">
+          <div className="hidden md:block pt-4 border-t border-slate-200/60 dark:border-[#334155]">
             <span className="text-[11px] text-slate-400">سامانه دیدار</span>
           </div>
         </div>
@@ -137,7 +137,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="مثال: جلسه بازنگری پروژه"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#1E2E50] bg-slate-50 dark:bg-[#16243F] text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#334155] text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
                   />
                 </div>
 
@@ -150,7 +150,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="توضیحات جلسه را وارد کنید (اختیاری)"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#1E2E50] bg-slate-50 dark:bg-[#16243F] text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#334155] text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
                   />
                 </div>
 
@@ -166,7 +166,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                         name="mtype"
                         checked={meetingType === 'in_person'}
                         onChange={() => setMeetingType('in_person')}
-                        className="accent-[#4F46E5]"
+                        className="accent-[#0F786E]"
                       />
                       <span>حضوری</span>
                     </label>
@@ -176,7 +176,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                         name="mtype"
                         checked={meetingType === 'online'}
                         onChange={() => setMeetingType('online')}
-                        className="accent-[#4F46E5]"
+                        className="accent-[#0F786E]"
                       />
                       <span>آنلاین</span>
                     </label>
@@ -186,7 +186,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                         name="mtype"
                         checked={meetingType === 'hybrid'}
                         onChange={() => setMeetingType('hybrid')}
-                        className="accent-[#4F46E5]"
+                        className="accent-[#0F786E]"
                       />
                       <span>ترکیبی</span>
                     </label>
@@ -210,7 +210,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                       type="time"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#1E2E50] text-xs bg-slate-50 dark:bg-[#16243F]"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#334155] text-xs bg-slate-50 dark:bg-[#334155]"
                     />
                   </div>
                   <div>
@@ -221,7 +221,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                       type="time"
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#1E2E50] text-xs bg-slate-50 dark:bg-[#16243F]"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#334155] text-xs bg-slate-50 dark:bg-[#334155]"
                     />
                   </div>
                 </div>
@@ -241,8 +241,8 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                       onClick={() => setSelectedRoom(r)}
                       className={`p-3 rounded-xl border text-xs font-bold cursor-pointer transition-all ${
                         selectedRoom === r
-                          ? 'border-[#4F46E5] bg-indigo-50/50 dark:bg-indigo-950/40 text-[#4F46E5]'
-                          : 'border-slate-200 dark:border-[#1E2E50] text-slate-700 dark:text-slate-300'
+                          ? 'border-[#0F786E] bg-emerald-50/50 dark:bg-emerald-950/40 text-[#0F786E]'
+                          : 'border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       {r}
@@ -267,7 +267,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                     value={attendeesEmail}
                     onChange={(e) => setAttendeesEmail(e.target.value)}
                     placeholder="ali@company.com, sara@company.com"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#1E2E50] text-xs bg-slate-50 dark:bg-[#16243F]"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#334155] text-xs bg-slate-50 dark:bg-[#334155]"
                   />
                 </div>
               </div>
@@ -279,7 +279,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
                 <h4 className="font-black text-slate-800 dark:text-slate-100 text-sm">
                   مرور نهایی مشخصات جلسه
                 </h4>
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#16243F] border border-slate-200/60 dark:border-[#1E2E50] space-y-2 text-xs">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#334155] border border-slate-200/60 dark:border-[#334155] space-y-2 text-xs">
                   <div><strong>عنوان:</strong> {title || 'جلسه تیم محصول'}</div>
                   <div><strong>نوع:</strong> {meetingType === 'in_person' ? 'حضوری' : 'آنلاین'}</div>
                   <div><strong>زمان:</strong> {startTime} الی {endTime}</div>
@@ -290,7 +290,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
           </div>
 
           {/* Action Buttons (مرحله بعد - انصراف) matching screenshot */}
-          <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-[#1E2E50] mt-6">
+          <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-[#334155] mt-6">
             <button
               onClick={closeBookingModal}
               className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
@@ -302,7 +302,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
               {currentStep > 1 && (
                 <button
                   onClick={handlePrev}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-[#1E2E50] text-slate-700 dark:text-slate-300 hover:bg-slate-100 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-[#334155] text-slate-700 dark:text-slate-300 hover:bg-slate-100 cursor-pointer"
                 >
                   مرحله قبل
                 </button>
@@ -310,7 +310,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
 
               <button
                 onClick={handleNext}
-                className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] shadow-xs transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] shadow-xs transition-colors cursor-pointer"
               >
                 <span>{currentStep === 5 ? 'ثبت نهایی جلسه' : 'مرحله بعد'}</span>
                 <ChevronLeft className="w-4 h-4" />

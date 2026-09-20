@@ -2,9 +2,7 @@ import express, { Request, Response } from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { JwtService } from "@nestjs/jwt";
-import swaggerUi from "swagger-ui-express";
 import { checkDbStatus } from "./src/services/dbService";
-import { swaggerDocument } from "./src/swagger/swaggerDocument";
 
 const jwtService = new JwtService({
   secret: "didar_enterprise_jwt_super_secret_key_2026",
@@ -516,24 +514,6 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
-
-  // Swagger Documentation API & Interactive UI
-  app.get("/api/docs-json", (_req: Request, res: Response) => {
-    res.json(swaggerDocument);
-  });
-  app.use(
-    "/api/docs",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerDocument, {
-      customSiteTitle: "مستندات API سامانه دیدار | Didar Swagger UI",
-      customCss: `
-        .swagger-ui .topbar { display: none !important; }
-        .swagger-ui { direction: ltr; font-family: system-ui, -apple-system, sans-serif; }
-        .swagger-ui .info { margin-bottom: 24px; }
-        .swagger-ui .info .title { font-size: 28px; color: #1e293b; }
-      `,
-    })
-  );
 
   // API Routes
   app.get("/api/health", (req: Request, res: Response) => {

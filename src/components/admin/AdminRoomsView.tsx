@@ -165,10 +165,10 @@ export const AdminRoomsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-[#111A2E] p-5 rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
-          <div className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-[#14B8A6]" />
+          <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-[#10B981]" />
             <span>پنل مدیریت منابع فیزیکی</span>
           </div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
@@ -182,7 +182,7 @@ export const AdminRoomsView: React.FC = () => {
         <button
           id="btn-add-room-admin"
           onClick={handleOpenAddModal}
-          className="px-4 py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+          className="px-4 py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           <span>افزودن اتاق جدید</span>
@@ -190,10 +190,10 @@ export const AdminRoomsView: React.FC = () => {
       </div>
 
       {/* Rooms Table */}
-      <div className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs overflow-hidden transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs overflow-hidden transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs">
-            <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-[#1E2E50]">
+            <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-[#334155]">
               <tr>
                 <th className="px-5 py-4 whitespace-nowrap">اتاق و کد</th>
                 <th className="px-5 py-4 whitespace-nowrap">ساختمان و طبقه</th>
@@ -204,12 +204,12 @@ export const AdminRoomsView: React.FC = () => {
                 <th className="px-5 py-4 text-left whitespace-nowrap">عملیات</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-[#1E2E50]">
+            <tbody className="divide-y divide-slate-100 dark:divide-[#334155]">
               {rooms.map((room) => (
-                <tr key={room.id} className="hover:bg-slate-50/70 dark:hover:bg-[#16243F]/50 transition-colors">
+                <tr key={room.id} className="hover:bg-slate-50/70 dark:hover:bg-[#334155]/50 transition-colors">
                   <td className="px-5 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 dark:bg-[#0A0F1D] shrink-0 border border-slate-200/60 dark:border-[#1E2E50]">
+                      <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 dark:bg-[#0F172A] shrink-0 border border-slate-200/60 dark:border-[#334155]">
                         <img
                           src={room.imageUrl}
                           alt={room.name}
@@ -237,7 +237,7 @@ export const AdminRoomsView: React.FC = () => {
                         return (
                           <span
                             key={amId}
-                            className="text-[11px] bg-slate-100 dark:bg-[#0A0F1D] text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-lg border border-slate-200/60 dark:border-[#1E2E50] whitespace-nowrap"
+                            className="text-[11px] bg-slate-100 dark:bg-[#0F172A] text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-lg border border-slate-200/60 dark:border-[#334155] whitespace-nowrap"
                           >
                             {am ? am.nameFa : amId}
                           </span>
@@ -265,8 +265,8 @@ export const AdminRoomsView: React.FC = () => {
                         <span>نیاز به تأیید ادمین</span>
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-[#0A0F1D] px-3 py-1.5 rounded-xl border border-slate-200/60 dark:border-[#1E2E50] whitespace-nowrap">
-                        <Sparkles className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-[#0F172A] px-3 py-1.5 rounded-xl border border-slate-200/60 dark:border-[#334155] whitespace-nowrap">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                         <span>رزرو آنی خودکار</span>
                       </span>
                     )}
@@ -289,7 +289,7 @@ export const AdminRoomsView: React.FC = () => {
 
                       <button
                         onClick={() => handleOpenEditModal(room)}
-                        className="p-2 text-[#2563EB] dark:text-[#60A5FA] hover:bg-blue-50 dark:hover:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 rounded-xl transition-colors"
+                        className="p-2 text-[#10B981] dark:text-[#34D399] hover:bg-emerald-50 dark:hover:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 rounded-xl transition-colors"
                         title="ویرایش اتاق"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -314,8 +314,8 @@ export const AdminRoomsView: React.FC = () => {
       {/* Add/Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#111A2E] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#1E2E50] w-full max-w-xl overflow-hidden transition-colors">
-            <div className="px-6 py-4 bg-[#0D1B3A] text-white flex items-center justify-between border-b border-[#1E2E50]">
+          <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#334155] w-full max-w-xl overflow-hidden transition-colors">
+            <div className="px-6 py-4 bg-[#0F786E] text-white flex items-center justify-between border-b border-[#334155]">
               <h3 className="text-sm font-bold">
                 {editingRoom ? 'ویرایش مشخصات اتاق' : 'افزودن اتاق جدید به سازمان'}
               </h3>
@@ -335,7 +335,7 @@ export const AdminRoomsView: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="مثال: اتاق نوآوری کارون"
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB]"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981]"
                     required
                   />
                 </div>
@@ -349,7 +349,7 @@ export const AdminRoomsView: React.FC = () => {
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="RM-201"
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB]"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981]"
                   />
                 </div>
 
@@ -363,7 +363,7 @@ export const AdminRoomsView: React.FC = () => {
                     max="100"
                     value={capacity}
                     onChange={(e) => setCapacity(Number(e.target.value))}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB]"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981]"
                     required
                   />
                 </div>
@@ -374,7 +374,7 @@ export const AdminRoomsView: React.FC = () => {
                     type="number"
                     value={floor}
                     onChange={(e) => setFloor(Number(e.target.value))}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB]"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981]"
                     required
                   />
                 </div>
@@ -385,7 +385,7 @@ export const AdminRoomsView: React.FC = () => {
                 <select
                   value={building}
                   onChange={(e) => setBuilding(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
+                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
                 >
                   {(currentOrg?.buildings ?? []).map((b) => (
                     <option key={b} value={b}>
@@ -409,12 +409,12 @@ export const AdminRoomsView: React.FC = () => {
                         onClick={() => handleToggleAmenity(amenity.id)}
                         className={`p-2 rounded-lg border text-right text-xs flex items-center justify-between ${
                           isChecked
-                            ? 'bg-blue-50 dark:bg-blue-950/40 border-[#2563EB] text-[#2563EB] dark:text-[#60A5FA] font-bold'
-                            : 'bg-white dark:bg-[#0A0F1D] border-slate-200 dark:border-[#1E2E50] text-slate-600 dark:text-slate-300'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-[#10B981] text-[#10B981] dark:text-[#34D399] font-bold'
+                            : 'bg-white dark:bg-[#0F172A] border-slate-200 dark:border-[#334155] text-slate-600 dark:text-slate-300'
                         }`}
                       >
                         <span>{amenity.nameFa}</span>
-                        {isChecked && <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />}
+                        {isChecked && <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] dark:text-[#34D399]" />}
                       </button>
                     );
                   })}
@@ -427,7 +427,7 @@ export const AdminRoomsView: React.FC = () => {
                     type="checkbox"
                     checked={requiresApproval}
                     onChange={(e) => setRequiresApproval(e.target.checked)}
-                    className="w-4 h-4 text-[#2563EB] rounded"
+                    className="w-4 h-4 text-[#10B981] rounded"
                   />
                   <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     رزرو این اتاق نیازمند تأیید قبلی مدیریت باشد
@@ -435,7 +435,7 @@ export const AdminRoomsView: React.FC = () => {
                 </label>
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-[#1E2E50]">
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-[#334155]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -446,7 +446,7 @@ export const AdminRoomsView: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] rounded-xl"
+                  className="px-5 py-2 text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-xl"
                 >
                   {isSubmitting ? 'در حال ثبت...' : editingRoom ? 'ذخیره تغییرات' : 'افزودن اتاق'}
                 </button>

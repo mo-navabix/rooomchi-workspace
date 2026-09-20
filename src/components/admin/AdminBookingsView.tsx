@@ -79,10 +79,10 @@ export const AdminBookingsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header & Filters */}
-      <div className="bg-white dark:bg-[#111A2E] p-5 rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs space-y-4 transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs space-y-4 transition-colors">
         <div>
-          <div className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-[#14B8A6]" />
+          <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-[#10B981]" />
             <span>نظارت جامع رزروهای سازمانی</span>
           </div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
@@ -93,7 +93,7 @@ export const AdminBookingsView: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100 dark:border-[#1E2E50]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100 dark:border-[#334155]">
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
             <input
@@ -101,7 +101,7 @@ export const AdminBookingsView: React.FC = () => {
               placeholder="جستجو بر اساس عنوان، برگزارکننده یا اتاق..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs pl-3 pr-9 py-2 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] rounded-xl text-slate-900 dark:text-white"
+              className="w-full text-xs pl-3 pr-9 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white"
             />
           </div>
 
@@ -109,7 +109,7 @@ export const AdminBookingsView: React.FC = () => {
             <select
               value={filterDepartment}
               onChange={(e) => setFilterDepartment(e.target.value)}
-              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#2563EB] cursor-pointer"
+              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
             >
               <option value="all">همه دپارتمان‌ها و واحدها</option>
               {(currentOrg?.departments ?? []).map((d) => (
@@ -125,7 +125,7 @@ export const AdminBookingsView: React.FC = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#2563EB] cursor-pointer"
+              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
             >
               <option value="all">همه وضعیت‌ها</option>
               <option value="pending_approval">در انتظار تأیید مدیریت (نیاز به اقدام)</option>
@@ -138,10 +138,10 @@ export const AdminBookingsView: React.FC = () => {
       </div>
 
       {/* Bookings Table */}
-      <div className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs overflow-hidden transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs overflow-hidden transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs">
-            <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-[#1E2E50]">
+            <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-[#334155]">
               <tr>
                 <th className="px-5 py-4 whitespace-nowrap">عنوان جلسه</th>
                 <th className="px-5 py-4 whitespace-nowrap">اتاق و محل</th>
@@ -152,9 +152,9 @@ export const AdminBookingsView: React.FC = () => {
                 <th className="px-5 py-4 text-left whitespace-nowrap">اقدام ادمین</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-[#1E2E50]">
+            <tbody className="divide-y divide-slate-100 dark:divide-[#334155]">
               {filtered.map((b) => (
-                <tr key={b.id} className="hover:bg-slate-50/70 dark:hover:bg-[#16243F]/50 transition-colors">
+                <tr key={b.id} className="hover:bg-slate-50/70 dark:hover:bg-[#334155]/50 transition-colors">
                   <td className="px-5 py-4 whitespace-nowrap">
                     <div className="font-bold text-slate-900 dark:text-white">{b.title}</div>
                     {b.description && (
@@ -166,7 +166,7 @@ export const AdminBookingsView: React.FC = () => {
                   <td className="px-5 py-4 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300">{b.roomName}</td>
                   <td className="px-5 py-4 whitespace-nowrap">
                     <div className="font-semibold text-slate-800 dark:text-slate-200">{b.date}</div>
-                    <div className="text-[11px] text-[#2563EB] dark:text-[#60A5FA] mt-0.5">
+                    <div className="text-[11px] text-[#10B981] dark:text-[#34D399] mt-0.5">
                       {b.startTime} الی {b.endTime}
                     </div>
                   </td>

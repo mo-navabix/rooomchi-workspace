@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserRole } from '../../types';
-import { DidarLogo } from '../common/DidarLogo';
+import { Logo } from '../common/Logo';
 import {
   X,
   Lock,
@@ -137,9 +137,9 @@ export const AuthModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-[#111A2E] rounded-3xl shadow-2xl border border-slate-200 dark:border-[#1E2E50] w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-[#334155] w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] transition-colors">
         {/* Header with Didar Branding */}
-        <div className="p-6 bg-gradient-to-r from-[#0D1B3A] via-[#1E3360] to-[#0D1B3A] text-white relative border-b border-[#1E2E50]">
+        <div className="p-6 bg-gradient-to-r from-[#0F786E] via-[#10B981] to-[#0F786E] text-white relative border-b border-[#334155]">
           <button
             onClick={closeAuthModal}
             className="absolute left-4 top-4 text-slate-400 hover:text-white p-1 rounded-lg transition-colors"
@@ -149,7 +149,7 @@ export const AuthModal: React.FC = () => {
 
           <div className="flex flex-col items-center text-center">
             <div className="mb-2">
-              <DidarLogo size="lg" />
+              <Logo variant="stacked" size="lg" />
             </div>
             <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white mt-2">
               {authModalView === 'login' && 'ورود به سامانه مدیریت جلسات'}
@@ -157,7 +157,7 @@ export const AuthModal: React.FC = () => {
               {authModalView === 'forgot' && 'فراموشی و بازیابی رمز عبور'}
               {authModalView === 'reset' && 'تنظیم رمز عبور جدید'}
             </h3>
-            <p className="text-xs text-blue-200/80 mt-1 max-w-xs">
+            <p className="text-xs text-emerald-200/80 mt-1 max-w-xs">
               {authModalView === 'login' && 'مدیریت هوشمند اتاق جلسات و هماهنگی سازمانی'}
               {authModalView === 'register' && `ایجاد حساب کاربری در پرتال سازمانی ${currentOrg?.name || ''}`}
               {authModalView === 'forgot' && 'ایمیل سازمانی خود را جهت دریافت کد تأیید ۶ رقمی وارد کنید'}
@@ -189,7 +189,7 @@ export const AuthModal: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.ir"
-                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] transition-all text-left"
+                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] transition-all text-left"
                     dir="ltr"
                     required
                   />
@@ -202,7 +202,7 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => openAuthModal('forgot')}
-                    className="text-[11px] font-medium text-[#2563EB] dark:text-[#60A5FA] hover:underline"
+                    className="text-[11px] font-medium text-[#10B981] dark:text-[#34D399] hover:underline"
                   >
                     فراموشی رمز عبور؟
                   </button>
@@ -214,7 +214,7 @@ export const AuthModal: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full text-xs pr-9 pl-9 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] transition-all text-left"
+                    className="w-full text-xs pr-9 pl-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] transition-all text-left"
                     dir="ltr"
                     required
                   />
@@ -231,7 +231,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 mt-2"
+                className="w-full py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 mt-2"
               >
                 {isSubmitting ? (
                   <span>در حال ورود...</span>
@@ -244,10 +244,10 @@ export const AuthModal: React.FC = () => {
               </button>
 
               {/* Demo Accounts Bar for instantaneous preview testing */}
-              <div className="pt-3 border-t border-slate-100 dark:border-[#1E2E50]">
+              <div className="pt-3 border-t border-slate-100 dark:border-[#334155]">
                 <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 flex items-center justify-between">
                   <span>تست سریع با نقش‌های سازمانی (دمو):</span>
-                  <span className="text-[10px] bg-slate-100 dark:bg-[#0A0F1D] text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-full font-mono border border-slate-200 dark:border-[#1E2E50]">
+                  <span className="text-[10px] bg-slate-100 dark:bg-[#0F172A] text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-full font-mono border border-slate-200 dark:border-[#334155]">
                     رمز: password123
                   </span>
                 </div>
@@ -255,10 +255,10 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => quickLoginAs('super_admin')}
-                    className="p-2 text-right rounded-lg border border-purple-200 dark:border-purple-800/50 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-900 dark:text-purple-200 text-[11px] font-bold transition-colors flex items-center justify-between"
+                    className="p-2 text-right rounded-lg border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-[11px] font-bold transition-colors flex items-center justify-between"
                   >
                     <span>مدیر کل دیدار</span>
-                    <span className="text-[9px] bg-purple-200 dark:bg-purple-900/60 px-1.5 py-0.5 rounded text-purple-800 dark:text-purple-300">
+                    <span className="text-[9px] bg-emerald-200 dark:bg-emerald-900/60 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-300">
                       Super Admin
                     </span>
                   </button>
@@ -266,10 +266,10 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => quickLoginAs('org_admin')}
-                    className="p-2 text-right rounded-lg border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-[11px] font-bold transition-colors flex items-center justify-between"
+                    className="p-2 text-right rounded-lg border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-[11px] font-bold transition-colors flex items-center justify-between"
                   >
                     <span>مدیر سازمان</span>
-                    <span className="text-[9px] bg-blue-200 dark:bg-blue-900/60 px-1.5 py-0.5 rounded text-blue-800 dark:text-blue-300">
+                    <span className="text-[9px] bg-emerald-200 dark:bg-emerald-900/60 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-300">
                       Org Admin
                     </span>
                   </button>
@@ -288,7 +288,7 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => quickLoginAs('employee')}
-                    className="p-2 text-right rounded-lg border border-slate-200 dark:border-[#1E2E50] bg-slate-50 dark:bg-[#0A0F1D] hover:bg-slate-100 dark:hover:bg-[#16243F] text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-colors flex items-center justify-between"
+                    className="p-2 text-right rounded-lg border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0F172A] hover:bg-slate-100 dark:hover:bg-[#334155] text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-colors flex items-center justify-between"
                   >
                     <span>کارمند عادی</span>
                     <span className="text-[9px] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">
@@ -303,7 +303,7 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => openAuthModal('register')}
-                  className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline underline-offset-4"
+                  className="text-xs font-bold text-[#10B981] dark:text-[#34D399] hover:underline underline-offset-4"
                 >
                   ثبت‌نام پرسنل جدید
                 </button>
@@ -325,7 +325,7 @@ export const AuthModal: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="مثال: سارا محمدی"
-                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB]"
+                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981]"
                     required
                   />
                 </div>
@@ -341,7 +341,7 @@ export const AuthModal: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="sara@company.ir"
-                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] text-left"
+                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
                     dir="ltr"
                     required
                   />
@@ -356,7 +356,7 @@ export const AuthModal: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="0912..."
-                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] text-left"
+                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
                     dir="ltr"
                   />
                 </div>
@@ -370,7 +370,7 @@ export const AuthModal: React.FC = () => {
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white rounded-xl focus:bg-white"
+                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:bg-white"
                   >
                     {(currentOrg?.departments ?? []).map((d) => (
                       <option key={d} value={d}>
@@ -387,7 +387,7 @@ export const AuthModal: React.FC = () => {
                   <select
                     value={regRole}
                     onChange={(e) => setRegRole(e.target.value as UserRole)}
-                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white rounded-xl focus:bg-white"
+                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:bg-white"
                   >
                     <option value="employee">کارمند عادی (رزرو جلسات)</option>
                     <option value="room_manager">مدیر تشریفات و اتاق‌ها</option>
@@ -406,7 +406,7 @@ export const AuthModal: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="حداقل ۶ کاراکتر"
-                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] text-left"
+                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
                     dir="ltr"
                     required
                   />
@@ -421,7 +421,7 @@ export const AuthModal: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="تکرار رمز"
-                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] text-left"
+                    className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
                     dir="ltr"
                     required
                   />
@@ -431,7 +431,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 mt-2"
+                className="w-full py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 mt-2"
               >
                 {isSubmitting ? (
                   <span>در حال ایجاد حساب...</span>
@@ -448,7 +448,7 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => openAuthModal('login')}
-                  className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline underline-offset-4"
+                  className="text-xs font-bold text-[#10B981] dark:text-[#34D399] hover:underline underline-offset-4"
                 >
                   ورود به حساب
                 </button>
@@ -470,7 +470,7 @@ export const AuthModal: React.FC = () => {
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
                     placeholder="employee@technova.ir"
-                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] text-left"
+                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
                     dir="ltr"
                     required
                   />
@@ -483,7 +483,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <span>در حال ارسال کد...</span>
@@ -530,7 +530,7 @@ export const AuthModal: React.FC = () => {
                   value={resetCode}
                   onChange={(e) => setResetCode(e.target.value)}
                   placeholder="123456"
-                  className="w-full text-sm font-mono tracking-widest text-center py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] font-bold"
+                  className="w-full text-sm font-mono tracking-widest text-center py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] font-bold"
                   dir="ltr"
                   required
                 />
@@ -545,7 +545,7 @@ export const AuthModal: React.FC = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="حداقل ۶ کاراکتر"
-                  className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0A0F1D] focus:ring-2 focus:ring-[#2563EB] text-left"
+                  className="w-full text-xs px-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
                   dir="ltr"
                   required
                 />

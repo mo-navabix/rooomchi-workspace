@@ -118,11 +118,11 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="space-y-6 select-none" id="dashboard-view">
       {/* 1. Welcome Banner */}
-      <div className="bg-white dark:bg-[#111A2E] border border-slate-200 dark:border-[#1E2E50] rounded-3xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-5 transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-3xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-5 transition-colors">
         <div className="space-y-1.5 text-right">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] border border-blue-200/60 dark:border-blue-800/40">
-              <Sparkles className="w-3.5 h-3.5 text-[#14B8A6]" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-[#10B981] dark:text-[#34D399] border border-emerald-200/60 dark:border-emerald-800/40">
+              <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />
               <span>{currentOrg?.name || 'سازمان دیدار'}</span>
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -141,14 +141,14 @@ export const DashboardView: React.FC = () => {
           <button
             id="btn-dash-open-booking"
             onClick={() => openBookingModal()}
-            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-xs transition-all cursor-pointer"
+            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-[#10B981] hover:bg-[#0D6B63] shadow-xs transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>رزرو سریع جلسه</span>
           </button>
           <button
             onClick={() => setActiveTab('rooms')}
-            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#16243F] hover:bg-slate-200 dark:hover:bg-[#1E2E50] transition-colors border border-slate-200/60 dark:border-[#1E2E50] cursor-pointer"
+            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#334155] hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border border-slate-200/60 dark:border-[#334155] cursor-pointer"
           >
             <DoorOpen className="w-4 h-4" />
             <span>مشاهده همه اتاق‌ها</span>
@@ -159,12 +159,12 @@ export const DashboardView: React.FC = () => {
       {/* 2. Four Metric / KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Total Rooms */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200 dark:border-[#1E2E50] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               کل اتاق‌های فعال
             </span>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center">
+            <div className="brand-icon-tile brand-icon-tile--lg flex items-center justify-center">
               <DoorOpen className="w-5 h-5" />
             </div>
           </div>
@@ -179,12 +179,12 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Metric 2: Today's Bookings */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200 dark:border-[#1E2E50] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               جلسات امروز
             </span>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <div className="brand-icon-tile brand-icon-tile--lg flex items-center justify-center">
               <CalendarCheck className="w-5 h-5" />
             </div>
           </div>
@@ -199,12 +199,12 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Metric 3: Active / Meetings Now */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200 dark:border-[#1E2E50] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               جلسات فعال هم‌اکنون
             </span>
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <div className="brand-icon-tile brand-icon-tile--lg brand-icon-tile--amber">
               <Radio className="w-5 h-5 animate-pulse" />
             </div>
           </div>
@@ -219,7 +219,7 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Metric 4: Total Historical / Platform Activity */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200 dark:border-[#1E2E50] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-2xl p-5 space-y-3 shadow-xs transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               کل رزروهای ثبت‌شده
@@ -242,7 +242,7 @@ export const DashboardView: React.FC = () => {
       {/* 3. Main Grid: Today's Schedule (2 cols) & Room Availability (1 col) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Column 1: Today's Schedule (2 cols) */}
-        <div className="lg:col-span-2 bg-white dark:bg-[#111A2E] border border-slate-200 dark:border-[#1E2E50] rounded-3xl p-6 shadow-xs space-y-5 transition-colors">
+        <div className="lg:col-span-2 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-3xl p-6 shadow-xs space-y-5 transition-colors">
           <div className="flex items-center justify-between">
             <div className="text-right">
               <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
@@ -257,7 +257,7 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={() => setActiveTab('my-bookings')}
-              className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-[#10B981] dark:text-[#34D399] hover:underline flex items-center gap-1 cursor-pointer"
             >
               <span>تمام جلسات</span>
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -265,7 +265,7 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {todayBookings.length === 0 ? (
-            <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-[#1E2E50] bg-slate-50/50 dark:bg-[#0D1527]/50">
+            <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-[#334155] bg-slate-50/50 dark:bg-[#0D1527]/50">
               <Calendar className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
               <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">
                 امروز هنوز جلسه‌ای ثبت نشده است
@@ -275,7 +275,7 @@ export const DashboardView: React.FC = () => {
               </p>
               <button
                 onClick={() => openBookingModal()}
-                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-colors cursor-pointer"
+                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] transition-colors cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>ثبت جلسه جدید</span>
@@ -293,7 +293,7 @@ export const DashboardView: React.FC = () => {
                     className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
                       isNow
                         ? 'border-emerald-500/50 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-xs'
-                        : 'border-slate-100 dark:border-[#1E2E50]/60 bg-slate-50/70 dark:bg-[#0D1527] hover:bg-slate-100/80 dark:hover:bg-[#16243F]'
+                        : 'border-slate-100 dark:border-[#334155]/60 bg-slate-50/70 dark:bg-[#0D1527] hover:bg-slate-100/80 dark:hover:bg-[#334155]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
@@ -301,7 +301,7 @@ export const DashboardView: React.FC = () => {
                         className={`w-12 h-12 rounded-2xl flex flex-col items-center justify-center shrink-0 ${
                           isNow
                             ? 'bg-emerald-600 text-white shadow-xs'
-                            : 'bg-blue-100 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA]'
+                            : 'bg-emerald-100 dark:bg-emerald-950/60 text-[#10B981] dark:text-[#34D399]'
                         }`}
                       >
                         <Clock className="w-4 h-4" />
@@ -341,7 +341,7 @@ export const DashboardView: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-200/70 dark:bg-[#16243F] text-slate-700 dark:text-slate-300">
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-200/70 dark:bg-[#334155] text-slate-700 dark:text-slate-300">
                         {toPersianDigits(booking.attendeesCount)} نفر
                       </span>
                     </div>
@@ -353,14 +353,14 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Column 2: Quick Room Availability (1 col) */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200 dark:border-[#1E2E50] rounded-3xl p-6 shadow-xs space-y-5 transition-colors">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-3xl p-6 shadow-xs space-y-5 transition-colors">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
               وضعیت لحظه‌ای اتاق‌ها
             </h2>
             <button
               onClick={() => setActiveTab('rooms')}
-              className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-[#10B981] dark:text-[#34D399] hover:underline flex items-center gap-1 cursor-pointer"
             >
               <span>مشاهده همه</span>
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -374,7 +374,7 @@ export const DashboardView: React.FC = () => {
               return (
                 <div
                   key={room.id}
-                  className="p-3.5 rounded-2xl border border-slate-100 dark:border-[#1E2E50]/60 bg-slate-50/70 dark:bg-[#0D1527] flex items-center justify-between gap-3 hover:bg-slate-100/80 dark:hover:bg-[#16243F] transition-colors"
+                  className="p-3.5 rounded-2xl border border-slate-100 dark:border-[#334155]/60 bg-slate-50/70 dark:bg-[#0D1527] flex items-center justify-between gap-3 hover:bg-slate-100/80 dark:hover:bg-[#334155] transition-colors"
                 >
                   <div className="text-right min-w-0">
                     <div className="flex items-center gap-1.5">
@@ -416,10 +416,10 @@ export const DashboardView: React.FC = () => {
             })}
           </div>
 
-          <div className="pt-2 border-t border-slate-100 dark:border-[#1E2E50]">
+          <div className="pt-2 border-t border-slate-100 dark:border-[#334155]">
             <button
               onClick={() => openBookingModal()}
-              className="w-full py-2.5 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-[#2563EB] dark:text-[#60A5FA] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              className="w-full py-2.5 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-[#10B981] dark:text-[#34D399] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>رزرو اتاق با جستجوی امکانات</span>

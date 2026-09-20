@@ -53,7 +53,7 @@ export const OrgLogoBadge: React.FC<OrgLogoBadgeProps> = ({
 
   return (
     <div
-      className={`inline-flex items-center justify-center shrink-0 overflow-hidden bg-slate-100 dark:bg-[#16243F] border border-slate-200/80 dark:border-[#1E2E50] shadow-xs select-none ${sizeClasses.container} ${className}`}
+      className={`inline-flex items-center justify-center shrink-0 overflow-hidden bg-slate-100 dark:bg-[#334155] border border-slate-200/80 dark:border-[#334155] shadow-xs select-none ${sizeClasses.container} ${className}`}
       title={name}
     >
       {isImg ? (

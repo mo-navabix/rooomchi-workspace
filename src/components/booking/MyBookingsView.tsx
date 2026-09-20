@@ -106,7 +106,7 @@ export const MyBookingsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header & Filter Tabs */}
-      <div className="bg-white dark:bg-[#111A2E] p-5 rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">جلسات و رزروهای من</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -116,12 +116,12 @@ export const MyBookingsView: React.FC = () => {
 
         <div className="flex items-center gap-2">
           {/* Tabs */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#0A0F1D] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#1E2E50]">
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#0F172A] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#334155]">
             <button
               onClick={() => setFilterTab('all')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 filterTab === 'all'
-                  ? 'bg-white dark:bg-[#16243F] text-slate-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -131,7 +131,7 @@ export const MyBookingsView: React.FC = () => {
               onClick={() => setFilterTab('upcoming')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 filterTab === 'upcoming'
-                  ? 'bg-white dark:bg-[#16243F] text-slate-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -141,7 +141,7 @@ export const MyBookingsView: React.FC = () => {
               onClick={() => setFilterTab('pending')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 filterTab === 'pending'
-                  ? 'bg-white dark:bg-[#16243F] text-slate-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -151,7 +151,7 @@ export const MyBookingsView: React.FC = () => {
               onClick={() => setFilterTab('cancelled')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 filterTab === 'cancelled'
-                  ? 'bg-white dark:bg-[#16243F] text-slate-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -161,7 +161,7 @@ export const MyBookingsView: React.FC = () => {
 
           <button
             onClick={() => openBookingModal()}
-            className="px-3.5 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>رزرو جدید</span>
@@ -174,13 +174,13 @@ export const MyBookingsView: React.FC = () => {
         {filteredBookings.map((b) => (
           <div
             key={b.id}
-            className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] p-5 shadow-xs hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+            className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-5 shadow-xs hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
           >
             <div className="space-y-2 flex-1">
               <div className="flex items-center gap-2.5 flex-wrap">
                 <span className="text-sm font-bold text-slate-900 dark:text-white">{b.title}</span>
                 {getStatusBadge(b.status)}
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-[#0A0F1D] px-2.5 py-0.5 rounded-md border border-slate-200/40 dark:border-[#1E2E50]">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-[#0F172A] px-2.5 py-0.5 rounded-md border border-slate-200/40 dark:border-[#334155]">
                   {b.department}
                 </span>
               </div>
@@ -227,7 +227,7 @@ export const MyBookingsView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleCopyMeetingDetails(b)}
-                className="px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-[#0A0F1D] hover:bg-slate-200 dark:hover:bg-[#16243F] border border-slate-200/60 dark:border-[#1E2E50] rounded-xl transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-[#0F172A] hover:bg-slate-200 dark:hover:bg-[#334155] border border-slate-200/60 dark:border-[#334155] rounded-xl transition-colors flex items-center gap-1.5"
                 title="اشتراک مشخصات جلسه با همکاران"
               >
                 <Share2 className="w-3.5 h-3.5" />
@@ -249,7 +249,7 @@ export const MyBookingsView: React.FC = () => {
         ))}
 
         {filteredBookings.length === 0 && (
-          <div className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] p-12 text-center text-slate-400 text-xs">
+          <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-12 text-center text-slate-400 text-xs">
             هیچ جلسه‌ای در این تب یافت نشد. برای برگزاری جلسه از دکمه «رزرو جدید» استفاده کنید.
           </div>
         )}

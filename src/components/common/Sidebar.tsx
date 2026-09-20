@@ -1,121 +1,389 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { getRoleMeta } from '../../constants/rbac';
+import { Logo } from './Logo';
 import {
   LayoutDashboard,
   Calendar,
   DoorOpen,
   CalendarCheck,
-  Users,
   BarChart3,
   Sliders,
-  Plus,
-  ShieldCheck,
-  Building,
-  ExternalLink,
-  ChevronDown,
   Sparkles,
+  ShieldCheck,
+  X,
+  ChevronDown,
+  ChevronLeft,
+  Building2,
+  Layers,
+  User,
+  Ticket,
 } from 'lucide-react';
 import { ActiveTab } from '../../types';
-import { DidarBrandMark } from './DidarBrandMark';
-import { OrgLogoBadge } from './OrgLogoBadge';
 
-export const Sidebar: React.FC = () => {
+const SIDEBAR_COLLAPSED_KEY = 'didar-portal-sidebar-collapsed';
+
+type SidebarProps = {
+  mobileOpen: boolean;
+  onClose: () => void;
+};
+
+type NavItem = {
+  id: ActiveTab;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  permissionCheck?: boolean;
+};
+
+type NavGroup = {
+  key: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  items: NavItem[];
+};
+
+function NavLinkButton({
+  item,
+  isActive,
+  collapsed,
+  onClick,
+}: {
+  item: NavItem;
+  isActive: boolean;
+  collapsed: boolean;
+  onClick: () => void;
+}) {
+  const Icon = item.icon;
+  return (
+    <button
+      type="button"
+      id={`sidebar-nav-${item.id}`}
+      title={collapsed ? item.label : undefined}
+      onClick={onClick}
+      className={`group relative w-full flex items-center gap-3 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+        collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
+      } ${
+        isActive
+          ? 'bg-gradient-to-l from-emerald-500/15 via-emerald-500/10 to-transparent text-[#0F786E] dark:from-emerald-500/20 dark:text-emerald-300'
+          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5'
+      }`}
+    >
+      {isActive && (
+        <span
+          className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-full bg-[#0F786E] dark:bg-emerald-400 shadow-[0_0_12px_rgba(15,120,110,0.35)] dark:shadow-[0_0_12px_rgba(52,211,153,0.6)]"
+          aria-hidden
+        />
+      )}
+      <Icon
+        className={`w-[18px] h-[18px] shrink-0 ${
+          isActive
+            ? 'text-[#0F786E] dark:text-emerald-400'
+            : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'
+        }`}
+      />
+      {!collapsed && <span className="flex-1 text-right truncate">{item.label}</span>}
+    </button>
+  );
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   const {
     activeTab,
     setActiveTab,
     currentOrg,
-    openBookingModal,
     setViewMode,
+    can,
+    currentUser,
+    userRole,
   } = useApp();
 
-  // Navigation Items exactly matching the UI image
-  const menuItems: { id: ActiveTab; label: string; icon: any }[] = [
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    reports: true,
+    users: true,
+    org: true,
+    settings: true,
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  }, [collapsed]);
+
+  const primaryItems: NavItem[] = [
     { id: 'dashboard', label: 'داشبورد', icon: LayoutDashboard },
     { id: 'calendar', label: 'تقویم', icon: Calendar },
     { id: 'rooms', label: 'اتاق‌ها', icon: DoorOpen },
-    { id: 'admin-rbac', label: 'کاربران', icon: Users },
-    { id: 'analytics', label: 'گزارش‌ها', icon: BarChart3 },
-    { id: 'admin-settings', label: 'تنظیمات', icon: Sliders },
+    { id: 'my-bookings', label: 'جلسات من', icon: CalendarCheck },
+    { id: 'profile', label: 'پروفایل من', icon: User },
   ];
 
-  return (
-    <aside
-      id="portal-sidebar"
-      className="w-56 shrink-0 bg-white dark:bg-[#111A2E] border-l border-slate-200/80 dark:border-[#1E2E50] min-h-screen flex flex-col justify-between py-6 px-3 select-none transition-colors"
-    >
-      {/* Top Brand & Menu List */}
-      <div className="space-y-6">
-        {/* Brand Header: Exact Didar Logo */}
-        <div
-          onClick={() => setActiveTab('dashboard')}
-          className="flex items-center gap-2.5 px-3 cursor-pointer transition-transform hover:scale-[1.02]"
-        >
-          <DidarBrandMark size="md" showText={true} />
-        </div>
+  const groups: NavGroup[] = useMemo(() => {
+    const raw: NavGroup[] = [
+      {
+        key: 'reports',
+        label: 'گزارش‌ها',
+        icon: BarChart3,
+        items: [{ id: 'analytics', label: 'گزارش‌ها و آمار', icon: BarChart3 }],
+      },
+      {
+        key: 'users',
+        label: 'کاربران',
+        icon: ShieldCheck,
+        items: [
+          {
+            id: 'admin-rbac',
+            label: 'مدیریت کاربران',
+            icon: ShieldCheck,
+            permissionCheck: can('MANAGE_USERS_ROLES'),
+          },
+        ],
+      },
+      {
+        key: 'org',
+        label: 'سازمان',
+        icon: Building2,
+        items: [
+          {
+            id: 'admin-rooms',
+            label: 'مدیریت اتاق‌ها',
+            icon: Layers,
+            permissionCheck: can('MANAGE_ROOMS'),
+          },
+          {
+            id: 'admin-bookings',
+            label: 'نظارت بر رزروها',
+            icon: Calendar,
+            permissionCheck: can('APPROVE_BOOKINGS'),
+          },
+          {
+            id: 'admin-support-tickets',
+            label: 'تیکت‌های پشتیبانی',
+            icon: Ticket,
+            permissionCheck: can('MANAGE_ORG_SETTINGS'),
+          },
+        ],
+      },
+      {
+        key: 'settings',
+        label: 'تنظیمات',
+        icon: Sliders,
+        items: [
+          {
+            id: 'admin-settings',
+            label: 'تنظیمات سازمان',
+            icon: Sliders,
+            permissionCheck: can('MANAGE_ORG_SETTINGS'),
+          },
+        ],
+      },
+    ];
 
-        {/* Primary Action Button: + رزرو جلسه (Purple matching UI design) */}
-        <div className="px-1">
+    return raw
+      .map((g) => ({
+        ...g,
+        items: g.items.filter((i) => i.permissionCheck === undefined || i.permissionCheck),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [can]);
+
+  const roleMeta = getRoleMeta(userRole);
+  const displayName = currentUser?.name || 'کاربر دیدار';
+  const displayRole = roleMeta?.titleFa?.split(' ').slice(0, 2).join(' ') || 'مدیر سیستم';
+
+  const goTo = (id: ActiveTab) => {
+    setActiveTab(id);
+    onClose();
+  };
+
+  const toggleGroup = (key: string) => {
+    if (collapsed) return;
+    setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const isGroupActive = (group: NavGroup) => group.items.some((i) => i.id === activeTab);
+
+  const shellWidth = collapsed ? 'w-[4.5rem]' : 'w-[260px]';
+
+  return (
+    <>
+      {mobileOpen && (
+        <button
+          type="button"
+          aria-label="بستن منو"
+          className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-[2px] lg:hidden cursor-pointer"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        id="portal-sidebar"
+        className={`fixed top-0 bottom-0 right-0 z-50 shrink-0 flex flex-col bg-white dark:bg-[#0A0F1A] border-s border-slate-200 dark:border-white/[0.06] text-slate-700 dark:text-slate-200 shadow-sm dark:shadow-none select-none transition-[width,transform] duration-300 ease-out lg:sticky lg:top-0 lg:h-screen lg:max-h-screen ${shellWidth} ${
+          mobileOpen ? 'translate-x-0 shadow-2xl' : 'translate-x-full lg:translate-x-0'
+        } ${mobileOpen ? 'flex' : 'hidden lg:flex'}`}
+      >
+        {/* Header: logo + collapse */}
+        <div
+          className={`flex items-center gap-2 border-b border-slate-200 dark:border-white/[0.06] shrink-0 ${
+            collapsed ? 'flex-col py-4 px-2' : 'justify-between px-4 py-4'
+          }`}
+        >
           <button
-            id="sidebar-btn-booking"
-            onClick={() => openBookingModal()}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl font-bold text-xs text-white bg-[#4F46E5] hover:bg-[#4338CA] shadow-sm transition-all cursor-pointer"
+            type="button"
+            onClick={() => goTo('dashboard')}
+            className={`flex items-center min-w-0 cursor-pointer ${collapsed ? 'justify-center' : 'justify-start w-full px-0.5'}`}
+            aria-label="اتاق — دیدار"
           >
-            <Plus className="w-4 h-4" />
-            <span>رزرو جلسه</span>
+            {collapsed ? (
+              <Logo variant="mark" size="sm" theme="auto" />
+            ) : (
+              <Logo variant="horizontal" size="md" theme="auto" className="max-w-[148px]" />
+            )}
+          </button>
+
+          {!collapsed && (
+            <button
+              type="button"
+              onClick={() => setCollapsed(true)}
+              className="hidden lg:flex p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-400 dark:hover:text-white cursor-pointer border border-slate-200 dark:border-white/10"
+              aria-label="جمع کردن منو"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/10 cursor-pointer"
+            aria-label="بستن منو"
+          >
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="space-y-1">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                id={`sidebar-nav-${item.id}`}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-[#EEF2FF] dark:bg-indigo-950/60 text-[#4F46E5] dark:text-indigo-300 font-black shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#16243F]'
-                }`}
-              >
-                <Icon
-                  className={`w-4 h-4 shrink-0 ${
-                    isActive ? 'text-[#4F46E5] dark:text-indigo-300' : 'text-slate-400 dark:text-slate-500'
-                  }`}
-                />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+        {collapsed && (
+          <button
+            type="button"
+            onClick={() => setCollapsed(false)}
+            className="hidden lg:flex mx-auto mt-2 p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-400 cursor-pointer border border-slate-200 dark:border-white/10"
+            aria-label="باز کردن منو"
+          >
+            <ChevronLeft className="w-4 h-4 rotate-180" />
+          </button>
+        )}
 
-      {/* Bottom Tenant Footer Card (سازمان: پلنیک آسمان) */}
-      <div className="pt-4 border-t border-slate-100 dark:border-[#1E2E50]/60 space-y-3">
-        <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl bg-slate-50 dark:bg-[#16243F] border border-slate-200/60 dark:border-[#1E2E50]">
-          <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-[#4F46E5] flex items-center justify-center text-xs shrink-0 font-black">
-            🏢
-          </div>
-          <div className="flex flex-col text-right overflow-hidden">
-            <span className="text-[10px] text-slate-400 font-medium">سازمان فعال:</span>
-            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
-              {currentOrg?.name || 'پلنیک آسمان'}
-            </span>
-          </div>
+        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto overflow-x-hidden px-2 py-3">
+          <nav className="space-y-1">
+            {primaryItems.map((item) => (
+              <NavLinkButton
+                key={item.id}
+                item={item}
+                isActive={activeTab === item.id}
+                collapsed={collapsed}
+                onClick={() => goTo(item.id)}
+              />
+            ))}
+
+            {groups.length > 0 && (
+              <div className="my-3 border-t border-slate-200 dark:border-white/[0.06]" aria-hidden />
+            )}
+
+            {groups.map((group) => {
+              const GroupIcon = group.icon;
+              const expanded = openGroups[group.key] ?? true;
+              const groupActive = isGroupActive(group);
+
+              if (collapsed) {
+                const first = group.items[0];
+                if (!first) return null;
+                return (
+                  <NavLinkButton
+                    key={group.key}
+                    item={{ ...first, label: group.label, icon: group.icon }}
+                    isActive={groupActive}
+                    collapsed={collapsed}
+                    onClick={() => goTo(first.id)}
+                  />
+                );
+              }
+
+              return (
+                <div key={group.key} className="space-y-0.5">
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(group.key)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold cursor-pointer transition-colors ${
+                      groupActive
+                        ? 'text-[#0F786E] dark:text-emerald-300'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/5'
+                    }`}
+                  >
+                    <GroupIcon className="w-[18px] h-[18px] shrink-0 text-slate-400 dark:text-slate-400" />
+                    <span className="flex-1 text-right">{group.label}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-500 transition-transform ${
+                        expanded ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  {expanded &&
+                    group.items.map((item) => (
+                      <div key={item.id} className="pr-2 mr-1 border-r border-slate-200 dark:border-white/[0.06]">
+                        <NavLinkButton
+                          item={item}
+                          isActive={activeTab === item.id}
+                          collapsed={false}
+                          onClick={() => goTo(item.id)}
+                        />
+                      </div>
+                    ))}
+                </div>
+              );
+            })}
+          </nav>
         </div>
 
-        {/* Back to Landing Page Button */}
-        <button
-          onClick={() => setViewMode('landing')}
-          className="w-full flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-[11px] font-bold text-slate-500 dark:text-slate-400 hover:text-[#4F46E5] hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors cursor-pointer"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-[#4F46E5]" />
-          <span>صفحه معرفی دیدار</span>
-        </button>
-      </div>
-    </aside>
+        {/* User profile (display only — settings via header / پروفایل من) */}
+        <div className="border-t border-slate-200 dark:border-white/[0.06] p-2 shrink-0">
+          <div
+            className={`w-full flex items-center gap-2.5 rounded-xl p-2 ${
+              collapsed ? 'justify-center' : ''
+            }`}
+          >
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0F786E] to-emerald-500 dark:from-slate-600 dark:to-slate-800 border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0">
+              {currentOrg?.name?.charAt(0) || displayName.charAt(0)}
+            </div>
+            {!collapsed && (
+              <div className="flex-1 min-w-0 text-right">
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">{displayName}</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-500 truncate">{displayRole}</div>
+              </div>
+            )}
+          </div>
+
+          {!collapsed && (
+            <button
+              type="button"
+              onClick={() => {
+                setViewMode('landing');
+                onClose();
+              }}
+              className="mt-1 w-full flex items-center justify-center gap-1.5 py-2 text-[10px] font-bold text-slate-500 hover:text-[#0F786E] dark:hover:text-emerald-400 transition-colors cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>صفحه معرفی دیدار</span>
+            </button>
+          )}
+        </div>
+      </aside>
+    </>
   );
 };

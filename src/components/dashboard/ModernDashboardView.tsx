@@ -70,7 +70,7 @@ export const ModernDashboardView: React.FC = () => {
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80',
       ],
-      color: 'border-l-4 border-l-purple-500',
+      color: 'border-l-4 border-l-emerald-500',
     },
     {
       id: '2',
@@ -81,7 +81,7 @@ export const ModernDashboardView: React.FC = () => {
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80',
       ],
-      color: 'border-l-4 border-l-blue-500',
+      color: 'border-l-4 border-l-emerald-500',
     },
     {
       id: '3',
@@ -122,12 +122,12 @@ export const ModernDashboardView: React.FC = () => {
       {/* 4 Stat Cards matching screenshot (جلسه امروز, رزرو این هفته, اتاق فعال, میزان استفاده) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Stat 1: میزان استفاده */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               میزان استفاده
             </span>
-            <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-[#4F46E5] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl brand-icon-tile brand-icon-tile--md flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
           </div>
@@ -139,12 +139,12 @@ export const ModernDashboardView: React.FC = () => {
         </div>
 
         {/* Stat 2: اتاق فعال */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               اتاق فعال
             </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl brand-icon-tile brand-icon-tile--md flex items-center justify-center">
               <DoorOpen className="w-4 h-4" />
             </div>
           </div>
@@ -156,12 +156,12 @@ export const ModernDashboardView: React.FC = () => {
         </div>
 
         {/* Stat 3: رزرو این هفته */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               رزرو این هفته
             </span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl brand-icon-tile brand-icon-tile--md flex items-center justify-center">
               <Users className="w-4 h-4" />
             </div>
           </div>
@@ -173,12 +173,12 @@ export const ModernDashboardView: React.FC = () => {
         </div>
 
         {/* Stat 4: جلسه امروز */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               جلسه امروز
             </span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl brand-icon-tile brand-icon-tile--md flex items-center justify-center">
               <Calendar className="w-4 h-4" />
             </div>
           </div>
@@ -193,14 +193,14 @@ export const ModernDashboardView: React.FC = () => {
       {/* Main 2-Column Section matching UI screenshot */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Right Column (6/12): جلسات امروز */}
-        <div className="lg:col-span-6 bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="lg:col-span-6 bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
               جلسات امروز
             </h3>
             <button
               onClick={() => setActiveTab('calendar')}
-              className="text-xs font-bold text-[#4F46E5] dark:text-indigo-400 hover:underline cursor-pointer"
+              className="text-xs font-bold text-[#0F786E] dark:text-emerald-300 hover:underline cursor-pointer"
             >
               مشاهده همه
             </button>
@@ -210,7 +210,7 @@ export const ModernDashboardView: React.FC = () => {
             {sampleMeetings.map((item) => (
               <div
                 key={item.id}
-                className={`p-3.5 rounded-2xl bg-slate-50 dark:bg-[#16243F] border border-slate-200/60 dark:border-[#1E2E50] flex items-center justify-between gap-3 ${item.color}`}
+                className={`p-3.5 rounded-2xl bg-slate-50 dark:bg-[#334155] border border-slate-200/60 dark:border-[#334155] flex items-center justify-between gap-3 ${item.color}`}
               >
                 <div className="space-y-1">
                   <div className="text-xs font-bold text-slate-800 dark:text-slate-100">
@@ -231,7 +231,7 @@ export const ModernDashboardView: React.FC = () => {
                       key={idx}
                       src={av}
                       alt="attendee"
-                      className="w-7 h-7 rounded-full border-2 border-white dark:border-[#16243F] object-cover"
+                      className="w-7 h-7 rounded-full border-2 border-white dark:border-[#334155] object-cover"
                     />
                   ))}
                 </div>
@@ -243,7 +243,7 @@ export const ModernDashboardView: React.FC = () => {
         {/* Left Column (6/12): نمودار استفاده از اتاق‌ها + اتاق‌های پرتقاضا */}
         <div className="lg:col-span-6 space-y-6">
           {/* Card 1: نمودار استفاده از اتاق‌ها */}
-          <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                 نمودار استفاده از اتاق‌ها
@@ -251,7 +251,7 @@ export const ModernDashboardView: React.FC = () => {
               <select
                 value={chartRange}
                 onChange={(e: any) => setChartRange(e.target.value)}
-                className="text-[11px] font-bold bg-slate-100 dark:bg-[#16243F] border-none rounded-lg px-2 py-1 text-slate-600 dark:text-slate-300"
+                className="text-[11px] font-bold bg-slate-100 dark:bg-[#334155] border-none rounded-lg px-2 py-1 text-slate-600 dark:text-slate-300"
               >
                 <option value="week">این هفته</option>
                 <option value="month">این ماه</option>
@@ -259,12 +259,12 @@ export const ModernDashboardView: React.FC = () => {
             </div>
 
             {/* Vertical Bar Chart matching screenshot */}
-            <div className="h-44 pt-4 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-[#1E2E50]/60 pb-2">
+            <div className="h-44 pt-4 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-[#334155]/60 pb-2">
               {weeklyUsage.map((w) => (
                 <div key={w.day} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-                  <div className="w-full max-w-[28px] bg-indigo-100 dark:bg-indigo-950/60 rounded-t-xl overflow-hidden relative flex items-end h-full">
+                  <div className="w-full max-w-[28px] bg-emerald-100 dark:bg-emerald-950/60 rounded-t-xl overflow-hidden relative flex items-end h-full">
                     <div
-                      className="w-full bg-[#6366F1] rounded-t-xl transition-all duration-500"
+                      className="w-full bg-[#10B981] rounded-t-xl transition-all duration-500"
                       style={{ height: w.height }}
                     />
                   </div>
@@ -277,7 +277,7 @@ export const ModernDashboardView: React.FC = () => {
           </div>
 
           {/* Card 2: اتاق‌های پرتقاضا (Progress Bars) */}
-          <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
               اتاق‌های پرتقاضا
             </h3>
@@ -286,30 +286,30 @@ export const ModernDashboardView: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                   <span className="text-slate-700 dark:text-slate-300">اتاق کنفرانس ۱</span>
-                  <span className="text-indigo-600 font-mono">۹۲%</span>
+                  <span className="text-emerald-600 font-mono">۹۲%</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 dark:bg-[#16243F] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#4F46E5] rounded-full w-[92%]" />
+                <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#0F786E] rounded-full w-[92%]" />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                   <span className="text-slate-700 dark:text-slate-300">اتاق VIP</span>
-                  <span className="text-indigo-600 font-mono">۷۸%</span>
+                  <span className="text-emerald-600 font-mono">۷۸%</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 dark:bg-[#16243F] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#6366F1] rounded-full w-[78%]" />
+                <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#10B981] rounded-full w-[78%]" />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                   <span className="text-slate-700 dark:text-slate-300">اتاق جلسات ۲</span>
-                  <span className="text-indigo-600 font-mono">۶۵%</span>
+                  <span className="text-emerald-600 font-mono">۶۵%</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 dark:bg-[#16243F] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#818CF8] rounded-full w-[65%]" />
+                <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#34D399] rounded-full w-[65%]" />
                 </div>
               </div>
             </div>

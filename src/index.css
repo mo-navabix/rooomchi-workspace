@@ -1,25 +1,302 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
-@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
-@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
+
+/* Didar brand — visual identity (راهنمای هویت بصری) */
+:root {
+  --brand-primary: #0f786e;
+  --brand-primary-hover: #0d6b63;
+  --brand-primary-light: #10b981;
+  --brand-primary-lighter: #34d399;
+  --brand-primary-ultra-light: #d1fae5;
+  --brand-secondary: #10b981;
+  --brand-navy: #0f172a;
+  --brand-slate: #334155;
+  --brand-gray: #64748b;
+  --brand-muted: #94a3b8;
+  --brand-border: #e2e8f0;
+  --brand-surface: #ffffff;
+  --brand-surface-card: #f8faf9;
+  --brand-surface-secondary: #f1f5f9;
+  --brand-success: #22c55e;
+  --brand-warning: #f59e0b;
+  --brand-error: #ef4444;
+  --brand-info: #3b82f6;
+  --brand-text: #0f172a;
+  --brand-text-body: #334155;
+  --brand-text-muted: #64748b;
+  --brand-gradient-start: #10b981;
+  --brand-gradient-end: #34d399;
+  --brand-gradient-soft-start: #f0fdf4;
+  --brand-gradient-soft-end: #dcfce7;
+}
+
+.dark {
+  --brand-text: #f8fafc;
+  --brand-text-body: #e2e8f0;
+  --brand-text-muted: #94a3b8;
+  --brand-surface: #0f172a;
+  --brand-surface-card: #1e293b;
+  --brand-surface-secondary: #334155;
+  --brand-border: #334155;
+}
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-vazir: 'Vazirmatn', 'Vazir', sans-serif;
-  --color-exec-primary: #0D1B3A;
-  --color-exec-primary-light: #1E3360;
-  --color-exec-secondary: #2563EB;
-  --color-exec-tertiary: #14B8A6;
-  --color-exec-neutral: #0F172A;
-  --color-exec-bg-dark: #0A0F1D;
-  --color-exec-card-dark: #111A2E;
-  --color-exec-card-hover: #16243F;
-  --color-exec-border-dark: #1E2E50;
+
+  --color-brand-primary: #0f786e;
+  --color-brand-primary-hover: #0d6b63;
+  --color-brand-primary-light: #10b981;
+  --color-brand-primary-lighter: #34d399;
+  --color-brand-primary-ultra-light: #d1fae5;
+  --color-brand-navy: #0f172a;
+  --color-brand-slate: #334155;
+  --color-brand-muted: #64748b;
+  --color-brand-border: #e2e8f0;
+  --color-brand-surface: #ffffff;
+  --color-brand-surface-card: #f8faf9;
+  --color-brand-success: #22c55e;
+  --color-brand-warning: #f59e0b;
+  --color-brand-error: #ef4444;
+
+  --color-exec-primary: #0f786e;
+  --color-exec-primary-light: #10b981;
+  --color-exec-secondary: #10b981;
+  --color-exec-tertiary: #34d399;
+  --color-exec-neutral: #0f172a;
+  --color-exec-bg-dark: #0c1219;
+  --color-exec-card-dark: #1e293b;
+  --color-exec-card-hover: #334155;
+  --color-exec-border-dark: #334155;
 }
 
-/* Local Vazirmatn & Vazir Font Definitions */
+@layer base {
+  *, ::before, ::after {
+    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  html {
+    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body {
+    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--brand-surface-card);
+    color: var(--brand-text);
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  button, input, optgroup, select, textarea {
+    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  html.dark body {
+    background-color: var(--brand-navy);
+    color: #f1f5f9;
+  }
+}
+
+/* Dark-mode surfaces & icon tiles (readable contrast on #0F172A / #1E293B) */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@layer components {
+  .page-skeleton-shell {
+    min-height: calc(100vh - 11rem);
+    width: 100%;
+  }
+
+  .brand-icon-tile {
+    @apply flex items-center justify-center rounded-xl shrink-0 bg-emerald-50 text-[#0F786E];
+  }
+
+  html.dark .brand-icon-tile {
+    background-color: rgb(16 185 129 / 0.14);
+    color: #6ee7b7;
+    box-shadow: inset 0 0 0 1px rgb(52 211 153 / 0.28);
+  }
+
+  .brand-icon-tile--lg {
+    @apply w-10 h-10;
+  }
+
+  .brand-icon-tile--md {
+    @apply w-8 h-8;
+  }
+
+  html.dark .brand-icon-tile--cyan {
+    background-color: rgb(34 211 238 / 0.12);
+    color: #67e8f9;
+    box-shadow: inset 0 0 0 1px rgb(34 211 238 / 0.25);
+  }
+
+  html.dark .brand-icon-tile--sky {
+    background-color: rgb(56 189 248 / 0.12);
+    color: #7dd3fc;
+    box-shadow: inset 0 0 0 1px rgb(56 189 248 / 0.22);
+  }
+
+  html.dark .brand-icon-tile--amber {
+    background-color: rgb(245 158 11 / 0.14);
+    color: #fcd34d;
+    box-shadow: inset 0 0 0 1px rgb(245 158 11 / 0.28);
+  }
+
+  .brand-icon-tile--cyan {
+    @apply bg-cyan-50 text-cyan-700;
+  }
+
+  .brand-icon-tile--sky {
+    @apply bg-sky-50 text-sky-700;
+  }
+
+  .brand-icon-tile--amber {
+    @apply bg-amber-50 text-amber-700;
+  }
+
+  .dark-surface-card {
+    @apply bg-white dark:bg-[#1e293b] border border-slate-200/80 dark:border-slate-600/60;
+  }
+
+  .dark-surface-inset {
+    @apply bg-slate-50 dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-600/40;
+  }
+
+  .dark-link-accent {
+    @apply text-[#0F786E] dark:text-emerald-300 hover:underline;
+  }
+
+  html.dark .nav-item-active {
+    background-color: rgb(16 185 129 / 0.16);
+    color: #a7f3d0;
+    box-shadow: inset 0 0 0 1px rgb(52 211 153 / 0.22);
+  }
+}
+
+.exec-card {
+  background-color: var(--brand-surface);
+  border-color: var(--brand-border);
+  transition: all 0.2s ease;
+}
+
+html.dark .exec-card {
+  background-color: var(--color-exec-card-dark);
+  border-color: var(--color-exec-border-dark);
+}
+
+.exec-card-subtle {
+  background-color: var(--brand-surface-secondary);
+  border-color: var(--brand-border);
+}
+
+html.dark .exec-card-subtle {
+  background-color: #0f172a;
+  border-color: var(--color-exec-border-dark);
+}
+
+.exec-input {
+  background-color: var(--brand-surface);
+  border-color: #cbd5e1;
+  color: var(--brand-text);
+}
+
+html.dark .exec-input {
+  background-color: var(--color-exec-card-dark);
+  border-color: var(--color-exec-border-dark);
+  color: #f8fafc;
+}
+
+.exec-input:focus {
+  border-color: var(--brand-primary-light);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+}
+html.dark .glass-card {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(51, 65, 85, 0.45);
+}
+
+.glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  background: #ffffff;
+  border-color: rgba(15, 120, 110, 0.35);
+  box-shadow: 0 12px 28px -6px rgba(16, 185, 129, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+html.dark .glass-card-hover:hover {
+  background: rgba(51, 65, 85, 0.85);
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6);
+}
+
+.neon-glow-blue {
+  box-shadow: 0 10px 30px -5px rgba(16, 185, 129, 0.2), 0 4px 12px -2px rgba(16, 185, 129, 0.08);
+}
+html.dark .neon-glow-blue {
+  box-shadow: 0 0 32px -8px rgba(16, 185, 129, 0.35);
+}
+
+.neon-glow-teal {
+  box-shadow: 0 10px 30px -5px rgba(15, 120, 110, 0.16), 0 4px 12px -2px rgba(15, 120, 110, 0.06);
+}
+html.dark .neon-glow-teal {
+  box-shadow: 0 0 28px -6px rgba(52, 211, 153, 0.35);
+}
+
+.tablet-screen-bezel {
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+html.dark .tablet-screen-bezel {
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Font faces — Vazirmatn / Vazir / IRANSans fallbacks */
 @font-face {
   font-family: 'Vazir';
   font-style: normal;
@@ -60,7 +337,6 @@
   font-display: swap;
 }
 
-/* IRANSans Web Font Fallbacks */
 @font-face {
   font-family: 'IRANSans';
   font-style: normal;
@@ -96,155 +372,3 @@
        url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2') format('woff2');
   font-display: swap;
 }
-
-@layer base {
-  *, ::before, ::after {
-    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-
-  html {
-    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-
-  body {
-    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #f8fafc;
-    color: #0f172a;
-    transition: background-color 0.25s ease, color 0.25s ease;
-  }
-
-  button, input, optgroup, select, textarea {
-    font-family: 'Vazirmatn', 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-
-  html.dark body {
-    background-color: #0a0f1d;
-    color: #f1f5f9;
-  }
-}
-
-/* Modern Workspace Executive Palette Utility Classes */
-.exec-card {
-  background-color: #ffffff;
-  border-color: #e2e8f0;
-  transition: all 0.2s ease;
-}
-
-html.dark .exec-card {
-  background-color: #111a2e;
-  border-color: #1e2e50;
-}
-
-.exec-card-subtle {
-  background-color: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-html.dark .exec-card-subtle {
-  background-color: #0d1527;
-  border-color: #1b2846;
-}
-
-.exec-input {
-  background-color: #ffffff;
-  border-color: #cbd5e1;
-  color: #0f172a;
-}
-
-html.dark .exec-input {
-  background-color: #111a2e;
-  border-color: #1e2e50;
-  color: #f8fafc;
-}
-
-.exec-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-/* Custom subtle scrollbar with Dark Mode support */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
-
-/* Hide scrollbar for Chrome, Safari, Opera and Firefox */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* Didar Landing Page Custom Design Tokens */
-.glass-card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.85);
-}
-html.dark .glass-card {
-  background: rgba(23, 31, 51, 0.75);
-  border: 1px solid rgba(69, 70, 78, 0.35);
-}
-
-.glass-card-hover {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glass-card-hover:hover {
-  background: #ffffff;
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 12px 28px -6px rgba(37, 99, 235, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
-  transform: translateY(-2px);
-}
-html.dark .glass-card-hover:hover {
-  background: rgba(34, 42, 61, 0.85);
-  border-color: rgba(79, 219, 200, 0.45);
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6);
-}
-
-.neon-glow-blue {
-  box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.2), 0 4px 12px -2px rgba(37, 99, 235, 0.08);
-}
-html.dark .neon-glow-blue {
-  box-shadow: 0 0 32px -8px rgba(37, 99, 235, 0.45);
-}
-
-.neon-glow-teal {
-  box-shadow: 0 10px 30px -5px rgba(13, 148, 136, 0.16), 0 4px 12px -2px rgba(13, 148, 136, 0.06);
-}
-html.dark .neon-glow-teal {
-  box-shadow: 0 0 28px -6px rgba(79, 219, 200, 0.35);
-}
-
-.tablet-screen-bezel {
-  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-html.dark .tablet-screen-bezel {
-  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
-}
-
-
-

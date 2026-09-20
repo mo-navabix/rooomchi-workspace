@@ -52,7 +52,7 @@ export const ModernRoomView: React.FC = () => {
         {/* Action Button: + افزودن اتاق (Dark Blue/Navy pill matching screenshot) */}
         <button
           onClick={() => openBookingModal()}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0D1B3A] dark:bg-[#4F46E5] hover:bg-slate-800 transition-colors shadow-xs cursor-pointer"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] dark:bg-[#0F786E] hover:bg-slate-800 transition-colors shadow-xs cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>افزودن اتاق</span>
@@ -64,7 +64,7 @@ export const ModernRoomView: React.FC = () => {
         <select
           value={filterCapacity}
           onChange={(e) => setFilterCapacity(e.target.value)}
-          className="text-xs font-semibold bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 shadow-2xs"
+          className="text-xs font-semibold bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 shadow-2xs"
         >
           <option value="all">همه ظرفیت‌ها</option>
           <option value="small">تا ۶ نفر</option>
@@ -75,7 +75,7 @@ export const ModernRoomView: React.FC = () => {
         <select
           value={filterFloor}
           onChange={(e) => setFilterFloor(e.target.value)}
-          className="text-xs font-semibold bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 shadow-2xs"
+          className="text-xs font-semibold bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 shadow-2xs"
         >
           <option value="all">همه طبقه‌ها</option>
           <option value="1">طبقه ۱</option>
@@ -86,7 +86,7 @@ export const ModernRoomView: React.FC = () => {
         <select
           value={filterBuilding}
           onChange={(e) => setFilterBuilding(e.target.value)}
-          className="text-xs font-semibold bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 shadow-2xs"
+          className="text-xs font-semibold bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-xl px-3 py-2 text-slate-700 dark:text-slate-300 shadow-2xs"
         >
           <option value="all">همه ساختمان‌ها</option>
           <option value="central">ساختمان مرکزی</option>
@@ -99,7 +99,7 @@ export const ModernRoomView: React.FC = () => {
         {rooms.slice(0, 4).map((room, idx) => (
           <div
             key={room.id}
-            className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+            className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
           >
             <div>
               {/* Room Photo with Green Status Badge matching screenshot */}
@@ -138,10 +138,10 @@ export const ModernRoomView: React.FC = () => {
             </div>
 
             {/* Bottom Actions Row */}
-            <div className="p-4 pt-0 flex items-center justify-between border-t border-slate-100 dark:border-[#1E2E50]/60 mt-2">
+            <div className="p-4 pt-0 flex items-center justify-between border-t border-slate-100 dark:border-[#334155]/60 mt-2">
               <button
                 onClick={() => openBookingModal()}
-                className="text-xs font-bold text-[#4F46E5] dark:text-indigo-400 hover:underline cursor-pointer"
+                className="text-xs font-bold text-[#0F786E] dark:text-emerald-300 hover:underline cursor-pointer"
               >
                 رزرو اتاق
               </button>

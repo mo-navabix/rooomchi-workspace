@@ -37,8 +37,10 @@ export type ActiveTab =
   | 'admin-rbac'
   | 'analytics'
   | 'admin-settings'
-  | 'provisioning'
-  | 'api-docs';
+  | 'admin-support-tickets'
+  | 'profile'
+  | 'support-ticket'
+  | 'provisioning';
 
 export interface Amenity {
   id: string;

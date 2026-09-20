@@ -139,12 +139,12 @@ export const AdminSettingsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-[#111A2E] p-5 rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs flex items-center justify-between transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex items-center justify-between transition-colors">
         <div className="flex items-center gap-3">
           <OrgLogoBadge logo={logo} name={orgName || currentOrg?.name} size="lg" />
           <div>
-            <div className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-[#14B8A6]" />
+            <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
+              <Sliders className="w-3.5 h-3.5 text-[#10B981]" />
               <span>پیکربندی اختصاصی سازمان</span>
             </div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
@@ -156,16 +156,16 @@ export const AdminSettingsView: React.FC = () => {
           </div>
         </div>
 
-        <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-[#2563EB] dark:text-[#60A5FA] border border-blue-200 dark:border-blue-900/50">
+        <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#10B981] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-900/50">
           اشتراک: {(currentOrg?.plan ?? 'business').toUpperCase()}
         </span>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Branding Box */}
-        <div className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] p-6 shadow-xs space-y-5 transition-colors">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#1E2E50] pb-3 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#14B8A6]" />
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-5 transition-colors">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#334155] pb-3 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#10B981]" />
             <span>هویت و برندینگ سازمانی (White-labeling)</span>
           </h3>
 
@@ -178,7 +178,7 @@ export const AdminSettingsView: React.FC = () => {
                 type="text"
                 value={orgName}
                 onChange={(e) => setOrgName(e.target.value)}
-                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#1E2E50] rounded-xl bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB] focus:outline-hidden"
+                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
                 required
               />
             </div>
@@ -191,14 +191,14 @@ export const AdminSettingsView: React.FC = () => {
                 type="email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
-                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#1E2E50] rounded-xl bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB] focus:outline-hidden"
+                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
                 required
               />
             </div>
           </div>
 
           {/* Org Logo / Symbol Section with Custom Logo Support */}
-          <div className="pt-2 border-t border-slate-100 dark:border-[#1E2E50] space-y-4">
+          <div className="pt-2 border-t border-slate-100 dark:border-[#334155] space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <label className="block text-xs font-bold text-slate-900 dark:text-white">
@@ -210,13 +210,13 @@ export const AdminSettingsView: React.FC = () => {
               </div>
 
               {/* Mode Toggle Tabs */}
-              <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#0A0F1D] rounded-xl border border-slate-200/80 dark:border-[#1E2E50] shrink-0 text-xs">
+              <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-[#0F172A] rounded-xl border border-slate-200/80 dark:border-[#334155] shrink-0 text-xs">
                 <button
                   type="button"
                   onClick={() => setLogoTab('presets')}
                   className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                     logoTab === 'presets'
-                      ? 'bg-white dark:bg-[#16243F] text-slate-900 dark:text-white shadow-xs font-bold'
+                      ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs font-bold'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -227,7 +227,7 @@ export const AdminSettingsView: React.FC = () => {
                   onClick={() => setLogoTab('custom')}
                   className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
                     logoTab === 'custom'
-                      ? 'bg-white dark:bg-[#16243F] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-bold'
+                      ? 'bg-white dark:bg-[#334155] text-[#10B981] dark:text-[#34D399] shadow-xs font-bold'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -239,7 +239,7 @@ export const AdminSettingsView: React.FC = () => {
 
             {/* Tab 1: Presets */}
             {logoTab === 'presets' && (
-              <div className="p-4 bg-slate-50 dark:bg-[#0A0F1D]/60 rounded-2xl border border-slate-200/80 dark:border-[#1E2E50] space-y-3">
+              <div className="p-4 bg-slate-50 dark:bg-[#0F172A]/60 rounded-2xl border border-slate-200/80 dark:border-[#334155] space-y-3">
                 <div className="flex flex-wrap gap-2.5">
                   {logoOptions.map((icon) => (
                     <button
@@ -248,8 +248,8 @@ export const AdminSettingsView: React.FC = () => {
                       onClick={() => setLogo(icon)}
                       className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl border transition-all ${
                         logo === icon
-                          ? 'border-[#2563EB] bg-blue-50 dark:bg-blue-950/60 shadow-xs ring-2 ring-[#2563EB]/40 scale-105'
-                          : 'border-slate-200 dark:border-[#1E2E50] bg-white dark:bg-[#111A2E] hover:border-slate-300 dark:hover:border-slate-600'
+                          ? 'border-[#10B981] bg-emerald-50 dark:bg-emerald-950/60 shadow-xs ring-2 ring-[#10B981]/40 scale-105'
+                          : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1E293B] hover:border-slate-300 dark:hover:border-slate-600'
                       }`}
                     >
                       {icon}
@@ -257,7 +257,7 @@ export const AdminSettingsView: React.FC = () => {
                   ))}
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  <Info className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                   <span>آیکون انتخابی در تمامی هدرها، کارت‌ها و منوهای کشویی سازمان نمایش داده می‌شود.</span>
                 </div>
               </div>
@@ -265,7 +265,7 @@ export const AdminSettingsView: React.FC = () => {
 
             {/* Tab 2: Custom Logo Upload & Direct URL */}
             {logoTab === 'custom' && (
-              <div className="p-4 bg-slate-50 dark:bg-[#0A0F1D]/60 rounded-2xl border border-slate-200/80 dark:border-[#1E2E50] space-y-4">
+              <div className="p-4 bg-slate-50 dark:bg-[#0F172A]/60 rounded-2xl border border-slate-200/80 dark:border-[#334155] space-y-4">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
                   {/* Upload Box */}
                   <div className="lg:col-span-7 space-y-3">
@@ -296,11 +296,11 @@ export const AdminSettingsView: React.FC = () => {
                       }}
                       className={`p-5 rounded-xl border-2 border-dashed text-center cursor-pointer transition-all ${
                         isDragging
-                          ? 'border-[#2563EB] bg-blue-50/50 dark:bg-blue-950/30'
-                          : 'border-slate-300 dark:border-[#1E2E50] hover:border-blue-400 dark:hover:border-blue-600 bg-white dark:bg-[#111A2E]'
+                          ? 'border-[#10B981] bg-emerald-50/50 dark:bg-emerald-950/30'
+                          : 'border-slate-300 dark:border-[#334155] hover:border-emerald-400 dark:hover:border-emerald-600 bg-white dark:bg-[#1E293B]'
                       }`}
                     >
-                      <div className="w-10 h-10 mx-auto rounded-full bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] mb-2">
+                      <div className="w-10 h-10 mx-auto rounded-full bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-[#10B981] dark:text-[#34D399] mb-2">
                         <Upload className="w-5 h-5" />
                       </div>
                       <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
@@ -323,12 +323,12 @@ export const AdminSettingsView: React.FC = () => {
                           placeholder="https://example.com/logo.png"
                           value={customLogoUrl}
                           onChange={(e) => setCustomLogoUrl(e.target.value)}
-                          className="flex-1 text-xs px-3.5 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-xl bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB] focus:outline-hidden"
+                          className="flex-1 text-xs px-3.5 py-2 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
                         />
                         <button
                           type="button"
                           onClick={handleApplyUrl}
-                          className="px-3 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors shrink-0 cursor-pointer"
+                          className="px-3 py-2 text-xs font-semibold bg-emerald-600 hover:bg-[#0D6B63] text-white rounded-xl transition-colors shrink-0 cursor-pointer"
                         >
                           اعمال لینک
                         </button>
@@ -337,10 +337,10 @@ export const AdminSettingsView: React.FC = () => {
                   </div>
 
                   {/* Standard Preview Card & Specifications */}
-                  <div className="lg:col-span-5 bg-white dark:bg-[#111A2E] p-4 rounded-xl border border-slate-200 dark:border-[#1E2E50] space-y-3">
+                  <div className="lg:col-span-5 bg-white dark:bg-[#1E293B] p-4 rounded-xl border border-slate-200 dark:border-[#334155] space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <ImageIcon className="w-3.5 h-3.5 text-[#14B8A6]" />
+                        <ImageIcon className="w-3.5 h-3.5 text-[#10B981]" />
                         <span>پیش‌نمایش در سایزهای استاندارد</span>
                       </span>
 
@@ -361,7 +361,7 @@ export const AdminSettingsView: React.FC = () => {
                     </div>
 
                     {/* Standardized Preview Renders */}
-                    <div className="flex items-center justify-around py-3 px-2 bg-slate-50 dark:bg-[#0A0F1D] rounded-xl border border-slate-100 dark:border-[#1E2E50]/70">
+                    <div className="flex items-center justify-around py-3 px-2 bg-slate-50 dark:bg-[#0F172A] rounded-xl border border-slate-100 dark:border-[#334155]/70">
                       {/* Small/Header */}
                       <div className="text-center space-y-1">
                         <OrgLogoBadge logo={logo} name={orgName} size="sm" className="mx-auto" />
@@ -381,8 +381,8 @@ export const AdminSettingsView: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 bg-blue-50/50 dark:bg-blue-950/20 p-2.5 rounded-lg border border-blue-100 dark:border-blue-900/30">
-                      <div className="font-semibold text-blue-800 dark:text-blue-300 flex items-center gap-1">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 bg-emerald-50/50 dark:bg-emerald-950/20 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
+                      <div className="font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" />
                         <span>مشخصات استاندارد لوگو:</span>
                       </div>
@@ -408,7 +408,7 @@ export const AdminSettingsView: React.FC = () => {
                     onClick={() => setPrimaryColor(c)}
                     className={`w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center ${
                       primaryColor === c
-                        ? 'border-slate-900 dark:border-white scale-110 shadow-md ring-2 ring-blue-500/30'
+                        ? 'border-slate-900 dark:border-white scale-110 shadow-md ring-2 ring-emerald-500/30'
                         : 'border-transparent hover:scale-105'
                     }`}
                     style={{ backgroundColor: c }}
@@ -422,9 +422,9 @@ export const AdminSettingsView: React.FC = () => {
         </div>
 
         {/* Booking Policies Box */}
-        <div className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] p-6 shadow-xs space-y-4 transition-colors">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#1E2E50] pb-3 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-[#14B8A6]" />
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-4 transition-colors">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#334155] pb-3 flex items-center gap-2">
+            <Clock className="w-4 h-4 text-[#10B981]" />
             <span>سیاست‌ها و محدودیت‌های زمانی رزرواسیون</span>
           </h3>
 
@@ -438,14 +438,14 @@ export const AdminSettingsView: React.FC = () => {
                   type="time"
                   value={startHour}
                   onChange={(e) => setStartHour(e.target.value)}
-                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#1E2E50] rounded-xl bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB] focus:outline-hidden"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
                 />
                 <span className="text-xs text-slate-400 font-medium">تا</span>
                 <input
                   type="time"
                   value={endHour}
                   onChange={(e) => setEndHour(e.target.value)}
-                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#1E2E50] rounded-xl bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB] focus:outline-hidden"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
                 />
               </div>
             </div>
@@ -458,7 +458,7 @@ export const AdminSettingsView: React.FC = () => {
                 <select
                   value={maxBookingHours}
                   onChange={(e) => setMaxBookingHours(Number(e.target.value))}
-                  className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none border border-slate-200 dark:border-[#1E2E50] rounded-xl bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2563EB] focus:outline-hidden cursor-pointer"
+                  className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden cursor-pointer"
                 >
                   <option value={2}>حداکثر ۲ ساعت</option>
                   <option value={3}>حداکثر ۳ ساعت</option>
@@ -476,7 +476,7 @@ export const AdminSettingsView: React.FC = () => {
                 type="checkbox"
                 checked={autoApprove}
                 onChange={(e) => setAutoApprove(e.target.checked)}
-                className="w-4 h-4 text-[#2563EB] rounded cursor-pointer"
+                className="w-4 h-4 text-[#10B981] rounded cursor-pointer"
               />
               <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 select-none">
                 تأیید خودکار رزروها برای تمام پرسنل سازمان
@@ -488,7 +488,7 @@ export const AdminSettingsView: React.FC = () => {
                 type="checkbox"
                 checked={allowWeekend}
                 onChange={(e) => setAllowWeekend(e.target.checked)}
-                className="w-4 h-4 text-[#2563EB] rounded cursor-pointer"
+                className="w-4 h-4 text-[#10B981] rounded cursor-pointer"
               />
               <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 select-none">
                 امکان رزرو در روزهای تعطیل و آخر هفته
@@ -503,7 +503,7 @@ export const AdminSettingsView: React.FC = () => {
             type="submit"
             id="btn-save-org-settings"
             disabled={isSaving}
-            className="px-6 py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+            className="px-6 py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span>{isSaving ? 'در حال ذخیره‌سازی...' : 'ذخیره تنظیمات سازمان'}</span>

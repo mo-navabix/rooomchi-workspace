@@ -13,6 +13,7 @@ import {
   CalendarCheck2,
 } from 'lucide-react';
 import { toPersianDigits, formatToJalali } from '../../utils/jalali';
+import { AnalyticsSkeleton } from '../common/Skeletons';
 
 export const AnalyticsView: React.FC = () => {
   const { currentOrg } = useApp();
@@ -72,6 +73,10 @@ export const AnalyticsView: React.FC = () => {
   }, '');
   const areaD = `${pathD} L ${points[points.length - 1].x} 190 L ${points[0].x} 190 Z`;
 
+  if (isLoading) {
+    return <AnalyticsSkeleton />;
+  }
+
   return (
     <div className="space-y-6 select-none" id="analytics-view">
       {/* Header */}
@@ -89,7 +94,7 @@ export const AnalyticsView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={loadData}
-            className="p-2 rounded-xl border border-slate-200 dark:border-[#1E2E50] text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#16243F] transition-colors cursor-pointer"
+            className="p-2 rounded-xl border border-slate-200 dark:border-[#334155] text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#334155] transition-colors cursor-pointer"
             title="بروزرسانی زنده آمار"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -98,7 +103,7 @@ export const AnalyticsView: React.FC = () => {
           <select
             value={timeRange}
             onChange={(e: any) => setTimeRange(e.target.value)}
-            className="text-xs font-bold bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-xl px-3.5 py-2 text-slate-700 dark:text-slate-200 shadow-2xs focus:outline-none"
+            className="text-xs font-bold bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-xl px-3.5 py-2 text-slate-700 dark:text-slate-200 shadow-2xs focus:outline-none"
           >
             <option value="week">هفته جاری</option>
             <option value="month">ماه جاری</option>
@@ -110,12 +115,12 @@ export const AnalyticsView: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Most Used Room */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               بیشترین استفاده
             </span>
-            <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-[#4F46E5] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl brand-icon-tile brand-icon-tile--md flex items-center justify-center">
               <Building className="w-4 h-4" />
             </div>
           </div>
@@ -131,12 +136,12 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         {/* Average Meeting Duration */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               میانگین مدت جلسه
             </span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl brand-icon-tile brand-icon-tile--md flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
           </div>
@@ -144,19 +149,19 @@ export const AnalyticsView: React.FC = () => {
             <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100">
               {toPersianDigits(avgDurationMinutes)} دقیقه
             </div>
-            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-1">
+            <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1">
               متوسط زمان برگزاری جلسات
             </div>
           </div>
         </div>
 
         {/* Total Meetings */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               تعداد کل جلسات ثبت شده
             </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl brand-icon-tile brand-icon-tile--md flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
@@ -172,7 +177,7 @@ export const AnalyticsView: React.FC = () => {
       </div>
 
       {/* Main Trend Line Chart */}
-      <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-3xl p-6 shadow-xs">
+      <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-6 shadow-xs">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
@@ -182,7 +187,7 @@ export const AnalyticsView: React.FC = () => {
               تعداد جلسات ثبت شده در دوره‌های هفتگی به صورت متصل به API
             </p>
           </div>
-          <span className="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-[#16243F] px-3 py-1.5 rounded-xl">
+          <span className="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-[#334155] px-3 py-1.5 rounded-xl">
             ماهانه
           </span>
         </div>
@@ -208,7 +213,7 @@ export const AnalyticsView: React.FC = () => {
             {/* Line Path */}
             <path
               d={pathD}
-              stroke="#6366F1"
+              stroke="#10B981"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -217,22 +222,22 @@ export const AnalyticsView: React.FC = () => {
             {/* Nodes */}
             {points.map((pt, i) => (
               <g key={i}>
-                <circle cx={pt.x} cy={pt.y} r="5" fill="#4F46E5" />
+                <circle cx={pt.x} cy={pt.y} r="5" fill="#0F786E" />
                 <circle cx={pt.x} cy={pt.y} r="2.5" fill="#FFFFFF" />
               </g>
             ))}
 
             <defs>
               <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#818CF8" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#818CF8" stopOpacity="0.0" />
+                <stop offset="0%" stopColor="#34D399" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#34D399" stopOpacity="0.0" />
               </linearGradient>
             </defs>
           </svg>
         </div>
 
         {/* Chart X Labels */}
-        <div className="flex justify-between text-xs text-slate-400 font-medium mt-4 pt-2 border-t border-slate-100 dark:border-[#1E2E50]">
+        <div className="flex justify-between text-xs text-slate-400 font-medium mt-4 pt-2 border-t border-slate-100 dark:border-[#334155]">
           {monthlyTrend.map((t) => (
             <span key={t.label}>
               {t.label} ({toPersianDigits(t.count)})
@@ -244,12 +249,12 @@ export const AnalyticsView: React.FC = () => {
       {/* Department & Popular Rooms Distribution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Popular Rooms Breakdown */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-3xl p-5 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
               محبوب‌ترین اتاق‌ها (تعداد رزرو)
             </h3>
-            <BarChart2 className="w-4 h-4 text-indigo-500" />
+            <BarChart2 className="w-4 h-4 text-emerald-600" />
           </div>
 
           <div className="space-y-3 pt-1">
@@ -266,13 +271,13 @@ export const AnalyticsView: React.FC = () => {
                 <div key={idx}>
                   <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                     <span className="text-slate-700 dark:text-slate-300">{item.name}</span>
-                    <span className="text-[#4F46E5] font-mono">
+                    <span className="text-[#0F786E] font-mono">
                       {toPersianDigits(item.count)} رزرو
                     </span>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 dark:bg-[#16243F] rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#4F46E5] rounded-full transition-all duration-500"
+                      className="h-full bg-[#0F786E] rounded-full transition-all duration-500"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
@@ -283,7 +288,7 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         {/* Department Usage Breakdown */}
-        <div className="bg-white dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#1E2E50] rounded-3xl p-5 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
               میزان استفاده بر اساس دپارتمان‌ها
@@ -299,7 +304,7 @@ export const AnalyticsView: React.FC = () => {
                   0
                 );
                 const percent = Math.min(100, Math.round((count / Math.max(1, totalDepts)) * 100));
-                const colors = ['bg-[#6366F1]', 'bg-emerald-500', 'bg-blue-500', 'bg-amber-500'];
+                const colors = ['bg-[#10B981]', 'bg-emerald-500', 'bg-emerald-500', 'bg-amber-500'];
                 const barColor = colors[idx % colors.length];
 
                 return (
@@ -310,7 +315,7 @@ export const AnalyticsView: React.FC = () => {
                         {toPersianDigits(count)} ({toPersianDigits(percent)}%)
                       </span>
                     </div>
-                    <div className="w-full h-2 bg-slate-100 dark:bg-[#16243F] rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
                       <div
                         className={`h-full ${barColor} rounded-full transition-all duration-500`}
                         style={{ width: `${percent}%` }}

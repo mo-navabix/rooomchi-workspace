@@ -147,10 +147,10 @@ export const AdminRbacView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-[#111A2E] p-5 rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
         <div>
-          <div className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-[#14B8A6]" />
+          <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-[#10B981]" />
             <span>مدیریت دسترسی‌های مبتنی بر نقش (RBAC)</span>
           </div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
@@ -163,11 +163,11 @@ export const AdminRbacView: React.FC = () => {
 
         <div className="flex items-center gap-2">
           {/* Sub-tabs */}
-          <div className="flex items-center bg-slate-100 dark:bg-[#16243F] p-1 rounded-xl text-xs font-semibold">
+          <div className="flex items-center bg-slate-100 dark:bg-[#334155] p-1 rounded-xl text-xs font-semibold">
             <button
               onClick={() => setActiveSubTab('users')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
-                activeSubTab === 'users' ? 'bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400'
+                activeSubTab === 'users' ? 'bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400'
               }`}
             >
               کاربران ({users.length})
@@ -175,7 +175,7 @@ export const AdminRbacView: React.FC = () => {
             <button
               onClick={() => setActiveSubTab('matrix')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
-                activeSubTab === 'matrix' ? 'bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400'
+                activeSubTab === 'matrix' ? 'bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white shadow-xs' : 'text-slate-500 dark:text-slate-400'
               }`}
             >
               ماتریس دسترسی‌ها
@@ -187,7 +187,7 @@ export const AdminRbacView: React.FC = () => {
               setNewDept(currentOrg?.departments[0] || '');
               setIsAddModalOpen(true);
             }}
-            className="px-3.5 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span>افزودن پرسنل</span>
@@ -203,7 +203,7 @@ export const AdminRbacView: React.FC = () => {
           return (
             <div
               key={r}
-              className="bg-white dark:bg-[#111A2E] p-4 rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs flex flex-col justify-between space-y-2 hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+              className="bg-white dark:bg-[#1E293B] p-4 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col justify-between space-y-2 hover:border-slate-300 dark:hover:border-slate-600 transition-all"
             >
               <div>
                 <div className="flex items-center justify-between mb-1">
@@ -217,7 +217,7 @@ export const AdminRbacView: React.FC = () => {
                   {meta.description}
                 </p>
               </div>
-              <div className="pt-2 border-t border-slate-100 dark:border-[#1E2E50] flex items-center justify-between text-[10px] text-slate-400">
+              <div className="pt-2 border-t border-slate-100 dark:border-[#334155] flex items-center justify-between text-[10px] text-slate-400">
                 <span>تعداد مجوزها:</span>
                 <span className="font-bold text-slate-700 dark:text-slate-300">{meta.permissions.length} مجوز فعال</span>
               </div>
@@ -230,7 +230,7 @@ export const AdminRbacView: React.FC = () => {
       {activeSubTab === 'users' && (
         <div className="space-y-4">
           {/* Filter Bar */}
-          <div className="bg-white dark:bg-[#111A2E] p-4 rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 transition-colors">
+          <div className="bg-white dark:bg-[#1E293B] p-4 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 transition-colors">
             <div className="relative w-full sm:w-72">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
               <input
@@ -238,7 +238,7 @@ export const AdminRbacView: React.FC = () => {
                 placeholder="جستجو نام، ایمیل یا دپارتمان..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full text-xs pl-3 pr-9 py-2 bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] rounded-xl text-slate-900 dark:text-white"
+                className="w-full text-xs pl-3 pr-9 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white"
               />
             </div>
 
@@ -248,7 +248,7 @@ export const AdminRbacView: React.FC = () => {
                 <select
                   value={filterRole}
                   onChange={(e) => setFilterRole(e.target.value)}
-                  className="w-full text-xs pr-3.5 pl-9 py-2 appearance-none bg-slate-50 dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#2563EB] cursor-pointer"
+                  className="w-full text-xs pr-3.5 pl-9 py-2 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
                 >
                   <option value="all">همه نقش‌ها</option>
                   <option value="super_admin">مدیر کل دیدار</option>
@@ -262,10 +262,10 @@ export const AdminRbacView: React.FC = () => {
           </div>
 
           {/* Users Table */}
-          <div className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs overflow-hidden transition-colors">
+          <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs overflow-hidden transition-colors">
             <div className="overflow-x-auto">
               <table className="w-full text-right text-xs">
-                <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-[#1E2E50]">
+                <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-[#334155]">
                   <tr>
                     <th className="px-5 py-4 whitespace-nowrap">نام کاربر و اطلاعات</th>
                     <th className="px-5 py-4 whitespace-nowrap">ایمیل و تماس</th>
@@ -275,9 +275,9 @@ export const AdminRbacView: React.FC = () => {
                     <th className="px-5 py-4 text-left whitespace-nowrap">عملیات</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-[#1E2E50]">
+                <tbody className="divide-y divide-slate-100 dark:divide-[#334155]">
                   {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-slate-50/70 dark:hover:bg-[#16243F]/50 transition-colors">
+                    <tr key={user.id} className="hover:bg-slate-50/70 dark:hover:bg-[#334155]/50 transition-colors">
                       <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2.5">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-slate-700 to-slate-900 text-white text-xs font-bold flex items-center justify-center shrink-0">
@@ -312,7 +312,7 @@ export const AdminRbacView: React.FC = () => {
                             onChange={(e) =>
                               handleRoleChange(user.id, e.target.value as UserRole, user.name)
                             }
-                            className="w-full text-xs pr-3 pl-8 py-2 appearance-none rounded-xl border border-slate-200 dark:border-[#1E2E50] bg-slate-50 dark:bg-[#0A0F1D] font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#2563EB] cursor-pointer hover:bg-slate-100 dark:hover:bg-[#16243F] transition-colors"
+                            className="w-full text-xs pr-3 pl-8 py-2 appearance-none rounded-xl border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0F172A] font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors"
                           >
                             <option value="employee">کارمند عادی (Employee)</option>
                             <option value="room_manager">مدیر تشریفات (Room Manager)</option>
@@ -369,29 +369,29 @@ export const AdminRbacView: React.FC = () => {
 
       {/* SUB-TAB 2: INTERACTIVE PERMISSIONS MATRIX */}
       {activeSubTab === 'matrix' && (
-        <div className="bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-[#1E2E50] shadow-xs overflow-hidden transition-colors">
-          <div className="p-5 border-b border-slate-100 dark:border-[#1E2E50] bg-slate-50/50 dark:bg-[#0D1527] flex items-center justify-between">
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs overflow-hidden transition-colors">
+          <div className="p-5 border-b border-slate-100 dark:border-[#334155] bg-slate-50/50 dark:bg-[#0D1527] flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">ماتریس انحصاری مجوزها و دسترسی‌ها</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 مقایسه شفاف اختیارات نقش‌ها در لایه‌های مختلف پلتفرم دیدار
               </p>
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-300 bg-white dark:bg-[#0A0F1D] border border-slate-200 dark:border-[#1E2E50] px-3 py-1 rounded-lg">
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-300 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] px-3 py-1 rounded-lg">
               استاندارد امنیت اطلاعات سازمانی
             </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs">
-              <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-600 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-[#1E2E50]">
+              <thead className="bg-slate-50 dark:bg-[#0D1527] text-slate-600 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-[#334155]">
                 <tr>
                   <th className="px-5 py-3.5">عنوان مجوز و شرح</th>
                   <th className="px-5 py-3.5 text-center">دسته</th>
-                  <th className="px-4 py-3.5 text-center text-purple-800 dark:text-purple-300 bg-purple-50/70 dark:bg-purple-950/30">
+                  <th className="px-4 py-3.5 text-center text-emerald-800 dark:text-emerald-300 bg-emerald-50/70 dark:bg-emerald-950/30">
                     مدیر کل دیدار
                   </th>
-                  <th className="px-4 py-3.5 text-center text-blue-800 dark:text-blue-300 bg-blue-50/70 dark:bg-blue-950/30">
+                  <th className="px-4 py-3.5 text-center text-emerald-800 dark:text-emerald-300 bg-emerald-50/70 dark:bg-emerald-950/30">
                     مدیر سازمان
                   </th>
                   <th className="px-4 py-3.5 text-center text-teal-800 dark:text-teal-300 bg-teal-50/70 dark:bg-teal-950/30">
@@ -402,15 +402,15 @@ export const AdminRbacView: React.FC = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-[#1E2E50]">
+              <tbody className="divide-y divide-slate-100 dark:divide-[#334155]">
                 {PERMISSION_LIST.map((perm) => (
-                  <tr key={perm.key} className="hover:bg-slate-50/50 dark:hover:bg-[#16243F]/40 transition-colors">
+                  <tr key={perm.key} className="hover:bg-slate-50/50 dark:hover:bg-[#334155]/40 transition-colors">
                     <td className="px-5 py-3.5">
                       <div className="font-bold text-slate-900 dark:text-white">{perm.titleFa}</div>
                       <div className="text-[11px] text-slate-400 max-w-md">{perm.description}</div>
                     </td>
                     <td className="px-5 py-3.5 text-center">
-                      <span className="text-[10px] font-semibold bg-slate-100 dark:bg-[#0A0F1D] text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded border border-slate-200/50 dark:border-[#1E2E50]">
+                      <span className="text-[10px] font-semibold bg-slate-100 dark:bg-[#0F172A] text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded border border-slate-200/50 dark:border-[#334155]">
                         {perm.category}
                       </span>
                     </td>
@@ -420,11 +420,11 @@ export const AdminRbacView: React.FC = () => {
                       return (
                         <td key={r} className="px-4 py-3.5 text-center">
                           {granted ? (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-[#14B8A6]">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-[#10B981]">
                               <Check className="w-3.5 h-3.5 stroke-[3]" />
                             </span>
                           ) : (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 dark:bg-[#0A0F1D] text-slate-300 dark:text-slate-600">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 dark:bg-[#0F172A] text-slate-300 dark:text-slate-600">
                               <X className="w-3.5 h-3.5" />
                             </span>
                           )}
@@ -442,8 +442,8 @@ export const AdminRbacView: React.FC = () => {
       {/* Add User Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#111A2E] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#1E2E50] w-full max-w-md overflow-hidden transition-colors">
-            <div className="px-6 py-4 bg-[#0D1B3A] text-white flex items-center justify-between border-b border-[#1E2E50]">
+          <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#334155] w-full max-w-md overflow-hidden transition-colors">
+            <div className="px-6 py-4 bg-[#0F786E] text-white flex items-center justify-between border-b border-[#334155]">
               <h3 className="text-sm font-bold">افزودن پرسنل جدید به {currentOrg?.name}</h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
@@ -463,7 +463,7 @@ export const AdminRbacView: React.FC = () => {
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="مثال: نیلوفر افشار"
-                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg focus:ring-2 focus:ring-[#2563EB] bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
+                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
                   required
                 />
               </div>
@@ -477,7 +477,7 @@ export const AdminRbacView: React.FC = () => {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="n.afshar@company.ir"
-                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg focus:ring-2 focus:ring-[#2563EB] bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white text-left"
+                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white text-left"
                   dir="ltr"
                   required
                 />
@@ -491,7 +491,7 @@ export const AdminRbacView: React.FC = () => {
                   <select
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value as UserRole)}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
                   >
                     <option value="employee">کارمند عادی</option>
                     <option value="room_manager">مدیر تشریفات</option>
@@ -505,7 +505,7 @@ export const AdminRbacView: React.FC = () => {
                   <select
                     value={newDept}
                     onChange={(e) => setNewDept(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
                   >
                     {(currentOrg?.departments ?? []).map((d) => (
                       <option key={d} value={d}>
@@ -524,7 +524,7 @@ export const AdminRbacView: React.FC = () => {
                     value={newJobTitle}
                     onChange={(e) => setNewJobTitle(e.target.value)}
                     placeholder="مثال: مدیر مارکتینگ"
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
                   />
                 </div>
 
@@ -537,13 +537,13 @@ export const AdminRbacView: React.FC = () => {
                     value={newPhone}
                     onChange={(e) => setNewPhone(e.target.value)}
                     placeholder="0912..."
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#1E2E50] rounded-lg text-left bg-white dark:bg-[#0A0F1D] text-slate-900 dark:text-white"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg text-left bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
                     dir="ltr"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-[#1E2E50]">
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-[#334155]">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
@@ -554,7 +554,7 @@ export const AdminRbacView: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] rounded-xl shadow-xs"
+                  className="px-5 py-2 text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-xl shadow-xs"
                 >
                   {isSubmitting ? 'در حال ثبت...' : 'ایجاد حساب کاربری'}
                 </button>

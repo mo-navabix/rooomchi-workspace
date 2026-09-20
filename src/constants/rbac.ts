@@ -15,8 +15,8 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
     role: 'super_admin',
     titleFa: 'مدیر کل پلتفرم دیدار',
     titleEn: 'Super Admin',
-    badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
-    bgLight: 'bg-purple-50',
+    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    bgLight: 'bg-emerald-50',
     description: 'دسترسی کامل به تمام سازمان‌ها، پیکربندی سیستم، ممیزی و نظارت بر کل پلتفرم دیدار',
     permissions: [
       'MANAGE_ORGANIZATIONS',
@@ -34,8 +34,8 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
     role: 'org_admin',
     titleFa: 'مدیر ارشد سازمان',
     titleEn: 'Organization Admin',
-    badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
-    bgLight: 'bg-blue-50',
+    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    bgLight: 'bg-emerald-50',
     description: 'مدیریت تمام اتاق‌ها، پرسنل، تأیید درخواست‌های رزرو، ساعات کاری و قوانین سازمانی',
     permissions: [
       'MANAGE_ROOMS',
@@ -139,7 +139,33 @@ export const PERMISSION_LIST: PermissionMeta[] = [
 ];
 
 export const hasPermission = (role: UserRole, permission: Permission): boolean => {
-  const meta = ROLE_DEFINITIONS[role];
+  const meta = ROLE_DEFINITIONS[normalizeUserRole(role)];
   if (!meta) return false;
   return meta.permissions.includes(permission);
 };
+
+/** Maps API / JWT role strings to client UserRole keys. */
+export function normalizeUserRole(role: string | undefined | null): UserRole {
+  const raw = String(role ?? '').trim();
+  if (!raw) return 'employee';
+
+  const upper = raw.toUpperCase().replace(/-/g, '_');
+  const apiMap: Record<string, UserRole> = {
+    SUPER_ADMIN: 'super_admin',
+    ORGANIZATION_ADMIN: 'org_admin',
+    ORG_ADMIN: 'org_admin',
+    MANAGER: 'room_manager',
+    ROOM_MANAGER: 'room_manager',
+    EMPLOYEE: 'employee',
+  };
+  if (apiMap[upper]) return apiMap[upper];
+
+  const lower = raw.toLowerCase() as UserRole;
+  if (ROLE_DEFINITIONS[lower]) return lower;
+
+  return 'employee';
+}
+
+export function getRoleMeta(role: string | undefined | null): RoleMeta {
+  return ROLE_DEFINITIONS[normalizeUserRole(role)];
+}
