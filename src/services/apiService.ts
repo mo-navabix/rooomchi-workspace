@@ -246,6 +246,83 @@ export class ApiService {
     return { ...body, token, user, message: body.message || 'ثبت‌نام موفق' };
   }
 
+  static async sendOtp(email: string): Promise<{ success: boolean; message: string; simulatedCode?: string }> {
+    const res = await fetch(`${API_BASE}/auth/send-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim().toLowerCase() }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در ارسال کد تأیید' }));
+      throw new Error(err.error || err.message || 'خطا در ارسال کد تأیید');
+    }
+    return res.json();
+  }
+
+  static async verifyOtp(
+    email: string,
+    code: string
+  ): Promise<{
+    token: string;
+    accessToken?: string;
+    user: User;
+    isProfileComplete: boolean;
+    isNewUser?: boolean;
+    message: string;
+  }> {
+    const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), code: code.trim() }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'کد تأیید نامعتبر است' }));
+      throw new Error(err.error || err.message || 'کد تأیید نامعتبر است');
+    }
+    const body = await res.json();
+    const token = body.token || body.accessToken;
+    const user: User = body.user
+      ? {
+          ...body.user,
+          orgId: body.user.orgId || body.user.organizationId,
+          name:
+            body.user.name ||
+            [body.user.firstName, body.user.lastName].filter(Boolean).join(' ') ||
+            email.split('@')[0],
+          isProfileComplete: body.isProfileComplete ?? body.user.isProfileComplete ?? false,
+        }
+      : body.user;
+    return { ...body, token, user };
+  }
+
+  static async completeProfile(data: {
+    name: string;
+    phone: string;
+    department?: string;
+    jobTitle?: string;
+    email?: string;
+    userId?: string;
+    password?: string;
+  }): Promise<{ success: boolean; message: string; user: User }> {
+    const res = await fetch(`${API_BASE}/auth/complete-profile`, {
+      method: 'POST',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در ثبت مشخصات تکمیلی' }));
+      throw new Error(err.error || err.message || 'خطا در ثبت مشخصات تکمیلی');
+    }
+    const body = await res.json();
+    const user: User = {
+      ...body.user,
+      orgId: body.user.orgId || body.user.organizationId,
+      name: body.user.name || [body.user.firstName, body.user.lastName].filter(Boolean).join(' '),
+      isProfileComplete: true,
+    };
+    return { ...body, user };
+  }
+
   static async forgotPassword(email: string): Promise<{ success: boolean; message: string; simulatedCode?: string }> {
     const res = await fetch(`${API_BASE}/auth/forgot-password`, {
       method: 'POST',

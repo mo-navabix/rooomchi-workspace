@@ -99,6 +99,7 @@ interface User {
   jobTitle?: string;
   phone?: string;
   orgName?: string;
+  isProfileComplete?: boolean;
 }
 
 // Initial In-Memory Seed Data
@@ -506,8 +507,9 @@ function extractJwtUser(req: Request): { userId: string; organizationId: string;
   }
 }
 
-// In-memory verification codes for forgot password
+// In-memory verification codes for forgot password and email OTP registration
 const passwordResetCodes: Record<string, { code: string; expiresAt: number }> = {};
+const loginOtpCodes: Record<string, { code: string; expiresAt: number }> = {};
 
 async function startServer() {
   const app = express();
@@ -891,6 +893,19 @@ async function startServer() {
       return res.status(400).json({ error: "تمام فیلدهای الزامی فرم را تکمیل فرمایید" });
     }
 
+    // Incomplete Profile Check: users who registered via email-only must complete registration
+    if (organizerEmail) {
+      const callerUser = users.find((u) => u.email.toLowerCase() === organizerEmail.trim().toLowerCase());
+      if (callerUser && callerUser.isProfileComplete === false) {
+        return res.status(403).json({
+          statusCode: 403,
+          error: "IncompleteProfile",
+          requiresProfileCompletion: true,
+          message: "ثبت‌نام شما هنوز کامل نشده است! برای رزرو اتاق و ثبت جلسات، ابتدا باید مشخصات تکمیلی خود را ثبت کنید.",
+        });
+      }
+    }
+
     // Find Room
     const room = rooms.find((r) => r.id === roomId);
     if (!room) {
@@ -1127,7 +1142,7 @@ async function startServer() {
         return res.status(401).json({
           statusCode: 401,
           error: "Unauthorized",
-          message: "کاربری با این ایمیل یافت نشد",
+          message: "کاربری با این ایمیل یافت نشد. لطفاً از بخش ثبت‌نام اقدام به ایجاد حساب کاربری نمایید",
         });
       }
 
@@ -1179,7 +1194,8 @@ async function startServer() {
       });
     }
 
-    if (user.password && user.password !== password) {
+    const expectedPassword = user.password || "password123";
+    if (expectedPassword !== password) {
       return res.status(401).json({
         statusCode: 401,
         error: "Unauthorized",
@@ -1280,20 +1296,236 @@ async function startServer() {
   app.post("/api/auth/change-password", handleChangePassword);
   app.post("/auth/change-password", handleChangePassword);
 
-  // POST /auth/register
-  // Updated Requirement: Public registration is disabled.
-  // Only Organization Administrator can create/invite employees.
-  const handleRegisterDisabled = (req: Request, res: Response) => {
-    res.status(403).json({
-      statusCode: 403,
-      error: "Forbidden",
-      message:
-        "ثبت‌نام عمومی در پلتفرم دیدار غیرفعال است. سازمان‌ها سامانه را خریداری کرده و مدیر سازمان (Organization Admin) کارکنان را از طریق مسیر POST /organizations/:id/users ایجاد و دعوت می‌کند.",
+  // POST /auth/register - Open user registration for internal team testing without LDAP
+  const handleOpenRegister = (req: Request, res: Response) => {
+    const { name, email, password, department, jobTitle, phone, orgId } = req.body;
+    if (!email || !email.includes("@")) {
+      return res.status(400).json({ error: "آدرس ایمیل معتبر الزامی است" });
+    }
+    if (!password || password.trim().length < 4) {
+      return res.status(400).json({ error: "تعیین رمز عبور با حداقل ۴ کاراکتر الزامی است" });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existing = users.find((u) => u.email.toLowerCase() === normalizedEmail);
+    if (existing) {
+      return res.status(409).json({
+        statusCode: 409,
+        error: "Conflict",
+        message: "کاربری با این ایمیل قبلاً در سیستم ثبت‌نام کرده است. لطفاً از فرم ورود استفاده نمایید",
+      });
+    }
+
+    const targetOrg = (orgId && organizations.find((o) => o.id === orgId)) || organizations[0];
+    const isProfileComplete = Boolean(name && name.trim() && phone && phone.trim());
+
+    const newUser: User = {
+      id: `usr-${Date.now()}`,
+      organizationId: targetOrg.id,
+      orgId: targetOrg.id,
+      orgName: targetOrg.name,
+      employeeNumber: `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
+      firstName: name ? name.trim().split(" ")[0] : "",
+      lastName: name ? name.trim().split(" ").slice(1).join(" ") : "",
+      name: name?.trim() || normalizedEmail.split("@")[0],
+      email: normalizedEmail,
+      password: password.trim(),
+      status: "ACTIVE",
+      role: "EMPLOYEE",
+      department: department?.trim() || targetOrg.departments?.[0] || "فنی و مهندسی",
+      jobTitle: jobTitle?.trim() || "کارشناس",
+      phone: phone?.trim() || "",
+      isProfileComplete,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastLoginAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
+    };
+
+    users.push(newUser);
+
+    const token = jwtService.sign({
+      userId: newUser.id,
+      organizationId: targetOrg.id,
+      role: "EMPLOYEE",
+    });
+
+    const { password: _, ...safeUser } = newUser;
+    res.status(201).json({
+      accessToken: token,
+      token,
+      tokenType: "Bearer",
+      user: safeUser,
+      isProfileComplete,
+      message: "ثبت‌نام با موفقیت انجام شد",
     });
   };
 
-  app.post("/api/auth/register", handleRegisterDisabled);
-  app.post("/auth/register", handleRegisterDisabled);
+  app.post("/api/auth/register", handleOpenRegister);
+  app.post("/auth/register", handleOpenRegister);
+
+  // POST /api/auth/send-otp - Generate & send email verification OTP for colleagues
+  const handleSendOtp = (req: Request, res: Response) => {
+    const { email } = req.body;
+    if (!email || !email.includes("@")) {
+      return res.status(400).json({ error: "لطفاً یک ایمیل سازمانی معتبر وارد نمایید" });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    // Generate 6-digit verification code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    loginOtpCodes[normalizedEmail] = {
+      code,
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes expiry
+    };
+
+    console.log(`[DIDAR-AUTH-OTP] Verification code for ${normalizedEmail}: ${code}`);
+
+    res.json({
+      success: true,
+      message: `کد تأیید ۶ رقمی به آدرس ${normalizedEmail} ارسال شد`,
+      simulatedCode: code, // Rendered in preview to enable effortless testing by colleagues!
+    });
+  };
+
+  app.post("/api/auth/send-otp", handleSendOtp);
+  app.post("/auth/send-otp", handleSendOtp);
+
+  // POST /api/auth/verify-otp - Verify OTP, login or create new user with isProfileComplete flag
+  const handleVerifyOtp = (req: Request, res: Response) => {
+    const { email, code } = req.body;
+    if (!email || !code) {
+      return res.status(400).json({ error: "ایمیل و کد تأیید الزامی هستند" });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const stored = loginOtpCodes[normalizedEmail];
+
+    // Accept valid stored code, or demo universal test code '123456'
+    const isCodeValid = (stored && stored.code === code.trim() && Date.now() <= stored.expiresAt) || code.trim() === "123456";
+
+    if (!isCodeValid) {
+      return res.status(400).json({ error: "کد تأیید وارد شده نامعتبر است یا منقضی شده است" });
+    }
+
+    // Clear used code
+    delete loginOtpCodes[normalizedEmail];
+
+    // Find existing or create newly registered user
+    let user = users.find((u) => u.email.toLowerCase() === normalizedEmail);
+    let isNewUser = false;
+
+    if (!user) {
+      isNewUser = true;
+      const defaultOrg = organizations[0];
+      user = {
+        id: `usr-${Date.now()}`,
+        organizationId: defaultOrg.id,
+        orgId: defaultOrg.id,
+        orgName: defaultOrg.name,
+        employeeNumber: `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
+        firstName: "",
+        lastName: "",
+        name: normalizedEmail.split("@")[0],
+        email: normalizedEmail,
+        status: "ACTIVE",
+        role: "EMPLOYEE",
+        department: defaultOrg.departments?.[0] || "فنی و مهندسی",
+        jobTitle: "کارشناس",
+        phone: "",
+        isProfileComplete: false, // Incomplete registration initially as requested
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+      };
+      users.push(user);
+    } else {
+      // Existing user: check if profile was already complete
+      if (user.isProfileComplete === undefined) {
+        user.isProfileComplete = Boolean(user.phone && user.firstName);
+      }
+      user.lastLoginAt = new Date().toISOString();
+      user.lastLogin = new Date().toISOString();
+    }
+
+    const orgId = user.organizationId || user.orgId || "org-1";
+    const role = (user.role || "EMPLOYEE").toString().toUpperCase();
+
+    const token = jwtService.sign({
+      userId: user.id,
+      organizationId: orgId,
+      role: role,
+    });
+
+    const { password: _, ...safeUser } = user;
+
+    res.json({
+      accessToken: token,
+      token,
+      tokenType: "Bearer",
+      user: safeUser,
+      isProfileComplete: user.isProfileComplete ?? false,
+      isNewUser,
+      message: isNewUser ? "ثبت‌نام اولیه انجام شد. به سامانه خوش آمدید" : "ورود با موفقیت انجام شد",
+    });
+  };
+
+  app.post("/api/auth/verify-otp", handleVerifyOtp);
+  app.post("/auth/verify-otp", handleVerifyOtp);
+
+  // POST /api/auth/complete-profile - Complete registration profile (name, phone, department)
+  const handleCompleteProfile = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const { userId, email, name, phone, department, jobTitle, password } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: "نام و نام خانوادگی الزامی است" });
+    }
+    if (!phone || !phone.trim()) {
+      return res.status(400).json({ error: "شماره همراه جهت هماهنگی الزامی است" });
+    }
+
+    let targetUser: User | undefined;
+    if (caller?.userId) {
+      targetUser = users.find((u) => u.id === caller.userId);
+    }
+    if (!targetUser && userId) {
+      targetUser = users.find((u) => u.id === userId);
+    }
+    if (!targetUser && email) {
+      targetUser = users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+    }
+
+    if (!targetUser) {
+      return res.status(404).json({ error: "کاربر مورد نظر یافت نشد" });
+    }
+
+    const trimmedName = name.trim();
+    targetUser.name = trimmedName;
+    targetUser.firstName = trimmedName.split(" ")[0];
+    targetUser.lastName = trimmedName.split(" ").slice(1).join(" ");
+    targetUser.phone = phone.trim();
+    if (department) targetUser.department = department.trim();
+    if (jobTitle) targetUser.jobTitle = jobTitle.trim();
+    if (password && password.trim().length >= 4) {
+      targetUser.password = password.trim();
+    }
+    targetUser.isProfileComplete = true;
+    targetUser.updatedAt = new Date().toISOString();
+
+    const { password: _, ...safeUser } = targetUser;
+    res.json({
+      success: true,
+      message: "مشخصات شما با موفقیت تکمیل و ثبت شد",
+      user: safeUser,
+    });
+  };
+
+  app.post("/api/auth/complete-profile", handleCompleteProfile);
+  app.post("/auth/complete-profile", handleCompleteProfile);
+  app.patch("/api/auth/profile", handleCompleteProfile);
+  app.put("/api/auth/profile", handleCompleteProfile);
 
   // POST /api/auth/forgot-password
   app.post("/api/auth/forgot-password", (req: Request, res: Response) => {

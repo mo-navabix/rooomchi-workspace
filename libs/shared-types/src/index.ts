@@ -24,6 +24,7 @@ export interface User {
   status: 'active' | 'suspended';
   createdAt: string;
   lastLogin?: string;
+  isProfileComplete?: boolean;
 }
 
 export type ActiveTab =

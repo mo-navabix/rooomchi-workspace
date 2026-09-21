@@ -15,6 +15,8 @@ import {
   Bell,
   Search,
   User,
+  UserCheck,
+  AlertCircle,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 
@@ -82,6 +84,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
     activeTab,
     setActiveTab,
     openBookingModal,
+    openCompleteProfileModal,
+    isRegistrationComplete,
     currentUser,
     currentOrg,
     isAuthenticated,
@@ -207,9 +211,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                     />
                     <div className="absolute left-0 mt-2 w-64 dark-surface-card rounded-2xl shadow-xl py-2 z-30">
                       <div className="px-4 py-3 border-b border-slate-100 dark:border-[#26364D]">
-                        <p className="text-sm font-bold text-slate-900 dark:text-white">
-                          {currentUser.name}
-                        </p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">
+                            {currentUser.name}
+                          </p>
+                          {!isRegistrationComplete() && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40">
+                              تکمیل‌نشده
+                            </span>
+                          )}
+                        </div>
                         <p
                           className="text-[11px] text-slate-500 font-mono mt-0.5"
                           dir="ltr"
@@ -223,6 +234,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                         </span>
                       </div>
                       <div className="p-1.5 space-y-0.5">
+                        {!isRegistrationComplete() && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsUserDropdownOpen(false);
+                              openCompleteProfileModal();
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/40 cursor-pointer mb-1 border border-amber-200/60 dark:border-amber-800/40"
+                          >
+                            <UserCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                            <span>تکمیل مشخصات کاربری</span>
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => {
@@ -266,18 +290,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                 <button
                   type="button"
                   onClick={() => openAuthModal("login")}
-                  className="p-2.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] transition-colors cursor-pointer shadow-xs"
                 >
-                  <LogIn className="w-4 h-4 sm:hidden" />
-                  <span className="hidden sm:inline">ورود</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openAuthModal("register")}
-                  className="hidden sm:flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer"
-                >
-                  <UserPlus className="w-4 h-4" />
-                  عضویت
+                  <LogIn className="w-4 h-4" />
+                  <span>ورود / ثبت‌نام</span>
                 </button>
               </div>
             )}

@@ -2,12 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 import { ApiService } from "../../services/apiService";
 import { Booking, Room, Stats } from "../../types";
-import { Calendar, Clock, DoorOpen, Users, Plus, TrendingUp } from "lucide-react";
+import { Calendar, Clock, DoorOpen, Users, Plus, TrendingUp, AlertTriangle, ArrowLeft } from "lucide-react";
 import { toPersianDigits } from "../../utils/jalali";
 import { UnifiedDashboardSkeleton } from "../common/Skeletons";
 
 export const UnifiedDashboardView: React.FC = () => {
-  const { currentOrg, openBookingModal, setActiveTab } = useApp();
+  const {
+    currentOrg,
+    openBookingModal,
+    setActiveTab,
+    currentUser,
+    isRegistrationComplete,
+    openCompleteProfileModal,
+  } = useApp();
   const [stats, setStats] = useState<Stats | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
@@ -124,6 +131,33 @@ export const UnifiedDashboardView: React.FC = () => {
 
   return (
     <div className="space-y-6 select-none" id="unified-dashboard-view">
+      {/* Reminder Banner for Email-Registered / Incomplete Profile Users */}
+      {currentUser && !isRegistrationComplete() && (
+        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/10 dark:bg-amber-400/10 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200">
+                ثبت‌نام اولیه شما با ایمیل با موفقیت انجام شده است
+              </h4>
+              <p className="text-[11px] text-amber-800 dark:text-amber-300/80 mt-0.5 leading-relaxed">
+                جهت فعال‌سازی قابلیت رزرو سالن جلسات و هماهنگی امکانات، لطفاً مشخصات کاربری (نام و شماره تماس) خود را تکمیل نمایید.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => openCompleteProfileModal()}
+            className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-colors shadow-xs shrink-0 cursor-pointer self-end sm:self-center"
+          >
+            <span>تکمیل مشخصات</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       <div className="flex justify-end">
         <button
           type="button"

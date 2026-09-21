@@ -19,6 +19,7 @@ import { SupportTicketView } from "./components/support/SupportTicketView";
 import { BookingModal } from "./components/booking/BookingModal";
 import { OrgProvisioningModal } from "./components/onboarding/OrgProvisioningModal";
 import { AuthModal } from "./components/auth/AuthModal";
+import { CompleteProfileModal } from "./components/auth/CompleteProfileModal";
 import { AppLoadingSkeleton } from "./components/common/Skeletons";
 import { PortalFooter } from "./components/common/PortalFooter";
 import { SupportChipsBar } from "./components/common/SupportChipsBar";
@@ -78,6 +79,7 @@ const MainContent: React.FC = () => {
       <BookingModal />
       <OrgProvisioningModal />
       <AuthModal />
+      <CompleteProfileModal />
       <Toast />
     </div>
   );

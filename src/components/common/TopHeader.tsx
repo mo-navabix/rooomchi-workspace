@@ -8,6 +8,7 @@ import {
   ChevronDown,
   LogOut,
   Building,
+  LogIn,
 } from "lucide-react";
 
 export const TopHeader: React.FC = () => {
@@ -118,9 +119,10 @@ export const TopHeader: React.FC = () => {
         ) : (
           <button
             onClick={() => openAuthModal("login")}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] transition-colors cursor-pointer"
           >
-            ورود به سیستم
+            <LogIn className="w-3.5 h-3.5" />
+            <span>ورود / ثبت‌نام</span>
           </button>
         )}
       </div>

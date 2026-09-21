@@ -55,8 +55,9 @@ export const ProfileView: React.FC = () => {
         department: department.trim(),
         jobTitle: jobTitle.trim() || undefined,
         phone: phone.trim() || undefined,
+        isProfileComplete: true,
       });
-      showToast("اطلاعات پروفایل ذخیره شد.", "success");
+      showToast("اطلاعات پروفایل با موفقیت ذخیره شد.", "success");
     } finally {
       setIsSaving(false);
     }

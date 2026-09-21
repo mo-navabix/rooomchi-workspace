@@ -23,7 +23,7 @@ interface ToastInfo {
   message: string;
 }
 
-export type AuthModalView = "login" | "register" | "forgot" | "reset";
+export type AuthModalView = "login" | "register" | "otp" | "forgot" | "reset";
 export type AppTheme = "light" | "dark";
 export type ViewMode = "landing" | "app";
 
@@ -44,6 +44,8 @@ interface AppContextType {
   selectedRoomForBooking: Room | null;
   isBookingModalOpen: boolean;
   isProvisioningModalOpen: boolean;
+  isCompleteProfileModalOpen: boolean;
+  pendingRoomForBooking: Room | null;
 
   // RBAC & Auth State
   currentUser: User | null;
@@ -64,6 +66,9 @@ interface AppContextType {
   hideToast: () => void;
   openBookingModal: (room?: Room) => void;
   closeBookingModal: () => void;
+  openCompleteProfileModal: (pendingRoom?: Room) => void;
+  closeCompleteProfileModal: () => void;
+  isRegistrationComplete: () => boolean;
   openProvisioningModal: () => void;
   closeProvisioningModal: () => void;
   setSearchQuery: (q: string) => void;
@@ -84,6 +89,15 @@ interface AppContextType {
     jobTitle?: string;
     phone?: string;
     role?: UserRole;
+  }) => Promise<void>;
+  sendOtp: (email: string) => Promise<{ success: boolean; simulatedCode?: string; message: string }>;
+  verifyOtp: (email: string, code: string) => Promise<{ isProfileComplete: boolean }>;
+  completeRegistration: (data: {
+    name: string;
+    phone: string;
+    department?: string;
+    jobTitle?: string;
+    password?: string;
   }) => Promise<void>;
   logout: () => void;
   forgotPassword: (
@@ -161,6 +175,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
   const [isProvisioningModalOpen, setIsProvisioningModalOpen] =
     useState<boolean>(false);
+  const [isCompleteProfileModalOpen, setIsCompleteProfileModalOpen] =
+    useState<boolean>(false);
+  const [pendingRoomForBooking, setPendingRoomForBooking] =
+    useState<Room | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Auth & RBAC State
@@ -345,12 +363,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     phone?: string;
     role?: UserRole;
   }) => {
-    const orgId = data.orgId || currentOrg?.id;
-    if (!orgId) {
-      throw new Error(
-        "لطفاً ابتدا یک سازمان را انتخاب یا راه‌اندازی کنید، سپس ثبت‌نام کنید",
-      );
-    }
+    const orgId = data.orgId || currentOrg?.id || (organizations[0] ? organizations[0].id : "org-1");
     const res = await ApiService.register({
       ...data,
       orgId,
@@ -412,7 +425,108 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const sendOtp = async (email: string) => {
+    const res = await ApiService.sendOtp(email);
+    showToast(res.message || "کد تأیید ارسال شد", "info");
+    return res;
+  };
+
+  const verifyOtp = async (email: string, code: string) => {
+    const res = await ApiService.verifyOtp(email, code);
+    const token = res.token || res.accessToken;
+    if (!token) {
+      throw new Error("توکن دریافت نشد");
+    }
+    saveUserSession(res.user, token);
+    closeAuthModal();
+    setViewMode("app");
+    showToast(
+      res.isProfileComplete === false
+        ? "ورود موفق! ثبت‌نام اولیه شما انجام شد. برای رزرو اتاق، لطفاً مشخصات خود را تکمیل کنید."
+        : `خوش آمدید، ${res.user.name}`,
+      "success",
+    );
+    if (res.user.orgId) {
+      const org = organizations.find((o) => o.id === res.user.orgId);
+      if (org) setCurrentOrg(org);
+    }
+    return { isProfileComplete: res.isProfileComplete };
+  };
+
+  const completeRegistration = async (data: {
+    name: string;
+    phone: string;
+    department?: string;
+    jobTitle?: string;
+    password?: string;
+  }) => {
+    if (!currentUser) throw new Error("کاربر در وضعیت ورود قرار ندارد");
+    const res = await ApiService.completeProfile({
+      ...data,
+      email: currentUser.email,
+      userId: currentUser.id,
+    });
+    let token = "session_token";
+    try {
+      token = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY) || token;
+    } catch {}
+    saveUserSession(res.user, token);
+    setIsCompleteProfileModalOpen(false);
+    showToast("مشخصات شما با موفقیت ثبت شد! اکنون می‌توانید اتاق مورد نظر را رزرو کنید", "success");
+
+    // If there was a pending room booking attempt, immediately launch it!
+    if (pendingRoomForBooking) {
+      const room = pendingRoomForBooking;
+      setPendingRoomForBooking(null);
+      setSelectedRoomForBooking(room);
+      setIsBookingModalOpen(true);
+    }
+  };
+
+  const isRegistrationComplete = useCallback((): boolean => {
+    if (!currentUser) return false;
+    if (currentUser.isProfileComplete === false) return false;
+    const hasValidName = Boolean(
+      currentUser.name &&
+      currentUser.name.trim() !== "" &&
+      currentUser.name.trim() !== currentUser.email.split("@")[0],
+    );
+    const hasValidPhone = Boolean(
+      currentUser.phone && currentUser.phone.trim() !== "",
+    );
+    return hasValidName && hasValidPhone;
+  }, [currentUser]);
+
+  const openCompleteProfileModal = (pendingRoom?: Room) => {
+    if (pendingRoom) {
+      setPendingRoomForBooking(pendingRoom);
+    }
+    setIsCompleteProfileModalOpen(true);
+  };
+
+  const closeCompleteProfileModal = () => {
+    setIsCompleteProfileModalOpen(false);
+  };
+
   const openBookingModal = (room?: Room) => {
+    // 1. If not authenticated at all:
+    if (!currentUser) {
+      showToast("برای رزرو اتاق، لطفاً وارد سامانه شوید یا ثبت‌نام کنید", "info");
+      openAuthModal("login");
+      return;
+    }
+
+    // 2. If authenticated but registration is incomplete (email-only registration):
+    if (!isRegistrationComplete()) {
+      showToast(
+        "همکار گرامی، برای رزرو اتاق ابتدا باید ثبت‌نام و اطلاعات کاربری خود را تکمیل نمایید",
+        "error",
+      );
+      openCompleteProfileModal(room);
+      return;
+    }
+
+    // 3. Complete user: proceed directly to booking modal
     setSelectedRoomForBooking(room || null);
     setIsBookingModalOpen(true);
   };
@@ -448,6 +562,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         selectedRoomForBooking,
         isBookingModalOpen,
         isProvisioningModalOpen,
+        isCompleteProfileModalOpen,
+        pendingRoomForBooking,
 
         // Auth & RBAC
         currentUser,
@@ -466,6 +582,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         hideToast,
         openBookingModal,
         closeBookingModal,
+        openCompleteProfileModal,
+        closeCompleteProfileModal,
+        isRegistrationComplete,
         openProvisioningModal,
         closeProvisioningModal,
         setSearchQuery,
@@ -478,6 +597,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         closeAuthModal,
         login,
         register,
+        sendOtp,
+        verifyOtp,
+        completeRegistration,
         logout,
         forgotPassword,
         resetPassword,

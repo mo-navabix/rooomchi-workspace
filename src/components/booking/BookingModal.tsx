@@ -29,6 +29,8 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     selectedRoomForBooking,
     isBookingModalOpen,
     closeBookingModal,
+    openCompleteProfileModal,
+    isRegistrationComplete,
     showToast,
   } = useApp();
 
@@ -169,6 +171,18 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       showToast('اتاقی برای رزرو انتخاب نشده است', 'error');
       return;
     }
+
+    // Direct Profile Completion Gate
+    if (!isRegistrationComplete()) {
+      showToast(
+        'همکار گرامی، برای انجام رزرو ابتدا باید ثبت‌نام و اطلاعات کاربری خود را تکمیل نمایید',
+        'error'
+      );
+      closeBookingModal();
+      openCompleteProfileModal(activeRoom || selectedRoomForBooking || undefined);
+      return;
+    }
+
     if (!title.trim()) {
       showToast('عنوان جلسه را وارد کنید', 'error');
       return;
@@ -236,6 +250,20 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       closeBookingModal();
       onSuccess?.();
     } catch (err: unknown) {
+      const anyErr = err as any;
+      if (
+        anyErr?.requiresProfileCompletion ||
+        anyErr?.error === 'IncompleteProfile' ||
+        anyErr?.message?.includes('تکمیل')
+      ) {
+        showToast(
+          'همکار گرامی، برای انجام رزرو ابتدا باید مشخصات و ثبت‌نام خود را تکمیل نمایید',
+          'error'
+        );
+        closeBookingModal();
+        openCompleteProfileModal(activeRoom || selectedRoomForBooking || undefined);
+        return;
+      }
       const message = err instanceof Error ? err.message : 'خطا در ثبت رزرو';
       showToast(message, 'error');
     } finally {
@@ -266,6 +294,24 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          {!isRegistrationComplete() && (
+            <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-xl flex items-center justify-between text-xs text-amber-900 dark:text-amber-200">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span>ثبت‌نام شما کامل نیست؛ تکمیل مشخصات الزامی است.</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  closeBookingModal();
+                  openCompleteProfileModal(activeRoom || selectedRoomForBooking || undefined);
+                }}
+                className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] transition-colors cursor-pointer shrink-0"
+              >
+                تکمیل مشخصات
+              </button>
+            </div>
+          )}
           <label className="block space-y-1.5">
             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">عنوان جلسه</span>
             <input
