@@ -385,6 +385,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     clearUserSession();
     showToast("شما با موفقیت از سامانه دیدار خارج شدید", "info");
     setActiveTab("dashboard");
+    setViewMode("landing");
   };
 
   const forgotPassword = async (email: string) => {
