@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 import { Logo } from "../common/Logo";
 import {
@@ -96,6 +96,10 @@ export const LandingView: React.FC = () => {
     showToast,
   } = useApp();
   const [newsletterEmail, setNewsletterEmail] = useState("");
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
   const startFree = () => {
     openProvisioningModal();
