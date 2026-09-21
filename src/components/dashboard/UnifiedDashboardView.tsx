@@ -69,7 +69,7 @@ export const UnifiedDashboardView: React.FC = () => {
           id: b.id,
           title: b.title,
           room: b.roomName,
-          time: `${b.startTime} - ${b.endTime}`,
+          time: `${toPersianDigits(b.startTime)} - ${toPersianDigits(b.endTime)}`,
           avatars: [
             "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80",
             "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80",
@@ -130,7 +130,7 @@ export const UnifiedDashboardView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 select-none" id="unified-dashboard-view">
+    <div className="space-y-4 sm:space-y-6 select-none" id="unified-dashboard-view">
       {/* Reminder Banner for Email-Registered / Incomplete Profile Users */}
       {currentUser && !isRegistrationComplete() && (
         <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
@@ -158,11 +158,11 @@ export const UnifiedDashboardView: React.FC = () => {
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-stretch sm:justify-end">
         <button
           type="button"
           onClick={() => openBookingModal()}
-          className="portal-btn-primary flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
+          className="portal-btn-primary flex w-full sm:w-auto items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>رزرو جلسه جدید</span>
@@ -170,11 +170,11 @@ export const UnifiedDashboardView: React.FC = () => {
       </div>
 
       {/* 4 Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Stat 1: میزان استفاده */}
-        <div className="dark-surface-card rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 dark:text-[#94A3B8]">
+        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-[#94A3B8] leading-tight">
               میزان استفاده
             </span>
             <div className="brand-icon-tile brand-icon-tile--md">
@@ -182,10 +182,10 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
-              {toPersianDigits(stats?.utilizationRate || 86)}%
+            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
+              {toPersianDigits(stats?.utilizationRate || 86)}٪
             </div>
-            <p className="stat-trend-up mt-1 flex items-center gap-1">
+            <p className="stat-trend-up mt-1 flex items-center gap-1 text-[10px] sm:text-xs">
               <TrendingUp className="w-3 h-3" />
               +{toPersianDigits(4)}٪ نسبت به هفته قبل
             </p>
@@ -193,7 +193,7 @@ export const UnifiedDashboardView: React.FC = () => {
         </div>
 
         {/* Stat 2: اتاق فعال */}
-        <div className="dark-surface-card rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               اتاق فعال
@@ -203,7 +203,7 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
+            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
               {toPersianDigits(stats?.totalRooms || rooms.length || 6)}
             </div>
             <p className="stat-trend-neutral mt-1">بدون تغییر</p>
@@ -211,7 +211,7 @@ export const UnifiedDashboardView: React.FC = () => {
         </div>
 
         {/* Stat 3: رزرو این هفته */}
-        <div className="dark-surface-card rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               رزرو این هفته
@@ -221,7 +221,7 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
+            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
               {toPersianDigits(stats?.totalHistoricalBookings || 24)}
             </div>
             <p className="stat-trend-up mt-1 flex items-center gap-1">
@@ -232,7 +232,7 @@ export const UnifiedDashboardView: React.FC = () => {
         </div>
 
         {/* Stat 4: جلسه امروز */}
-        <div className="dark-surface-card rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               جلسه امروز
@@ -242,7 +242,7 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold text-slate-900 dark:text-[#F8FAFC] font-mono tracking-tight">
+            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
               {toPersianDigits(
                 todayBookings.length || stats?.todayBookingsCount || 4,
               )}
@@ -253,16 +253,16 @@ export const UnifiedDashboardView: React.FC = () => {
       </div>
 
       {/* Main 2-Column Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-6 dark-surface-card rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-900 dark:text-[#F8FAFC] text-sm sm:text-base">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+        <div className="lg:col-span-6 dark-surface-card rounded-2xl sm:rounded-3xl portal-card-pad-lg shadow-xs space-y-3 sm:space-y-4 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="font-bold text-slate-900 dark:text-[#F8FAFC] text-sm sm:text-base shrink-0">
               جلسات امروز
             </h3>
             <button
               type="button"
               onClick={() => setActiveTab("calendar")}
-              className="text-xs font-bold dark-link-accent cursor-pointer"
+              className="text-[11px] sm:text-xs font-bold dark-link-accent cursor-pointer shrink-0"
             >
               مشاهده تقویم کامل
             </button>
@@ -272,16 +272,16 @@ export const UnifiedDashboardView: React.FC = () => {
             {displayMeetings.map((item) => (
               <div
                 key={item.id}
-                className={`p-3.5 rounded-2xl dark-surface-inset flex items-center justify-between gap-3 ${item.borderClass}`}
+                className={`p-3 sm:p-3.5 rounded-2xl dark-surface-inset flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 min-w-0 ${item.borderClass}`}
               >
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0 flex-1">
                   <div className="text-xs font-bold text-slate-800 dark:text-[#F8FAFC]">
                     {item.title}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-[#94A3B8] font-medium">
                     {item.room}
                   </div>
-                  <div className="text-[10px] font-mono text-slate-500 dark:text-[#94A3B8]">
+                  <div className="text-[10px] dashboard-numeric text-slate-500 dark:text-[#94A3B8]">
                     {item.time}
                   </div>
                 </div>
@@ -302,9 +302,9 @@ export const UnifiedDashboardView: React.FC = () => {
         </div>
 
         {/* Left Column (6/12): نمودار استفاده از اتاق‌ها + اتاق‌های پرتقاضا */}
-        <div className="lg:col-span-6 space-y-6">
+        <div className="lg:col-span-6 space-y-4 sm:space-y-6 min-w-0">
           {/* Card 1: نمودار استفاده از اتاق‌ها */}
-          <div className="dark-surface-card p-5 sm:p-6 space-y-4">
+          <div className="dark-surface-card portal-card-pad-lg space-y-4 min-w-0">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-slate-900 dark:text-[#F8FAFC] text-sm">
                 نمودار استفاده از اتاق‌ها
@@ -344,7 +344,7 @@ export const UnifiedDashboardView: React.FC = () => {
           </div>
 
           {/* Card 2: اتاق‌های پرتقاضا (Progress Bars) */}
-          <div className="dark-surface-card p-5 sm:p-6 space-y-4">
+          <div className="dark-surface-card portal-card-pad-lg space-y-4 min-w-0">
             <h3 className="font-semibold text-slate-900 dark:text-[#F8FAFC] text-sm">
               اتاق‌های پرتقاضا
             </h3>
@@ -361,8 +361,8 @@ export const UnifiedDashboardView: React.FC = () => {
                       <span className="text-slate-700 dark:text-[#94A3B8]">
                         {pr.name}
                       </span>
-                      <span className="text-[#0F786E] dark:text-[#5eead4] font-mono">
-                        {toPersianDigits(pct)}%
+                      <span className="text-[#0F786E] dark:text-[#5eead4] dashboard-numeric text-xs font-bold">
+                        {toPersianDigits(pct)}٪
                       </span>
                     </div>
                     <div className="progress-track">

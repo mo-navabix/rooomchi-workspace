@@ -110,9 +110,9 @@ export const RoomBrowser: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 min-w-0">
       {/* Search & Filter Header */}
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs space-y-4 transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs space-y-4 transition-colors">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
@@ -210,7 +210,7 @@ export const RoomBrowser: React.FC = () => {
       </div>
 
       {/* Rooms List Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         {filteredRooms.map((room) => {
           const roomBookingsCount = bookings.filter(
             (b) => b.roomId === room.id && b.status !== 'cancelled'

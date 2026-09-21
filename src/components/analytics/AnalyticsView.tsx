@@ -78,9 +78,9 @@ export const AnalyticsView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 select-none" id="analytics-view">
-      <div className="flex justify-end">
-        <div className="flex items-center gap-2">
+    <div className="space-y-4 sm:space-y-6 select-none min-w-0" id="analytics-view">
+      <div className="flex justify-stretch sm:justify-end">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           <button
             onClick={loadData}
             className="p-2 rounded-xl border border-slate-200 dark:border-[#334155] text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#334155] transition-colors cursor-pointer"
@@ -102,9 +102,9 @@ export const AnalyticsView: React.FC = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {/* Most Used Room */}
-        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl portal-card-pad shadow-xs flex flex-col justify-between min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               بیشترین استفاده
@@ -125,7 +125,7 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         {/* Average Meeting Duration */}
-        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl portal-card-pad shadow-xs flex flex-col justify-between min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               میانگین مدت جلسه
@@ -145,7 +145,7 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         {/* Total Meetings */}
-        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl portal-card-pad shadow-xs flex flex-col justify-between min-w-0">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               تعداد کل جلسات ثبت شده
@@ -166,8 +166,8 @@ export const AnalyticsView: React.FC = () => {
       </div>
 
       {/* Main Trend Line Chart */}
-      <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-6 shadow-xs">
-        <div className="flex items-center justify-between mb-6">
+      <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl sm:rounded-3xl portal-card-pad-lg shadow-xs min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
           <div>
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
               روند تعداد جلسات برگزار شده
@@ -226,9 +226,9 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         {/* Chart X Labels */}
-        <div className="flex justify-between text-xs text-slate-400 font-medium mt-4 pt-2 border-t border-slate-100 dark:border-[#334155]">
+        <div className="portal-tabs-scroll justify-between gap-2 text-[10px] sm:text-xs text-slate-400 font-medium mt-4 pt-2 border-t border-slate-100 dark:border-[#334155]">
           {monthlyTrend.map((t) => (
-            <span key={t.label}>
+            <span key={t.label} className="shrink-0 whitespace-nowrap">
               {t.label} ({toPersianDigits(t.count)})
             </span>
           ))}
@@ -236,7 +236,7 @@ export const AnalyticsView: React.FC = () => {
       </div>
 
       {/* Department & Popular Rooms Distribution */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Popular Rooms Breakdown */}
         <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-3xl p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">

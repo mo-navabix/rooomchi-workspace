@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
   return (
     <header className="portal-header sticky top-0 z-40 w-full">
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-3 sm:gap-4 h-[4.25rem]">
+        <div className="flex items-center gap-2 sm:gap-4 h-14 sm:h-[4.25rem]">
           {/* RTL start: menu + page context */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <button
@@ -301,11 +301,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
         </div>
 
         {/* Mobile page title */}
-        <div className="sm:hidden pb-3 -mt-1">
-          <h1 className="text-base font-black text-slate-900 dark:text-white">
+        <div className="sm:hidden pb-2.5 -mt-0.5 min-w-0">
+          <h1 className="text-base font-bold text-slate-900 dark:text-[#F8FAFC] truncate">
             {page.title}
           </h1>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+          <p className="text-[11px] text-slate-500 dark:text-[#94A3B8] line-clamp-2 leading-relaxed">
             {page.subtitle}
           </p>
         </div>

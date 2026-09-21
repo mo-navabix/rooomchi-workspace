@@ -45,11 +45,14 @@ const MainContent: React.FC = () => {
 
             <div className="flex flex-1 flex-col min-w-0 min-h-screen">
               <Header onOpenSidebar={() => setSidebarOpen(true)} />
-              <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 min-h-[calc(100vh-10rem)]">
+              <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-20 sm:pb-6 min-h-[calc(100vh-10rem)]">
                 {isLoading ? (
                   <AppLoadingSkeleton tab={activeTab} />
                 ) : (
-                  <div key={activeTab} className="min-h-[calc(100vh-10rem)]">
+                  <div
+                    key={activeTab}
+                    className="portal-page min-h-[calc(100vh-10rem)]"
+                  >
                     {activeTab === "dashboard" && <UnifiedDashboardView />}
                     {activeTab === "calendar" && <CalendarView />}
                     {activeTab === "rooms" && <RoomBrowser />}

@@ -266,6 +266,28 @@
     border-color: var(--otagh-border);
   }
 
+  .portal-page {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .portal-card-pad {
+    @apply p-4 sm:p-5;
+  }
+
+  .portal-card-pad-lg {
+    @apply p-4 sm:p-6;
+  }
+
+  .portal-tabs-scroll {
+    @apply flex max-w-full items-center gap-1 overflow-x-auto overscroll-x-contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .portal-tabs-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
   .portal-sidebar {
     @apply bg-white border-s border-slate-200 text-slate-700;
   }
@@ -363,6 +385,17 @@
   html.dark .sidebar-nav-indicator {
     background-color: #14b8a6;
     box-shadow: none;
+  }
+
+  /* KPI و اعداد داشبورد — همان فونت فارسی (نه monospace لاتین) */
+  .dashboard-stat-value {
+    @apply text-xl sm:text-2xl font-bold tracking-tight tabular-nums;
+    font-family: inherit;
+  }
+
+  .dashboard-numeric {
+    @apply tabular-nums;
+    font-family: inherit;
   }
 
   .stat-trend-up {

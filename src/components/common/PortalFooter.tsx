@@ -9,8 +9,8 @@ export const PortalFooter: React.FC = () => {
 
   return (
     <footer className="mt-auto border-t border-slate-200/80 dark:border-[#26364D] bg-white/80 dark:bg-[#111C2E]/90 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
           <div className="md:col-span-4 space-y-3 text-center md:text-right">
             <Logo variant="horizontal" size="sm" showTagline={false} className="mx-auto md:mx-0 md:mr-0" />
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-xs mx-auto md:mx-0">

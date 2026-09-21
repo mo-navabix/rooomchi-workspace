@@ -145,9 +145,9 @@ export const AdminRbacView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 min-w-0">
       {/* Header */}
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+      <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col gap-4 transition-colors">
         <div>
           <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-[#10B981]" />
@@ -158,9 +158,9 @@ export const AdminRbacView: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           {/* Sub-tabs */}
-          <div className="flex items-center bg-slate-100 dark:bg-[#334155] p-1 rounded-xl text-xs font-semibold">
+          <div className="portal-tabs-scroll bg-slate-100 dark:bg-[#334155] p-1 rounded-xl text-xs font-semibold">
             <button
               onClick={() => setActiveSubTab('users')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
@@ -184,7 +184,7 @@ export const AdminRbacView: React.FC = () => {
               setNewDept(currentOrg?.departments[0] || '');
               setIsAddModalOpen(true);
             }}
-            className="px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="w-full sm:w-auto justify-center px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0"
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span>افزودن پرسنل</span>

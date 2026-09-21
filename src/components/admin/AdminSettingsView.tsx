@@ -137,7 +137,7 @@ export const AdminSettingsView: React.FC = () => {
   const isCustomLogo = isImageLogo(logo);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 min-w-0">
       {/* Header */}
       <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex items-center justify-between transition-colors">
         <div className="flex items-center gap-3">

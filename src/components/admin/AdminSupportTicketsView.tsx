@@ -135,8 +135,8 @@ export const AdminSupportTicketsView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs space-y-4">
+    <div className="space-y-4 sm:space-y-6 min-w-0">
+      <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs space-y-4">
         <div>
           <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
             <Ticket className="w-3.5 h-3.5" />
@@ -147,7 +147,7 @@ export const AdminSupportTicketsView: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
           {(
             [
               ['open', 'باز', counts.open],

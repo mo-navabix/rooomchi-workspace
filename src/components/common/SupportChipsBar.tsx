@@ -20,7 +20,7 @@ export const SupportChipsBar: React.FC = () => {
         />
       )}
 
-      <div className="fixed bottom-5 left-4 sm:bottom-6 sm:left-6 z-50 flex flex-col items-center gap-2">
+      <div className="fixed bottom-4 left-3 sm:bottom-6 sm:left-6 z-50 flex flex-col items-center gap-2 pb-[env(safe-area-inset-bottom,0px)]">
         {open && (
           <div
             className="flex flex-col items-stretch gap-1.5 p-2 rounded-2xl bg-white/95 dark:bg-[#1E293B]/95 border border-slate-200/90 dark:border-[#334155] shadow-lg backdrop-blur-md"

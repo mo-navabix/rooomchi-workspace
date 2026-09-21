@@ -98,7 +98,7 @@ export const SupportTicketView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl" id="support-ticket-view">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl min-w-0 mx-auto w-full" id="support-ticket-view">
       <form onSubmit={handleSubmit} className="dark-surface-card rounded-3xl p-5 sm:p-6 space-y-4">
         <label className="block space-y-1.5">
           <span className="text-xs font-bold text-slate-600 dark:text-slate-400">عنوان تیکت</span>

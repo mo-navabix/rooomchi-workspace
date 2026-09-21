@@ -104,15 +104,15 @@ export const MyBookingsView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 min-w-0">
       {/* Header & Filter Tabs */}
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-4 transition-colors">
-        <div className="flex items-center gap-2 sm:ms-auto">
+      <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col gap-3 transition-colors">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 sm:justify-end">
           {/* Tabs */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#0F172A] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#334155]">
+          <div className="portal-tabs-scroll bg-slate-100 dark:bg-[#0F172A] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#334155]">
             <button
               onClick={() => setFilterTab('all')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                 filterTab === 'all'
                   ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -122,7 +122,7 @@ export const MyBookingsView: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterTab('upcoming')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                 filterTab === 'upcoming'
                   ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -132,7 +132,7 @@ export const MyBookingsView: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterTab('pending')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                 filterTab === 'pending'
                   ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -142,7 +142,7 @@ export const MyBookingsView: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterTab('cancelled')}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
+              className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                 filterTab === 'cancelled'
                   ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -154,7 +154,7 @@ export const MyBookingsView: React.FC = () => {
 
           <button
             onClick={() => openBookingModal()}
-            className="px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="w-full sm:w-auto justify-center px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>رزرو جدید</span>
@@ -167,7 +167,7 @@ export const MyBookingsView: React.FC = () => {
         {filteredBookings.map((b) => (
           <div
             key={b.id}
-            className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-5 shadow-xs hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+            className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] portal-card-pad shadow-xs hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 min-w-0"
           >
             <div className="space-y-2 flex-1">
               <div className="flex items-center gap-2.5 flex-wrap">
