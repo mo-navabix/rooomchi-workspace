@@ -18,6 +18,7 @@ import {
   Layers,
   User,
   Ticket,
+  Users,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 
@@ -132,14 +133,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       },
       {
         key: "users",
-        label: "کاربران",
-        icon: ShieldCheck,
+        label: "کاربران و تیم‌ها",
+        icon: Users,
         items: [
           {
             id: "admin-rbac",
             label: "مدیریت کاربران",
             icon: ShieldCheck,
             permissionCheck: can("MANAGE_USERS_ROLES"),
+          },
+          {
+            id: "teams",
+            label: "تیم‌ها و گروه‌ها",
+            icon: Users,
           },
         ],
       },

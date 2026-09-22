@@ -9,7 +9,8 @@ export type Permission =
   | 'MANAGE_USERS_ROLES'
   | 'VIEW_ANALYTICS'
   | 'MANAGE_CATERING'
-  | 'MANAGE_ORG_SETTINGS';
+  | 'MANAGE_ORG_SETTINGS'
+  | 'MANAGE_TEAMS';
 
 export interface User {
   id: string;
@@ -40,6 +41,7 @@ export type ActiveTab =
   | 'analytics'
   | 'admin-settings'
   | 'admin-support-tickets'
+  | 'teams'
   | 'profile'
   | 'support-ticket'
   | 'provisioning';
@@ -125,4 +127,36 @@ export interface Stats {
   avgMeetingDurationMinutes?: number;
   topRoom?: { name: string; occupancyRate: number; bookingsCount: number };
   monthlyTrend?: { label: string; count: number }[];
+}
+
+export interface TeamMember {
+  id: string;
+  teamId: string;
+  userId: string;
+  createdAt: string;
+}
+
+export interface TeamMemberWithUser extends TeamMember {
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    department?: string;
+    jobTitle?: string;
+    role?: UserRole;
+    avatar?: string;
+  };
+}
+
+export interface Team {
+  id: string;
+  organizationId: string;
+  name: string;
+  description?: string;
+  createdBy: string;
+  createdByName?: string;
+  createdAt: string;
+  updatedAt: string;
+  memberCount?: number;
+  members?: TeamMemberWithUser[];
 }

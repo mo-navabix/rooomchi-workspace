@@ -310,3 +310,61 @@ VALUES
     '{"message": "پایگاه داده دیدار با موفقیت راه‌اندازی و جدول‌بندی شد."}'::jsonb
 )
 ON CONFLICT (id) DO NOTHING;
+
+-- ----------------------------------------------------------------------------
+-- ۷. جدول تیم‌ها و گروه‌ها (teams)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS teams (
+    id VARCHAR(64) PRIMARY KEY,
+    organization_id VARCHAR(64) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_by VARCHAR(64) REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_teams_org ON teams(organization_id);
+CREATE INDEX IF NOT EXISTS idx_teams_creator ON teams(created_by);
+
+-- ----------------------------------------------------------------------------
+-- ۸. جدول اعضای تیم (team_members)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS team_members (
+    id VARCHAR(64) PRIMARY KEY,
+    team_id VARCHAR(64) NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    user_id VARCHAR(64) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_team_user UNIQUE (team_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_team_members_team ON team_members(team_id);
+CREATE INDEX IF NOT EXISTS idx_team_members_user ON team_members(user_id);
+
+-- داده‌های اولیه تیم‌ها
+INSERT INTO teams (id, organization_id, name, description, created_by)
+VALUES
+(
+    'team-1',
+    'org-1',
+    'تیم محصول و طراحی',
+    'اعضای بخش مدیریت محصول، تجربه کاربری (UX) و رابط کاربری (UI)',
+    'usr-1'
+),
+(
+    'team-2',
+    'org-1',
+    'تیم مارکتینگ و رشد',
+    'اعضای بازاریابی دیجیتال، برندینگ و روابط عمومی',
+    'usr-1'
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- اعضای اولیه تیم‌ها
+INSERT INTO team_members (id, team_id, user_id)
+VALUES
+('tm-1', 'team-1', 'usr-1'),
+('tm-2', 'team-1', 'usr-2'),
+('tm-3', 'team-1', 'usr-3')
+ON CONFLICT (id) DO NOTHING;
+

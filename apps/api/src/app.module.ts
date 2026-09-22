@@ -6,6 +6,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
 import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { TeamModule } from './modules/teams/team.module';
 import { TenantModule } from './common/tenant/tenant.module';
 import { TenantResolverMiddleware } from './common/tenant/tenant-resolver.middleware';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -19,6 +20,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     UsersModule,
     RolesModule,
     AuthModule,
+    TeamModule,
   ],
   providers: [
     JwtAuthGuard,

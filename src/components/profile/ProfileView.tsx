@@ -127,17 +127,25 @@ export const ProfileView: React.FC = () => {
           </div>
         </div>
         {currentOrg && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-[#334155] shrink-0">
+          <div
+            id="profile-org-badge"
+            className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/90 dark:border-[#334155] sm:self-center shrink-0 shadow-xs max-w-full min-w-0"
+          >
             <OrgLogoBadge
-              size="sm"
+              size="md"
               logo={currentOrg.logo}
               name={currentOrg.name}
             />
             <div className="text-right min-w-0">
-              <div className="text-[10px] text-slate-400">سازمان</div>
-              <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[8rem]">
+              <span className="block text-[11px] font-medium text-slate-400 dark:text-slate-400">
+                سازمان
+              </span>
+              <span
+                className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 whitespace-normal leading-relaxed break-words"
+                title={currentOrg.name}
+              >
                 {currentOrg.name}
-              </div>
+              </span>
             </div>
           </div>
         )}

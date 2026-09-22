@@ -6,6 +6,8 @@ import { User } from '../modules/users/entities/user.entity';
 import { Role } from '../modules/roles/entities/role.entity';
 import { Room } from '../modules/rooms/entities/room.entity';
 import { Reservation } from '../modules/reservations/entities/reservation.entity';
+import { Team } from '../modules/teams/entities/team.entity';
+import { TeamMember } from '../modules/teams/entities/team-member.entity';
 import { InitialMultiTenantSchema1700000000000 } from '../database/migrations/1700000000000-InitialMultiTenantSchema';
 import { AlignOrganizationSchema1700000000001 } from '../database/migrations/1700000000001-AlignOrganizationSchema';
 
@@ -21,7 +23,16 @@ export const getTypeOrmConfig = (): TypeOrmModuleOptions => {
     database: process.env.DATABASE_NAME || process.env.DB_DATABASE || 'didar_enterprise_db',
     url: process.env.DATABASE_URL,
     ssl: getDatabaseSsl(),
-    entities: [Organization, OrganizationAuthSettings, User, Role, Room, Reservation],
+    entities: [
+      Organization,
+      OrganizationAuthSettings,
+      User,
+      Role,
+      Room,
+      Reservation,
+      Team,
+      TeamMember,
+    ],
     migrations: [
       InitialMultiTenantSchema1700000000000,
       AlignOrganizationSchema1700000000001,

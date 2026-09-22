@@ -514,7 +514,212 @@ let users: User[] = [
     lastLoginAt: new Date().toISOString(),
     lastLogin: new Date().toISOString(),
   },
+  {
+    id: "user-tech-reza",
+    organizationId: "org-1",
+    orgId: "org-1",
+    employeeNumber: "TECH-304",
+    firstName: "رضا",
+    lastName: "صادقی",
+    name: "رضا صادقی",
+    email: "reza.sadeghi@technova.ir",
+    password: "password123",
+    status: "ACTIVE",
+    role: "EMPLOYEE",
+    department: "محصول و طراحی",
+    jobTitle: "طراح ارشد محصول و رابط کاربری (Product Designer)",
+    phone: "09124445566",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 15).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 15).toISOString(),
+  },
+  {
+    id: "user-tech-sara",
+    organizationId: "org-1",
+    orgId: "org-1",
+    employeeNumber: "TECH-305",
+    firstName: "سارا",
+    lastName: "محمدی",
+    name: "سارا محمدی",
+    email: "sara.m@technova.ir",
+    password: "password123",
+    status: "ACTIVE",
+    role: "EMPLOYEE",
+    department: "محصول و طراحی",
+    jobTitle: "مدیر محصول (Product Manager)",
+    phone: "09125556677",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 12).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 12).toISOString(),
+  },
+  {
+    id: "user-tech-negar",
+    organizationId: "org-1",
+    orgId: "org-1",
+    employeeNumber: "TECH-306",
+    firstName: "نگار",
+    lastName: "حسینی",
+    name: "نگار حسینی",
+    email: "negar.h@technova.ir",
+    password: "password123",
+    status: "ACTIVE",
+    role: "EMPLOYEE",
+    department: "مارکتینگ و رشد",
+    jobTitle: "مدیر محتوا و شبکه‌های اجتماعی",
+    phone: "09126667788",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 8).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 8).toISOString(),
+  },
+  // Taban Holding Users (org-2)
+  {
+    id: "user-taban-admin",
+    organizationId: "org-2",
+    orgId: "org-2",
+    employeeNumber: "TABAN-01",
+    firstName: "کامران",
+    lastName: "حیدری",
+    name: "کامران حیدری",
+    email: "admin@taban.group",
+    password: "password123",
+    status: "ACTIVE",
+    role: "ORGANIZATION_ADMIN",
+    department: "سرمایه‌گذاری خطرپذیر",
+    jobTitle: "معاون سرمایه‌گذاری",
+    phone: "09129990011",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 45).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 45).toISOString(),
+  },
+  {
+    id: "user-taban-manager",
+    organizationId: "org-2",
+    orgId: "org-2",
+    employeeNumber: "TABAN-02",
+    firstName: "زهرا",
+    lastName: "طاهری",
+    name: "زهرا طاهری",
+    email: "z.taheri@taban.group",
+    password: "password123",
+    status: "ACTIVE",
+    role: "MANAGER",
+    department: "مالی و حسابداری",
+    jobTitle: "سرپرست امور مالی",
+    phone: "09129990022",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 30).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 30).toISOString(),
+  },
+  {
+    id: "user-taban-emp",
+    organizationId: "org-2",
+    orgId: "org-2",
+    employeeNumber: "TABAN-03",
+    firstName: "پیمان",
+    lastName: "قادری",
+    name: "پیمان قادری",
+    email: "peyman.q@taban.group",
+    password: "password123",
+    status: "ACTIVE",
+    role: "EMPLOYEE",
+    department: "حقوقی و قراردادها",
+    jobTitle: "کارشناس ارشد حقوقی",
+    phone: "09129990033",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 20).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 20).toISOString(),
+  },
 ];
+
+// Teams and Team Members In-Memory Data Models
+interface TeamRecord {
+  id: string;
+  organizationId: string;
+  name: string;
+  description?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface TeamMemberRecord {
+  id: string;
+  teamId: string;
+  userId: string;
+  createdAt: string;
+}
+
+let teams: TeamRecord[] = [
+  {
+    id: "team-1",
+    organizationId: "org-1",
+    name: "تیم محصول و طراحی",
+    description: "اعضای مدیریت محصول، طراحی تجربه کاربری و رابط کاربری (Product & UX/UI)",
+    createdBy: "user-org-admin",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 14).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 2).toISOString(),
+  },
+  {
+    id: "team-2",
+    organizationId: "org-1",
+    name: "تیم مارکتینگ و رشد",
+    description: "تیم بازاریابی دیجیتال، برندینگ، کمپین‌های تبلیغاتی و روابط عمومی",
+    createdBy: "user-facility",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 10).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 1).toISOString(),
+  },
+  {
+    id: "team-3",
+    organizationId: "org-2",
+    name: "تیم ارزیابی و سرمایه‌گذاری",
+    description: "تحلیلگران طرح‌های توجیهی، ارزیابی موشکافانه (Due Diligence) و ارزش‌گذاری",
+    createdBy: "user-taban-admin",
+    createdAt: new Date(Date.now() - 3600000 * 24 * 25).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 5).toISOString(),
+  },
+];
+
+let teamMembers: TeamMemberRecord[] = [
+  { id: "tm-1", teamId: "team-1", userId: "user-tech-reza", createdAt: new Date(Date.now() - 3600000 * 24 * 14).toISOString() },
+  { id: "tm-2", teamId: "team-1", userId: "user-tech-sara", createdAt: new Date(Date.now() - 3600000 * 24 * 14).toISOString() },
+  { id: "tm-3", teamId: "team-1", userId: "user-employee", createdAt: new Date(Date.now() - 3600000 * 24 * 10).toISOString() },
+  { id: "tm-4", teamId: "team-1", userId: "user-facility", createdAt: new Date(Date.now() - 3600000 * 24 * 7).toISOString() },
+
+  { id: "tm-5", teamId: "team-2", userId: "user-employee", createdAt: new Date(Date.now() - 3600000 * 24 * 10).toISOString() },
+  { id: "tm-6", teamId: "team-2", userId: "user-tech-negar", createdAt: new Date(Date.now() - 3600000 * 24 * 8).toISOString() },
+
+  { id: "tm-7", teamId: "team-3", userId: "user-taban-admin", createdAt: new Date(Date.now() - 3600000 * 24 * 25).toISOString() },
+  { id: "tm-8", teamId: "team-3", userId: "user-taban-manager", createdAt: new Date(Date.now() - 3600000 * 24 * 25).toISOString() },
+  { id: "tm-9", teamId: "team-3", userId: "user-taban-emp", createdAt: new Date(Date.now() - 3600000 * 24 * 20).toISOString() },
+];
+
+function populateTeamResponse(team: TeamRecord) {
+  const members = teamMembers
+    .filter((tm) => tm.teamId === team.id)
+    .map((tm) => {
+      const u = users.find((usr) => usr.id === tm.userId);
+      return {
+        id: tm.id,
+        teamId: tm.teamId,
+        userId: tm.userId,
+        createdAt: tm.createdAt,
+        user: u
+          ? {
+              id: u.id,
+              name: u.name,
+              email: u.email,
+              department: u.department,
+              jobTitle: u.jobTitle,
+              role: u.role,
+            }
+          : undefined,
+      };
+    });
+
+  const creatorUser = users.find((u) => u.id === team.createdBy);
+
+  return {
+    ...team,
+    createdByName: creatorUser?.name || "مدیر سازمان",
+    memberCount: members.length,
+    members,
+  };
+}
+
 
 // Helper to extract JWT user and enforce multi-tenant isolation
 function extractJwtUser(req: Request): { userId: string; organizationId: string; role: string } | null {
@@ -1902,6 +2107,322 @@ async function startServer() {
 
   app.delete("/api/users/:id", handleDeleteUser);
   app.delete("/users/:id", handleDeleteUser);
+
+  // ============================================================================
+  // TEAMS & GROUPS MANAGEMENT APIS (Multi-Tenant & Role-Scoped)
+  // ============================================================================
+
+  // Helper to check manage permission for teams (Admin or Manager)
+  function canManageTeams(role?: string): boolean {
+    if (!role) return true; // fallback for open testing
+    const upper = role.toUpperCase();
+    return upper === "SUPER_ADMIN" || upper === "ORGANIZATION_ADMIN" || upper === "MANAGER" || upper === "ROOM_MANAGER";
+  }
+
+  // GET /teams & /api/teams
+  const handleGetTeams = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const queryOrg = req.query.orgId as string | undefined;
+
+    let targetOrgId = queryOrg;
+    if (!targetOrgId && caller) {
+      targetOrgId = caller.organizationId;
+    }
+    if (!targetOrgId) {
+      targetOrgId = "org-1"; // default if guest/unspecified
+    }
+
+    // Multi-tenant check: Non-superadmin cannot inspect other orgs' teams
+    if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== targetOrgId) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: امکان مشاهده تیم‌های سازمان دیگر وجود ندارد",
+      });
+    }
+
+    const orgTeams = teams.filter((t) => t.organizationId === targetOrgId);
+    const populated = orgTeams.map(populateTeamResponse);
+    res.json(populated);
+  };
+
+  app.get("/api/teams", handleGetTeams);
+  app.get("/teams", handleGetTeams);
+
+  // GET /teams/:id & /api/teams/:id
+  const handleGetTeamById = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const team = teams.find((t) => t.id === req.params.id);
+    if (!team) {
+      return res.status(404).json({ error: "تیم مورد نظر یافت نشد" });
+    }
+
+    if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== team.organizationId) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: این تیم متعلق به سازمان شما نمی‌باشد",
+      });
+    }
+
+    res.json(populateTeamResponse(team));
+  };
+
+  app.get("/api/teams/:id", handleGetTeamById);
+  app.get("/teams/:id", handleGetTeamById);
+
+  // POST /teams & /api/teams
+  const handleCreateTeam = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const { name, description, organizationId, orgId, memberIds } = req.body;
+
+    if (caller && !canManageTeams(caller.role)) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: کارمندان مجاز به ایجاد تیم نیستند و فقط می‌توانند از تیم‌ها در جلسات استفاده کنند",
+      });
+    }
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: "نام تیم الزامی است" });
+    }
+
+    const targetOrgId = organizationId || orgId || caller?.organizationId || "org-1";
+
+    if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== targetOrgId) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: ایجاد تیم در سازمان دیگر مجاز نمی‌باشد",
+      });
+    }
+
+    // Verify all requested members belong to the same organization
+    if (Array.isArray(memberIds) && memberIds.length > 0) {
+      for (const uid of memberIds) {
+        const u = users.find((usr) => usr.id === uid);
+        if (!u) {
+          return res.status(400).json({ error: `کاربر با شناسه ${uid} یافت نشد` });
+        }
+        const userOrg = u.organizationId || u.orgId;
+        if (userOrg !== targetOrgId) {
+          return res.status(400).json({
+            error: `کاربر ${u.name || u.firstName} متعلق به سازمان این تیم نمی‌باشد و نمی‌تواند اضافه شود`,
+          });
+        }
+      }
+    }
+
+    const newTeam: TeamRecord = {
+      id: `team-${Date.now()}`,
+      organizationId: targetOrgId,
+      name: name.trim(),
+      description: description?.trim() || "",
+      createdBy: caller?.userId || "user-org-admin",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    teams.push(newTeam);
+
+    if (Array.isArray(memberIds)) {
+      memberIds.forEach((uid: string) => {
+        teamMembers.push({
+          id: `tm-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          teamId: newTeam.id,
+          userId: uid,
+          createdAt: new Date().toISOString(),
+        });
+      });
+    }
+
+    const populated = populateTeamResponse(newTeam);
+    res.status(201).json(populated);
+  };
+
+  app.post("/api/teams", handleCreateTeam);
+  app.post("/teams", handleCreateTeam);
+
+  // PATCH /teams/:id & /api/teams/:id
+  const handleUpdateTeam = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const teamIndex = teams.findIndex((t) => t.id === req.params.id);
+    if (teamIndex === -1) {
+      return res.status(404).json({ error: "تیم مورد نظر یافت نشد" });
+    }
+
+    const team = teams[teamIndex];
+    if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== team.organizationId) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی به تیم سازمان دیگر",
+      });
+    }
+
+    if (caller && !canManageTeams(caller.role)) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: کارمندان مجاز به ویرایش اطلاعات تیم نیستند",
+      });
+    }
+
+    const { name, description } = req.body;
+    if (name !== undefined) {
+      if (!name.trim()) {
+        return res.status(400).json({ error: "نام تیم نمی‌تواند خالی باشد" });
+      }
+      team.name = name.trim();
+    }
+    if (description !== undefined) {
+      team.description = description.trim();
+    }
+    team.updatedAt = new Date().toISOString();
+
+    res.json(populateTeamResponse(team));
+  };
+
+  app.patch("/api/teams/:id", handleUpdateTeam);
+  app.patch("/teams/:id", handleUpdateTeam);
+
+  // DELETE /teams/:id & /api/teams/:id
+  const handleDeleteTeam = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const teamIndex = teams.findIndex((t) => t.id === req.params.id);
+    if (teamIndex === -1) {
+      return res.status(404).json({ error: "تیم مورد نظر یافت نشد" });
+    }
+
+    const team = teams[teamIndex];
+    if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== team.organizationId) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی به تیم سازمان دیگر",
+      });
+    }
+
+    if (caller && !canManageTeams(caller.role)) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: کارمندان مجاز به حذف تیم نیستند",
+      });
+    }
+
+    // Cascade delete members
+    teamMembers = teamMembers.filter((tm) => tm.teamId !== team.id);
+    teams.splice(teamIndex, 1);
+
+    res.json({ success: true, message: `تیم «${team.name}» با موفقیت حذف شد` });
+  };
+
+  app.delete("/api/teams/:id", handleDeleteTeam);
+  app.delete("/teams/:id", handleDeleteTeam);
+
+  // POST /teams/:id/members & /api/teams/:id/members
+  const handleAddTeamMembers = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const team = teams.find((t) => t.id === req.params.id);
+    if (!team) {
+      return res.status(404).json({ error: "تیم مورد نظر یافت نشد" });
+    }
+
+    if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== team.organizationId) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: تیم متعلق به سازمان دیگر است",
+      });
+    }
+
+    if (caller && !canManageTeams(caller.role)) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: کارمندان مجاز به افزودن عضو به تیم نیستند",
+      });
+    }
+
+    const { userIds } = req.body;
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({ error: "لیست شناسه‌های کاربری (userIds) الزامی است" });
+    }
+
+    // Verify all users belong to the same organization
+    for (const uid of userIds) {
+      const u = users.find((usr) => usr.id === uid);
+      if (!u) {
+        return res.status(400).json({ error: `کاربر با شناسه ${uid} یافت نشد` });
+      }
+      const userOrg = u.organizationId || u.orgId;
+      if (userOrg !== team.organizationId) {
+        return res.status(400).json({
+          error: `کاربر ${u.name || u.firstName} متعلق به این سازمان نمی‌باشد و ورود آن به تیم مجاز نیست`,
+        });
+      }
+    }
+
+    // Add non-duplicate members
+    userIds.forEach((uid: string) => {
+      const alreadyIn = teamMembers.some((tm) => tm.teamId === team.id && tm.userId === uid);
+      if (!alreadyIn) {
+        teamMembers.push({
+          id: `tm-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          teamId: team.id,
+          userId: uid,
+          createdAt: new Date().toISOString(),
+        });
+      }
+    });
+
+    team.updatedAt = new Date().toISOString();
+    res.json(populateTeamResponse(team));
+  };
+
+  app.post("/api/teams/:id/members", handleAddTeamMembers);
+  app.post("/teams/:id/members", handleAddTeamMembers);
+
+  // DELETE /teams/:id/members/:userId & /api/teams/:id/members/:userId
+  const handleRemoveTeamMember = (req: Request, res: Response) => {
+    const caller = extractJwtUser(req);
+    const team = teams.find((t) => t.id === req.params.id);
+    if (!team) {
+      return res.status(404).json({ error: "تیم مورد نظر یافت نشد" });
+    }
+
+    if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== team.organizationId) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی به تیم سازمان دیگر",
+      });
+    }
+
+    if (caller && !canManageTeams(caller.role)) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "Forbidden",
+        message: "عدم دسترسی: کارمندان مجاز به حذف عضو از تیم نیستند",
+      });
+    }
+
+    const { userId } = req.params;
+    const initialLen = teamMembers.length;
+    teamMembers = teamMembers.filter((tm) => !(tm.teamId === team.id && tm.userId === userId));
+
+    if (teamMembers.length === initialLen) {
+      return res.status(404).json({ error: "عضو مورد نظر در این تیم یافت نشد" });
+    }
+
+    team.updatedAt = new Date().toISOString();
+    res.json(populateTeamResponse(team));
+  };
+
+  app.delete("/api/teams/:id/members/:userId", handleRemoveTeamMember);
+  app.delete("/teams/:id/members/:userId", handleRemoveTeamMember);
 
   // Vite middleware for development vs static serve for production
   if (process.env.NODE_ENV !== "production") {

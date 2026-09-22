@@ -28,6 +28,7 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
       'VIEW_ANALYTICS',
       'MANAGE_CATERING',
       'MANAGE_ORG_SETTINGS',
+      'MANAGE_TEAMS',
     ],
   },
   org_admin: {
@@ -46,6 +47,7 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
       'VIEW_ANALYTICS',
       'MANAGE_CATERING',
       'MANAGE_ORG_SETTINGS',
+      'MANAGE_TEAMS',
     ],
   },
   room_manager: {
@@ -61,6 +63,7 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
       'BOOK_ROOM',
       'MANAGE_CATERING',
       'VIEW_ANALYTICS',
+      'MANAGE_TEAMS',
     ],
   },
   employee: {
@@ -135,6 +138,12 @@ export const PERMISSION_LIST: PermissionMeta[] = [
     titleFa: 'پیکربندی تنظیمات سازمان',
     description: 'تنظیم برند، رنگ، ساعات کاری مجاز و سیاست‌های تأیید خودکار',
     category: 'سازمان',
+  },
+  {
+    key: 'MANAGE_TEAMS',
+    titleFa: 'مدیریت تیم‌ها و گروه‌ها',
+    description: 'ایجاد، ویرایش، حذف تیم‌ها و تعریف لیست اعضای ثابت برای تسریع رزرو جلسات',
+    category: 'کاربران و امنیت',
   },
 ];
 

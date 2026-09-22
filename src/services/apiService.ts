@@ -1,4 +1,4 @@
-import { Booking, Organization, Room, Stats, User, UserRole } from '../types';
+import { Booking, Organization, Room, Stats, User, UserRole, Team } from '../types';
 
 const API_BASE = '/api';
 
@@ -420,5 +420,102 @@ export class ApiService {
       const err = await res.json().catch(() => ({ error: 'خطا در حذف کاربر' }));
       throw new Error(err.error || err.message || 'خطا در حذف کاربر');
     }
+  }
+
+  // ==========================================
+  // TEAMS & GROUPS MANAGEMENT
+  // ==========================================
+
+  static async getTeams(orgId?: string): Promise<Team[]> {
+    const url = orgId ? `${API_BASE}/teams?orgId=${encodeURIComponent(orgId)}` : `${API_BASE}/teams`;
+    const res = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در دریافت لیست تیم‌ها' }));
+      throw new Error(err.error || err.message || 'خطا در دریافت لیست تیم‌ها');
+    }
+    return res.json();
+  }
+
+  static async getTeam(id: string): Promise<Team> {
+    const res = await fetch(`${API_BASE}/teams/${id}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'تیم یافت نشد' }));
+      throw new Error(err.error || err.message || 'تیم یافت نشد');
+    }
+    return res.json();
+  }
+
+  static async createTeam(data: {
+    name: string;
+    description?: string;
+    memberIds?: string[];
+    organizationId?: string;
+  }): Promise<Team> {
+    const res = await fetch(`${API_BASE}/teams`, {
+      method: 'POST',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در ایجاد تیم' }));
+      throw new Error(err.error || err.message || 'خطا در ایجاد تیم');
+    }
+    return res.json();
+  }
+
+  static async updateTeam(
+    id: string,
+    updates: { name?: string; description?: string },
+  ): Promise<Team> {
+    const res = await fetch(`${API_BASE}/teams/${id}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(updates),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در ویرایش تیم' }));
+      throw new Error(err.error || err.message || 'خطا در ویرایش تیم');
+    }
+    return res.json();
+  }
+
+  static async deleteTeam(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/teams/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در حذف تیم' }));
+      throw new Error(err.error || err.message || 'خطا در حذف تیم');
+    }
+  }
+
+  static async addTeamMembers(id: string, userIds: string[]): Promise<Team> {
+    const res = await fetch(`${API_BASE}/teams/${id}/members`, {
+      method: 'POST',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify({ userIds }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در افزودن اعضا به تیم' }));
+      throw new Error(err.error || err.message || 'خطا در افزودن اعضا به تیم');
+    }
+    return res.json();
+  }
+
+  static async removeTeamMember(id: string, userId: string): Promise<Team> {
+    const res = await fetch(`${API_BASE}/teams/${id}/members/${userId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در حذف کاربر از تیم' }));
+      throw new Error(err.error || err.message || 'خطا در حذف کاربر از تیم');
+    }
+    return res.json();
   }
 }

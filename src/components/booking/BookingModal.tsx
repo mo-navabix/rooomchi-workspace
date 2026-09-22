@@ -6,12 +6,7 @@ import { PersianDatePicker } from '../common/PersianDatePicker';
 import { TimePicker } from '../common/TimePicker';
 import { toPersianDigits } from '../../utils/jalali';
 import { X, Calendar, AlertTriangle, ChevronDown, UserPlus } from 'lucide-react';
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function normalizeEmail(raw: string): string {
-  return raw.trim().toLowerCase();
-}
+import { ParticipantSelector } from './ParticipantSelector';
 
 interface Props {
   onSuccess?: () => void;
@@ -38,7 +33,6 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const [startTime, setStartTime] = useState<string>('10:00');
   const [endTime, setEndTime] = useState<string>('11:00');
   const [title, setTitle] = useState<string>('');
-  const [inviteInput, setInviteInput] = useState<string>('');
   const [inviteeEmails, setInviteeEmails] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
@@ -47,7 +41,6 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     if (!currentOrg || !isBookingModalOpen) return;
 
     setTitle('');
-    setInviteInput('');
     setInviteeEmails([]);
     setDate(today);
     setStartTime('10:00');
@@ -138,38 +131,6 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const activeRoom = availableRooms.find((r) => r.id === selectedRoomId);
   const roomLocked = Boolean(selectedRoomForBooking);
 
-  const addInvitee = (raw: string) => {
-    const email = normalizeEmail(raw);
-    if (!email) return;
-    if (!EMAIL_RE.test(email)) {
-      showToast('ایمیل معتبر وارد کنید', 'error');
-      return;
-    }
-    const selfEmail = normalizeEmail(currentUser?.email ?? '');
-    if (selfEmail && email === selfEmail) {
-      showToast('خودتان در جلسه حضور دارید؛ نیازی به دعوت نیست', 'error');
-      return;
-    }
-    if (inviteeEmails.includes(email)) {
-      setInviteInput('');
-      return;
-    }
-    const cap = activeRoom?.capacity;
-    if (cap && 1 + inviteeEmails.length >= cap) {
-      showToast(`ظرفیت اتاق حداکثر ${cap} نفر است`, 'error');
-      return;
-    }
-    setInviteeEmails((prev) => [...prev, email]);
-    setInviteInput('');
-  };
-
-  const handleInviteKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      addInvitee(inviteInput);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentOrg || !selectedRoomId) {
@@ -197,22 +158,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       return;
     }
 
-    let attendeeEmails = [...inviteeEmails];
-    const pendingInvite = normalizeEmail(inviteInput);
-    if (pendingInvite) {
-      if (!EMAIL_RE.test(pendingInvite)) {
-        showToast('ایمیل دعوت‌شده معتبر نیست', 'error');
-        return;
-      }
-      const selfEmail = normalizeEmail(currentUser?.email ?? '');
-      if (selfEmail && pendingInvite === selfEmail) {
-        showToast('خودتان در جلسه حضور دارید؛ نیازی به دعوت نیست', 'error');
-        return;
-      }
-      if (!attendeeEmails.includes(pendingInvite)) {
-        attendeeEmails = [...attendeeEmails, pendingInvite];
-      }
-    }
+    const attendeeEmails = [...inviteeEmails];
 
     const cap = activeRoom?.capacity;
     if (cap && 1 + attendeeEmails.length > cap) {
@@ -390,47 +336,14 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
             />
           </div>
 
-          <div className="space-y-1.5">
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-              <UserPlus className="w-3.5 h-3.5 text-[#0F786E]" />
-              دعوت به جلسه
-              <span className="text-[10px] font-normal text-slate-400">(اختیاری)</span>
-            </span>
-            <input
-              type="email"
-              id="input-booking-invite"
-              dir="ltr"
-              value={inviteInput}
-              onChange={(e) => setInviteInput(e.target.value)}
-              onKeyDown={handleInviteKeyDown}
-              onBlur={() => {
-                if (inviteInput.trim()) addInvitee(inviteInput);
-              }}
-              placeholder="email@company.ir — Enter"
-              className="w-full text-sm px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#10B981]/40 placeholder:text-slate-400"
-            />
-            {inviteeEmails.length > 0 && (
-              <ul className="flex flex-wrap gap-1.5 pt-0.5">
-                {inviteeEmails.map((email) => (
-                  <li key={email}>
-                    <span
-                      className="inline-flex items-center gap-1 max-w-full text-[11px] bg-slate-100 dark:bg-[#334155] text-slate-700 dark:text-slate-200 px-2 py-1 rounded-lg"
-                    >
-                      <span dir="ltr" className="truncate">{email}</span>
-                      <button
-                        type="button"
-                        onClick={() => setInviteeEmails((prev) => prev.filter((e) => e !== email))}
-                        className="text-slate-400 hover:text-rose-500 cursor-pointer shrink-0"
-                        aria-label="حذف"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <ParticipantSelector
+            currentOrgId={currentOrg?.id || ''}
+            currentUserEmail={currentUser?.email}
+            roomCapacity={activeRoom?.capacity}
+            inviteeEmails={inviteeEmails}
+            onChangeInvitees={setInviteeEmails}
+            showToast={showToast}
+          />
 
           {conflictMessage && (
             <p className="text-xs text-rose-600 dark:text-rose-400 flex items-start gap-1.5">

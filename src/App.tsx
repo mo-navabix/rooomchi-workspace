@@ -14,6 +14,7 @@ import { AdminBookingsView } from "./components/admin/AdminBookingsView";
 import { AdminRbacView } from "./components/admin/AdminRbacView";
 import { AdminSettingsView } from "./components/admin/AdminSettingsView";
 import { AdminSupportTicketsView } from "./components/admin/AdminSupportTicketsView";
+import { TeamsView } from "./features/teams/TeamsView";
 import { ProfileView } from "./components/profile/ProfileView";
 import { SupportTicketView } from "./components/support/SupportTicketView";
 import { BookingModal } from "./components/booking/BookingModal";
@@ -65,6 +66,7 @@ const MainContent: React.FC = () => {
                     {activeTab === "admin-support-tickets" && (
                       <AdminSupportTicketsView />
                     )}
+                    {activeTab === "teams" && <TeamsView />}
                     {activeTab === "profile" && <ProfileView />}
                     {activeTab === "support-ticket" && <SupportTicketView />}
                   </div>
