@@ -391,7 +391,10 @@ export class ApiService {
       headers: getAuthHeaders(true),
       body: JSON.stringify({ role }),
     });
-    if (!res.ok) throw new Error('خطا در تغییر نقش کاربر');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در تغییر نقش کاربر' }));
+      throw new Error(err.error || err.message || 'خطا در تغییر نقش کاربر');
+    }
     return res.json();
   }
 
@@ -401,7 +404,10 @@ export class ApiService {
       headers: getAuthHeaders(true),
       body: JSON.stringify({ status }),
     });
-    if (!res.ok) throw new Error('خطا در تغییر وضعیت کاربر');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در تغییر وضعیت کاربر' }));
+      throw new Error(err.error || err.message || 'خطا در تغییر وضعیت کاربر');
+    }
     return res.json();
   }
 
@@ -410,6 +416,9 @@ export class ApiService {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
-    if (!res.ok) throw new Error('خطا در حذف کاربر');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در حذف کاربر' }));
+      throw new Error(err.error || err.message || 'خطا در حذف کاربر');
+    }
   }
 }

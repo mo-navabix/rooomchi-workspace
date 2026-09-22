@@ -25,6 +25,7 @@ export interface User {
   createdAt: string;
   lastLogin?: string;
   isProfileComplete?: boolean;
+  isPermanentAdmin?: boolean;
 }
 
 export type ActiveTab =

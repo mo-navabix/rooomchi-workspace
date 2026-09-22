@@ -100,6 +100,7 @@ interface User {
   phone?: string;
   orgName?: string;
   isProfileComplete?: boolean;
+  isPermanentAdmin?: boolean;
 }
 
 // Initial In-Memory Seed Data
@@ -426,6 +427,28 @@ let users: User[] = [
     department: "مدیریت کل سیستم",
     jobTitle: "مدیر ارشد پلتفرم",
     phone: "09120000001",
+    isPermanentAdmin: true,
+    createdAt: new Date(Date.now() - 3600000 * 24 * 60).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 24 * 60).toISOString(),
+    lastLoginAt: new Date().toISOString(),
+    lastLogin: new Date().toISOString(),
+  },
+  {
+    id: "user-super-2",
+    organizationId: "org-1",
+    orgId: "org-1",
+    employeeNumber: "DIDAR-002",
+    firstName: "مدیر فنی",
+    lastName: "دیدار",
+    name: "مدیر فنی و امنیت سامانه دیدار",
+    email: "root@didar.ir",
+    password: "password123",
+    status: "ACTIVE",
+    role: "SUPER_ADMIN",
+    department: "امنیت و زیرساخت",
+    jobTitle: "مدیر ارشد فنی و امنیت",
+    phone: "09120000002",
+    isPermanentAdmin: true,
     createdAt: new Date(Date.now() - 3600000 * 24 * 60).toISOString(),
     updatedAt: new Date(Date.now() - 3600000 * 24 * 60).toISOString(),
     lastLoginAt: new Date().toISOString(),
@@ -505,6 +528,18 @@ function extractJwtUser(req: Request): { userId: string; organizationId: string;
   } catch {
     return null;
   }
+}
+
+// Helper to identify permanent, undeletable site root admins
+function isProtectedAdmin(user: User | { id?: string; email?: string; isPermanentAdmin?: boolean } | undefined): boolean {
+  if (!user) return false;
+  return (
+    user.isPermanentAdmin === true ||
+    user.id === "user-super" ||
+    user.id === "user-super-2" ||
+    user.email?.toLowerCase() === "admin@didar.ir" ||
+    user.email?.toLowerCase() === "root@didar.ir"
+  );
 }
 
 // In-memory verification codes for forgot password and email OTP registration
@@ -1770,6 +1805,13 @@ async function startServer() {
       return res.status(404).json({ error: "کاربر یافت نشد" });
     }
 
+    if (isProtectedAdmin(user)) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "این کاربر از مدیران اصلی و دائمی سامانه است و نقش آن قابل تغییر یا تنزل درجه نمی‌باشد",
+      });
+    }
+
     const targetOrgId = user.organizationId || user.orgId;
     if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== targetOrgId) {
       return res.status(403).json({
@@ -1808,6 +1850,14 @@ async function startServer() {
       return res.status(404).json({ error: "کاربر یافت نشد" });
     }
 
+    const normalizedStatus = status.toString().toUpperCase();
+    if (isProtectedAdmin(user) && normalizedStatus !== "ACTIVE") {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "امکان تعلیق یا غیرفعال‌سازی مدیران اصلی و دائمی سامانه وجود ندارد",
+      });
+    }
+
     const targetOrgId = user.organizationId || user.orgId;
     if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== targetOrgId) {
       return res.status(403).json({
@@ -1817,7 +1867,6 @@ async function startServer() {
       });
     }
 
-    const normalizedStatus = status.toString().toUpperCase();
     user.status = normalizedStatus as any;
     user.updatedAt = new Date().toISOString();
 
@@ -1832,16 +1881,27 @@ async function startServer() {
   app.patch("/api/users/:id/status", handleUpdateStatus);
   app.patch("/users/:id/status", handleUpdateStatus);
 
-  // DELETE /api/users/:id
-  app.delete("/api/users/:id", (req: Request, res: Response) => {
+  // DELETE /api/users/:id (and /users/:id)
+  const handleDeleteUser = (req: Request, res: Response) => {
     const idx = users.findIndex((u) => u.id === req.params.id);
     if (idx === -1) {
       return res.status(404).json({ error: "کاربر یافت نشد" });
     }
 
+    const targetUser = users[idx];
+    if (isProtectedAdmin(targetUser)) {
+      return res.status(403).json({
+        statusCode: 403,
+        error: "این کاربر از مدیران اصلی و دائمی سامانه است و تحت هیچ شرایطی قابل حذف نمی‌باشد",
+      });
+    }
+
     const deleted = users.splice(idx, 1)[0];
     res.json({ message: `کاربر ${deleted.name} حذف شد` });
-  });
+  };
+
+  app.delete("/api/users/:id", handleDeleteUser);
+  app.delete("/users/:id", handleDeleteUser);
 
   // Vite middleware for development vs static serve for production
   if (process.env.NODE_ENV !== "production") {
