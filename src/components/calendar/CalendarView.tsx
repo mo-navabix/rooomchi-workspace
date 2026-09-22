@@ -5,7 +5,6 @@ import { Booking, Room } from '../../types';
 import {
   ChevronRight,
   ChevronLeft,
-  Plus,
   Clock,
   Filter,
   RefreshCw,
@@ -63,9 +62,8 @@ function dayInfoFromIso(isoDate: string): CalendarDayInfo {
 }
 
 export const CalendarView: React.FC = () => {
-  const { currentOrg, openBookingModal } = useApp();
+  const { currentOrg } = useApp();
   const isNarrow = useMatchMedia('(max-width: 767px)');
-  const [viewMode, setViewMode] = useState<'day' | 'week' | 'month' | 'list'>('week');
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0);
   const [focusDateIso, setFocusDateIso] = useState<string>(() => todayIso());
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -104,7 +102,7 @@ export const CalendarView: React.FC = () => {
   const startDay = weekDays[0];
   const endDay = weekDays[6];
 
-  const showDayView = isNarrow || viewMode === 'day';
+  const showDayView = isNarrow;
 
   const gridDays = useMemo(() => {
     if (showDayView) return [dayInfoFromIso(focusDateIso)];
@@ -162,67 +160,8 @@ export const CalendarView: React.FC = () => {
 
   return (
     <div className="space-y-4 sm:space-y-5 select-none min-w-0" id="calendar-view">
-      {/* View mode — desktop only */}
-      <div className="hidden md:flex w-full justify-end">
-        <div className="portal-tabs-scroll w-auto p-1 bg-slate-100 dark:bg-[#1E293B] rounded-xl border border-slate-200/70 dark:border-[#334155]">
-          <button
-            type="button"
-            onClick={() => setViewMode('day')}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-              viewMode === 'day'
-                ? 'bg-[#0F786E] text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            روز
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('week')}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-              viewMode === 'week'
-                ? 'bg-[#0F786E] text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            هفته
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('month')}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-              viewMode === 'month'
-                ? 'bg-[#0F786E] text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            ماه
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('list')}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-              viewMode === 'list'
-                ? 'bg-[#0F786E] text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            لیست
-          </button>
-        </div>
-      </div>
-
       <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl portal-card-pad shadow-xs flex flex-col gap-3">
         <div className="flex flex-col gap-3 min-w-0">
-          <button
-            type="button"
-            onClick={() => openBookingModal()}
-            className="flex w-full sm:w-auto sm:self-start items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] shadow-xs transition-colors cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>رزرو جلسه</span>
-          </button>
-
           {showDayView ? (
             <div className="space-y-3">
               <PersianDatePicker
@@ -344,7 +283,7 @@ export const CalendarView: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl portal-card-pad flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+      <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl portal-card-pad flex items-center justify-between text-xs">
         <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
           <Clock className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>
@@ -359,13 +298,6 @@ export const CalendarView: React.FC = () => {
             )}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => openBookingModal()}
-          className="text-emerald-600 dark:text-emerald-300 font-bold hover:underline cursor-pointer"
-        >
-          + رزرو جلسه جدید
-        </button>
       </div>
     </div>
   );

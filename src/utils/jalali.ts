@@ -191,7 +191,7 @@ export function formatToJalaliDescriptive(dateStr?: string | null): string {
   const j = gregorianToJalali(gy, gm, gd);
   const monthName = PERSIAN_MONTH_NAMES[j.month - 1] || '';
 
-  return `${weekDayName} ${j.day} ${monthName} ${j.year}`;
+  return `${weekDayName} ${toPersianDigits(j.day)} ${monthName} ${toPersianDigits(j.year)}`;
 }
 
 /**
@@ -224,8 +224,23 @@ export function getJalaliMonthStartWeekday(jy: number, jm: number): number {
 /**
  * Converts English digits in a string to Persian digits
  */
-export function toPersianDigits(n: number | string): string {
+export function toPersianDigits(n: number | string | null | undefined): string {
+  if (n === null || n === undefined) return '';
   const str = String(n);
   const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
   return str.replace(/[0-9]/g, (w) => farsiDigits[+w]);
+}
+
+/**
+ * Converts Persian and Arabic digits in a string to standard English digits
+ */
+export function toEnglishDigits(str: string | null | undefined): string {
+  if (!str) return '';
+  const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+  const arabicDigits = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+  let res = String(str);
+  for (let i = 0; i < 10; i++) {
+    res = res.replace(persianDigits[i], String(i)).replace(arabicDigits[i], String(i));
+  }
+  return res;
 }

@@ -3,6 +3,8 @@ import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Room, Booking } from '../../types';
 import { PersianDatePicker } from '../common/PersianDatePicker';
+import { TimePicker } from '../common/TimePicker';
+import { toPersianDigits } from '../../utils/jalali';
 import { X, Calendar, AlertTriangle, ChevronDown, UserPlus } from 'lucide-react';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -14,13 +16,6 @@ function normalizeEmail(raw: string): string {
 interface Props {
   onSuccess?: () => void;
 }
-
-const TIME_SLOTS = [
-  '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-  '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
-  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
-  '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00',
-];
 
 export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const {
@@ -98,8 +93,16 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
 
   useEffect(() => {
     if (endTime <= startTime) {
-      const next = TIME_SLOTS.find((t) => t > startTime);
-      if (next) setEndTime(next);
+      const parts = startTime.split(':');
+      const h = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) || 0;
+      if (!isNaN(h)) {
+        const nextMin = ((h * 60 + m + 60) % (24 * 60));
+        const nh = Math.floor(nextMin / 60);
+        const nm = nextMin % 60;
+        const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+        setEndTime(`${pad2(nh)}:${pad2(nm)}`);
+      }
     }
   }, [startTime, endTime]);
 
@@ -122,7 +125,9 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     });
 
     if (conflict) {
-      setConflictMessage(`این اتاق از ${conflict.startTime} تا ${conflict.endTime} رزرو است.`);
+      setConflictMessage(
+        `این اتاق از ${toPersianDigits(conflict.startTime)} تا ${toPersianDigits(conflict.endTime)} رزرو است.`
+      );
     } else {
       setConflictMessage(null);
     }
@@ -367,38 +372,22 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
           />
 
           <div className="grid grid-cols-2 gap-3">
-            <label className="block space-y-1.5">
-              <span className="text-xs font-bold text-slate-600 dark:text-slate-400">شروع</span>
-              <div className="relative">
-                <select
-                  id="select-booking-start"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className={selectClass}
-                >
-                  {TIME_SLOTS.slice(0, -1).map((time) => (
-                    <option key={time} value={time}>{time}</option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </label>
-            <label className="block space-y-1.5">
-              <span className="text-xs font-bold text-slate-600 dark:text-slate-400">پایان</span>
-              <div className="relative">
-                <select
-                  id="select-booking-end"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className={selectClass}
-                >
-                  {TIME_SLOTS.filter((t) => t > startTime).map((time) => (
-                    <option key={time} value={time}>{time}</option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </label>
+            <TimePicker
+              id="input-booking-start"
+              label="شروع"
+              value={startTime}
+              onChange={setStartTime}
+              required
+            />
+            <TimePicker
+              id="input-booking-end"
+              label="پایان"
+              value={endTime}
+              onChange={setEndTime}
+              isEndTime
+              referenceStartTime={startTime}
+              required
+            />
           </div>
 
           <div className="space-y-1.5">
