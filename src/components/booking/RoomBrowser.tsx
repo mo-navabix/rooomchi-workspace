@@ -9,6 +9,22 @@ import {
   Sparkles,
   ChevronDown,
   RotateCcw,
+  SlidersHorizontal,
+  X,
+  ArrowLeft,
+  Tv,
+  Video,
+  Mic,
+  PenTool,
+  Wifi,
+  Coffee,
+  Wind,
+  Layers,
+  Check,
+  Building2,
+  Info,
+  ShieldAlert,
+  CalendarPlus,
 } from 'lucide-react';
 import { RoomBrowserSkeleton } from '../common/Skeletons';
 
@@ -17,6 +33,7 @@ export const RoomBrowser: React.FC = () => {
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [amenitiesModalRoom, setAmenitiesModalRoom] = useState<Room | null>(null);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -164,46 +181,53 @@ export const RoomBrowser: React.FC = () => {
         </div>
       </div>
 
-      {/* Rooms List Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+      {/* Rooms List Grid - Compact, Clean, and Simplified */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
         {filteredRooms.map((room) => {
+          const isMaintenance = room.status === 'maintenance';
+          const amenityCount = room.amenities?.length || 0;
+
           return (
             <div
               key={room.id}
-              className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+              className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200/90 dark:border-[#334155] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
             >
               <div>
-                {/* Photo & Badge Header */}
-                <div className="relative h-48 w-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                {/* Photo & Badge Header (Compact h-36) */}
+                <div className="relative h-36 sm:h-40 w-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                   <img
                     src={room.imageUrl}
                     alt={room.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white/95 dark:bg-[#0F786E]/90 backdrop-blur-md text-slate-900 dark:text-white shadow-xs">
+                  {/* Top Badges */}
+                  <div className="absolute top-2.5 right-2.5 left-2.5 flex items-center justify-between pointer-events-none">
+                    <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg bg-black/60 backdrop-blur-md text-white border border-white/10 shadow-xs">
                       {room.code}
                     </span>
                     {room.requiresApproval && (
-                      <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-amber-500/90 text-white backdrop-blur-md">
-                        نیاز به تأیید مدیریت
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/90 text-white backdrop-blur-md shadow-xs">
+                        نیاز به تأیید
                       </span>
                     )}
                   </div>
 
-                  <div className="absolute bottom-3 right-3 left-3 text-white">
-                    <div className="text-[11px] text-white/80 font-medium">
+                  {/* Bottom Image Info */}
+                  <div className="absolute bottom-2.5 right-3 left-3 text-white">
+                    <div className="text-[11px] text-white/80 font-medium truncate">
                       {room.building} • طبقه {room.floor}
                     </div>
-                    <h3 className="text-base font-bold text-white drop-shadow-xs">{room.name}</h3>
+                    <h3 className="text-sm sm:text-base font-bold text-white drop-shadow-xs truncate">
+                      {room.name}
+                    </h3>
                   </div>
                 </div>
 
-                {/* Body Specs */}
-                <div className="p-4 space-y-3">
+                {/* Body - Clean & Simplified */}
+                <div className="p-3.5 space-y-2.5">
                   {/* Capacity & Status */}
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200 font-bold bg-slate-100 dark:bg-[#0F172A] px-2.5 py-1 rounded-lg">
@@ -211,42 +235,51 @@ export const RoomBrowser: React.FC = () => {
                       <span>ظرفیت: {room.capacity} نفر</span>
                     </div>
 
-                    <div className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                      {room.status === 'maintenance' ? 'در حال تعمیرات' : 'فعال و آماده پذیرش'}
+                    <div className="flex items-center gap-1 text-[11px] font-semibold">
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          isMaintenance ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'
+                        }`}
+                      />
+                      <span
+                        className={
+                          isMaintenance
+                            ? 'text-amber-600 dark:text-amber-400'
+                            : 'text-emerald-600 dark:text-emerald-400'
+                        }
+                      >
+                        {isMaintenance ? 'تعمیرات' : 'آماده رزرو'}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Amenities List */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {room.amenities.map((amId) => {
-                      const am = ALL_AMENITIES.find((a) => a.id === amId);
-                      if (!am) return null;
-                      return (
-                        <span
-                          key={amId}
-                          className="text-[10px] font-medium bg-slate-50 dark:bg-[#0F172A] text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-[#334155] px-2 py-0.5 rounded-md"
-                        >
-                          {am.nameFa}
-                        </span>
-                      );
-                    })}
-                  </div>
+                  {/* Simplified Amenities Button Trigger (Replaces crowded tag list) */}
+                  <button
+                    type="button"
+                    onClick={() => setAmenitiesModalRoom(room)}
+                    className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-[#0F172A] hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30 border border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-300 hover:text-[#0F786E] dark:hover:text-[#5eead4] text-xs font-semibold transition-colors cursor-pointer group/btn"
+                  >
+                    <span className="flex items-center gap-1.5 truncate">
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4] shrink-0" />
+                      <span>امکانات و تجهیزات</span>
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-[#0F786E] dark:text-[#5eead4] border border-slate-200 dark:border-white/10 shadow-xs shrink-0">
+                      {amenityCount} قابلیت
+                    </span>
+                  </button>
                 </div>
               </div>
 
               {/* Action Footer */}
-              <div className="p-4 bg-slate-50 dark:bg-[#0D1527] border-t border-slate-100 dark:border-[#334155] flex items-center justify-between transition-colors">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  {room.status === 'maintenance' ? 'در حال تعمیرات' : 'آماده ثبت سفارش جلسه'}
-                </span>
+              <div className="p-3 pt-0">
                 <button
                   id={`btn-book-room-${room.id}`}
-                  disabled={room.status === 'maintenance'}
+                  disabled={isMaintenance}
                   onClick={() => openBookingModal(room)}
-                  className="px-4 py-2 bg-[#10B981] hover:bg-[#0D6B63] disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="w-full py-2 px-3 bg-[#0F786E] hover:bg-[#0D6B63] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-white" />
-                  <span>انتخاب و رزرو</span>
+                  <CalendarPlus className="w-3.5 h-3.5" />
+                  <span>{isMaintenance ? 'غیرقابل رزرو (تعمیرات)' : 'رزرو این اتاق'}</span>
                 </button>
               </div>
             </div>
@@ -260,6 +293,95 @@ export const RoomBrowser: React.FC = () => {
           <p className="text-xs text-slate-400">
             فیلترها را ریست کنید یا با عبارت دیگری جستجو فرمایید.
           </p>
+        </div>
+      )}
+
+      {/* Small Amenities Popup Modal */}
+      {amenitiesModalRoom && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div
+            className="fixed inset-0"
+            onClick={() => setAmenitiesModalRoom(null)}
+          />
+
+          <div className="relative w-full max-w-sm sm:max-w-md bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-150 flex flex-col max-h-[85vh]">
+            {/* Header */}
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-900/50">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center shrink-0">
+                  <SlidersHorizontal className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                    امکانات {amenitiesModalRoom.name}
+                  </h4>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                    کد: {amenitiesModalRoom.code} • ظرفیت {amenitiesModalRoom.capacity} نفر
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAmenitiesModalRoom(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Content List */}
+            <div className="p-4 overflow-y-auto space-y-3">
+              <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-emerald-500" />
+                <span>تجهیزات و امکانات فعال اتاق:</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {amenitiesModalRoom.amenities.map((amId) => {
+                  const am = ALL_AMENITIES.find((a) => a.id === amId);
+                  const nameFa = am ? am.nameFa : amId;
+
+                  let IconComp = Check;
+                  if (amId.includes('wifi')) IconComp = Wifi;
+                  else if (amId.includes('projector') || amId.includes('tv')) IconComp = Tv;
+                  else if (amId.includes('video')) IconComp = Video;
+                  else if (amId.includes('mic')) IconComp = Mic;
+                  else if (amId.includes('whiteboard')) IconComp = PenTool;
+                  else if (amId.includes('catering') || amId.includes('coffee')) IconComp = Coffee;
+                  else if (amId.includes('ac')) IconComp = Wind;
+
+                  return (
+                    <div
+                      key={amId}
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200"
+                    >
+                      <div className="w-6 h-6 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center text-[#0F786E] dark:text-[#5eead4] shrink-0 shadow-2xs">
+                        <IconComp className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="font-medium text-[11px] leading-snug">
+                        {nameFa}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Location & Policies */}
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>موقعیت فیزیکی: {amenitiesModalRoom.building}، طبقه {amenitiesModalRoom.floor}</span>
+                </div>
+                {amenitiesModalRoom.requiresApproval && (
+                  <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                    <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
+                    <span>رزرو این اتاق منوط به تأیید نهایی واحد مدیریت است.</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

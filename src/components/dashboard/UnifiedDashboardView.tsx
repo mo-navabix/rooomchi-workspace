@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 import { ApiService } from "../../services/apiService";
 import { Booking, Room, Stats } from "../../types";
-import { Calendar, Clock, DoorOpen, Users, Plus, TrendingUp, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, DoorOpen, Users, TrendingUp, AlertTriangle, ArrowLeft } from "lucide-react";
 import { toPersianDigits } from "../../utils/jalali";
 import { UnifiedDashboardSkeleton } from "../common/Skeletons";
 
 export const UnifiedDashboardView: React.FC = () => {
   const {
     currentOrg,
-    openBookingModal,
     setActiveTab,
     currentUser,
     isRegistrationComplete,
@@ -157,17 +156,6 @@ export const UnifiedDashboardView: React.FC = () => {
           </button>
         </div>
       )}
-
-      <div className="flex justify-stretch sm:justify-end">
-        <button
-          type="button"
-          onClick={() => openBookingModal()}
-          className="portal-btn-primary flex w-full sm:w-auto items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>رزرو جلسه جدید</span>
-        </button>
-      </div>
 
       {/* 4 Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

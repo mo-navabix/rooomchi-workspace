@@ -24,6 +24,7 @@ import {
   CheckCircle2,
   AlertCircle,
   X,
+  ChevronDown,
 } from 'lucide-react';
 import { AdminBookingsSkeleton } from '../common/Skeletons';
 
@@ -171,37 +172,43 @@ export const AdminSupportTicketsView: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100 dark:border-[#334155]">
-          <div className="relative sm:col-span-1">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-3 border-t border-slate-100 dark:border-[#334155]">
+          <div className="relative sm:col-span-6">
+            <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="جستجو شناسه، عنوان، کاربر..."
-              className="w-full pr-9 pl-3 py-2.5 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155]"
+              placeholder="جستجو بر اساس شناسه، عنوان، نام یا ایمیل کاربر..."
+              className="w-full pr-10 pl-3 py-2.5 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/30 focus:border-[#0F786E] transition-all"
             />
           </div>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as typeof filterStatus)}
-            className="px-3 py-2.5 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] cursor-pointer"
-          >
-            <option value="all">همه وضعیت‌ها</option>
-            {(Object.keys(statusLabels) as SupportTicket['status'][]).map((s) => (
-              <option key={s} value={s}>{statusLabels[s]}</option>
-            ))}
-          </select>
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value as typeof filterCategory)}
-            className="px-3 py-2.5 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] cursor-pointer"
-          >
-            <option value="all">همه دسته‌ها</option>
-            {(Object.keys(categoryLabels) as TicketCategory[]).map((c) => (
-              <option key={c} value={c}>{categoryLabels[c]}</option>
-            ))}
-          </select>
+          <div className="relative sm:col-span-3">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as typeof filterStatus)}
+              className="w-full appearance-none pr-3.5 pl-9 py-2.5 rounded-xl text-xs font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/30 focus:border-[#0F786E] transition-all"
+            >
+              <option value="all">همه وضعیت‌ها</option>
+              {(Object.keys(statusLabels) as SupportTicket['status'][]).map((s) => (
+                <option key={s} value={s}>{statusLabels[s]}</option>
+              ))}
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+          <div className="relative sm:col-span-3">
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value as typeof filterCategory)}
+              className="w-full appearance-none pr-3.5 pl-9 py-2.5 rounded-xl text-xs font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/30 focus:border-[#0F786E] transition-all"
+            >
+              <option value="all">همه دسته‌ها</option>
+              {(Object.keys(categoryLabels) as TicketCategory[]).map((c) => (
+                <option key={c} value={c}>{categoryLabels[c]}</option>
+              ))}
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 

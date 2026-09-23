@@ -26,6 +26,48 @@ import {
   Settings,
 } from "lucide-react";
 
+interface ToggleSwitchProps {
+  checked: boolean;
+  onChange: () => void;
+  size?: "sm" | "md";
+  label?: string;
+  disabled?: boolean;
+}
+
+export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
+  checked,
+  onChange,
+  size = "md",
+  label,
+  disabled,
+}) => {
+  const isSm = size === "sm";
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={onChange}
+      className={`group relative inline-flex items-center shrink-0 cursor-pointer rounded-full border-0 p-0.5 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 ${
+        isSm ? "h-5 w-9" : "h-6 w-11"
+      } ${
+        checked ? "bg-[#0F786E]" : "bg-slate-300 dark:bg-slate-700"
+      } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+    >
+      <span className="sr-only">{label || "تغییر وضعیت"}</span>
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none block aspect-square shrink-0 rounded-full bg-white shadow-md ring-0 transition-transform duration-200 ease-in-out ${
+          isSm ? "h-4 w-4" : "h-5 w-5"
+        } ${
+          checked ? (isSm ? "-translate-x-4" : "-translate-x-5") : "translate-x-0"
+        }`}
+      />
+    </button>
+  );
+};
+
 interface AuditLogEntry {
   id: string;
   userName: string;
@@ -287,17 +329,13 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
-                <input
-                  type="checkbox"
-                  checked={accessControl.googleAuthEnabled}
-                  onChange={() =>
-                    handleToggle("googleAuthEnabled", "ورود با حساب گوگل")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                checked={accessControl.googleAuthEnabled}
+                onChange={() =>
+                  handleToggle("googleAuthEnabled", "ورود با حساب گوگل")
+                }
+                label="امکان ورود و ثبت‌نام با حساب گوگل"
+              />
             </div>
 
             {/* Toggle 2: Google Auto Sign-out on Logout */}
@@ -314,17 +352,13 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
-                <input
-                  type="checkbox"
-                  checked={accessControl.googleAutoSignOut}
-                  onChange={() =>
-                    handleToggle("googleAutoSignOut", "خروج همزمان از حساب گوگل")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                checked={accessControl.googleAutoSignOut}
+                onChange={() =>
+                  handleToggle("googleAutoSignOut", "خروج همزمان از حساب گوگل")
+                }
+                label="خروج خودکار و لغو نشست گوگل"
+              />
             </div>
 
             {/* Allowed Google Domains Restriction */}
@@ -414,17 +448,13 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
-                <input
-                  type="checkbox"
-                  checked={accessControl.emailPasswordAuthEnabled}
-                  onChange={() =>
-                    handleToggle("emailPasswordAuthEnabled", "ورود با کلمه عبور")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                checked={accessControl.emailPasswordAuthEnabled}
+                onChange={() =>
+                  handleToggle("emailPasswordAuthEnabled", "ورود با کلمه عبور")
+                }
+                label="ورود با ایمیل و گذرواژه سازمانی"
+              />
             </div>
 
             {/* Toggle 4: Self Registration */}
@@ -441,17 +471,13 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
-                <input
-                  type="checkbox"
-                  checked={accessControl.selfRegistrationEnabled}
-                  onChange={() =>
-                    handleToggle("selfRegistrationEnabled", "ثبت‌نام مستقیم کاربران")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                checked={accessControl.selfRegistrationEnabled}
+                onChange={() =>
+                  handleToggle("selfRegistrationEnabled", "ثبت‌نام مستقیم کاربران")
+                }
+                label="ثبت‌نام مستقیم و عمومی کاربران"
+              />
             </div>
 
             {/* Toggle 5: Two Factor Auth Requirement */}
@@ -468,17 +494,13 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
-                <input
-                  type="checkbox"
-                  checked={accessControl.twoFactorAuthRequired}
-                  onChange={() =>
-                    handleToggle("twoFactorAuthRequired", "احراز هویت دومرحله‌ای")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                checked={accessControl.twoFactorAuthRequired}
+                onChange={() =>
+                  handleToggle("twoFactorAuthRequired", "احراز هویت دومرحله‌ای")
+                }
+                label="الزام ورود دومرحله‌ای برای مدیران"
+              />
             </div>
           </div>
         </div>
@@ -569,17 +591,14 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
-                <input
-                  type="checkbox"
-                  checked={accessControl.requireApprovalAfterHours}
-                  onChange={() =>
-                    handleToggle("requireApprovalAfterHours", "تأییدیه ساعات غیراداری")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                size="sm"
+                checked={accessControl.requireApprovalAfterHours}
+                onChange={() =>
+                  handleToggle("requireApprovalAfterHours", "تأییدیه ساعات غیراداری")
+                }
+                label="تأییدیه ساعات غیراداری"
+              />
             </div>
 
             {/* Guest Booking Access */}
@@ -593,17 +612,14 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
-                <input
-                  type="checkbox"
-                  checked={accessControl.guestBookingEnabled}
-                  onChange={() =>
-                    handleToggle("guestBookingEnabled", "رزرو توسط مهمانان")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                size="sm"
+                checked={accessControl.guestBookingEnabled}
+                onChange={() =>
+                  handleToggle("guestBookingEnabled", "رزرو توسط مهمانان")
+                }
+                label="رزرو توسط افراد مهمان"
+              />
             </div>
 
             {/* Employee Analytics Visibility */}
@@ -617,17 +633,14 @@ export const AccessControlView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
-                <input
-                  type="checkbox"
-                  checked={accessControl.employeeAnalyticsEnabled}
-                  onChange={() =>
-                    handleToggle("employeeAnalyticsEnabled", "مشاهده آمار توسط پرسنل")
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0F786E]"></div>
-              </label>
+              <ToggleSwitch
+                size="sm"
+                checked={accessControl.employeeAnalyticsEnabled}
+                onChange={() =>
+                  handleToggle("employeeAnalyticsEnabled", "مشاهده آمار توسط پرسنل")
+                }
+                label="دسترسی پرسنل عادی به گزارش‌ها"
+              />
             </div>
           </div>
         </div>

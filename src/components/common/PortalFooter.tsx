@@ -8,8 +8,8 @@ export const PortalFooter: React.FC = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-slate-200/80 dark:border-[#26364D] bg-white/80 dark:bg-[#111C2E]/90 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <footer className="mt-3 sm:mt-5 px-3 sm:px-6 lg:px-8 pb-4 pt-1 w-full">
+      <div className="max-w-7xl mx-auto rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-[#111C2E]/85 backdrop-blur-md shadow-sm dark:shadow-black/20 p-5 sm:p-7">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
           <div className="md:col-span-4 space-y-3 text-center md:text-right">
             <Logo variant="horizontal" size="sm" showTagline={false} className="mx-auto md:mx-0 md:mr-0" />

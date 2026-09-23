@@ -521,9 +521,9 @@ export const AdminRbacView: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateUser} className="p-6 space-y-3.5">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <form onSubmit={handleCreateUser} className="p-6 space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                   نام و نام خانوادگی *
                 </label>
                 <input
@@ -531,13 +531,13 @@ export const AdminRbacView: React.FC = () => {
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="مثال: نیلوفر افشار"
-                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
                   required
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                   ایمیل سازمانی *
                 </label>
                 <input
@@ -545,59 +545,69 @@ export const AdminRbacView: React.FC = () => {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="n.afshar@company.ir"
-                  className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white text-left"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white text-left transition-all shadow-xs"
                   dir="ltr"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <div className="grid grid-cols-2 gap-3.5">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     نقش سازمانی
                   </label>
-                  <select
-                    value={newRole}
-                    onChange={(e) => setNewRole(e.target.value as UserRole)}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
-                  >
-                    <option value="employee">کارمند عادی</option>
-                    <option value="room_manager">مدیر تشریفات</option>
-                    <option value="org_admin">مدیر سازمان</option>
-                    <option value="super_admin">مدیر کل سیستم</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={newRole}
+                      onChange={(e) => setNewRole(e.target.value as UserRole)}
+                      className="w-full appearance-none pr-3.5 pl-9 py-2.5 text-xs font-semibold border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all cursor-pointer shadow-xs"
+                    >
+                      <option value="employee">کارمند عادی</option>
+                      <option value="room_manager">مدیر تشریفات</option>
+                      <option value="org_admin">مدیر سازمان</option>
+                      <option value="super_admin">مدیر کل سیستم</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">دپارتمان</label>
-                  <select
-                    value={newDept}
-                    onChange={(e) => setNewDept(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
-                  >
-                    {(currentOrg?.departments ?? []).map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    دپارتمان
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={newDept}
+                      onChange={(e) => setNewDept(e.target.value)}
+                      className="w-full appearance-none pr-3.5 pl-9 py-2.5 text-xs font-semibold border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all cursor-pointer shadow-xs"
+                    >
+                      {(currentOrg?.departments ?? []).map((d) => (
+                        <option key={d} value={d}>
+                          {d}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">سمت شغلی</label>
+              <div className="grid grid-cols-2 gap-3.5">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    سمت شغلی
+                  </label>
                   <input
                     type="text"
                     value={newJobTitle}
                     onChange={(e) => setNewJobTitle(e.target.value)}
                     placeholder="مثال: مدیر مارکتینگ"
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
+                    className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                     شماره همراه
                   </label>
                   <input
@@ -605,24 +615,24 @@ export const AdminRbacView: React.FC = () => {
                     value={newPhone}
                     onChange={(e) => setNewPhone(e.target.value)}
                     placeholder="0912..."
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg text-left bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white"
+                    className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
                     dir="ltr"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-[#334155]">
+              <div className="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100 dark:border-[#334155]">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                  className="px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
                 >
                   انصراف
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-xl shadow-xs"
+                  className="px-5 py-2.5 text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] rounded-xl shadow-xs transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting ? 'در حال ثبت...' : 'ایجاد حساب کاربری'}
                 </button>

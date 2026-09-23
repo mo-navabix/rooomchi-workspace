@@ -1,475 +1,455 @@
-import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
-import { Clock, ChevronDown } from 'lucide-react';
-import { toPersianDigits, toEnglishDigits } from '../../utils/jalali';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { Clock, Check, X } from 'lucide-react';
+import { toPersianDigits } from '../../utils/jalali';
 
 interface TimePickerProps {
   id?: string;
   label?: string;
-  value: string; // HH:MM in 24h format e.g. "10:00"
+  value: string; // "HH:MM" e.g. "09:00"
   onChange: (time: string) => void;
-  minTime?: string;
-  maxTime?: string;
+  minTime?: string; // e.g. "08:00"
+  maxTime?: string; // e.g. "18:00"
   disabled?: boolean;
   required?: boolean;
-  placeholder?: string;
-  className?: string;
   isEndTime?: boolean;
-  startTimeReference?: string;
   referenceStartTime?: string;
+  startTimeReference?: string;
+  className?: string;
 }
 
-const ITEM_HEIGHT = 42; // height of each roller item in px
-const VISIBLE_COUNT = 7; // 3 above, 1 center, 3 below (matching user's screenshot)
-const ROLLER_HEIGHT = ITEM_HEIGHT * VISIBLE_COUNT; // 294px
-const HALF_PADDING = (ROLLER_HEIGHT - ITEM_HEIGHT) / 2; // 126px top & bottom spacer
+const ITEM_HEIGHT = 44; // Standard height in px for each wheel row
+const VISIBLE_COUNT = 5; // Visible items (center is index 2)
+const WHEEL_HEIGHT = ITEM_HEIGHT * VISIBLE_COUNT; // 220px
+const WHEEL_PADDING = (WHEEL_HEIGHT - ITEM_HEIGHT) / 2; // 88px (exactly center item)
 
-const HOURS = Array.from({ length: 24 }, (_, i) => (i < 10 ? `0${i}` : `${i}`));
-const MINUTES = Array.from({ length: 60 }, (_, i) => (i < 10 ? `0${i}` : `${i}`));
-
-interface WheelColumnProps {
-  items: string[];
-  selectedValue: string;
-  onSelect: (val: string) => void;
-  label: string;
+interface SingleWheelProps {
+  items: number[];
+  selectedValue: number;
+  onSelect: (val: number) => void;
+  padZero?: boolean;
 }
 
-const WheelColumn: React.FC<WheelColumnProps> = ({
+const SingleWheel: React.FC<SingleWheelProps> = ({
   items,
   selectedValue,
   onSelect,
-  label,
+  padZero = true,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(() => {
-    const idx = items.indexOf(selectedValue);
-    return idx >= 0 ? idx : 0;
-  });
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isInternalScroll = useRef(false);
+  const debounceTimer = useRef<number | null>(null);
 
-  const isDraggingRef = useRef(false);
-  const startYRef = useRef(0);
-  const startScrollTopRef = useRef(0);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Sync scroll position with external selectedValue without animation
+  // Scroll to selected value on mount or change
   useEffect(() => {
     const idx = items.indexOf(selectedValue);
-    if (idx >= 0) {
-      setActiveIndex(idx);
-      if (containerRef.current) {
-        const targetScroll = idx * ITEM_HEIGHT;
-        if (Math.abs(containerRef.current.scrollTop - targetScroll) > 1) {
-          containerRef.current.scrollTop = targetScroll;
-        }
-      }
+    if (idx !== -1 && scrollRef.current) {
+      isInternalScroll.current = true;
+      scrollRef.current.scrollTo({
+        top: idx * ITEM_HEIGHT,
+        behavior: 'smooth',
+      });
+      const timer = window.setTimeout(() => {
+        isInternalScroll.current = false;
+      }, 250);
+      return () => clearTimeout(timer);
     }
   }, [selectedValue, items]);
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop = e.currentTarget.scrollTop;
-    const currentIdx = Math.max(0, Math.min(items.length - 1, Math.round(scrollTop / ITEM_HEIGHT)));
-    setActiveIndex(currentIdx);
+  const handleScroll = useCallback(() => {
+    if (isInternalScroll.current) return;
 
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
+    if (debounceTimer.current) {
+      window.clearTimeout(debounceTimer.current);
     }
 
-    scrollTimeoutRef.current = setTimeout(() => {
-      if (items[currentIdx] && items[currentIdx] !== selectedValue) {
-        onSelect(items[currentIdx]);
+    debounceTimer.current = window.setTimeout(() => {
+      if (!scrollRef.current) return;
+      const top = scrollRef.current.scrollTop;
+      const rawIndex = Math.round(top / ITEM_HEIGHT);
+      const clampedIndex = Math.max(0, Math.min(items.length - 1, rawIndex));
+      const chosen = items[clampedIndex];
+      if (chosen !== undefined && chosen !== selectedValue) {
+        onSelect(chosen);
       }
-    }, 50);
-  };
+    }, 60);
+  }, [items, onSelect, selectedValue]);
 
-  const handleItemClick = (idx: number) => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = idx * ITEM_HEIGHT;
+  const handleClickItem = (itemVal: number, index: number) => {
+    if (scrollRef.current) {
+      isInternalScroll.current = true;
+      scrollRef.current.scrollTo({
+        top: index * ITEM_HEIGHT,
+        behavior: 'smooth',
+      });
+      onSelect(itemVal);
+      setTimeout(() => {
+        isInternalScroll.current = false;
+      }, 250);
     }
-    setActiveIndex(idx);
-    onSelect(items[idx]);
-  };
-
-  // Mouse Dragging Support for desktop
-  const handleMouseDown = (e: React.MouseEvent) => {
-    isDraggingRef.current = true;
-    startYRef.current = e.clientY;
-    if (containerRef.current) {
-      startScrollTopRef.current = containerRef.current.scrollTop;
-    }
-
-    const handleMouseMove = (moveEvt: MouseEvent) => {
-      if (!isDraggingRef.current || !containerRef.current) return;
-      const delta = moveEvt.clientY - startYRef.current;
-      containerRef.current.scrollTop = startScrollTopRef.current - delta;
-    };
-
-    const handleMouseUp = () => {
-      if (!isDraggingRef.current) return;
-      isDraggingRef.current = false;
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-
-      if (containerRef.current) {
-        const scrollTop = containerRef.current.scrollTop;
-        const finalIdx = Math.max(0, Math.min(items.length - 1, Math.round(scrollTop / ITEM_HEIGHT)));
-        containerRef.current.scrollTop = finalIdx * ITEM_HEIGHT;
-        setActiveIndex(finalIdx);
-        onSelect(items[finalIdx]);
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center select-none relative">
-      <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-1">
-        {label}
-      </div>
-
+    <div
+      className="relative flex-1 overflow-hidden"
+      style={{ height: `${WHEEL_HEIGHT}px` }}
+    >
       <div
-        ref={containerRef}
+        ref={scrollRef}
         onScroll={handleScroll}
-        onMouseDown={handleMouseDown}
-        className="w-full relative overflow-y-auto cursor-grab active:cursor-grabbing snap-y snap-mandatory touch-pan-y"
+        className="h-full w-full overflow-y-scroll no-scrollbar select-none"
         style={{
-          height: `${ROLLER_HEIGHT}px`,
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
+          scrollSnapType: 'y mandatory',
+          paddingTop: `${WHEEL_PADDING}px`,
+          paddingBottom: `${WHEEL_PADDING}px`,
         }}
       >
-        <div style={{ height: `${HALF_PADDING}px` }} />
+        {items.map((item, index) => {
+          const isSelected = item === selectedValue;
+          const diff = Math.abs(items.indexOf(selectedValue) - index);
+          // English (Latin) formatted digits
+          const str = padZero ? item.toString().padStart(2, '0') : item.toString();
 
-        {items.map((item, idx) => {
-          const diff = Math.abs(idx - activeIndex);
-
-          // 3D Drum Roller perspective matching the user's screenshot
           let opacity = 1;
           let scale = 1;
-          let colorClass = 'text-slate-900 dark:text-white font-bold';
-
-          if (diff === 0) {
+          if (isSelected) {
             opacity = 1;
             scale = 1.18;
-            colorClass = 'text-slate-900 dark:text-white font-black text-2xl';
           } else if (diff === 1) {
             opacity = 0.55;
             scale = 0.96;
-            colorClass = 'text-slate-500 dark:text-slate-400 font-medium text-lg';
           } else if (diff === 2) {
-            opacity = 0.32;
-            scale = 0.86;
-            colorClass = 'text-slate-400 dark:text-slate-500 font-normal text-base';
-          } else if (diff === 3) {
-            opacity = 0.16;
-            scale = 0.76;
-            colorClass = 'text-slate-300 dark:text-slate-600 font-light text-sm';
+            opacity = 0.28;
+            scale = 0.84;
           } else {
-            opacity = 0.06;
-            scale = 0.68;
-            colorClass = 'text-slate-200 dark:text-slate-700 font-light text-xs';
+            opacity = 0.12;
+            scale = 0.72;
           }
 
           return (
             <div
               key={item}
-              onClick={() => handleItemClick(idx)}
+              onClick={() => handleClickItem(item, index)}
               style={{
                 height: `${ITEM_HEIGHT}px`,
+                scrollSnapAlign: 'center',
                 opacity,
                 transform: `scale(${scale})`,
-                transition: 'none',
               }}
-              className={`flex items-center justify-center snap-center cursor-pointer select-none tracking-wider ${colorClass}`}
+              className={`flex items-center justify-center cursor-pointer transition-all duration-150 ${
+                isSelected
+                  ? 'font-black text-slate-900 dark:text-white'
+                  : 'font-semibold text-slate-500 dark:text-slate-400'
+              }`}
             >
-              {item}
+              <span className="font-mono text-xl sm:text-2xl tracking-wider select-none text-slate-900 dark:text-white">
+                {str}
+              </span>
             </div>
           );
         })}
-
-        <div style={{ height: `${HALF_PADDING}px` }} />
       </div>
     </div>
   );
 };
 
 export const TimePicker: React.FC<TimePickerProps> = ({
-  id = 'time-picker',
+  id,
   label,
-  value = '10:00',
+  value,
   onChange,
-  minTime,
-  maxTime,
+  minTime = '08:00',
+  maxTime = '18:00',
   disabled = false,
   required = false,
-  placeholder = 'انتخاب زمان',
-  className = '',
   isEndTime = false,
-  startTimeReference,
   referenceStartTime,
+  startTimeReference,
+  className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const refStart = startTimeReference || referenceStartTime;
-  const [typedValue, setTypedValue] = useState(value);
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [panelPos, setPanelPos] = useState<{ top: number; left: number; width: number } | null>(null);
+  const refStart = referenceStartTime || startTimeReference;
 
-  // Parse current hour and minute
-  const [currentHour, currentMinute] = (() => {
-    const parts = (value || '10:00').split(':');
-    const h = parts[0] || '10';
-    const m = parts[1] || '00';
-    return [h.padStart(2, '0'), m.padStart(2, '0')];
-  })();
+  // Safe parse bounds
+  const [minH, minM] = useMemo(() => {
+    const [h, m] = (minTime || '08:00').split(':').map(Number);
+    return [isNaN(h) ? 8 : h, isNaN(m) ? 0 : m];
+  }, [minTime]);
 
-  useEffect(() => {
-    setTypedValue(value);
-  }, [value]);
+  const [maxH, maxM] = useMemo(() => {
+    const [h, m] = (maxTime || '18:00').split(':').map(Number);
+    return [isNaN(h) ? 18 : h, isNaN(m) ? 0 : m];
+  }, [maxTime]);
 
-  const updatePanelPosition = () => {
-    const trigger = triggerRef.current;
-    if (!trigger) return;
-    const rect = trigger.getBoundingClientRect();
-    const panelWidth = 310;
-    const panelHeight = 390;
+  // Current parsed hour and minute
+  const [curH, curM] = useMemo(() => {
+    const [h, m] = (value || '08:00').split(':').map(Number);
+    return [isNaN(h) ? minH : h, isNaN(m) ? 0 : m];
+  }, [value, minH]);
 
-    let left = rect.right - panelWidth;
-    if (left < 10) left = 10;
-    if (left + panelWidth > window.innerWidth - 10) {
-      left = window.innerWidth - panelWidth - 10;
-    }
+  // Temporary state while modal is open
+  const [tempH, setTempH] = useState<number>(curH);
+  const [tempM, setTempM] = useState<number>(curM);
 
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const openAbove = spaceBelow < panelHeight && rect.top > panelHeight;
-
-    const top = openAbove
-      ? Math.max(10, rect.top - panelHeight - 6)
-      : Math.min(window.innerHeight - panelHeight - 10, rect.bottom + 6);
-
-    setPanelPos({ top, left, width: panelWidth });
+  // Sync temp values when picker opens
+  const openPicker = () => {
+    if (disabled) return;
+    setTempH(curH);
+    setTempM(curM);
+    setIsOpen(true);
   };
 
-  useLayoutEffect(() => {
-    if (!isOpen) {
-      setPanelPos(null);
-      return;
-    }
-    updatePanelPosition();
-    window.addEventListener('resize', updatePanelPosition);
-    window.addEventListener('scroll', updatePanelPosition, true);
-    return () => {
-      window.removeEventListener('resize', updatePanelPosition);
-      window.removeEventListener('scroll', updatePanelPosition, true);
-    };
-  }, [isOpen]);
+  // Allowed hours within org bounds
+  const allowedHours = useMemo(() => {
+    let startH = minH;
+    let endH = maxH;
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (triggerRef.current?.contains(target) || panelRef.current?.contains(target)) {
-        return;
+    if (isEndTime && refStart) {
+      const [sh] = refStart.split(':').map(Number);
+      if (!isNaN(sh) && sh >= startH) {
+        startH = sh;
       }
-      setIsOpen(false);
-    };
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
 
-  const handleHourSelect = useCallback((newH: string) => {
-    const newTime = `${newH}:${currentMinute}`;
-    onChange(newTime);
-  }, [currentMinute, onChange]);
-
-  const handleMinuteSelect = useCallback((newM: string) => {
-    const newTime = `${currentHour}:${newM}`;
-    onChange(newTime);
-  }, [currentHour, onChange]);
-
-  const handleDirectInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = toEnglishDigits(e.target.value).trim();
-    setTypedValue(raw);
-
-    if (/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(raw)) {
-      const [h, m] = raw.split(':');
-      const formatted = `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
-      onChange(formatted);
+    const list: number[] = [];
+    for (let h = startH; h <= endH; h++) {
+      list.push(h);
     }
+    return list.length > 0 ? list : [minH];
+  }, [minH, maxH, isEndTime, refStart]);
+
+  // Allowed minutes (5-minute step increments: 0, 5, 10, ..., 55)
+  const allowedMinutes = useMemo(() => {
+    const list: number[] = [];
+    for (let m = 0; m < 60; m += 5) {
+      list.push(m);
+    }
+    return list;
+  }, []);
+
+  // Ensure initial temp values are within bounds
+  useEffect(() => {
+    if (allowedHours.length > 0 && !allowedHours.includes(tempH)) {
+      setTempH(allowedHours[0]);
+    }
+  }, [allowedHours, tempH]);
+
+  // Confirm selection
+  const handleConfirm = () => {
+    let finalH = tempH;
+    let finalM = tempM;
+
+    // Boundary checks
+    if (finalH === minH && finalM < minM) {
+      finalM = minM;
+    }
+    if (finalH === maxH && finalM > maxM) {
+      finalM = maxM;
+    }
+
+    if (isEndTime && refStart) {
+      const [sh, sm] = refStart.split(':').map(Number);
+      if (finalH === sh && finalM <= sm) {
+        finalM = Math.min(55, sm + 15);
+      }
+    }
+
+    const formatted = `${finalH.toString().padStart(2, '0')}:${finalM.toString().padStart(2, '0')}`;
+    onChange(formatted);
+    setIsOpen(false);
   };
 
-  const handleDirectInputBlur = () => {
-    const raw = toEnglishDigits(typedValue).trim();
-    if (/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(raw)) {
-      const [h, m] = raw.split(':');
-      const formatted = `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
-      onChange(formatted);
-      setTypedValue(formatted);
-    } else {
-      setTypedValue(value);
-    }
-  };
+  // Duration label
+  const durationText = useMemo(() => {
+    if (!isEndTime || !refStart) return '';
+    const [sh, sm] = refStart.split(':').map(Number);
+    const [eh, em] = value.split(':').map(Number);
+    const diff = eh * 60 + em - (sh * 60 + sm);
+    if (diff <= 0) return '';
+    if (diff < 60) return `${diff} دقیقه`;
+    const h = Math.floor(diff / 60);
+    const m = diff % 60;
+    return m === 0 ? `${h} ساعت` : `${h} ساعت و ${m} دقیقه`;
+  }, [isEndTime, refStart, value]);
 
-  const timePanel = isOpen && panelPos ? (
-    <div
-      ref={panelRef}
-      role="dialog"
-      aria-modal="true"
-      className="fixed z-[130] bg-[#F8F9FA] dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] rounded-3xl shadow-2xl p-4 select-none animate-in fade-in zoom-in-95 duration-150"
-      style={{
-        top: panelPos.top,
-        left: panelPos.left,
-        width: panelPos.width,
-      }}
-    >
-      {/* Top Header Card */}
-      <div className="bg-white dark:bg-[#0F172A] rounded-2xl p-2.5 mb-3 border border-slate-200/80 dark:border-[#334155] flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs">
-          <Clock className="w-4 h-4 text-[#10B981]" />
-          <span className="font-bold">{isEndTime ? 'ساعت پایان' : 'ساعت شروع'}:</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 dir-ltr font-black text-lg text-slate-900 dark:text-white">
-            <span className="px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-[#10B981] dark:text-[#34D399]">
-              {currentHour}:{currentMinute}
-            </span>
-          </div>
-          <span className="text-xs text-slate-400 font-bold">
-            ({toPersianDigits(currentHour)}:{toPersianDigits(currentMinute)})
-          </span>
-        </div>
-      </div>
+  // Duration label for temp selection inside dialog
+  const tempDurationText = useMemo(() => {
+    if (!isEndTime || !refStart) return '';
+    const [sh, sm] = refStart.split(':').map(Number);
+    const diff = tempH * 60 + tempM - (sh * 60 + sm);
+    if (diff <= 0) return '';
+    if (diff < 60) return `${diff} دقیقه`;
+    const h = Math.floor(diff / 60);
+    const m = diff % 60;
+    return m === 0 ? `${h} ساعت` : `${h} ساعت و ${m} دقیقه`;
+  }, [isEndTime, refStart, tempH, tempM]);
 
-      {/* iOS Wheel Drum Roller View (Matching exact user screenshot) */}
-      <div className="relative bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200/80 dark:border-[#334155] overflow-hidden p-2">
-        {/* Horizontal Center Selection Lens (Matching exact soft rounded gray capsule in screenshot) */}
-        <div
-          className="absolute inset-x-3 pointer-events-none rounded-2xl bg-slate-200/65 dark:bg-slate-700/60 shadow-xs"
-          style={{
-            top: '50%',
-            transform: 'translateY(-50%)',
-            height: `${ITEM_HEIGHT}px`,
-            marginTop: '10px', // adjustment for label header above
-          }}
-        />
-
-        {/* Top Cylindrical Vignette Fade */}
-        <div
-          className="absolute inset-x-0 top-0 pointer-events-none z-10 bg-gradient-to-b from-white dark:from-[#0F172A] via-white/85 dark:via-[#0F172A]/85 to-transparent"
-          style={{ height: '80px' }}
-        />
-
-        {/* Bottom Cylindrical Vignette Fade */}
-        <div
-          className="absolute inset-x-0 bottom-0 pointer-events-none z-10 bg-gradient-to-t from-white dark:from-[#0F172A] via-white/85 dark:via-[#0F172A]/85 to-transparent"
-          style={{ height: '80px' }}
-        />
-
-        {/* Two Roller Columns (Hours on the Left, Minutes on the Right) */}
-        <div
-          dir="ltr"
-          className="flex items-center justify-center gap-6 relative z-0 dir-ltr"
-        >
-          {/* Hours Roller (Left) */}
-          <WheelColumn
-            items={HOURS}
-            selectedValue={currentHour}
-            onSelect={handleHourSelect}
-            label="ساعت"
-          />
-
-          {/* Colon Separator in center */}
-          <div
-            className="flex items-center justify-center font-black text-2xl text-slate-400 dark:text-slate-500 select-none pb-1"
-            style={{ marginTop: '16px' }}
-          >
-            :
-          </div>
-
-          {/* Minutes Roller (Right) */}
-          <WheelColumn
-            items={MINUTES}
-            selectedValue={currentMinute}
-            onSelect={handleMinuteSelect}
-            label="دقیقه"
-          />
-        </div>
-      </div>
-
-      {/* Footer Controls */}
-      <div className="mt-3 pt-2 border-t border-slate-200/70 dark:border-[#334155]">
-        <button
-          type="button"
-          onClick={() => setIsOpen(false)}
-          className="w-full py-2 rounded-xl bg-[#10B981] hover:bg-[#0D6B63] text-white text-xs font-bold transition-all cursor-pointer shadow-xs text-center"
-        >
-          تأیید زمان
-        </button>
-      </div>
-    </div>
-  ) : null;
+  const currentFormatted = `${tempH.toString().padStart(2, '0')}:${tempM.toString().padStart(2, '0')}`;
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`space-y-1.5 ${className}`} id={id}>
       {label && (
-        <label
-          htmlFor={id}
-          className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5"
-        >
-          {label} {required && <span className="text-rose-500">*</span>}
-        </label>
+        <div className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400">
+          <div className="flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
+            <span>{label}</span>
+            {required && <span className="text-rose-500">*</span>}
+          </div>
+          {durationText && (
+            <span className="text-[10px] font-semibold text-[#0F786E] dark:text-[#5eead4] bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200/50">
+              {durationText}
+            </span>
+          )}
+        </div>
       )}
 
-      <div
-        ref={triggerRef}
-        className={`w-full flex items-center justify-between rounded-xl border transition-all ${
+      {/* Button to open Time Picker Dialog with English digits */}
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={openPicker}
+        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-sm font-bold bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 transition-all cursor-pointer shadow-xs ${
           isOpen
-            ? 'border-[#10B981] ring-2 ring-[#10B981]/20 bg-white dark:bg-[#0F172A]'
-            : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-slate-300 dark:hover:border-slate-600'
-        } ${disabled ? 'opacity-50 cursor-not-allowed bg-slate-100' : ''}`}
+            ? 'border-[#0F786E] ring-2 ring-[#0F786E]/30 bg-emerald-50/20'
+            : 'border-slate-200 dark:border-[#334155] hover:border-[#0F786E]/60'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        <div className="flex-1 flex items-center gap-2 px-3 py-2">
-          <Clock className="w-4 h-4 text-[#10B981] dark:text-[#34D399] shrink-0 pointer-events-none" />
-          <input
-            id={id}
-            type="text"
-            disabled={disabled}
-            value={isFocused ? typedValue : toPersianDigits(typedValue)}
-            onChange={handleDirectInputChange}
-            onBlur={() => {
-              setIsFocused(false);
-              handleDirectInputBlur();
-            }}
-            onFocus={() => {
-              if (!disabled) {
-                setIsFocused(true);
-                setIsOpen(true);
-              }
-            }}
-            placeholder={placeholder}
-            className="w-full bg-transparent text-sm font-bold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer tracking-wider text-left dir-ltr"
+        <span className="font-mono text-base font-bold tracking-wider text-slate-800 dark:text-slate-100">
+          {value}
+        </span>
+        <Clock className="w-4 h-4 text-[#0F786E] dark:text-[#5eead4]" />
+      </button>
+
+      {/* Centered Modal Dialog for Wheel Picker */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in-50 duration-150">
+          {/* Backdrop click dismiss */}
+          <div
+            className="absolute inset-0"
+            onClick={() => setIsOpen(false)}
           />
+
+          {/* Dialog Card */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="relative z-10 w-full max-w-[320px] bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-[#334155] p-5 space-y-4 animate-in zoom-in-95 duration-150"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#334155]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                    {label ? `انتخاب ساعت ${label}` : 'انتخاب ساعت'}
+                  </h4>
+                  <p className="text-[10px] text-slate-400">
+                    ساعات کاری: {minTime} الی {maxTime}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* iOS Roller Drum Container */}
+            <div className="relative rounded-2xl bg-slate-50 dark:bg-[#0F172A] border border-slate-100 dark:border-[#334155] overflow-hidden">
+              {/* Center Highlight Selection Bar (Exact match to iOS wheel) */}
+              <div
+                className="absolute left-2 right-2 rounded-xl bg-slate-200/75 dark:bg-slate-700/60 pointer-events-none z-0 border border-slate-300/40 dark:border-slate-600/40"
+                style={{
+                  top: `${WHEEL_PADDING}px`,
+                  height: `${ITEM_HEIGHT}px`,
+                }}
+              />
+
+              {/* Top Gradient Fade */}
+              <div
+                className="absolute top-0 left-0 right-0 pointer-events-none z-10 bg-gradient-to-b from-slate-50 dark:from-[#0F172A] to-transparent"
+                style={{ height: `${WHEEL_PADDING - 10}px` }}
+              />
+
+              {/* Bottom Gradient Fade */}
+              <div
+                className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 bg-gradient-to-t from-slate-50 dark:from-[#0F172A] to-transparent"
+                style={{ height: `${WHEEL_PADDING - 10}px` }}
+              />
+
+              {/* Dual Roller Columns (Hours : Minutes in English LTR) */}
+              <div className="flex items-center justify-center px-4 relative z-0" dir="ltr">
+                {/* Hour Column */}
+                <SingleWheel
+                  items={allowedHours}
+                  selectedValue={tempH}
+                  onSelect={setTempH}
+                  padZero={true}
+                />
+
+                {/* Colon Separator */}
+                <div
+                  className="flex items-center justify-center font-mono font-bold text-2xl text-slate-500 dark:text-slate-300 w-8 select-none"
+                  style={{ height: `${ITEM_HEIGHT}px` }}
+                >
+                  :
+                </div>
+
+                {/* Minute Column */}
+                <SingleWheel
+                  items={allowedMinutes}
+                  selectedValue={tempM}
+                  onSelect={setTempM}
+                  padZero={true}
+                />
+              </div>
+            </div>
+
+            {/* Column Labels precisely aligned with columns */}
+            <div className="flex items-center px-4" dir="ltr">
+              <div className="flex-1 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
+                ساعت
+              </div>
+              <div className="w-8" />
+              <div className="flex-1 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
+                دقیقه
+              </div>
+            </div>
+
+            {/* Live Preview & Duration if end time */}
+            {tempDurationText && (
+              <div className="text-center text-xs font-bold text-[#0F786E] dark:text-[#5eead4] bg-emerald-50 dark:bg-emerald-950/40 py-1.5 px-3 rounded-xl border border-emerald-200/50">
+                مدت زمان جلسه: {tempDurationText}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleConfirm}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-[#0F786E] hover:bg-[#0D6B63] text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              >
+                <Check className="w-4 h-4 stroke-[2.5]" />
+                <span>تأیید ساعت ({currentFormatted})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="py-2.5 px-4 rounded-xl border border-slate-200 dark:border-[#334155] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors cursor-pointer"
+              >
+                انصراف
+              </button>
+            </div>
+          </div>
         </div>
-
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => !disabled && setIsOpen(!isOpen)}
-          className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
-          tabIndex={-1}
-        >
-          <ChevronDown
-            className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-          />
-        </button>
-      </div>
-
-      {timePanel && createPortal(timePanel, document.body)}
+      )}
     </div>
   );
 };

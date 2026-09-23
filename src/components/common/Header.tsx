@@ -117,9 +117,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
   const currentRoleMeta = getRoleMeta(userRole);
 
   return (
-    <header className="portal-header sticky top-0 z-40 w-full">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 sm:gap-4 h-14 sm:h-[4.25rem]">
+    <header className="sticky top-0 z-40 w-full pt-2.5 sm:pt-3.5 px-3 sm:px-6 lg:px-8 pb-1">
+      <div className="w-full rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-[#111C2E]/90 border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-black/20 backdrop-blur-md px-3 sm:px-5">
+        <div className="flex items-center gap-2 sm:gap-4 h-14 sm:h-16">
           {/* RTL start: menu + page context */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <button

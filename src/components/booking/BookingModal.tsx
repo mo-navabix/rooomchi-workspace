@@ -30,9 +30,12 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
 
   const today = new Date().toISOString().split('T')[0];
+  const orgWorkStart = currentOrg?.workHours?.start || '08:00';
+  const orgWorkEnd = currentOrg?.workHours?.end || '18:00';
+
   const [date, setDate] = useState<string>(today);
-  const [startTime, setStartTime] = useState<string>('10:00');
-  const [endTime, setEndTime] = useState<string>('11:00');
+  const [startTime, setStartTime] = useState<string>(orgWorkStart);
+  const [endTime, setEndTime] = useState<string>('09:00');
   const [title, setTitle] = useState<string>('');
   const [inviteeEmails, setInviteeEmails] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -44,8 +47,15 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     setTitle('');
     setInviteeEmails([]);
     setDate(today);
-    setStartTime('10:00');
-    setEndTime('11:00');
+
+    const initStart = currentOrg?.workHours?.start || '08:00';
+    const initEndOrg = currentOrg?.workHours?.end || '18:00';
+    setStartTime(initStart);
+
+    const [sh, sm] = initStart.split(':').map(Number);
+    const endH = sh + 1;
+    const endFormatted = `${endH.toString().padStart(2, '0')}:${(sm || 0).toString().padStart(2, '0')}`;
+    setEndTime(endFormatted <= initEndOrg ? endFormatted : initEndOrg);
     setConflictMessage(null);
 
     const loadData = async () => {
@@ -340,6 +350,8 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
               label="شروع"
               value={startTime}
               onChange={setStartTime}
+              minTime={orgWorkStart}
+              maxTime={orgWorkEnd}
               required
             />
             <TimePicker
@@ -347,6 +359,8 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
               label="پایان"
               value={endTime}
               onChange={setEndTime}
+              minTime={orgWorkStart}
+              maxTime={orgWorkEnd}
               isEndTime
               referenceStartTime={startTime}
               required

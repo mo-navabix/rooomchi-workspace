@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Team, User } from '../../types';
 import { ApiService } from '../../services/apiService';
 import {
-  UserPlus,
   Users,
-  UserCheck,
   Search,
   Check,
   X,
   Plus,
   Building2,
-  ChevronDown,
+  Mail,
+  UserCheck,
+  AlertCircle,
 } from 'lucide-react';
+import { toPersianDigits } from '../../utils/jalali';
 
 interface ParticipantSelectorProps {
   currentOrgId: string;
@@ -33,19 +34,18 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
   onChangeInvitees,
   showToast,
 }) => {
-  const [activeMode, setActiveMode] = useState<'individual' | 'teams'>('individual');
-  const [emailInput, setEmailInput] = useState('');
+  const [query, setQuery] = useState('');
   const [teams, setTeams] = useState<Team[]>([]);
   const [orgUsers, setOrgUsers] = useState<User[]>([]);
-  const [isLoadingTeams, setIsLoadingTeams] = useState(false);
-  const [userSearchQuery, setUserSearchQuery] = useState('');
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Fetch teams & users for current organization
   useEffect(() => {
     if (!currentOrgId) return;
     let isMounted = true;
-    setIsLoadingTeams(true);
+    setIsLoading(true);
 
     Promise.all([
       ApiService.getTeams(currentOrgId).catch(() => []),
@@ -57,7 +57,7 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
         setOrgUsers(fetchedUsers);
       })
       .finally(() => {
-        if (isMounted) setIsLoadingTeams(false);
+        if (isMounted) setIsLoading(false);
       });
 
     return () => {
@@ -81,6 +81,17 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
     } catch {}
   }, []);
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const addSingleEmail = (raw: string) => {
     const email = normalizeEmail(raw);
     if (!email) return;
@@ -92,325 +103,318 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
 
     const self = normalizeEmail(currentUserEmail || '');
     if (self && email === self) {
-      showToast('خودتان برگزارکننده جلسه هستید؛ نیازی به افزودن نیست', 'info');
+      showToast('شما به عنوان برگزارکننده به طور خودکار در جلسه حضور دارید', 'info');
+      setQuery('');
+      setIsDropdownOpen(false);
       return;
     }
 
     if (inviteeEmails.includes(email)) {
-      showToast('این شخص قبلاً به لیست حاضرین اضافه شده است', 'info');
-      setEmailInput('');
-      return;
-    }
-
-    if (roomCapacity && 1 + inviteeEmails.length >= roomCapacity) {
-      showToast(`ظرفیت این اتاق حداکثر ${roomCapacity} نفر است`, 'error');
+      showToast('این شخص قبلاً به لیست مدعوین اضافه شده است', 'info');
+      setQuery('');
+      setIsDropdownOpen(false);
       return;
     }
 
     onChangeInvitees([...inviteeEmails, email]);
-    setEmailInput('');
-    setIsUserDropdownOpen(false);
-  };
-
-  const addMultipleEmails = (emails: string[], sourceName?: string) => {
-    const self = normalizeEmail(currentUserEmail || '');
-    const validToAdd: string[] = [];
-
-    for (const raw of emails) {
-      const em = normalizeEmail(raw);
-      if (!em || !EMAIL_RE.test(em)) continue;
-      if (self && em === self) continue;
-      if (inviteeEmails.includes(em) || validToAdd.includes(em)) continue;
-
-      if (roomCapacity && 1 + inviteeEmails.length + validToAdd.length >= roomCapacity) {
-        showToast(`حداکثر ظرفیت اتاق (${roomCapacity} نفر) تکمیل شد`, 'error');
-        break;
-      }
-      validToAdd.push(em);
-    }
-
-    if (validToAdd.length === 0) {
-      showToast(`تمام اعضای ${sourceName || 'این گروه'} قبلاً در جلسه حضور دارند`, 'info');
-      return;
-    }
-
-    onChangeInvitees([...inviteeEmails, ...validToAdd]);
-    showToast(`${validToAdd.length} نفر از اعضای ${sourceName || 'تیم'} به جلسه افزوده شدند`, 'success');
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      addSingleEmail(emailInput);
-    }
+    setQuery('');
+    setIsDropdownOpen(false);
   };
 
   const removeInvitee = (email: string) => {
     onChangeInvitees(inviteeEmails.filter((e) => e !== email));
   };
 
-  // Filter colleague suggestions
-  const colleagueSuggestions = orgUsers.filter((u) => {
-    const email = normalizeEmail(u.email);
-    if (!email || email === normalizeEmail(currentUserEmail || '')) return false;
-    if (inviteeEmails.includes(email)) return false;
-    if (!userSearchQuery) return true;
-    const q = userSearchQuery.toLowerCase();
-    return (
-      u.name.toLowerCase().includes(q) ||
-      email.includes(q) ||
-      (u.department && u.department.toLowerCase().includes(q))
-    );
-  });
+  const addMultipleEmails = (emails: string[], groupName?: string) => {
+    const self = normalizeEmail(currentUserEmail || '');
+    const validEmails = emails
+      .map(normalizeEmail)
+      .filter((e) => EMAIL_RE.test(e) && e !== self);
+
+    const newEmails = Array.from(new Set([...inviteeEmails, ...validEmails]));
+    const addedCount = newEmails.length - inviteeEmails.length;
+
+    onChangeInvitees(newEmails);
+
+    if (addedCount > 0) {
+      showToast(
+        `${toPersianDigits(addedCount)} نفر ${groupName ? `از ${groupName}` : ''} به جلسه اضافه شدند`,
+        'success'
+      );
+    } else {
+      showToast('تمامی اعضای این تیم قبلاً اضافه شده بودند', 'info');
+    }
+  };
+
+  const toggleTeam = (team: Team) => {
+    const memberEmails = (team.members || [])
+      .map((m) => m.user?.email)
+      .filter((e): e is string => Boolean(e))
+      .map(normalizeEmail);
+
+    const isFullyAdded =
+      memberEmails.length > 0 &&
+      memberEmails.every((em) => inviteeEmails.includes(em));
+
+    if (isFullyAdded) {
+      // Remove this team's members
+      onChangeInvitees(inviteeEmails.filter((em) => !memberEmails.includes(em)));
+      showToast(`اعضای ${team.name} از جلسه حذف شدند`, 'info');
+    } else {
+      // Add this team's members
+      addMultipleEmails(memberEmails, team.name);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredUsers.length > 0 && query.trim()) {
+        addSingleEmail(filteredUsers[0].email);
+      } else if (query.trim()) {
+        addSingleEmail(query);
+      }
+    }
+  };
+
+  // Filtered colleague suggestions based on query
+  const filteredUsers = React.useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const self = normalizeEmail(currentUserEmail || '');
+    return orgUsers.filter((u) => {
+      const email = normalizeEmail(u.email);
+      if (email === self) return false;
+      if (!q) return true;
+      return (
+        u.name?.toLowerCase().includes(q) ||
+        email.includes(q) ||
+        u.department?.toLowerCase().includes(q)
+      );
+    });
+  }, [orgUsers, query, currentUserEmail]);
+
+  // Capacity check
+  const totalCount = inviteeEmails.length + 1; // +1 for host
+  const isOverCapacity = roomCapacity && roomCapacity > 0 ? totalCount > roomCapacity : false;
 
   return (
-    <div className="space-y-2.5 pt-1">
-      {/* Header and Mode Selector Tab */}
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-          <UserPlus className="w-4 h-4 text-[#0F786E]" />
-          حاضرین و مدعوین جلسه
-          <span className="text-[11px] font-normal text-slate-400">
-            ({inviteeEmails.length} نفر افزوده شده)
-          </span>
-        </span>
-
-        {/* Tab switchers: Individual Users vs Teams */}
-        <div className="inline-flex p-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-bold">
-          <button
-            type="button"
-            id="tab-select-individual"
-            onClick={() => setActiveMode('individual')}
-            className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-              activeMode === 'individual'
-                ? 'bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white shadow-xs'
-                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
-          >
-            افزودن فردی
-          </button>
-          <button
-            type="button"
-            id="tab-select-teams"
-            onClick={() => setActiveMode('teams')}
-            className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1 cursor-pointer ${
-              activeMode === 'teams'
-                ? 'bg-white dark:bg-[#0F172A] text-[#0F786E] dark:text-[#5eead4] shadow-xs'
-                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
-          >
-            <Users className="w-3 h-3" />
-            <span>انتخاب تیم / گروه</span>
-            {teams.length > 0 && (
-              <span className="text-[9px] px-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-[#0F786E] dark:text-[#5eead4]">
-                {teams.length}
-              </span>
-            )}
-          </button>
+    <div ref={containerRef} className="space-y-2.5">
+      {/* Header & Capacity */}
+      <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
+          <Users className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
+          <span>حاضرین و مدعوین جلسه</span>
+          {inviteeEmails.length > 0 && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-[#0F786E] dark:text-[#5eead4] border border-emerald-200/50">
+              {toPersianDigits(inviteeEmails.length)} نفر
+            </span>
+          )}
         </div>
+
+        {roomCapacity && roomCapacity > 0 && (
+          <div
+            className={`text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 ${
+              isOverCapacity
+                ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200'
+                : 'text-slate-500 dark:text-slate-400'
+            }`}
+          >
+            {isOverCapacity && <AlertCircle className="w-3 h-3 text-rose-500" />}
+            <span>
+              ظرفیت: {toPersianDigits(totalCount)} از {toPersianDigits(roomCapacity)} نفر
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Mode 1: Individual Users Input */}
-      {activeMode === 'individual' && (
-        <div className="space-y-2">
-          <div className="relative">
-            <input
-              type="email"
-              id="input-booking-invite"
-              dir="ltr"
-              value={emailInput}
-              onChange={(e) => {
-                setEmailInput(e.target.value);
-                setUserSearchQuery(e.target.value);
-                setIsUserDropdownOpen(true);
-              }}
-              onFocus={() => setIsUserDropdownOpen(true)}
-              onKeyDown={handleKeyDown}
-              placeholder="email@company.ir — کلید Enter"
-              className="w-full text-xs sm:text-sm pr-3 pl-16 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 placeholder:text-slate-400 dark:text-white"
-            />
+      {/* Smart Search & Invite Field */}
+      <div className="relative">
+        <div className="relative">
+          <input
+            type="text"
+            id="input-booking-invite"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setIsDropdownOpen(true);
+            }}
+            onFocus={() => setIsDropdownOpen(true)}
+            onKeyDown={handleKeyDown}
+            placeholder="جستجو بر اساس نام یا ایمیل همکار (یا تایپ ایمیل و فشردن Enter)..."
+            className="w-full text-xs pr-8 pl-16 py-2.5 rounded-xl border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all"
+          />
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
 
+          {query.trim() && (
             <button
               type="button"
-              onClick={() => addSingleEmail(emailInput)}
-              className="absolute left-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#0F786E] hover:bg-[#0D6B63] text-white text-[11px] font-bold cursor-pointer transition-colors"
+              onClick={() => addSingleEmail(query)}
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#0F786E] hover:bg-[#0D6B63] text-white text-[10px] font-bold cursor-pointer transition-colors"
             >
               افزودن
             </button>
-          </div>
-
-          {/* Quick Colleague Suggestion Dropdown */}
-          {isUserDropdownOpen && colleagueSuggestions.length > 0 && (
-            <div className="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-[#1E293B] shadow-md p-1.5 max-h-40 overflow-y-auto space-y-1">
-              <div className="text-[10px] font-bold text-slate-400 px-2 py-1 flex items-center justify-between">
-                <span>پیشنهاد همکاران در این سازمان:</span>
-                <button
-                  type="button"
-                  onClick={() => setIsUserDropdownOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 cursor-pointer"
-                >
-                  بستن
-                </button>
-              </div>
-              {colleagueSuggestions.slice(0, 6).map((colleague) => (
-                <div
-                  key={colleague.id}
-                  onClick={() => {
-                    addSingleEmail(colleague.email);
-                    setIsUserDropdownOpen(false);
-                  }}
-                  className="flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-[#0F172A] cursor-pointer text-xs transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 text-[10px] flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
-                      {colleague.name.slice(0, 1)}
-                    </div>
-                    <span className="font-bold text-slate-800 dark:text-slate-200">
-                      {colleague.name}
-                    </span>
-                    {colleague.department && (
-                      <span className="text-[10px] text-slate-400">({colleague.department})</span>
-                    )}
-                  </div>
-                  <span dir="ltr" className="text-[10px] text-slate-400">
-                    {colleague.email}
-                  </span>
-                </div>
-              ))}
-            </div>
           )}
         </div>
-      )}
 
-      {/* Mode 2: Teams Selection */}
-      {activeMode === 'teams' && (
-        <div className="space-y-2 bg-slate-50 dark:bg-[#0F172A]/70 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800">
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            برای افزودن گروهی همه اعضای یک تیم، روی دکمه افزودن کلیک کنید:
-          </p>
-
-          {isLoadingTeams ? (
-            <div className="py-4 text-center text-xs text-slate-400">در حال دریافت تیم‌ها...</div>
-          ) : teams.length === 0 ? (
-            <div className="text-center py-4 text-xs text-slate-400">
-              هنوز تیمی در این سازمان تعریف نشده است.
-            </div>
-          ) : (
-            <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
-              {teams.map((team) => {
-                const memberEmails = (team.members || [])
-                  .map((m) => m.user?.email)
-                  .filter((e): e is string => Boolean(e));
-
-                const alreadyAddedCount = memberEmails.filter((em) =>
-                  inviteeEmails.includes(normalizeEmail(em))
-                ).length;
-
-                const isFullyAdded =
-                  memberEmails.length > 0 && alreadyAddedCount === memberEmails.length;
-
+        {/* Colleagues Suggestions Dropdown */}
+        {isDropdownOpen && (
+          <div className="absolute z-20 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] shadow-xl p-1 space-y-0.5">
+            {filteredUsers.length === 0 ? (
+              <div className="p-3 text-center text-xs text-slate-400">
+                {query.includes('@')
+                  ? 'کلید Enter را برای افزودن این ایمیل فشار دهید'
+                  : 'همکاری با این نام یافت نشد'}
+              </div>
+            ) : (
+              filteredUsers.slice(0, 8).map((user) => {
+                const isAlreadyAdded = inviteeEmails.includes(normalizeEmail(user.email));
                 return (
-                  <div
-                    key={team.id}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
-                      isFullyAdded
-                        ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40'
-                        : 'bg-white dark:bg-[#1E293B] border-slate-200/80 dark:border-slate-800'
+                  <button
+                    key={user.id}
+                    type="button"
+                    onClick={() => {
+                      if (!isAlreadyAdded) {
+                        addSingleEmail(user.email);
+                      }
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-lg text-right transition-colors cursor-pointer ${
+                      isAlreadyAdded
+                        ? 'bg-emerald-50/50 dark:bg-emerald-950/20 opacity-75'
+                        : 'hover:bg-slate-50 dark:hover:bg-[#0F172A]'
                     }`}
                   >
-                    <div className="min-w-0 flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center font-bold text-xs shrink-0">
-                        {team.name.slice(0, 2)}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-[#0F786E] dark:text-[#5eead4] text-[10px] font-bold flex items-center justify-center shrink-0">
+                        {user.name ? user.name.slice(0, 1) : 'U'}
                       </div>
                       <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-800 dark:text-white truncate">
-                            {team.name}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
+                            {user.name || user.email}
                           </span>
-                          <span className="text-[10px] text-slate-400">
-                            ({team.memberCount ?? memberEmails.length} عضو)
-                          </span>
+                          {user.department && (
+                            <span className="text-[10px] text-slate-400">
+                              ({user.department})
+                            </span>
+                          )}
                         </div>
-                        {team.description && (
-                          <p className="text-[10px] text-slate-400 truncate max-w-[200px]">
-                            {team.description}
-                          </p>
-                        )}
+                        <p dir="ltr" className="text-[10px] text-slate-400 truncate text-right">
+                          {user.email}
+                        </p>
                       </div>
                     </div>
 
-                    <div>
-                      {isFullyAdded ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0F786E] dark:text-[#5eead4] bg-white dark:bg-[#0F172A] px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800/40">
-                          <Check className="w-3 h-3 stroke-[3]" />
-                          همه اعضا در جلسه هستند
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          id={`btn-add-team-members-${team.id}`}
-                          onClick={() => addMultipleEmails(memberEmails, team.name)}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#0F786E] hover:bg-[#0D6B63] text-white text-[11px] font-bold cursor-pointer transition-colors shrink-0"
-                        >
-                          <Plus className="w-3 h-3" />
-                          <span>
-                            افزودن تیم
-                            {alreadyAddedCount > 0 && ` (${memberEmails.length - alreadyAddedCount} نفر باقی‌مانده)`}
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                    {isAlreadyAdded ? (
+                      <span className="flex items-center gap-1 text-[10px] font-bold text-[#0F786E] dark:text-[#5eead4] shrink-0">
+                        <Check className="w-3 h-3" />
+                        <span>دعوت شده</span>
+                      </span>
+                    ) : (
+                      <Plus className="w-3.5 h-3.5 text-slate-400 hover:text-[#0F786E] shrink-0" />
+                    )}
+                  </button>
                 );
-              })}
-            </div>
-          )}
+              })
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Quick Team Chips (Compact & Ergonomic) */}
+      {teams.length > 0 && (
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+            <span className="flex items-center gap-1">
+              <Building2 className="w-3 h-3 text-[#0F786E] dark:text-[#5eead4]" />
+              <span>افزودن گروهی اعضای تیم:</span>
+            </span>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5">
+            {teams.map((team) => {
+              const memberEmails = (team.members || [])
+                .map((m) => m.user?.email)
+                .filter((e): e is string => Boolean(e))
+                .map(normalizeEmail);
+
+              const isFullyAdded =
+                memberEmails.length > 0 &&
+                memberEmails.every((em) => inviteeEmails.includes(em));
+
+              const count = team.memberCount ?? memberEmails.length;
+
+              return (
+                <button
+                  key={team.id}
+                  type="button"
+                  onClick={() => toggleTeam(team)}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer border ${
+                    isFullyAdded
+                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-[#0F786E] dark:text-[#5eead4] border-emerald-300 dark:border-emerald-700/60 shadow-xs'
+                      : 'bg-slate-50 dark:bg-[#0F172A] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-[#334155] hover:border-[#0F786E]/50'
+                  }`}
+                >
+                  {isFullyAdded ? (
+                    <Check className="w-3 h-3 stroke-[2.5]" />
+                  ) : (
+                    <Plus className="w-3 h-3 text-slate-400" />
+                  )}
+                  <span>{team.name}</span>
+                  <span className="text-[9px] opacity-75 font-normal">
+                    ({toPersianDigits(count)} نفر)
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
       {/* Selected Invitees Chips Display */}
       {inviteeEmails.length > 0 && (
-        <div className="space-y-1.5 pt-1">
+        <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-[#334155]">
           <div className="flex items-center justify-between text-[11px] text-slate-500">
-            <span>فهرست مدعوین جلسه:</span>
-            <button
-              type="button"
-              onClick={() => onChangeInvitees([])}
-              className="text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
-            >
-              پاک‌کردن همه
-            </button>
+            <span>مدعوین این جلسه:</span>
+            {inviteeEmails.length > 1 && (
+              <button
+                type="button"
+                onClick={() => onChangeInvitees([])}
+                className="text-rose-500 hover:text-rose-600 text-[10px] font-semibold hover:underline cursor-pointer"
+              >
+                پاک‌کردن همه
+              </button>
+            )}
           </div>
 
-          <ul className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+          <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-0.5">
             {inviteeEmails.map((email) => {
-              // Lookup user name if exists
               const matchedUser = orgUsers.find(
                 (u) => normalizeEmail(u.email) === normalizeEmail(email)
               );
 
               return (
-                <li key={email}>
-                  <span className="inline-flex items-center gap-1.5 text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700">
-                    <span className="font-semibold">{matchedUser?.name || email}</span>
-                    {matchedUser && (
-                      <span dir="ltr" className="text-[10px] text-slate-400">
-                        ({email})
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeInvitee(email)}
-                      className="text-slate-400 hover:text-rose-500 cursor-pointer shrink-0 transition-colors mr-0.5"
-                      aria-label="حذف"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+                <span
+                  key={email}
+                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-100 dark:bg-[#0F172A] text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-[#334155] text-xs font-medium shadow-xs"
+                >
+                  <span className="w-4 h-4 rounded-full bg-[#0F786E]/15 text-[#0F786E] dark:text-[#5eead4] text-[9px] font-bold flex items-center justify-center shrink-0">
+                    {matchedUser?.name ? matchedUser.name.slice(0, 1) : email.slice(0, 1).toUpperCase()}
                   </span>
-                </li>
+                  <span className="truncate max-w-[140px]">
+                    {matchedUser?.name || email}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeInvitee(email)}
+                    className="text-slate-400 hover:text-rose-500 transition-colors cursor-pointer p-0.5 rounded-sm shrink-0"
+                    aria-label="حذف"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
               );
             })}
-          </ul>
+          </div>
         </div>
       )}
     </div>

@@ -13,12 +13,11 @@ import {
   Coffee,
   Share2,
   Trash2,
-  Plus,
 } from 'lucide-react';
 import { MyBookingsSkeleton } from '../common/Skeletons';
 
 export const MyBookingsView: React.FC = () => {
-  const { currentOrg, openBookingModal, showToast } = useApp();
+  const { currentOrg, showToast } = useApp();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filterTab, setFilterTab] = useState<'all' | 'upcoming' | 'pending' | 'cancelled'>('all');
@@ -151,14 +150,6 @@ export const MyBookingsView: React.FC = () => {
               لغو شده
             </button>
           </div>
-
-          <button
-            onClick={() => openBookingModal()}
-            className="w-full sm:w-auto justify-center px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>رزرو جدید</span>
-          </button>
         </div>
       </div>
 
@@ -243,7 +234,7 @@ export const MyBookingsView: React.FC = () => {
 
         {filteredBookings.length === 0 && (
           <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-12 text-center text-slate-400 text-xs">
-            هیچ جلسه‌ای در این تب یافت نشد. برای برگزاری جلسه از دکمه «رزرو جدید» استفاده کنید.
+            هیچ جلسه‌ای در این بخش یافت نشد.
           </div>
         )}
       </div>

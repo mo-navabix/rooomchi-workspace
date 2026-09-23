@@ -10,7 +10,7 @@ import {
   loadTickets,
   saveTickets,
 } from '../../services/supportTickets';
-import { Ticket, Send, Clock, CheckCircle2, Inbox } from 'lucide-react';
+import { Ticket, Send, Clock, CheckCircle2, Inbox, ChevronDown } from 'lucide-react';
 
 export type { TicketCategory, TicketPriority, SupportTicket };
 
@@ -114,27 +114,33 @@ export const SupportTicketView: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block space-y-1.5">
             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">دسته‌بندی</span>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value as TicketCategory)}
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] cursor-pointer"
-            >
-              {(Object.keys(categoryLabels) as TicketCategory[]).map((key) => (
-                <option key={key} value={key}>{categoryLabels[key]}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value as TicketCategory)}
+                className="w-full appearance-none pr-3.5 pl-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all"
+              >
+                {(Object.keys(categoryLabels) as TicketCategory[]).map((key) => (
+                  <option key={key} value={key}>{categoryLabels[key]}</option>
+                ))}
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </label>
           <label className="block space-y-1.5">
             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">اولویت</span>
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as TicketPriority)}
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] cursor-pointer"
-            >
-              {(Object.keys(priorityLabels) as TicketPriority[]).map((key) => (
-                <option key={key} value={key}>{priorityLabels[key]}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value as TicketPriority)}
+                className="w-full appearance-none pr-3.5 pl-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all"
+              >
+                {(Object.keys(priorityLabels) as TicketPriority[]).map((key) => (
+                  <option key={key} value={key}>{priorityLabels[key]}</option>
+                ))}
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </label>
         </div>
 

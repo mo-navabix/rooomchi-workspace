@@ -139,14 +139,6 @@ export const DashboardView: React.FC = () => {
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <button
-            id="btn-dash-open-booking"
-            onClick={() => openBookingModal()}
-            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-[#10B981] hover:bg-[#0D6B63] shadow-xs transition-all cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>رزرو سریع جلسه</span>
-          </button>
-          <button
             onClick={() => setActiveTab('rooms')}
             className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#334155] hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border border-slate-200/60 dark:border-[#334155] cursor-pointer"
           >
