@@ -21,22 +21,29 @@ export const BRAND_COLORS = {
   textBody: '#334155',
 } as const;
 
-export const DIDAR_LOGO_ALT = 'اتاق — سامانه رزرو اتاق جلسات دیدار';
+export const DIDAR_LOGO_ALT = 'روم‌چی — سامانه هوشمند رزرو اتاق جلسات Roomchi';
 
 /** لوگوی تم روشن: متن تیره — برای پس‌زمینه روشن */
-export const DIDAR_LOGO_SRC_LIGHT = '/assets/logo/didar-logo-light.png';
+export const DIDAR_LOGO_SRC_LIGHT = '/assets/logo/rooomchi-logo-light.svg';
 
 /** لوگوی تم تاریک: متن روشن — برای پس‌زمینه تیره */
-export const DIDAR_LOGO_SRC_DARK = '/assets/logo/didar-logo-dark.png';
+export const DIDAR_LOGO_SRC_DARK = '/assets/logo/rooomchi-logo-dark.svg';
 
 /** @deprecated Use resolveLogoSrc(theme) */
 export const DIDAR_LOGO_SRC = DIDAR_LOGO_SRC_LIGHT;
 
-export const DIDAR_LOGO_SVG = '/assets/logo/didar-logo.svg';
-export const DIDAR_LOGO_MARK_SVG = '/assets/logo/didar-mark.svg';
+export const DIDAR_LOGO_SVG = '/assets/logo/rooomchi-logo-light.svg';
+export const DIDAR_LOGO_MARK_SVG = '/assets/logo/rooomchi-logo-light.svg';
 
 export type BrandThemeMode = 'light' | 'dark';
 
 export function resolveLogoSrc(theme: BrandThemeMode): string {
   return theme === 'dark' ? DIDAR_LOGO_SRC_DARK : DIDAR_LOGO_SRC_LIGHT;
 }
+
+export function resolveLogoMarkSrc(theme: BrandThemeMode): string {
+  return theme === 'dark'
+    ? '/assets/logo/rooomchi-mark-dark.svg'
+    : '/assets/logo/rooomchi-mark-light.svg';
+}
+

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" fill="none">
+  <!-- Wordmark Roomchi -->
+  <g id="brand-wordmark">
+    <!-- Letter R -->
+    <text x="36" y="67" font-family="'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="#062729">R</text>
+    
+    <!-- Stylized Geometric O Donut Ring -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M 98 34 C 107.941 34 116 42.059 116 52 C 116 61.941 107.941 70 98 70 C 88.059 70 80 61.941 80 52 C 80 42.059 88.059 34 98 34 Z M 98 44.5 C 102.142 44.5 105.5 47.858 105.5 52 C 105.5 56.142 102.142 59.5 98 59.5 C 93.858 59.5 90.5 56.142 90.5 52 C 90.5 47.858 93.858 44.5 98 44.5 Z" fill="#0F786E"/>
+    
+    <!-- Letters oomchi -->
+    <text x="122" y="67" font-family="'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="#062729" letter-spacing="-0.8px">oomchi</text>
+    
+    <!-- Subtitle Tagline -->
+    <text x="38" y="93" font-family="'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" fill="#475569" letter-spacing="3.2px">SMARTER SPACES. BETTER MEETINGS.</text>
+  </g>
+</svg>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Team, User } from '../../../types';
+import { UserAvatar } from '../../../components/common/UserAvatar';
 import {
   Users,
   ArrowRight,
@@ -233,9 +234,12 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
                   className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-[#0F172A]/50 hover:bg-white dark:hover:bg-[#0F172A] transition-all"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold shrink-0">
-                      {(u?.name || 'ع').slice(0, 1)}
-                    </div>
+                    <UserAvatar
+                      user={u}
+                      name={u?.name}
+                      email={u?.email}
+                      size="sm"
+                    />
                     <div className="min-w-0">
                       <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white truncate">
                         {u?.name || 'کاربر سیستم'}

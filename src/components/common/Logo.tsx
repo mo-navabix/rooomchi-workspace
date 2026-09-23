@@ -1,6 +1,11 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { DIDAR_LOGO_ALT, resolveLogoSrc, type BrandThemeMode } from '../../constants/brand';
+import {
+  DIDAR_LOGO_ALT,
+  resolveLogoSrc,
+  resolveLogoMarkSrc,
+  type BrandThemeMode,
+} from '../../constants/brand';
 
 export type LogoVariant = 'horizontal' | 'stacked' | 'mark';
 export type LogoSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -59,6 +64,7 @@ export const Logo: React.FC<LogoProps> = ({
   const src = resolveLogoSrc(mode);
 
   if (resolvedVariant === 'mark') {
+    const markSrc = resolveLogoMarkSrc(mode);
     return (
       <div
         id={id}
@@ -67,10 +73,10 @@ export const Logo: React.FC<LogoProps> = ({
         aria-label={DIDAR_LOGO_ALT}
       >
         <img
-          src={src}
+          src={markSrc}
           alt=""
           draggable={false}
-          className="h-full w-auto max-w-none object-cover object-left"
+          className="h-full w-auto max-w-none object-contain"
         />
       </div>
     );

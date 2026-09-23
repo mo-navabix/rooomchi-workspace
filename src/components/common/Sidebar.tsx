@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useApp } from "../../context/AppContext";
 import { getRoleMeta } from "../../constants/rbac";
 import { Logo } from "./Logo";
+import { UserAvatar } from "./UserAvatar";
 import {
   LayoutDashboard,
   Calendar,
@@ -19,6 +20,7 @@ import {
   User,
   Ticket,
   Users,
+  KeyRound,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 
@@ -140,6 +142,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             id: "admin-rbac",
             label: "مدیریت کاربران",
             icon: ShieldCheck,
+            permissionCheck: can("MANAGE_USERS_ROLES"),
+          },
+          {
+            id: "access-control",
+            label: "کنترل دسترسی‌ها",
+            icon: KeyRound,
             permissionCheck: can("MANAGE_USERS_ROLES"),
           },
           {
@@ -299,9 +307,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               collapsed ? "justify-center" : ""
             }`}
           >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[var(--brand-primary)] to-[var(--brand-primary-light)] dark:from-slate-600 dark:to-slate-800 border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0">
-              {currentOrg?.name?.charAt(0) || displayName.charAt(0)}
-            </div>
+            <UserAvatar
+              user={currentUser}
+              name={displayName}
+              size="sm"
+            />
             {!collapsed && (
               <div className="flex-1 min-w-0 text-right">
                 <div className="text-xs font-bold text-slate-900 dark:text-white truncate">

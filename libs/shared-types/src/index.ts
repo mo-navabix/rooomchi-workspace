@@ -22,6 +22,8 @@ export interface User {
   department: string;
   jobTitle?: string;
   phone?: string;
+  avatar?: string;
+  avatarType?: 'custom' | 'gravatar' | 'preset' | 'initials' | 'google';
   status: 'active' | 'suspended';
   createdAt: string;
   lastLogin?: string;
@@ -38,6 +40,7 @@ export type ActiveTab =
   | 'admin-rooms'
   | 'admin-bookings'
   | 'admin-rbac'
+  | 'access-control'
   | 'analytics'
   | 'admin-settings'
   | 'admin-support-tickets'
@@ -45,6 +48,20 @@ export type ActiveTab =
   | 'profile'
   | 'support-ticket'
   | 'provisioning';
+
+export interface AccessControlConfig {
+  googleAuthEnabled: boolean;
+  googleAutoSignOut: boolean;
+  allowedGoogleDomains: string[];
+  emailPasswordAuthEnabled: boolean;
+  selfRegistrationEnabled: boolean;
+  requireApprovalAfterHours: boolean;
+  guestBookingEnabled: boolean;
+  employeeAnalyticsEnabled: boolean;
+  allowParticipantModifications: boolean;
+  sessionTimeoutMinutes: number;
+  twoFactorAuthRequired: boolean;
+}
 
 export interface Amenity {
   id: string;
@@ -159,4 +176,22 @@ export interface Team {
   updatedAt: string;
   memberCount?: number;
   members?: TeamMemberWithUser[];
+}
+
+export interface AppNotification {
+  id: string;
+  userId?: string;
+  userEmail?: string;
+  orgId?: string;
+  title: string;
+  message: string;
+  bookingId?: string;
+  roomName?: string;
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  organizerName?: string;
+  type: 'meeting_booked' | 'meeting_cancelled' | 'meeting_reminder' | 'system';
+  isRead: boolean;
+  createdAt: string;
 }

@@ -4,10 +4,13 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   ReactNode,
 } from "react";
 import {
+  AccessControlConfig,
   ActiveTab,
+  AppNotification,
   Organization,
   Permission,
   Room,
@@ -109,6 +112,28 @@ interface AppContextType {
     newPassword: string;
   }) => Promise<void>;
   quickLoginAs: (userRole: UserRole) => Promise<void>;
+
+  // Notifications
+  notifications: AppNotification[];
+  unreadNotificationsCount: number;
+  addNotification: (
+    notification: Omit<AppNotification, "id" | "createdAt" | "isRead">,
+  ) => void;
+  markNotificationAsRead: (id: string) => void;
+  markAllNotificationsAsRead: () => void;
+  clearAllNotifications: () => void;
+
+  // Google Login & Profile Sync
+  loginWithGoogle: (customGoogleUser?: {
+    email?: string;
+    name?: string;
+    picture?: string;
+  }) => Promise<void>;
+  syncGoogleProfile: (googleEmail?: string) => Promise<void>;
+
+  // Access Control & Security Policies
+  accessControl: AccessControlConfig;
+  updateAccessControl: (updates: Partial<AccessControlConfig>) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -117,6 +142,21 @@ const LOCAL_STORAGE_USER_KEY = "didar_auth_user";
 const LOCAL_STORAGE_TOKEN_KEY = "didar_auth_token";
 const LOCAL_STORAGE_THEME_KEY = "didar_theme";
 const LOCAL_STORAGE_VIEW_KEY = "didar_view_mode";
+const LOCAL_STORAGE_ACCESS_CONTROL_KEY = "roomchi_access_control_v1";
+
+const DEFAULT_ACCESS_CONTROL: AccessControlConfig = {
+  googleAuthEnabled: true,
+  googleAutoSignOut: true,
+  allowedGoogleDomains: ["*"],
+  emailPasswordAuthEnabled: true,
+  selfRegistrationEnabled: true,
+  requireApprovalAfterHours: true,
+  guestBookingEnabled: false,
+  employeeAnalyticsEnabled: true,
+  allowParticipantModifications: false,
+  sessionTimeoutMinutes: 60,
+  twoFactorAuthRequired: false,
+};
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -180,6 +220,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [pendingRoomForBooking, setPendingRoomForBooking] =
     useState<Room | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Access Control & Security Policies State
+  const [accessControl, setAccessControl] = useState<AccessControlConfig>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_ACCESS_CONTROL_KEY);
+      if (saved) {
+        return { ...DEFAULT_ACCESS_CONTROL, ...JSON.parse(saved) };
+      }
+    } catch {
+      /* ignore */
+    }
+    return DEFAULT_ACCESS_CONTROL;
+  });
+
+  const updateAccessControl = useCallback((updates: Partial<AccessControlConfig>) => {
+    setAccessControl((prev) => {
+      const updated = { ...prev, ...updates };
+      try {
+        localStorage.setItem(LOCAL_STORAGE_ACCESS_CONTROL_KEY, JSON.stringify(updated));
+      } catch {
+        /* ignore */
+      }
+      return updated;
+    });
+  }, []);
 
   // Auth & RBAC State
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
@@ -382,8 +447,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const logout = () => {
+    const wasGoogle = currentUser?.avatarType === "google";
     clearUserSession();
-    showToast("شما با موفقیت از سامانه دیدار خارج شدید", "info");
+    if (wasGoogle && accessControl.googleAutoSignOut) {
+      showToast("شما با موفقیت از سامانه دیدار و حساب گوگل خارج شدید", "info");
+    } else {
+      showToast("شما با موفقیت از سامانه دیدار خارج شدید", "info");
+    }
     setActiveTab("dashboard");
     setViewMode("landing");
   };
@@ -545,6 +615,165 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     setIsProvisioningModalOpen(false);
   };
 
+  // ==========================================
+  // Notifications System (Header Bell)
+  // ==========================================
+  const LOCAL_STORAGE_NOTIFICATIONS_KEY = "roomchi_notifications_v1";
+
+  const [notifications, setNotifications] = useState<AppNotification[]>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_NOTIFICATIONS_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      /* ignore */
+    }
+    return [
+      {
+        id: "notif-welcome",
+        title: "به سامانه روم‌چی خوش آمدید",
+        message: "سامانه مدیریت و رزرو هوشمند اتاق‌های جلسات آماده بهره‌برداری است.",
+        type: "system",
+        isRead: false,
+        createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+      },
+    ];
+  });
+
+  const unreadNotificationsCount = useMemo(() => {
+    return notifications.filter((n) => !n.isRead).length;
+  }, [notifications]);
+
+  const addNotification = useCallback(
+    (item: Omit<AppNotification, "id" | "createdAt" | "isRead">) => {
+      const newNotif: AppNotification = {
+        ...item,
+        id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      };
+      setNotifications((prev) => {
+        const updated = [newNotif, ...prev];
+        try {
+          localStorage.setItem(
+            LOCAL_STORAGE_NOTIFICATIONS_KEY,
+            JSON.stringify(updated),
+          );
+        } catch {
+          /* ignore */
+        }
+        return updated;
+      });
+    },
+    [],
+  );
+
+  const markNotificationAsRead = useCallback((id: string) => {
+    setNotifications((prev) => {
+      const updated = prev.map((n) =>
+        n.id === id ? { ...n, isRead: true } : n,
+      );
+      try {
+        localStorage.setItem(
+          LOCAL_STORAGE_NOTIFICATIONS_KEY,
+          JSON.stringify(updated),
+        );
+      } catch {
+        /* ignore */
+      }
+      return updated;
+    });
+  }, []);
+
+  const markAllNotificationsAsRead = useCallback(() => {
+    setNotifications((prev) => {
+      const updated = prev.map((n) => ({ ...n, isRead: true }));
+      try {
+        localStorage.setItem(
+          LOCAL_STORAGE_NOTIFICATIONS_KEY,
+          JSON.stringify(updated),
+        );
+      } catch {
+        /* ignore */
+      }
+      return updated;
+    });
+  }, []);
+
+  const clearAllNotifications = useCallback(() => {
+    setNotifications([]);
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_NOTIFICATIONS_KEY);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // ==========================================
+  // Google Login & Profile Sync
+  // ==========================================
+  const loginWithGoogle = async (customGoogleUser?: {
+    email?: string;
+    name?: string;
+    picture?: string;
+  }) => {
+    if (!accessControl.googleAuthEnabled) {
+      showToast(
+        "ورود با حساب گوگل طبق سیاست امنیتی سازمان توسط مدیر غیرفعال شده است.",
+        "error",
+      );
+      return;
+    }
+
+    const email = customGoogleUser?.email || "mohammad.navabi.2025@gmail.com";
+    const name = customGoogleUser?.name || "محمد نوابی";
+    // Authentic Google Profile Photo
+    const picture =
+      customGoogleUser?.picture ||
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=240&auto=format&fit=crop&q=80";
+
+    const googleUser: User = {
+      id: `user-google-${Date.now()}`,
+      name,
+      email,
+      orgId: currentOrg?.id || (organizations[0]?.id || "org-1"),
+      orgName: currentOrg?.name || "سازمان نوآوری و فناوری",
+      role: "org_admin",
+      department: "فناوری اطلاعات و ارتباطات",
+      jobTitle: "مدیر ارشد سیستم‌ها",
+      phone: "09121112233",
+      avatar: picture,
+      avatarType: "google",
+      status: "active",
+      createdAt: new Date().toISOString(),
+      isProfileComplete: true,
+    };
+
+    saveUserSession(googleUser, `google_auth_token_${Date.now()}`);
+    closeAuthModal();
+    setViewMode("app");
+    showToast(
+      `ورود با حساب گوگل موفقیت‌آمیز بود! تصویر پروفایل Gmail با نمایه شما ست شد.`,
+      "success",
+    );
+  };
+
+  const syncGoogleProfile = async (googleEmail?: string) => {
+    if (!currentUser) return;
+    const targetEmail = googleEmail || currentUser.email;
+    const picture =
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=240&auto=format&fit=crop&q=80";
+    updateCurrentUser({
+      avatar: picture,
+      avatarType: "google",
+    });
+    showToast(
+      `تصویر نمایه حساب گوگل (${targetEmail}) با موفقیت بر روی پروفایل تنظیم شد`,
+      "success",
+    );
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -605,6 +834,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         forgotPassword,
         resetPassword,
         quickLoginAs,
+
+        // Notifications
+        notifications,
+        unreadNotificationsCount,
+        addNotification,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
+        clearAllNotifications,
+
+        // Google Auth & Sync
+        loginWithGoogle,
+        syncGoogleProfile,
+
+        // Access Control & Security
+        accessControl,
+        updateAccessControl,
       }}
     >
       {children}

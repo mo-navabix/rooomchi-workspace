@@ -12,6 +12,7 @@ import { MyBookingsView } from "./components/booking/MyBookingsView";
 import { AdminRoomsView } from "./components/admin/AdminRoomsView";
 import { AdminBookingsView } from "./components/admin/AdminBookingsView";
 import { AdminRbacView } from "./components/admin/AdminRbacView";
+import { AccessControlView } from "./components/admin/AccessControlView";
 import { AdminSettingsView } from "./components/admin/AdminSettingsView";
 import { AdminSupportTicketsView } from "./components/admin/AdminSupportTicketsView";
 import { TeamsView } from "./features/teams/TeamsView";
@@ -62,6 +63,7 @@ const MainContent: React.FC = () => {
                     {activeTab === "admin-rooms" && <AdminRoomsView />}
                     {activeTab === "admin-bookings" && <AdminBookingsView />}
                     {activeTab === "admin-rbac" && <AdminRbacView />}
+                    {activeTab === "access-control" && <AccessControlView />}
                     {activeTab === "admin-settings" && <AdminSettingsView />}
                     {activeTab === "admin-support-tickets" && (
                       <AdminSupportTicketsView />

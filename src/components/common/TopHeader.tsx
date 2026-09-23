@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
+import { UserAvatar } from "./UserAvatar";
 import {
   Search,
   Bell,
@@ -69,16 +70,7 @@ export const TopHeader: React.FC = () => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-50 dark:hover:bg-[#334155] transition-colors cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0F786E] to-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-xs overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                  alt="avatar"
-                  className="w-full h-full object-cover"
-                  onError={(e: any) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
-              </div>
+              <UserAvatar user={currentUser} size="sm" shape="circle" />
               <div className="hidden sm:flex flex-col text-right">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
                   {currentUser.name || "علی محمدی"}

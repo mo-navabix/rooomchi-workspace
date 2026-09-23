@@ -27,7 +27,7 @@ import {
 import { AdminRbacSkeleton } from '../common/Skeletons';
 
 export const AdminRbacView: React.FC = () => {
-  const { currentOrg, showToast, can } = useApp();
+  const { currentOrg, showToast, can, setActiveTab } = useApp();
 
   const [users, setUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -198,6 +198,14 @@ export const AdminRbacView: React.FC = () => {
               }`}
             >
               ماتریس دسترسی‌ها
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('access-control')}
+              className="px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 cursor-pointer"
+            >
+              <KeyRound className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
+              <span>کنترل دسترسی‌ها</span>
             </button>
           </div>
 

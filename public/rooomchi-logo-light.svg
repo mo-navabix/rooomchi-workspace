@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 140" fill="none" role="img" aria-label="Roomchi — Smarter Spaces. Better Meetings.">
+  <defs>
+    <style>
+      .brand-title-light {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Montserrat, "Helvetica Neue", sans-serif;
+        font-weight: 700;
+        font-size: 72px;
+      }
+      .brand-tagline-light {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Montserrat, sans-serif;
+        font-weight: 600;
+        font-size: 14.5px;
+        letter-spacing: 0.26em;
+      }
+    </style>
+  </defs>
+
+  <g transform="translate(16, 20)">
+    <!-- Letter R -->
+    <text x="0" y="66" fill="#052829" class="brand-title-light">R</text>
+
+    <!-- Teal O symbol -->
+    <circle cx="78" cy="45" r="24" fill="#0fa48f" />
+    <circle cx="78" cy="45" r="9.5" fill="#FFFFFF" />
+
+    <!-- oomchi -->
+    <text x="110" y="66" fill="#052829" class="brand-title-light" letter-spacing="-0.02em">oomchi</text>
+
+    <!-- Subtitle -->
+    <text x="2" y="98" fill="#526A69" class="brand-tagline-light">SMARTER SPACES. BETTER MEETINGS.</text>
+  </g>
+</svg>

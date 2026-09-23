@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useApp } from "../../context/AppContext";
 import { getRoleMeta } from "../../constants/rbac";
 import { OrgLogoBadge } from "../common/OrgLogoBadge";
+import { UserAvatar } from "../common/UserAvatar";
+import { AvatarSettings } from "./AvatarSettings";
 import {
   User,
   Mail,
@@ -12,6 +14,7 @@ import {
   Save,
   KeyRound,
   Calendar,
+  Camera,
 } from "lucide-react";
 
 export const ProfileView: React.FC = () => {
@@ -30,6 +33,7 @@ export const ProfileView: React.FC = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [phone, setPhone] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [showAvatarSection, setShowAvatarSection] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -65,20 +69,20 @@ export const ProfileView: React.FC = () => {
 
   if (!isAuthenticated || !currentUser) {
     return (
-      <div className="dark-surface-card rounded-3xl p-8 sm:p-12 text-center max-w-lg mx-auto space-y-4">
-        <div className="w-14 h-14 mx-auto rounded-2xl brand-icon-tile brand-icon-tile--lg">
-          <User className="w-7 h-7" />
+      <div className="dark-surface-card rounded-2xl p-6 sm:p-8 text-center max-w-md mx-auto space-y-4">
+        <div className="w-12 h-12 mx-auto rounded-xl brand-icon-tile brand-icon-tile--lg">
+          <User className="w-6 h-6" />
         </div>
-        <h1 className="text-lg font-black text-slate-900 dark:text-white">
+        <h1 className="text-base font-bold text-slate-900 dark:text-white">
           پروفایل کاربری
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           برای مشاهده و ویرایش اطلاعات شخصی، ابتدا وارد حساب کاربری شوید.
         </p>
         <button
           type="button"
           onClick={() => openAuthModal("login")}
-          className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer"
+          className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer shadow-xs"
         >
           ورود به سیستم
         </button>
@@ -91,57 +95,65 @@ export const ProfileView: React.FC = () => {
     : "—";
   const lastLoginLabel = currentUser.lastLogin
     ? new Date(currentUser.lastLogin).toLocaleDateString("fa-IR")
-    : "—";
+    : "امروز";
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-3xl min-w-0 mx-auto w-full" id="profile-view">
-      <div className="dark-surface-card rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-5">
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#0F786E] to-emerald-500 text-white flex items-center justify-center text-2xl font-black shrink-0 shadow-md">
-          {name.charAt(0) || "?"}
-        </div>
-        <div className="flex-1 text-center sm:text-right space-y-2 min-w-0">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white truncate">
-            {name}
-          </h2>
-          <p
-            className="text-sm text-slate-500 dark:text-slate-400 font-mono"
-            dir="ltr"
-          >
-            {currentUser.email}
-          </p>
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <span
-              className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${roleMeta.badgeClass}`}
+    <div className="space-y-4 max-w-3xl min-w-0 mx-auto w-full pb-8" id="profile-view">
+      {/* Compact User Header Card */}
+      <div className="dark-surface-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 border border-slate-200/80 dark:border-white/10 shadow-xs">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="relative group shrink-0">
+            <UserAvatar
+              user={currentUser}
+              name={name}
+              size="lg"
+              className="shadow-xs ring-2 ring-[#0F786E]/20"
+            />
+            <button
+              type="button"
+              onClick={() => setShowAvatarSection((prev) => !prev)}
+              className="absolute -bottom-1 -left-1 p-1.5 rounded-lg bg-[#0F786E] text-white hover:bg-[#0D6B63] shadow-xs border-2 border-white dark:border-[#0F172A] cursor-pointer transition-transform hover:scale-105"
+              title="تغییر تصویر نمایه"
             >
-              {roleMeta.titleFa}
-            </span>
-            <span
-              className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
-                currentUser.status === "active"
-                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
-                  : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
-              }`}
+              <Camera className="w-3 h-3" />
+            </button>
+          </div>
+
+          <div className="text-right space-y-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white truncate">
+                {name}
+              </h2>
+              <span
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${roleMeta.badgeClass}`}
+              >
+                {roleMeta.titleFa}
+              </span>
+            </div>
+
+            <p
+              className="text-xs text-slate-500 dark:text-slate-400 font-mono truncate"
+              dir="ltr"
             >
-              {currentUser.status === "active" ? "حساب فعال" : "معلق"}
-            </span>
+              {currentUser.email}
+            </p>
           </div>
         </div>
+
         {currentOrg && (
           <div
             id="profile-org-badge"
-            className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/90 dark:border-[#334155] sm:self-center shrink-0 shadow-xs max-w-full min-w-0"
+            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-[#334155] sm:self-center shrink-0"
           >
             <OrgLogoBadge
-              size="md"
+              size="sm"
               logo={currentOrg.logo}
               name={currentOrg.name}
             />
-            <div className="text-right min-w-0">
-              <span className="block text-[11px] font-medium text-slate-400 dark:text-slate-400">
-                سازمان
-              </span>
+            <div className="text-right">
+              <span className="block text-[10px] text-slate-400 font-medium">سازمان</span>
               <span
-                className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 whitespace-normal leading-relaxed break-words"
+                className="block text-xs font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap"
                 title={currentOrg.name}
               >
                 {currentOrg.name}
@@ -151,124 +163,138 @@ export const ProfileView: React.FC = () => {
         )}
       </div>
 
+      {/* Conditionally Expanded Compact Avatar Editor */}
+      {showAvatarSection && (
+        <AvatarSettings onClose={() => setShowAvatarSection(false)} />
+      )}
+
+      {/* Personal Info Form */}
       <form
         onSubmit={handleSave}
-        className="dark-surface-card rounded-3xl p-5 sm:p-6 space-y-6"
+        className="dark-surface-card rounded-2xl p-4 sm:p-5 space-y-4 border border-slate-200/80 dark:border-white/10 shadow-xs"
       >
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <User className="w-4 h-4 text-[#0F786E]" />
-          اطلاعات شخصی
-        </h3>
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+          <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <User className="w-3.5 h-3.5 text-[#0F786E]" />
+            مشخصات کاربری و پرسنلی
+          </h3>
+          <span className="text-[11px] text-slate-400">
+            اطلاعات هویتی جهت ثبت در جلسات
+          </span>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label className="space-y-1.5 sm:col-span-2">
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
-              نام و نام خانوادگی
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <label className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+              نام و نام خانوادگی *
             </span>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+              required
             />
           </label>
-          <label className="space-y-1.5">
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-              <Mail className="w-3.5 h-3.5" />
-              ایمیل (غیرقابل تغییر)
+
+          <label className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1">
+              <Mail className="w-3 h-3" />
+              ایمیل سازمانی (شناسه حساب)
             </span>
             <input
               value={currentUser.email}
               readOnly
               dir="ltr"
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-100 dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] text-slate-500 cursor-not-allowed"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-100 dark:bg-[#1E293B] border border-slate-200 dark:border-[#334155] text-slate-500 cursor-not-allowed font-mono"
             />
           </label>
-          <label className="space-y-1.5">
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-              <Phone className="w-3.5 h-3.5" />
-              شماره تماس
+
+          <label className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1">
+              <Phone className="w-3 h-3" />
+              شماره همراه
             </span>
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               dir="ltr"
               placeholder="09xxxxxxxxx"
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
             />
           </label>
-          <label className="space-y-1.5">
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-              <Building2 className="w-3.5 h-3.5" />
+
+          <label className="space-y-1">
+            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1">
+              <Building2 className="w-3 h-3" />
               واحد / دپارتمان
             </span>
             <input
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40"
+              placeholder="مثال: توسعه محصول"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
             />
           </label>
-          <label className="space-y-1.5">
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-              <Briefcase className="w-3.5 h-3.5" />
-              عنوان شغلی
+
+          <label className="space-y-1 sm:col-span-2">
+            <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1">
+              <Briefcase className="w-3 h-3" />
+              سمت شغلی
             </span>
             <input
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40"
+              placeholder="مثال: سرپرست تیم فنی"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
             />
           </label>
         </div>
 
-        <div className="flex justify-end pt-2">
+        <div className="flex items-center justify-end pt-2">
           <button
             type="submit"
             disabled={isSaving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] disabled:opacity-60 cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] disabled:opacity-60 cursor-pointer shadow-xs transition-colors"
           >
-            <Save className="w-4 h-4" />
-            {isSaving ? "در حال ذخیره…" : "ذخیره تغییرات"}
+            <Save className="w-3.5 h-3.5" />
+            <span>{isSaving ? "در حال ثبت…" : "ذخیره تغییرات"}</span>
           </button>
         </div>
       </form>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="dark-surface-card rounded-2xl p-5 space-y-3">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Shield className="w-4 h-4 text-[#0F786E]" />
-            امنیت حساب
-          </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            برای تغییر رمز عبور از گزینه «فراموشی رمز» در صفحه ورود استفاده
-            کنید.
-          </p>
+      {/* Security & Account History in 1 Compact Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div className="dark-surface-card rounded-2xl p-4 border border-slate-200/80 dark:border-white/10 shadow-xs flex items-center justify-between">
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-[#0F786E]" />
+              امنیت حساب
+            </h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              تغییر یا بازیابی رمز عبور
+            </p>
+          </div>
           <button
             type="button"
             onClick={() => openAuthModal("forgot")}
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#0F786E] dark:text-emerald-400 hover:underline cursor-pointer"
+            className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-[#0F786E] dark:text-[#5eead4] flex items-center gap-1.5 cursor-pointer transition-colors"
           >
-            <KeyRound className="w-3.5 h-3.5" />
-            بازنشانی رمز عبور
+            <KeyRound className="w-3 h-3" />
+            <span>بازنشانی رمز</span>
           </button>
         </div>
 
-        <div className="dark-surface-card rounded-2xl p-5 space-y-3 text-sm">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#0F786E]" />
-            سوابق حساب
-          </h3>
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-500">تاریخ عضویت</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-200">
-              {createdLabel}
-            </span>
+        <div className="dark-surface-card rounded-2xl p-4 border border-slate-200/80 dark:border-white/10 shadow-xs flex items-center justify-between text-xs">
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[#0F786E]" />
+              سوابق دسترسی
+            </h4>
+            <span className="text-[11px] text-slate-500">تاریخ عضویت: {createdLabel}</span>
           </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-500">آخرین ورود</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-200">
-              {lastLoginLabel}
-            </span>
-          </div>
+          <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-1 rounded-md border border-emerald-200/50">
+            ورود موفق
+          </span>
         </div>
       </div>
     </div>

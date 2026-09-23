@@ -22,6 +22,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     openCompleteProfileModal,
     isRegistrationComplete,
     showToast,
+    addNotification,
   } = useApp();
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
@@ -189,6 +190,22 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
         attendeeEmails,
         equipmentNeeded: [],
         cateringNeeded: false,
+      });
+
+      const bookedRoom = availableRooms.find((r) => r.id === selectedRoomId);
+      const roomDisplayName = bookedRoom?.name || newBooking.roomName || 'اتاق جلسات';
+
+      // Automatically push notification to bell in header
+      addNotification({
+        title: `رزرو جلسه جدید: ${newBooking.title}`,
+        message: `جلسه «${newBooking.title}» در سالن ${roomDisplayName} برای تاریخ ${newBooking.date} ساعت ${newBooking.startTime} تا ${newBooking.endTime} ثبت شد.`,
+        bookingId: newBooking.id,
+        roomName: roomDisplayName,
+        date: newBooking.date,
+        startTime: newBooking.startTime,
+        endTime: newBooking.endTime,
+        organizerName,
+        type: 'meeting_booked',
       });
 
       showToast(
