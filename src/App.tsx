@@ -14,6 +14,7 @@ import { AdminBookingsView } from "./components/admin/AdminBookingsView";
 import { AdminRbacView } from "./components/admin/AdminRbacView";
 import { AccessControlView } from "./components/admin/AccessControlView";
 import { AdminSettingsView } from "./components/admin/AdminSettingsView";
+import { AdminNotificationsView } from "./components/admin/AdminNotificationsView";
 import { AdminSupportTicketsView } from "./components/admin/AdminSupportTicketsView";
 import { TeamsView } from "./features/teams/TeamsView";
 import { ProfileView } from "./components/profile/ProfileView";
@@ -47,7 +48,7 @@ const MainContent: React.FC = () => {
 
             <div className="flex flex-1 flex-col min-w-0 min-h-screen">
               <Header onOpenSidebar={() => setSidebarOpen(true)} />
-              <main className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 pb-2 sm:pb-3">
+              <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-8">
                 {isLoading ? (
                   <AppLoadingSkeleton tab={activeTab} />
                 ) : (
@@ -65,6 +66,9 @@ const MainContent: React.FC = () => {
                     {activeTab === "admin-rbac" && <AdminRbacView />}
                     {activeTab === "access-control" && <AccessControlView />}
                     {activeTab === "admin-settings" && <AdminSettingsView />}
+                    {activeTab === "admin-notifications" && (
+                      <AdminNotificationsView />
+                    )}
                     {activeTab === "admin-support-tickets" && (
                       <AdminSupportTicketsView />
                     )}

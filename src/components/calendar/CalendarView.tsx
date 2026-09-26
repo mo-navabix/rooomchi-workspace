@@ -5,6 +5,7 @@ import { Booking, Room } from '../../types';
 import {
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   Clock,
   Filter,
   RefreshCw,
@@ -248,12 +249,12 @@ export const CalendarView: React.FC = () => {
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <Filter className="w-4 h-4 text-slate-400 shrink-0" />
+          <div className="relative flex-1 min-w-0">
+            <Filter className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <select
               value={selectedRoomId}
               onChange={(e) => setSelectedRoomId(e.target.value)}
-              className="w-full min-w-0 text-xs font-semibold bg-slate-50 dark:bg-[#334155] border border-slate-200 dark:border-[#334155] rounded-xl px-3 py-2 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+              className="w-full min-w-0 appearance-none text-xs font-semibold bg-slate-50 dark:bg-[#334155] border border-slate-200 dark:border-[#334155] rounded-xl pr-10 pl-9 py-2.5 text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#0F786E] cursor-pointer transition-all shadow-2xs"
             >
               <option value="all">همه اتاق‌ها و سالن‌ها ({rooms.length})</option>
               {rooms.map((r) => (
@@ -262,6 +263,7 @@ export const CalendarView: React.FC = () => {
                 </option>
               ))}
             </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
       </div>

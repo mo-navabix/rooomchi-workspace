@@ -5,6 +5,8 @@ import { toPersianDigits } from '../../utils/jalali';
 interface TimePickerProps {
   id?: string;
   label?: string;
+  modalTitle?: string;
+  subtitle?: string;
   value: string; // "HH:MM" e.g. "09:00"
   onChange: (time: string) => void;
   minTime?: string; // e.g. "08:00"
@@ -15,6 +17,8 @@ interface TimePickerProps {
   referenceStartTime?: string;
   startTimeReference?: string;
   className?: string;
+  compact?: boolean;
+  showAmPm?: boolean;
 }
 
 const ITEM_HEIGHT = 44; // Standard height in px for each wheel row
@@ -155,6 +159,8 @@ const SingleWheel: React.FC<SingleWheelProps> = ({
 export const TimePicker: React.FC<TimePickerProps> = ({
   id,
   label,
+  modalTitle,
+  subtitle,
   value,
   onChange,
   minTime = '08:00',
@@ -165,6 +171,8 @@ export const TimePicker: React.FC<TimePickerProps> = ({
   referenceStartTime,
   startTimeReference,
   className = '',
+  compact = false,
+  showAmPm = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const refStart = referenceStartTime || startTimeReference;
@@ -285,9 +293,22 @@ export const TimePicker: React.FC<TimePickerProps> = ({
 
   const currentFormatted = `${tempH.toString().padStart(2, '0')}:${tempM.toString().padStart(2, '0')}`;
 
+  const formattedDisplay = useMemo(() => {
+    if (!value) return '';
+    if (!showAmPm) return value;
+    const [h, m] = value.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return value;
+    const period = h >= 12 ? 'PM' : 'AM';
+    const displayH = h % 12 === 0 ? 12 : h % 12;
+    return `${displayH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${period}`;
+  }, [value, showAmPm]);
+
+  const dialogTitle = modalTitle || (label ? `انتخاب ساعت ${label}` : 'انتخاب ساعت');
+  const dialogSubtitle = subtitle || `ساعات کاری: ${minTime} الی ${maxTime}`;
+
   return (
-    <div className={`space-y-1.5 ${className}`} id={id}>
-      {label && (
+    <div className={`${compact ? 'inline-block' : 'space-y-1.5'} ${className}`} id={id}>
+      {label && !compact && (
         <div className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
@@ -307,16 +328,24 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         type="button"
         disabled={disabled}
         onClick={openPicker}
-        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-sm font-bold bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 transition-all cursor-pointer shadow-xs ${
-          isOpen
-            ? 'border-[#0F786E] ring-2 ring-[#0F786E]/30 bg-emerald-50/20'
-            : 'border-slate-200 dark:border-[#334155] hover:border-[#0F786E]/60'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={
+          compact
+            ? `inline-flex items-center justify-between gap-2.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+                isOpen
+                  ? 'border-[#0F786E] ring-2 ring-[#0F786E]/30 bg-emerald-50/20'
+                  : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-[#0F786E]/60 text-slate-800 dark:text-slate-100'
+              } ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`
+            : `w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-sm font-bold bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 transition-all cursor-pointer shadow-xs ${
+                isOpen
+                  ? 'border-[#0F786E] ring-2 ring-[#0F786E]/30 bg-emerald-50/20'
+                  : 'border-slate-200 dark:border-[#334155] hover:border-[#0F786E]/60'
+              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`
+        }
       >
-        <span className="font-mono text-base font-bold tracking-wider text-slate-800 dark:text-slate-100">
-          {value}
+        <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-slate-800 dark:text-slate-100">
+          {formattedDisplay}
         </span>
-        <Clock className="w-4 h-4 text-[#0F786E] dark:text-[#5eead4]" />
+        <Clock className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-[#0F786E] dark:text-[#5eead4]`} />
       </button>
 
       {/* Centered Modal Dialog for Wheel Picker */}
@@ -342,10 +371,10 @@ export const TimePicker: React.FC<TimePickerProps> = ({
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                    {label ? `انتخاب ساعت ${label}` : 'انتخاب ساعت'}
+                    {dialogTitle}
                   </h4>
                   <p className="text-[10px] text-slate-400">
-                    ساعات کاری: {minTime} الی {maxTime}
+                    {dialogSubtitle}
                   </p>
                 </div>
               </div>

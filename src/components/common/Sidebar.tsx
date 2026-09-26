@@ -25,6 +25,7 @@ import {
   Moon,
   LogOut,
   Sparkles,
+  BellRing,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 
@@ -100,6 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       "access-control",
       "admin-rbac",
       "analytics",
+      "admin-notifications",
       "admin-support-tickets",
       "admin-settings",
     ];
@@ -143,6 +145,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     { id: "my-bookings", label: "جلسات من", icon: CalendarCheck },
     { id: "teams", label: "تیم‌ها و همکاران", icon: Users },
     { id: "support-ticket", label: "پشتیبانی و تیکت من", icon: Ticket },
+    { id: "profile", label: "پروفایل من", icon: User },
   ], []);
 
   // Orderly Navigation items for BUSINESS / ENTERPRISE mode
@@ -178,6 +181,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         icon: BarChart3,
       },
       {
+        id: "admin-notifications",
+        label: "مدیریت اعلان‌ها (SMS و تلگرام)",
+        icon: BellRing,
+        permissionCheck: can("MANAGE_ORG_SETTINGS"),
+      },
+      {
         id: "admin-support-tickets",
         label: "تیکت‌های سازمانی",
         icon: Ticket,
@@ -203,6 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       "access-control",
       "admin-rbac",
       "analytics",
+      "admin-notifications",
       "admin-support-tickets",
       "admin-settings",
     ];
@@ -457,46 +467,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               );
             })}
           </nav>
-
-          {/* Account & Quick Actions Section */}
-          <div className="pt-2 border-t border-slate-100 dark:border-white/5 space-y-1">
-            {!collapsed && (
-              <div className="px-3 pb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 text-right">
-                حساب و ارتباطات
-              </div>
-            )}
-
-            {/* Profile Link */}
-            <button
-              type="button"
-              title={collapsed ? "پروفایل من" : undefined}
-              onClick={() => goTo("profile")}
-              className={`group relative w-full flex items-center gap-3 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
-                collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
-              } ${
-                activeTab === "profile"
-                  ? "bg-[#0F786E]/10 dark:bg-[#0F786E]/20 text-[#0F786E] dark:text-[#5eead4] font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-              }`}
-            >
-              {activeTab === "profile" && (
-                <span
-                  className="absolute right-1 top-2 bottom-2 w-1 rounded-full bg-[#0F786E] dark:bg-[#5eead4]"
-                  aria-hidden
-                />
-              )}
-              <User
-                className={`w-[18px] h-[18px] shrink-0 transition-colors ${
-                  activeTab === "profile"
-                    ? "text-[#0F786E] dark:text-[#5eead4]"
-                    : "text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200"
-                }`}
-              />
-              {!collapsed && (
-                <span className="flex-1 text-right truncate">پروفایل کاربری من</span>
-              )}
-            </button>
-          </div>
         </div>
 
         {/* BOTTOM USER PROFILE CARD */}

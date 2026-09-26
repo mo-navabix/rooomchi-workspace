@@ -1,6 +1,6 @@
 import { Amenity } from '../types';
 
-export const ALL_AMENITIES: Amenity[] = [
+export const BASE_AMENITIES: Amenity[] = [
   {
     id: 'projector',
     name: 'Projector 4K',
@@ -59,6 +59,53 @@ export const ALL_AMENITIES: Amenity[] = [
   },
 ];
 
+export const ALL_AMENITIES: Amenity[] = BASE_AMENITIES;
+
+const CUSTOM_AMENITIES_KEY = 'didar_custom_amenities';
+
+export const getStoredCustomAmenities = (): Amenity[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(CUSTOM_AMENITIES_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('Error reading custom amenities from localStorage', e);
+    return [];
+  }
+};
+
+export const saveCustomAmenity = (newAmenity: Amenity): Amenity[] => {
+  const current = getStoredCustomAmenities();
+  // Check if already exists
+  const existingIdx = current.findIndex((a) => a.id === newAmenity.id);
+  let updated: Amenity[];
+  if (existingIdx >= 0) {
+    updated = [...current];
+    updated[existingIdx] = newAmenity;
+  } else {
+    updated = [...current, newAmenity];
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(CUSTOM_AMENITIES_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error('Error saving custom amenity to localStorage', e);
+    }
+  }
+  return updated;
+};
+
+export const getAllAmenitiesList = (): Amenity[] => {
+  const custom = getStoredCustomAmenities();
+  // Filter out any duplicates if id matches
+  const customFiltered = custom.filter(
+    (c) => !BASE_AMENITIES.some((b) => b.id === c.id)
+  );
+  return [...BASE_AMENITIES, ...customFiltered];
+};
+
 export const getAmenityById = (id: string): Amenity | undefined => {
-  return ALL_AMENITIES.find((a) => a.id === id);
+  return getAllAmenitiesList().find((a) => a.id === id);
 };

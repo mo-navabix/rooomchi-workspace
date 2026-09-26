@@ -44,6 +44,7 @@ export type ActiveTab =
   | 'analytics'
   | 'admin-settings'
   | 'admin-support-tickets'
+  | 'admin-notifications'
   | 'teams'
   | 'profile'
   | 'support-ticket'
@@ -195,3 +196,73 @@ export interface AppNotification {
   isRead: boolean;
   createdAt: string;
 }
+
+export interface SmsNotificationConfig {
+  enabled: boolean;
+  provider: 'kavenegar' | 'magfa' | 'farazsms' | 'ghasedak' | 'custom';
+  apiKey: string;
+  lineNumber: string;
+  managerPhone: string;
+  notifyOrganizer: boolean;
+  notifyParticipants: boolean;
+  notifyRoomManager: boolean;
+  templateNewBooking: string;
+  templateApproval: string;
+  templateCancellation: string;
+  templateReminder: string;
+}
+
+export interface TelegramNotificationConfig {
+  enabled: boolean;
+  botToken: string;
+  botUsername: string;
+  targetChatId: string;
+  channelType: 'channel' | 'group' | 'direct';
+  sendRichButtons: boolean;
+  dailyDigestEnabled: boolean;
+  dailyDigestTime: string;
+}
+
+export interface InAppNotificationConfig {
+  enabled: boolean;
+  soundEnabled: boolean;
+  toastPopupEnabled: boolean;
+  retentionDays: number;
+}
+
+export interface NotificationChannelRule {
+  id: string;
+  eventKey:
+    | 'new_booking_request'
+    | 'booking_approved'
+    | 'booking_rejected'
+    | 'booking_cancelled'
+    | 'meeting_reminder_15m'
+    | 'schedule_conflict'
+    | 'daily_summary';
+  titleFa: string;
+  descriptionFa: string;
+  inApp: boolean;
+  sms: boolean;
+  telegram: boolean;
+  audience: 'organizer' | 'participants' | 'manager' | 'all';
+}
+
+export interface NotificationSettings {
+  sms: SmsNotificationConfig;
+  telegram: TelegramNotificationConfig;
+  inApp: InAppNotificationConfig;
+  rules: NotificationChannelRule[];
+}
+
+export interface NotificationLogEntry {
+  id: string;
+  channel: 'sms' | 'telegram' | 'in_app';
+  recipient: string;
+  title: string;
+  preview: string;
+  timestamp: string;
+  status: 'delivered' | 'sent' | 'failed' | 'queued';
+  eventType: string;
+}
+

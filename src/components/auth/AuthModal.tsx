@@ -25,6 +25,7 @@ export const AuthModal: React.FC = () => {
     authModalView,
     closeAuthModal,
     openAuthModal,
+    currentOrg,
     login,
     sendOtp,
     verifyOtp,
@@ -257,6 +258,13 @@ export const AuthModal: React.FC = () => {
               {currentView === 'forgot' && 'ایمیل حساب خود را جهت دریافت کد تأیید وارد نمایید'}
               {currentView === 'reset' && 'کد تأیید ارسال‌شده و رمز جدید خود را وارد کنید'}
             </p>
+
+            {currentOrg && (
+              <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-xs rounded-full border border-white/20 text-white text-[11px] font-semibold shadow-xs">
+                <span className="opacity-80">ورود به پورتال:</span>
+                <span className="font-bold underline decoration-emerald-300 underline-offset-2">{currentOrg.name}</span>
+              </div>
+            )}
           </div>
         </div>
 

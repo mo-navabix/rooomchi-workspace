@@ -303,29 +303,38 @@ export const AdminSupportTicketsView: React.FC = () => {
                 </p>
               </div>
 
-              <label className="block space-y-1.5">
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">وضعیت</span>
-                <select
-                  value={draftStatus}
-                  onChange={(e) => setDraftStatus(e.target.value as SupportTicket['status'])}
-                  className="w-full px-3 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] cursor-pointer"
-                >
-                  {(Object.keys(statusLabels) as SupportTicket['status'][]).map((s) => (
-                    <option key={s} value={s}>{statusLabels[s]}</option>
-                  ))}
-                </select>
-              </label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  وضعیت
+                </label>
+                <div className="relative">
+                  <select
+                    value={draftStatus}
+                    onChange={(e) => setDraftStatus(e.target.value as SupportTicket['status'])}
+                    className="w-full appearance-none pr-4 pl-10 py-3 rounded-xl text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] transition-all shadow-2xs"
+                  >
+                    {(Object.keys(statusLabels) as SupportTicket['status'][]).map((s) => (
+                      <option key={s} value={s}>
+                        {statusLabels[s]}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+              </div>
 
-              <label className="block space-y-1.5">
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">یادداشت داخلی (ادمین)</span>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  یادداشت داخلی (ادمین)
+                </label>
                 <textarea
                   value={draftNote}
                   onChange={(e) => setDraftNote(e.target.value)}
                   rows={3}
                   placeholder="برای تیم پشتیبانی؛ کاربر این متن را نمی‌بیند."
-                  className="w-full px-3 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] resize-y"
+                  className="w-full px-4 py-3 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] resize-y transition-all"
                 />
-              </label>
+              </div>
 
               <button
                 type="button"

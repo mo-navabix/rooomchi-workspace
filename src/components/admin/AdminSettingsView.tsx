@@ -20,11 +20,19 @@ import {
   ChevronDown,
   Info,
   CheckCircle2,
+  QrCode,
+  Printer,
+  ExternalLink,
+  Copy,
+  BellRing,
+  Send,
+  Smartphone,
 } from 'lucide-react';
 import { AdminSettingsSkeleton } from '../common/Skeletons';
+import { OrgLoginQrModal } from './OrgLoginQrModal';
 
 export const AdminSettingsView: React.FC = () => {
-  const { currentOrg, updateCurrentOrgData, showToast } = useApp();
+  const { currentOrg, updateCurrentOrgData, showToast, setActiveTab } = useApp();
 
   const [isLoading, setIsLoading] = useState<boolean>(!currentOrg);
   const [orgName, setOrgName] = useState<string>('');
@@ -40,6 +48,7 @@ export const AdminSettingsView: React.FC = () => {
   const [allowWeekend, setAllowWeekend] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -139,26 +148,37 @@ export const AdminSettingsView: React.FC = () => {
   return (
     <div className="space-y-4 sm:space-y-6 min-w-0">
       {/* Header */}
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex items-center justify-between transition-colors">
-        <div className="flex items-center gap-3">
-          <OrgLogoBadge logo={logo} name={orgName || currentOrg?.name} size="lg" />
-          <div>
+      <div className="bg-white dark:bg-[#1E293B] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
+        <div className="flex items-center gap-3 min-w-0">
+          <OrgLogoBadge logo={logo} name={orgName || currentOrg?.name} size="lg" className="shrink-0" />
+          <div className="min-w-0 flex-1">
             <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-[#10B981]" />
+              <Sliders className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
               <span>پیکربندی اختصاصی سازمان</span>
             </div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-0.5 break-words">
               تنظیمات و سفارشی‌سازی {currentOrg?.name}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
               تغییر برندینگ، رنگ سازمانی، ساعات کاری مجاز و قوانین رزرواسیون
             </p>
           </div>
         </div>
 
-        <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#10B981] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-900/50">
-          اشتراک: {(currentOrg?.plan ?? 'business').toUpperCase()}
-        </span>
+        <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={() => setIsQrModalOpen(true)}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-[#0F786E] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-800/70 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow cursor-pointer shrink-0"
+          >
+            <QrCode className="w-3.5 h-3.5" />
+            <span>بارکد اختصاصی ورود (QR)</span>
+          </button>
+
+          <span className="text-xs font-bold px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#10B981] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-900/50 shrink-0 text-center">
+            اشتراک: {(currentOrg?.plan ?? 'business').toUpperCase()}
+          </span>
+        </div>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
@@ -421,6 +441,187 @@ export const AdminSettingsView: React.FC = () => {
           </div>
         </div>
 
+        {/* Smart QR Code & Organization Portal Access Box */}
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-4 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 dark:border-[#334155] gap-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <QrCode className="w-4 h-4 text-[#10B981]" />
+              <span>بارکد اختصاصی ورود هوشمند به سازمان (QR Code)</span>
+            </h3>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(true)}
+                className="px-3.5 py-1.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>مدیریت، چاپ و خروجی QR</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+            <div className="lg:col-span-8 space-y-3">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                مدیران سازمان می‌توانند بارکد اختصاصی ورود به پورتال <strong>{currentOrg?.name}</strong> را با رنگ‌بندی دلخواه و تیتر سفارشی استخراج، چاپ و در قالب استند رومیزی، پوستر دیواری یا راهنمای ورود پرسنل در ورودی اتاق جلسات نصب نمایند.
+              </p>
+
+              <div className="p-3 bg-slate-50 dark:bg-[#0F172A] rounded-xl border border-slate-200/80 dark:border-[#334155] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                    لینک مستقیم ورود پرسنل:
+                  </span>
+                  <span
+                    className="text-xs font-mono text-slate-600 dark:text-slate-400 truncate direction-ltr text-left select-all"
+                    dir="ltr"
+                  >
+                    {typeof window !== 'undefined' ? window.location.origin : 'https://didar.ir'}?auth=login&org={encodeURIComponent(currentOrg?.slug || currentOrg?.id || '')}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const url = `${typeof window !== 'undefined' ? window.location.origin : 'https://didar.ir'}?auth=login&org=${encodeURIComponent(currentOrg?.slug || currentOrg?.id || '')}`;
+                      try {
+                        await navigator.clipboard.writeText(url);
+                        showToast('لینک مستقیم ورود در حافظه کپی شد', 'success');
+                      } catch {
+                        showToast('خطا در کپی لینک', 'error');
+                      }
+                    }}
+                    className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                  >
+                    <Copy className="w-3.5 h-3.5 text-slate-400" />
+                    <span>کپی لینک</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsQrModalOpen(true)}
+                    className="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>مشاهده پیش‌نمایش بارکد</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>انتقال آنی به فرم لاگین با اسکن دوربین</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>خروجی باکیفیت وکتور SVG و پوستر PNG</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>سازگار با چاپگرهای اداری سایز A4 / A5</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="lg:col-span-4 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(true)}
+                className="group relative p-4 bg-slate-50 dark:bg-[#0F172A] hover:bg-emerald-50/50 dark:hover:bg-[#0F172A]/80 border-2 border-dashed border-slate-200 dark:border-[#334155] hover:border-emerald-400 rounded-2xl transition-all text-center flex flex-col items-center gap-2 cursor-pointer w-full max-w-[220px]"
+              >
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#1E293B] shadow-xs border border-slate-200/80 dark:border-slate-700 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                  <QrCode className="w-9 h-9" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    چاپ و تنظیم بارکد ورود
+                  </span>
+                  <span className="text-[11px] text-slate-400 block mt-0.5">
+                    کلیک جهت باز کردن پنل چاپ
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Notifications & Messaging Channels Control Box */}
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-4 transition-colors">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-[#334155]">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                <BellRing className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  کانال‌های اطلاع‌رسانی و پیام‌ها (SMS، تلگرام و اعلان درون‌برنامه‌ای)
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  ارسال پیامک‌های تأیید و لغو، هشدارهای ربات تلگرام و آلارم‌های بلادرنگ سامانه
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('admin-notifications')}
+              className="px-3.5 py-1.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer self-start sm:self-auto shrink-0"
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>مدیریت و پیکربندی کانال‌ها</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* SMS Status */}
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-[#334155] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <Smartphone className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+                  پیامک (SMS Gateway)
+                </span>
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                  وب‌سرویس فعال (کاوه‌نگار)
+                </span>
+              </div>
+            </div>
+
+            {/* Telegram Status */}
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-[#334155] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                <Send className="w-4 h-4 -rotate-45" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+                  ربات تلگرام
+                </span>
+                <span className="text-[11px] text-sky-600 dark:text-sky-400 font-semibold">
+                  متصل به کانال سازمانی
+                </span>
+              </div>
+            </div>
+
+            {/* In-App Status */}
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-[#334155] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+                <BellRing className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+                  نوتیفیکیشن پلتفرم
+                </span>
+                <span className="text-[11px] text-teal-600 dark:text-teal-400 font-semibold">
+                  زنگوله + پاپ‌آپ فعال
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Booking Policies Box */}
         <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-4 transition-colors">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#334155] pb-3 flex items-center gap-2">
@@ -510,6 +711,14 @@ export const AdminSettingsView: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Organization Login QR Code Modal */}
+      <OrgLoginQrModal
+        isOpen={isQrModalOpen}
+        onClose={() => setIsQrModalOpen(false)}
+        organization={currentOrg}
+        onShowToast={showToast}
+      />
     </div>
   );
 };

@@ -1,0 +1,167 @@
+import {
+  NotificationSettings,
+  NotificationChannelRule,
+  NotificationLogEntry,
+} from '../types';
+
+export const DEFAULT_NOTIFICATION_RULES: NotificationChannelRule[] = [
+  {
+    id: 'rule-new-request',
+    eventKey: 'new_booking_request',
+    titleFa: 'ثبت درخواست رزرو نیازمند تأیید',
+    descriptionFa: 'ارسال هشدار فوری به مدیر یا سرپرست تشریفات هنگام ثبت جلسه جدید',
+    inApp: true,
+    sms: true,
+    telegram: true,
+    audience: 'manager',
+  },
+  {
+    id: 'rule-booking-approved',
+    eventKey: 'booking_approved',
+    titleFa: 'تأیید نهایی جلسه توسط مدیریت',
+    descriptionFa: 'اطلاع‌رسانی به هماهنگ‌کننده و شرکت‌کنندگان پس از تأیید قطعی',
+    inApp: true,
+    sms: true,
+    telegram: true,
+    audience: 'all',
+  },
+  {
+    id: 'rule-booking-cancelled',
+    eventKey: 'booking_cancelled',
+    titleFa: 'لغو یا انصراف از جلسه',
+    descriptionFa: 'ارسال پیام اضطراری لغو به اعضا و آزادسازی اتاق در تقویم',
+    inApp: true,
+    sms: true,
+    telegram: true,
+    audience: 'all',
+  },
+  {
+    id: 'rule-reminder-15m',
+    eventKey: 'meeting_reminder_15m',
+    titleFa: 'یادآوری ۱۵ دقیقه پیش از شروع جلسه',
+    descriptionFa: 'هشدار سریع برای آماده‌سازی سالن و حضور به موقع مدعوین',
+    inApp: true,
+    sms: true,
+    telegram: false,
+    audience: 'participants',
+  },
+  {
+    id: 'rule-schedule-conflict',
+    eventKey: 'schedule_conflict',
+    titleFa: 'تداخل زمان‌بندی یا تعمیرات سالن',
+    descriptionFa: 'اطلاع‌رسانی در صورت تغییر وضعیت ناگهانی اتاق یا تداخل رزروها',
+    inApp: true,
+    sms: true,
+    telegram: true,
+    audience: 'manager',
+  },
+  {
+    id: 'rule-daily-summary',
+    eventKey: 'daily_summary',
+    titleFa: 'خلاصه و برنامه روزانه جلسات (صبحگاهی)',
+    descriptionFa: 'ارسال لیست تمام جلسات امروز سالن‌ها در آغاز روز کاری',
+    inApp: false,
+    sms: false,
+    telegram: true,
+    audience: 'manager',
+  },
+];
+
+export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
+  sms: {
+    enabled: true,
+    provider: 'kavenegar',
+    apiKey: 'kav_live_948201a74fb89c02e11893',
+    lineNumber: '3000500600',
+    managerPhone: '09123456789',
+    notifyOrganizer: true,
+    notifyParticipants: true,
+    notifyRoomManager: true,
+    templateNewBooking:
+      'دیدار: جلسه «{نام_جلسه}» در اتاق {اتاق} برای ساعت {ساعت} ثبت و در انتظار تأیید است.',
+    templateApproval:
+      'دیدار: جلسه شما با عنوان «{نام_جلسه}» در سالن {اتاق} برای تاریخ {تاریخ} تأیید شد.',
+    templateCancellation:
+      'دیدار: جلسه «{نام_جلسه}» در تاریخ {تاریخ} و ساعت {ساعت} لغو شد.',
+    templateReminder:
+      'دیدار: یادآوری؛ جلسه «{نام_جلسه}» ۱۵ دقیقه دیگر در سالن {اتاق} آغاز می‌شود.',
+  },
+  telegram: {
+    enabled: true,
+    botToken: '6829104821:AAH8fL0wZ-Xy49qQ912kMop912j',
+    botUsername: '@DidarMeetingBot',
+    targetChatId: '@didar_management_channel',
+    channelType: 'channel',
+    sendRichButtons: true,
+    dailyDigestEnabled: true,
+    dailyDigestTime: '08:00',
+  },
+  inApp: {
+    enabled: true,
+    soundEnabled: true,
+    toastPopupEnabled: true,
+    retentionDays: 14,
+  },
+  rules: DEFAULT_NOTIFICATION_RULES,
+};
+
+export const INITIAL_NOTIFICATION_LOGS: NotificationLogEntry[] = [
+  {
+    id: 'log-1',
+    channel: 'sms',
+    recipient: '09123456789 (مهندس علوی)',
+    title: 'تأیید جلسه هیئت مدیره',
+    preview: 'دیدار: جلسه شما با عنوان «جلسه راهبردی فصلی» در سالن کنفرانس VIP برای تاریخ ۱۴۰۳/۰۷/۰۵ تأیید شد.',
+    timestamp: '۱۰ دقیقه پیش',
+    status: 'delivered',
+    eventType: 'booking_approved',
+  },
+  {
+    id: 'log-2',
+    channel: 'telegram',
+    recipient: '@didar_management_channel',
+    title: 'درخواست جدید نیازمند بررسی',
+    preview: '📌 درخواست رزرو جدید: جلسه بررسی اسپرینت ۲۴ | هماهنگ‌کننده: نیلوفر افشار | سالن ابوریحان',
+    timestamp: '۴۲ دقیقه پیش',
+    status: 'delivered',
+    eventType: 'new_booking_request',
+  },
+  {
+    id: 'log-3',
+    channel: 'in_app',
+    recipient: 'مدیر سازمان و هماهنگ‌کننده',
+    title: 'یادآوری شروع جلسه',
+    preview: 'جلسه بازبینی OKR سه ماهه ۱۵ دقیقه دیگر در اتاق جلسات پردیس آغاز می‌شود.',
+    timestamp: '۱ ساعت پیش',
+    status: 'delivered',
+    eventType: 'meeting_reminder_15m',
+  },
+  {
+    id: 'log-4',
+    channel: 'sms',
+    recipient: '09351112233 (سارا رضایی)',
+    title: 'لغو جلسه مصاحبه فنی',
+    preview: 'دیدار: جلسه «مصاحبه تخصصی ارشد فرانت‌اند» در تاریخ ۱۴۰۳/۰۷/۰۴ لغو شد.',
+    timestamp: '۳ ساعت پیش',
+    status: 'delivered',
+    eventType: 'booking_cancelled',
+  },
+  {
+    id: 'log-5',
+    channel: 'telegram',
+    recipient: '@didar_management_channel',
+    title: 'گزارش صبحگاهی اتاق‌ها',
+    preview: '📊 خلاصه روزانه: امروز ۸ جلسه در سالن‌های سازمان برگزار خواهد شد (نرخ اشغال: ۷۸٪).',
+    timestamp: 'امروز ۰۸:۰۰',
+    status: 'delivered',
+    eventType: 'daily_summary',
+  },
+];
+
+export const SMS_PROVIDERS = [
+  { id: 'kavenegar', name: 'کاوه‌نگار (Kavenegar)', desc: 'وب‌سرویس پترن و پیامک اعتباری هوشمند با تحویل سریع' },
+  { id: 'magfa', name: 'مگفا (Magfa)', desc: 'اپراتور دولتی و سازمانی با خطوط اختصاصی ۳۰۰۰' },
+  { id: 'farazsms', name: 'فراز اس‌ام‌اس (Faraz SMS)', desc: 'ارسال با خطوط خدماتی بدون بلک‌لیست تبلیغاتی' },
+  { id: 'ghasedak', name: 'قاصدک (Ghasedak)', desc: 'سرویس OTP و اعلان‌های فوری شرکتی' },
+  { id: 'custom', name: 'وب‌هوک اختصاصی (Custom Webhook)', desc: 'اتصال به سامانه پیامکی اختصاصی شرکت از طریق REST API' },
+];

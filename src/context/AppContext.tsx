@@ -318,6 +318,41 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     refreshOrganizations();
   }, []);
 
+  // Handle QR code scanning / deep-link entry (?auth=login&org=...)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (organizations.length === 0) return;
+
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const authParam = searchParams.get('auth');
+      const orgParam = searchParams.get('org');
+
+      if (orgParam) {
+        const decodedOrg = decodeURIComponent(orgParam).toLowerCase().trim();
+        const matched = organizations.find(
+          (o) =>
+            o.id.toLowerCase() === decodedOrg ||
+            (o.slug && o.slug.toLowerCase() === decodedOrg) ||
+            o.name.toLowerCase() === decodedOrg
+        );
+        if (matched) {
+          setCurrentOrg(matched);
+          if (authParam === 'login' || authParam === 'register') {
+            setAuthModalView(authParam);
+            setIsAuthModalOpen(true);
+            showToast(`به صفحه ورود اختصاصی «${matched.name}» هدایت شدید`, 'info');
+          }
+        }
+      } else if (authParam === 'login' || authParam === 'register') {
+        setAuthModalView(authParam);
+        setIsAuthModalOpen(true);
+      }
+    } catch (e) {
+      console.error('Failed to parse URL query params', e);
+    }
+  }, [organizations, showToast]);
+
   // Sync user state with localStorage
   const saveUserSession = (user: User, token: string) => {
     const normalized = { ...user, role: normalizeUserRole(user.role) };

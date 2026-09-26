@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Room } from '../../types';
-import { ALL_AMENITIES } from '../../constants/amenities';
+import {
+  ALL_AMENITIES,
+  getAllAmenitiesList,
+  getAmenityById,
+} from '../../constants/amenities';
 import {
   Search,
   Users,
@@ -24,7 +28,11 @@ import {
   Building2,
   Info,
   ShieldAlert,
-  CalendarPlus,
+  CalendarCheck,
+  Monitor,
+  Speaker,
+  Laptop,
+  Cast,
 } from 'lucide-react';
 import { RoomBrowserSkeleton } from '../common/Skeletons';
 
@@ -136,7 +144,7 @@ export const RoomBrowser: React.FC = () => {
               className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
             >
               <option value="all">همه امکانات و تجهیزات</option>
-              {ALL_AMENITIES.map((a) => (
+              {getAllAmenitiesList().map((a) => (
                 <option key={a.id} value={a.id}>
                   دارای {a.nameFa}
                 </option>
@@ -253,20 +261,49 @@ export const RoomBrowser: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Simplified Amenities Button Trigger (Replaces crowded tag list) */}
-                  <button
-                    type="button"
+                  {/* Simplified Amenities Strip with Icon Previews */}
+                  <div
                     onClick={() => setAmenitiesModalRoom(room)}
-                    className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-[#0F172A] hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30 border border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-300 hover:text-[#0F786E] dark:hover:text-[#5eead4] text-xs font-semibold transition-colors cursor-pointer group/btn"
+                    className="w-full flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-[#0F172A] hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30 border border-slate-200/80 dark:border-white/5 transition-colors cursor-pointer group/btn"
+                    title="مشاهده جزئیات امکانات و تجهیزات"
                   >
-                    <span className="flex items-center gap-1.5 truncate">
-                      <SlidersHorizontal className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4] shrink-0" />
-                      <span>امکانات و تجهیزات</span>
+                    <div className="flex items-center gap-1 overflow-hidden">
+                      {room.amenities.slice(0, 3).map((amId) => {
+                        const am = getAmenityById(amId);
+                        let IconComp = Check;
+                        if (am?.icon === 'Wifi' || amId.includes('wifi')) IconComp = Wifi;
+                        else if (am?.icon === 'Projector' || amId.includes('projector') || am?.icon === 'Tv' || amId.includes('tv')) IconComp = Tv;
+                        else if (am?.icon === 'Video' || amId.includes('video')) IconComp = Video;
+                        else if (am?.icon === 'Mic' || amId.includes('mic')) IconComp = Mic;
+                        else if (am?.icon === 'Speaker') IconComp = Speaker;
+                        else if (am?.icon === 'Monitor') IconComp = Monitor;
+                        else if (am?.icon === 'Laptop') IconComp = Laptop;
+                        else if (am?.icon === 'Cast') IconComp = Cast;
+                        else if (am?.icon === 'PenTool' || amId.includes('whiteboard')) IconComp = PenTool;
+                        else if (am?.icon === 'Coffee' || amId.includes('catering') || amId.includes('coffee')) IconComp = Coffee;
+                        else if (am?.icon === 'Wind' || amId.includes('ac')) IconComp = Wind;
+
+                        return (
+                          <div
+                            key={amId}
+                            title={am?.nameFa || amId}
+                            className="w-6.5 h-6.5 rounded-lg bg-white dark:bg-slate-800 text-[#0F786E] dark:text-[#5eead4] border border-slate-200/70 dark:border-white/10 flex items-center justify-center shrink-0 shadow-2xs group-hover/btn:border-emerald-300"
+                          >
+                            <IconComp className="w-3.5 h-3.5" />
+                          </div>
+                        );
+                      })}
+                      {room.amenities.length > 3 && (
+                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 px-1">
+                          +{room.amenities.length - 3}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] font-bold text-[#0F786E] dark:text-[#5eead4] group-hover/btn:underline shrink-0 flex items-center gap-1">
+                      <SlidersHorizontal className="w-3 h-3" />
+                      <span>{amenityCount} قابلیت</span>
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-[#0F786E] dark:text-[#5eead4] border border-slate-200 dark:border-white/10 shadow-xs shrink-0">
-                      {amenityCount} قابلیت
-                    </span>
-                  </button>
+                  </div>
                 </div>
               </div>
 
@@ -278,7 +315,7 @@ export const RoomBrowser: React.FC = () => {
                   onClick={() => openBookingModal(room)}
                   className="w-full py-2 px-3 bg-[#0F786E] hover:bg-[#0D6B63] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <CalendarPlus className="w-3.5 h-3.5" />
+                  <CalendarCheck className="w-3.5 h-3.5" />
                   <span>{isMaintenance ? 'غیرقابل رزرو (تعمیرات)' : 'رزرو این اتاق'}</span>
                 </button>
               </div>
@@ -296,7 +333,7 @@ export const RoomBrowser: React.FC = () => {
         </div>
       )}
 
-      {/* Small Amenities Popup Modal */}
+      {/* Small Amenities Popup Modal (Close button removed per user request) */}
       {amenitiesModalRoom && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
           <div
@@ -305,7 +342,7 @@ export const RoomBrowser: React.FC = () => {
           />
 
           <div className="relative w-full max-w-sm sm:max-w-md bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-150 flex flex-col max-h-[85vh]">
-            {/* Header */}
+            {/* Header (No top-right close X button) */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-900/50">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center shrink-0">
@@ -320,14 +357,6 @@ export const RoomBrowser: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              <button
-                type="button"
-                onClick={() => setAmenitiesModalRoom(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
 
             {/* Content List */}
@@ -339,17 +368,21 @@ export const RoomBrowser: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {amenitiesModalRoom.amenities.map((amId) => {
-                  const am = ALL_AMENITIES.find((a) => a.id === amId);
+                  const am = getAmenityById(amId);
                   const nameFa = am ? am.nameFa : amId;
 
                   let IconComp = Check;
-                  if (amId.includes('wifi')) IconComp = Wifi;
-                  else if (amId.includes('projector') || amId.includes('tv')) IconComp = Tv;
-                  else if (amId.includes('video')) IconComp = Video;
-                  else if (amId.includes('mic')) IconComp = Mic;
-                  else if (amId.includes('whiteboard')) IconComp = PenTool;
-                  else if (amId.includes('catering') || amId.includes('coffee')) IconComp = Coffee;
-                  else if (amId.includes('ac')) IconComp = Wind;
+                  if (am?.icon === 'Wifi' || amId.includes('wifi')) IconComp = Wifi;
+                  else if (am?.icon === 'Projector' || amId.includes('projector') || am?.icon === 'Tv' || amId.includes('tv')) IconComp = Tv;
+                  else if (am?.icon === 'Video' || amId.includes('video')) IconComp = Video;
+                  else if (am?.icon === 'Mic' || amId.includes('mic')) IconComp = Mic;
+                  else if (am?.icon === 'Speaker') IconComp = Speaker;
+                  else if (am?.icon === 'Monitor') IconComp = Monitor;
+                  else if (am?.icon === 'Laptop') IconComp = Laptop;
+                  else if (am?.icon === 'Cast') IconComp = Cast;
+                  else if (am?.icon === 'PenTool' || amId.includes('whiteboard')) IconComp = PenTool;
+                  else if (am?.icon === 'Coffee' || amId.includes('catering') || amId.includes('coffee')) IconComp = Coffee;
+                  else if (am?.icon === 'Wind' || amId.includes('ac')) IconComp = Wind;
 
                   return (
                     <div
@@ -380,6 +413,17 @@ export const RoomBrowser: React.FC = () => {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Bottom Close Button */}
+            <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60">
+              <button
+                type="button"
+                onClick={() => setAmenitiesModalRoom(null)}
+                className="w-full py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+              >
+                بستن پنجره
+              </button>
             </div>
           </div>
         </div>

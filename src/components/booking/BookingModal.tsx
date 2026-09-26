@@ -7,6 +7,7 @@ import { TimePicker } from '../common/TimePicker';
 import { toPersianDigits } from '../../utils/jalali';
 import { X, Calendar, AlertTriangle, ChevronDown, UserPlus } from 'lucide-react';
 import { ParticipantSelector } from './ParticipantSelector';
+import { triggerBookingNotifications } from '../../utils/notificationDispatcher';
 
 interface Props {
   onSuccess?: () => void;
@@ -205,18 +206,15 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       const bookedRoom = availableRooms.find((r) => r.id === selectedRoomId);
       const roomDisplayName = bookedRoom?.name || newBooking.roomName || 'اتاق جلسات';
 
-      // Automatically push notification to bell in header
-      addNotification({
-        title: `رزرو جلسه جدید: ${newBooking.title}`,
-        message: `جلسه «${newBooking.title}» در سالن ${roomDisplayName} برای تاریخ ${newBooking.date} ساعت ${newBooking.startTime} تا ${newBooking.endTime} ثبت شد.`,
-        bookingId: newBooking.id,
-        roomName: roomDisplayName,
-        date: newBooking.date,
-        startTime: newBooking.startTime,
-        endTime: newBooking.endTime,
-        organizerName,
-        type: 'meeting_booked',
-      });
+      // Automatically dispatch multi-channel notifications (In-App, SMS, Telegram)
+      triggerBookingNotifications(
+        {
+          ...newBooking,
+          roomName: roomDisplayName,
+        },
+        newBooking.status === 'pending_approval' ? 'new_booking_request' : 'booking_approved',
+        addNotification
+      );
 
       showToast(
         newBooking.status === 'pending_approval'

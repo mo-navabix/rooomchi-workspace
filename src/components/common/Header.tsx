@@ -19,6 +19,7 @@ import {
   AlertCircle,
   Calendar,
   CheckCheck,
+  X,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 import { UserAvatar } from "./UserAvatar";
@@ -51,6 +52,10 @@ const PAGE_META: Partial<
   "admin-settings": {
     title: "تنظیمات سازمان",
     subtitle: "پیکربندی سیاست‌ها و برندینگ",
+  },
+  "admin-notifications": {
+    title: "مدیریت اعلان‌ها و پیام‌ها",
+    subtitle: "پیکربندی ارسال نوتیفیکیشن‌ها از طریق SMS، تلگرام و سیستم داخلی",
   },
   "admin-support-tickets": {
     title: "تیکت‌های پشتیبانی",
@@ -117,8 +122,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
   const currentRoleMeta = getRoleMeta(userRole);
 
   return (
-    <header className="sticky top-0 z-40 w-full pt-2.5 sm:pt-3.5 px-3 sm:px-6 lg:px-8 pb-1">
-      <div className="w-full rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-[#111C2E]/90 border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-black/20 backdrop-blur-md px-3 sm:px-5">
+    <header className="sticky top-0 z-40 w-full pt-2.5 sm:pt-3.5 px-4 sm:px-6 lg:px-8 pb-1">
+      <div className="w-full rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-[#111C2E]/90 border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-black/20 backdrop-blur-md px-4 sm:px-6">
         <div className="flex items-center gap-2 sm:gap-4 h-14 sm:h-16">
           {/* RTL start: menu + page context */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
@@ -188,12 +193,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                 <>
                   <button
                     type="button"
-                    className="fixed inset-0 z-20 cursor-default"
+                    className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-2xs sm:bg-transparent sm:backdrop-blur-none cursor-default"
                     onClick={() => setIsNotificationsOpen(false)}
+                    aria-label="بستن اعلان‌ها"
                   />
-                  <div className="absolute left-0 mt-2 w-80 sm:w-96 dark-surface-card rounded-2xl shadow-2xl z-30 border border-slate-200/90 dark:border-[#334155] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                  <div className="fixed inset-x-3 top-16 sm:absolute sm:inset-auto sm:left-0 sm:mt-2 w-auto sm:w-96 max-h-[82vh] sm:max-h-[32rem] dark-surface-card rounded-2xl shadow-2xl z-50 border border-slate-200/90 dark:border-[#334155] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
                     {/* Popover Header */}
-                    <div className="p-3.5 border-b border-slate-100 dark:border-[#26364D] flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
+                    <div className="p-3.5 border-b border-slate-100 dark:border-[#26364D] flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/70 shrink-0">
                       <div className="flex items-center gap-2">
                         <Bell className="w-4 h-4 text-[#0F786E] dark:text-[#5eead4]" />
                         <h4 className="text-xs font-bold text-slate-900 dark:text-white">
@@ -206,20 +212,30 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                         )}
                       </div>
 
-                      {notifications.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        {notifications.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={markAllNotificationsAsRead}
+                            className="text-[11px] font-medium text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer flex items-center gap-1"
+                          >
+                            <CheckCheck className="w-3.5 h-3.5" />
+                            <span>خواندن همه</span>
+                          </button>
+                        )}
                         <button
                           type="button"
-                          onClick={markAllNotificationsAsRead}
-                          className="text-[11px] font-medium text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer flex items-center gap-1"
+                          onClick={() => setIsNotificationsOpen(false)}
+                          className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors sm:hidden cursor-pointer"
+                          aria-label="بستن"
                         >
-                          <CheckCheck className="w-3.5 h-3.5" />
-                          <span>خواندن همه</span>
+                          <X className="w-4 h-4" />
                         </button>
-                      )}
+                      </div>
                     </div>
 
                     {/* Notifications List */}
-                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-[#26364D]">
+                    <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-[#26364D] max-h-72 sm:max-h-80">
                       {notifications.length === 0 ? (
                         <div className="py-8 px-4 text-center">
                           <Bell className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto mb-2 opacity-50" />
@@ -290,27 +306,41 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                     </div>
 
                     {/* Footer */}
-                    {notifications.length > 0 && (
-                      <div className="p-2.5 border-t border-slate-100 dark:border-[#26364D] bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={clearAllNotifications}
-                          className="text-[11px] text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium cursor-pointer"
-                        >
-                          پاک کردن همه
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveTab("calendar");
-                            setIsNotificationsOpen(false);
-                          }}
-                          className="text-[11px] font-bold text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer"
-                        >
-                          مشاهده تقویم جلسات
-                        </button>
+                    <div className="p-2.5 border-t border-slate-100 dark:border-[#26364D] bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between shrink-0">
+                      <div className="flex items-center gap-2">
+                        {notifications.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={clearAllNotifications}
+                            className="text-[11px] text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium cursor-pointer"
+                          >
+                            پاک کردن همه
+                          </button>
+                        )}
+                        {(userRole === 'org_admin' || userRole === 'super_admin' || userRole === 'room_manager') && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTab("admin-notifications");
+                              setIsNotificationsOpen(false);
+                            }}
+                            className="text-[11px] text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer flex items-center gap-1 font-semibold"
+                          >
+                            <span>مدیریت SMS و تلگرام</span>
+                          </button>
+                        )}
                       </div>
-                    )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveTab("calendar");
+                          setIsNotificationsOpen(false);
+                        }}
+                        className="text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:underline cursor-pointer"
+                      >
+                        تقویم جلسات
+                      </button>
+                    </div>
                   </div>
                 </>
               )}
@@ -367,7 +397,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                       className="fixed inset-0 z-20 cursor-default"
                       onClick={() => setIsUserDropdownOpen(false)}
                     />
-                    <div className="absolute left-0 mt-2 w-64 dark-surface-card rounded-2xl shadow-xl py-2 z-30 border border-slate-200/80 dark:border-white/10">
+                    <div className="absolute left-0 mt-2 w-64 max-w-[calc(100vw-1.5rem)] dark-surface-card rounded-2xl shadow-xl py-2 z-30 border border-slate-200/80 dark:border-white/10">
                       <div className="px-4 py-3 border-b border-slate-100 dark:border-[#26364D] flex items-center gap-3">
                         <UserAvatar user={currentUser} size="md" />
                         <div className="flex-1 min-w-0">

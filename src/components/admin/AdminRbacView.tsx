@@ -27,7 +27,7 @@ import {
 import { AdminRbacSkeleton } from '../common/Skeletons';
 
 export const AdminRbacView: React.FC = () => {
-  const { currentOrg, showToast, can, setActiveTab } = useApp();
+  const { currentOrg, showToast, can } = useApp();
 
   const [users, setUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -180,9 +180,9 @@ export const AdminRbacView: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
           {/* Sub-tabs */}
-          <div className="portal-tabs-scroll bg-slate-100 dark:bg-[#334155] p-1 rounded-xl text-xs font-semibold">
+          <div className="portal-tabs-scroll bg-slate-100 dark:bg-[#334155] p-1 rounded-xl text-xs font-semibold self-start sm:self-auto">
             <button
               onClick={() => setActiveSubTab('users')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
@@ -199,14 +199,6 @@ export const AdminRbacView: React.FC = () => {
             >
               ماتریس دسترسی‌ها
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('access-control')}
-              className="px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 cursor-pointer"
-            >
-              <KeyRound className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
-              <span>کنترل دسترسی‌ها</span>
-            </button>
           </div>
 
           <button
@@ -214,9 +206,9 @@ export const AdminRbacView: React.FC = () => {
               setNewDept(currentOrg?.departments[0] || '');
               setIsAddModalOpen(true);
             }}
-            className="w-full sm:w-auto justify-center px-3.5 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
           >
-            <UserPlus className="w-3.5 h-3.5" />
+            <UserPlus className="w-4 h-4" />
             <span>افزودن پرسنل</span>
           </button>
         </div>
