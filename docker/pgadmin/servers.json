@@ -1,0 +1,15 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Rooomchi PostgreSQL",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "rooomchi_db",
+      "Username": "postgres",
+      "Password": "postgres",
+      "SSLMode": "prefer",
+      "Comment": "Docker Compose service name is postgres — not localhost"
+    }
+  }
+}

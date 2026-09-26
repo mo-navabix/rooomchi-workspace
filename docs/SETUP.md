@@ -70,6 +70,8 @@ curl http://localhost:3000/api/db/status
 
 ---
 
+> **راهنمای کامل Postgres (سیستم جدید، pgAdmin، backup، دو ماشین):** [POSTGRES.md](POSTGRES.md)
+
 ## ۴. فقط دیتابیس (بدون اپ)
 
 ```bash
@@ -90,6 +92,64 @@ npm run db:up
 ```bash
 docker exec -it rooomchi-postgres psql -U postgres -d rooomchi_db -c "\dt"
 ```
+
+---
+
+## ۴.۱ pgAdmin داخل Docker (رابط وب + Query Tool)
+
+```bash
+npm run db:admin
+```
+
+مرورگر: **[http://localhost:5050](http://localhost:5050)**
+
+| ورود به pgAdmin (dev) | مقدار |
+|------------------------|--------|
+| Email | `pgadmin@rooomchi.ir` |
+| Password | `pgadmin` |
+
+**اگر صفحه «Set Master Password» می‌بینید:** این رمز جدا از Postgres است (برای ذخیرهٔ پسوردها در pgAdmin). در dev می‌توانید خالی بگذارید و تأیید کنید، یا بعد از `npm run db:admin:reset` اصلاً نمایش داده نمی‌شود.
+
+**سرور از قبل در پروژه تعریف شده** (`docker/pgadmin/servers.json`). یک بار اجرا کنید:
+
+```bash
+npm run db:admin:reset
+```
+
+بعد در سایدبار چپ: **Servers → Rooomchi PostgreSQL** (اگر قفل است، پسورد سرور: `postgres`).
+
+مسیر جداول:
+
+`Rooomchi PostgreSQL` → **Databases** → `rooomchi_db` → **Schemas** → `public` → **Tables**
+
+اگر سرور خالی است، معمولاً Host اشتباه بوده (`localhost` به‌جای `postgres`). دستی: **Register → Server** — Host = **`postgres`**, Maintenance DB = **`rooomchi_db`**, user/pass = `postgres` / `postgres`.
+
+Query: راست‌کلیک روی `rooomchi_db` → **Query Tool** → SQL → F5.
+
+توقف pgAdmin:
+
+```bash
+docker compose --profile tools stop pgadmin
+```
+
+پورت دیگر: `ROOOMCHI_PGADMIN_PORT=5051 npm run db:admin`
+
+---
+
+## ۴.۲ pgAdmin روی خود ویندوز (بدون Docker برای UI)
+
+1. از [صفحه دانلود pgAdmin](https://www.pgadmin.org/download/) نسخه **Windows** را نصب کنید.
+2. Postgres باید در دسترس باشد (`npm run db:up`).
+3. در pgAdmin دسکتاپ **Add New Server**:
+
+| فیلد | مقدار |
+|------|--------|
+| Host | `localhost` |
+| Port | `5432` (یا `ROOOMCHI_PG_PORT`) |
+| Database | `rooomchi_db` |
+| Username / Password | `postgres` / `postgres` |
+
+ابزارهای مشابه: **DBeaver**, **DataGrip**, افزونه PostgreSQL در VS Code/Cursor.
 
 ---
 

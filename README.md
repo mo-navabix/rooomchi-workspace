@@ -54,7 +54,7 @@ npm run dev
 
 `npm run dev` ابتدا Postgres را با Docker بالا می‌آورد، سپس سرور (Vite + API) را روی پورت **3000** اجرا می‌کند.
 
-راهنمای کامل (سیستم جدید، DB روی ماشین دیگر، عیب‌یابی): **[docs/SETUP.md](docs/SETUP.md)**
+راهنمای کامل پروژه: **[docs/SETUP.md](docs/SETUP.md)** — **Postgres و pgAdmin:** **[docs/POSTGRES.md](docs/POSTGRES.md)**
 
 ---
 
@@ -83,7 +83,8 @@ Credentialهای داخل `docker-compose.yml` ثابت هستند (`postgres` /
 | `npm run dev` | Docker Postgres + سرور توسعه |
 | `npm run dev:app` | فقط سرور (DB روی host دیگر با `DB_HOST`) |
 | `npm run db:up` | فقط کانتینر Postgres |
-| `npm run db:down` | توقف Postgres |
+| `npm run db:admin` | Postgres + **pgAdmin** → [localhost:5050](http://localhost:5050) |
+| `npm run db:down` | توقف Postgres (و pgAdmin اگر بالا بود) |
 | `npm run db:reset` | حذف volume و ساخت دوباره DB + اسکیما |
 | `npm run build` | بیلد فرانت + سرور برای production |
 | `npm run start` | اجرای `dist/server.cjs` |
@@ -135,6 +136,7 @@ REST تحت مسیر `/api/...` (و برخی alias بدون پیشوند `/api` 
 
 ## مستندات بیشتر
 
+- [PostgreSQL — setup و استفاده روی سیستم جدید](docs/POSTGRES.md)
 - [راه‌اندازی و استقرار](docs/SETUP.md)
 - [زمینه پروژه برای توسعه / AI](docs/PROJECT_CONTEXT_AND_AI_PROMPT.md)
 
