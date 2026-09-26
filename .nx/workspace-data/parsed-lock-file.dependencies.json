@@ -1,10 +1,5 @@
 [
   {
-    "source": "npm:@babel/runtime-corejs3@7.29.7",
-    "target": "npm:core-js-pure@3.50.0",
-    "type": "static"
-  },
-  {
     "source": "npm:@clack/core@1.4.3",
     "target": "npm:fast-wrap-ansi@0.2.0",
     "type": "static"
@@ -305,1466 +300,6 @@
     "type": "static"
   },
   {
-    "source": "npm:@swagger-api/apidom-ast@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ast@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ast@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ast@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ast@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ast@1.11.6",
-    "target": "npm:unraw@3.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:@swagger-api/apidom-ast@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:minim@0.23.8",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:short-unique-id@5.3.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-core@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-error@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "target": "npm:@swaggerexpert/json-pointer@2.10.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-2019-09@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "target": "npm:@swagger-api/apidom-ast@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-draft-6@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-json-schema-draft-7@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-draft-4@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ast@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ast@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-json-schema-2020-12@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "target": "npm:ts-mixer@6.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-api-design-systems@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:@swagger-api/apidom-ast@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:tree-sitter@0.21.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:tree-sitter-json@0.24.8",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "target": "npm:web-tree-sitter@0.24.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-ast@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:@tree-sitter-grammars/tree-sitter-yaml@0.7.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:tree-sitter@0.22.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "target": "npm:web-tree-sitter@0.24.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@types/ramda@0.30.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:axios@1.18.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:minimatch@10.2.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-arazzo-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swagger-api/apidom-reference@1.11.6",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swaggerexpert/cookie@2.0.2",
-    "target": "npm:apg-lite@1.0.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:@swaggerexpert/json-pointer@2.10.2",
-    "target": "npm:apg-lite@1.0.5",
-    "type": "static"
-  },
-  {
     "source": "npm:@tailwindcss/node@4.3.3",
     "target": "npm:@jridgewell/remapping@2.3.5",
     "type": "static"
@@ -1910,21 +445,6 @@
     "type": "static"
   },
   {
-    "source": "npm:@tanstack/react-virtual@3.14.10",
-    "target": "npm:@tanstack/virtual-core@3.17.8",
-    "type": "static"
-  },
-  {
-    "source": "npm:@tanstack/react-virtual@3.14.10",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:@tanstack/react-virtual@3.14.10",
-    "target": "npm:react-dom@19.3.0",
-    "type": "static"
-  },
-  {
     "source": "npm:@tokenizer/inflate@0.4.1",
     "target": "npm:debug@4.4.3",
     "type": "static"
@@ -1932,21 +452,6 @@
   {
     "source": "npm:@tokenizer/inflate@0.4.1",
     "target": "npm:token-types@6.1.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@tree-sitter-grammars/tree-sitter-yaml@0.7.1",
-    "target": "npm:node-addon-api@8.9.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:@tree-sitter-grammars/tree-sitter-yaml@0.7.1",
-    "target": "npm:node-gyp-build@4.8.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:@tree-sitter-grammars/tree-sitter-yaml@0.7.1",
-    "target": "npm:tree-sitter@0.22.4",
     "type": "static"
   },
   {
@@ -2015,11 +520,6 @@
     "type": "static"
   },
   {
-    "source": "npm:@types/hast@3.0.5",
-    "target": "npm:@types/unist@3.0.3",
-    "type": "static"
-  },
-  {
     "source": "npm:@types/jsonwebtoken@9.0.10",
     "target": "npm:@types/ms@2.1.0",
     "type": "static"
@@ -2075,8 +575,8 @@
     "type": "static"
   },
   {
-    "source": "npm:@types/ramda@0.30.2",
-    "target": "npm:types-ramda@0.30.1",
+    "source": "npm:@types/qrcode@1.5.6",
+    "target": "npm:@types/node@26.6.1",
     "type": "static"
   },
   {
@@ -2107,21 +607,6 @@
   {
     "source": "npm:@types/serve-static@1.15.10",
     "target": "npm:@types/send@0.17.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:@types/swagger-ui-express@4.1.8",
-    "target": "npm:@types/express@4.17.25",
-    "type": "static"
-  },
-  {
-    "source": "npm:@types/swagger-ui-express@4.1.8",
-    "target": "npm:@types/serve-static@1.15.10",
-    "type": "static"
-  },
-  {
-    "source": "npm:@types/swagger-ui-react@5.18.0",
-    "target": "npm:@types/react@19.3.0",
     "type": "static"
   },
   {
@@ -2160,11 +645,6 @@
     "type": "static"
   },
   {
-    "source": "npm:autolinker@3.16.2",
-    "target": "npm:tslib@2.8.1",
-    "type": "static"
-  },
-  {
     "source": "npm:autoprefixer@10.6.1",
     "target": "npm:browserslist@4.29.0",
     "type": "static"
@@ -2192,11 +672,6 @@
   {
     "source": "npm:autoprefixer@10.6.1",
     "target": "npm:postcss@8.5.28",
-    "type": "static"
-  },
-  {
-    "source": "npm:available-typed-arrays@1.0.7",
-    "target": "npm:possible-typed-array-names@1.1.0",
     "type": "static"
   },
   {
@@ -2345,26 +820,6 @@
     "type": "static"
   },
   {
-    "source": "npm:call-bind@1.0.9",
-    "target": "npm:call-bind-apply-helpers@1.0.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:call-bind@1.0.9",
-    "target": "npm:es-define-property@1.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:call-bind@1.0.9",
-    "target": "npm:get-intrinsic@1.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:call-bind@1.0.9",
-    "target": "npm:set-function-length@1.2.2",
-    "type": "static"
-  },
-  {
     "source": "npm:call-bind-apply-helpers@1.0.2",
     "target": "npm:es-errors@1.3.0",
     "type": "static"
@@ -2445,11 +900,6 @@
     "type": "static"
   },
   {
-    "source": "npm:copy-to-clipboard@3.3.3",
-    "target": "npm:toggle-selection@1.0.6",
-    "type": "static"
-  },
-  {
     "source": "npm:cors@2.8.6",
     "target": "npm:object-assign@4.1.1",
     "type": "static"
@@ -2470,11 +920,6 @@
     "type": "static"
   },
   {
-    "source": "npm:decode-named-character-reference@1.3.0",
-    "target": "npm:character-entities@2.0.2",
-    "type": "static"
-  },
-  {
     "source": "npm:default-browser@5.2.1",
     "target": "npm:bundle-name@4.1.0",
     "type": "static"
@@ -2487,26 +932,6 @@
   {
     "source": "npm:defaults@1.0.4",
     "target": "npm:clone@1.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:define-data-property@1.1.4",
-    "target": "npm:es-define-property@1.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:define-data-property@1.1.4",
-    "target": "npm:es-errors@1.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:define-data-property@1.1.4",
-    "target": "npm:gopd@1.2.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:dompurify@3.4.15",
-    "target": "npm:@types/trusted-types@2.0.7",
     "type": "static"
   },
   {
@@ -2575,133 +1000,133 @@
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/aix-ppc64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/aix-ppc64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/android-arm@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/android-arm@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/android-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/android-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/android-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/android-x64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/darwin-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/darwin-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/darwin-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/darwin-x64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/freebsd-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/freebsd-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/freebsd-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/freebsd-x64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-arm@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-arm@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-ia32@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-ia32@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-loong64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-loong64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-mips64el@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-mips64el@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-ppc64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-ppc64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-riscv64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-riscv64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-s390x@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-s390x@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/linux-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/linux-x64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/netbsd-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/netbsd-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/netbsd-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/netbsd-x64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/openbsd-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/openbsd-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/openbsd-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/openbsd-x64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/openharmony-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/openharmony-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/sunos-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/sunos-x64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/win32-arm64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/win32-arm64@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/win32-ia32@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/win32-ia32@0.28.2",
     "type": "static"
   },
   {
-    "source": "npm:esbuild@0.25.12",
-    "target": "npm:@esbuild/win32-x64@0.25.12",
+    "source": "npm:esbuild@0.28.2",
+    "target": "npm:@esbuild/win32-x64@0.28.2",
     "type": "static"
   },
   {
@@ -2870,11 +1295,6 @@
     "type": "static"
   },
   {
-    "source": "npm:fault@1.0.4",
-    "target": "npm:format@0.2.2",
-    "type": "static"
-  },
-  {
     "source": "npm:fdir@6.5.0",
     "target": "npm:picomatch@4.0.7",
     "type": "static"
@@ -2950,13 +1370,18 @@
     "type": "static"
   },
   {
-    "source": "npm:follow-redirects@1.16.0",
-    "target": "npm:debug@4.4.3",
+    "source": "npm:find-up@4.1.0",
+    "target": "npm:locate-path@5.0.0",
     "type": "static"
   },
   {
-    "source": "npm:for-each@0.3.5",
-    "target": "npm:is-callable@1.2.7",
+    "source": "npm:find-up@4.1.0",
+    "target": "npm:path-exists@4.0.0",
+    "type": "static"
+  },
+  {
+    "source": "npm:follow-redirects@1.16.0",
+    "target": "npm:debug@4.4.3",
     "type": "static"
   },
   {
@@ -3135,11 +1560,6 @@
     "type": "static"
   },
   {
-    "source": "npm:has-property-descriptors@1.0.2",
-    "target": "npm:es-define-property@1.0.1",
-    "type": "static"
-  },
-  {
     "source": "npm:has-tostringtag@1.0.2",
     "target": "npm:has-symbols@1.1.0",
     "type": "static"
@@ -3147,36 +1567,6 @@
   {
     "source": "npm:hasown@2.0.4",
     "target": "npm:function-bind@1.1.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:hast-util-parse-selector@4.0.0",
-    "target": "npm:@types/hast@3.0.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:hastscript@9.0.1",
-    "target": "npm:@types/hast@3.0.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:hastscript@9.0.1",
-    "target": "npm:comma-separated-tokens@2.0.3",
-    "type": "static"
-  },
-  {
-    "source": "npm:hastscript@9.0.1",
-    "target": "npm:hast-util-parse-selector@4.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:hastscript@9.0.1",
-    "target": "npm:property-information@7.2.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:hastscript@9.0.1",
-    "target": "npm:space-separated-tokens@2.0.2",
     "type": "static"
   },
   {
@@ -3220,38 +1610,13 @@
     "type": "static"
   },
   {
-    "source": "npm:invariant@2.2.4",
-    "target": "npm:loose-envify@1.4.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:is-alphanumerical@2.0.1",
-    "target": "npm:is-alphabetical@2.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:is-alphanumerical@2.0.1",
-    "target": "npm:is-decimal@2.0.1",
-    "type": "static"
-  },
-  {
     "source": "npm:is-inside-container@1.0.0",
     "target": "npm:is-docker@3.0.0",
     "type": "static"
   },
   {
-    "source": "npm:is-typed-array@1.1.15",
-    "target": "npm:which-typed-array@1.1.24",
-    "type": "static"
-  },
-  {
     "source": "npm:is-wsl@3.1.0",
     "target": "npm:is-inside-container@1.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:js-yaml@4.3.2",
-    "target": "npm:argparse@2.0.1",
     "type": "static"
   },
   {
@@ -3395,6 +1760,11 @@
     "type": "static"
   },
   {
+    "source": "npm:locate-path@5.0.0",
+    "target": "npm:p-locate@4.1.0",
+    "type": "static"
+  },
+  {
     "source": "npm:log-symbols@4.1.0",
     "target": "npm:chalk@4.1.2",
     "type": "static"
@@ -3402,21 +1772,6 @@
   {
     "source": "npm:log-symbols@4.1.0",
     "target": "npm:is-unicode-supported@0.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:loose-envify@1.4.0",
-    "target": "npm:js-tokens@4.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:lowlight@1.20.0",
-    "target": "npm:fault@1.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:lowlight@1.20.0",
-    "target": "npm:highlight.js@10.7.3",
     "type": "static"
   },
   {
@@ -3432,11 +1787,6 @@
   {
     "source": "npm:mime-types@2.1.35",
     "target": "npm:mime-db@1.52.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:minim@0.23.8",
-    "target": "npm:lodash@4.18.1",
     "type": "static"
   },
   {
@@ -4210,16 +2560,6 @@
     "type": "static"
   },
   {
-    "source": "npm:openapi-path-templating@2.2.1",
-    "target": "npm:apg-lite@1.0.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:openapi-server-url-templating@1.3.0",
-    "target": "npm:apg-lite@1.0.5",
-    "type": "static"
-  },
-  {
     "source": "npm:ora@5.4.1",
     "target": "npm:bl@4.1.0",
     "type": "static"
@@ -4265,6 +2605,16 @@
     "type": "static"
   },
   {
+    "source": "npm:p-limit@2.3.0",
+    "target": "npm:p-try@2.2.0",
+    "type": "static"
+  },
+  {
+    "source": "npm:p-locate@4.1.0",
+    "target": "npm:p-limit@2.3.0",
+    "type": "static"
+  },
+  {
     "source": "npm:p-retry@4.6.2",
     "target": "npm:@types/retry@0.12.0",
     "type": "static"
@@ -4272,41 +2622,6 @@
   {
     "source": "npm:p-retry@4.6.2",
     "target": "npm:retry@0.13.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:parse-entities@4.0.2",
-    "target": "npm:@types/unist@2.0.11",
-    "type": "static"
-  },
-  {
-    "source": "npm:parse-entities@4.0.2",
-    "target": "npm:character-entities-legacy@3.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:parse-entities@4.0.2",
-    "target": "npm:character-reference-invalid@2.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:parse-entities@4.0.2",
-    "target": "npm:decode-named-character-reference@1.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:parse-entities@4.0.2",
-    "target": "npm:is-alphanumerical@2.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:parse-entities@4.0.2",
-    "target": "npm:is-decimal@2.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:parse-entities@4.0.2",
-    "target": "npm:is-hexadecimal@2.0.1",
     "type": "static"
   },
   {
@@ -4420,21 +2735,6 @@
     "type": "static"
   },
   {
-    "source": "npm:prop-types@15.8.1",
-    "target": "npm:loose-envify@1.4.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:prop-types@15.8.1",
-    "target": "npm:object-assign@4.1.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:prop-types@15.8.1",
-    "target": "npm:react-is@16.13.1",
-    "type": "static"
-  },
-  {
     "source": "npm:protobufjs@7.6.6",
     "target": "npm:@protobufjs/aspromise@1.1.2",
     "type": "static"
@@ -4500,6 +2800,21 @@
     "type": "static"
   },
   {
+    "source": "npm:qrcode@1.5.4",
+    "target": "npm:dijkstrajs@1.0.3",
+    "type": "static"
+  },
+  {
+    "source": "npm:qrcode@1.5.4",
+    "target": "npm:pngjs@5.0.0",
+    "type": "static"
+  },
+  {
+    "source": "npm:qrcode@1.5.4",
+    "target": "npm:yargs@15.4.1",
+    "type": "static"
+  },
+  {
     "source": "npm:qs@6.16.0",
     "target": "npm:es-define-property@1.0.1",
     "type": "static"
@@ -4507,26 +2822,6 @@
   {
     "source": "npm:qs@6.16.0",
     "target": "npm:side-channel@1.1.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:ramda-adjunct@5.1.0",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:randexp@0.5.3",
-    "target": "npm:drange@1.1.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:randexp@0.5.3",
-    "target": "npm:ret@0.2.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:randombytes@2.1.0",
-    "target": "npm:safe-buffer@5.2.1",
     "type": "static"
   },
   {
@@ -4550,132 +2845,12 @@
     "type": "static"
   },
   {
-    "source": "npm:react-copy-to-clipboard@5.1.1",
-    "target": "npm:copy-to-clipboard@3.3.3",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-copy-to-clipboard@5.1.1",
-    "target": "npm:prop-types@15.8.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-copy-to-clipboard@5.1.1",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-debounce-input@3.3.0",
-    "target": "npm:lodash.debounce@4.0.8",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-debounce-input@3.3.0",
-    "target": "npm:prop-types@15.8.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-debounce-input@3.3.0",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
     "source": "npm:react-dom@19.3.0",
     "target": "npm:scheduler@0.28.0",
     "type": "static"
   },
   {
     "source": "npm:react-dom@19.3.0",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-immutable-proptypes@2.2.0",
-    "target": "npm:invariant@2.2.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-immutable-proptypes@2.2.0",
-    "target": "npm:immutable@5.1.9",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-immutable-pure-component@2.2.2",
-    "target": "npm:immutable@5.1.9",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-immutable-pure-component@2.2.2",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-immutable-pure-component@2.2.2",
-    "target": "npm:react-dom@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-inspector@6.0.2",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-redux@9.3.0",
-    "target": "npm:@types/use-sync-external-store@0.0.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-redux@9.3.0",
-    "target": "npm:use-sync-external-store@1.7.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-redux@9.3.0",
-    "target": "npm:@types/react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-redux@9.3.0",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-redux@9.3.0",
-    "target": "npm:redux@5.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-syntax-highlighter@16.1.1",
-    "target": "npm:@babel/runtime@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-syntax-highlighter@16.1.1",
-    "target": "npm:highlight.js@10.7.3",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-syntax-highlighter@16.1.1",
-    "target": "npm:highlightjs-vue@1.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-syntax-highlighter@16.1.1",
-    "target": "npm:lowlight@1.20.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-syntax-highlighter@16.1.1",
-    "target": "npm:prismjs@1.30.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-syntax-highlighter@16.1.1",
-    "target": "npm:refractor@5.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:react-syntax-highlighter@16.1.1",
     "target": "npm:react@19.3.0",
     "type": "static"
   },
@@ -4692,36 +2867,6 @@
   {
     "source": "npm:readable-stream@3.6.2",
     "target": "npm:util-deprecate@1.0.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:refractor@5.0.0",
-    "target": "npm:@types/hast@3.0.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:refractor@5.0.0",
-    "target": "npm:@types/prismjs@1.26.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:refractor@5.0.0",
-    "target": "npm:hastscript@9.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:refractor@5.0.0",
-    "target": "npm:parse-entities@4.0.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:remarkable@2.0.1",
-    "target": "npm:argparse@1.0.10",
-    "type": "static"
-  },
-  {
-    "source": "npm:remarkable@2.0.1",
-    "target": "npm:autolinker@3.16.2",
     "type": "static"
   },
   {
@@ -4915,11 +3060,6 @@
     "type": "static"
   },
   {
-    "source": "npm:serialize-error@8.1.0",
-    "target": "npm:type-fest@0.20.2",
-    "type": "static"
-  },
-  {
     "source": "npm:serve-static@1.16.3",
     "target": "npm:encodeurl@2.0.0",
     "type": "static"
@@ -4937,51 +3077,6 @@
   {
     "source": "npm:serve-static@1.16.3",
     "target": "npm:send@0.19.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:set-function-length@1.2.2",
-    "target": "npm:define-data-property@1.1.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:set-function-length@1.2.2",
-    "target": "npm:es-errors@1.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:set-function-length@1.2.2",
-    "target": "npm:function-bind@1.1.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:set-function-length@1.2.2",
-    "target": "npm:get-intrinsic@1.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:set-function-length@1.2.2",
-    "target": "npm:gopd@1.2.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:set-function-length@1.2.2",
-    "target": "npm:has-property-descriptors@1.0.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:sha.js@2.4.12",
-    "target": "npm:inherits@2.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:sha.js@2.4.12",
-    "target": "npm:safe-buffer@5.2.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:sha.js@2.4.12",
-    "target": "npm:to-buffer@1.2.2",
     "type": "static"
   },
   {
@@ -5100,396 +3195,6 @@
     "type": "static"
   },
   {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@scarf/scarf@1.4.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-core@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-error@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-json-pointer@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-ns-openapi-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-reference@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swaggerexpert/cookie@2.0.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:deepmerge@4.3.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:fast-json-patch@3.1.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:js-yaml@4.3.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:neotraverse@1.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:node-abort-controller@3.1.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:openapi-path-templating@2.2.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:openapi-server-url-templating@1.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:ramda@0.30.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:ramda-adjunct@5.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-ns-asyncapi-3@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-ns-openapi-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-api-design-systems-yaml@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-arazzo-json-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-arazzo-yaml-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-json-3@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-asyncapi-yaml-3@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-json@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-json-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-0@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-1@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-openapi-yaml-3-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-client@3.38.2",
-    "target": "npm:@swagger-api/apidom-parser-adapter-yaml-1-2@1.11.6",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-dist@5.33.0",
-    "target": "npm:@scarf/scarf@1.4.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-express@5.0.1",
-    "target": "npm:swagger-ui-dist@5.33.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-express@5.0.1",
-    "target": "npm:express@5.2.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:@babel/runtime-corejs3@7.29.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:@scarf/scarf@1.4.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:@tanstack/react-virtual@3.14.10",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:base64-js@1.5.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:buffer@6.0.3",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:classnames@2.5.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:css.escape@1.5.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:deep-extend@0.6.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:dompurify@3.4.15",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:ieee754@1.2.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:immutable@5.1.9",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:js-file-download@0.4.12",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:js-yaml@4.3.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:lodash@4.18.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:prop-types@15.8.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:randexp@0.5.3",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:randombytes@2.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-copy-to-clipboard@5.1.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-debounce-input@3.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-immutable-proptypes@2.2.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-immutable-pure-component@2.2.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-inspector@6.0.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-redux@9.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-syntax-highlighter@16.1.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:redux@5.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:remarkable@2.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:reselect@5.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:serialize-error@8.1.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:sha.js@2.4.12",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:swagger-client@3.38.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:url-parse@1.5.10",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:xml@1.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:xml-but-prettier@1.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:zenscroll@4.0.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:swagger-ui-react@5.33.0",
-    "target": "npm:react-dom@19.3.0",
-    "type": "static"
-  },
-  {
     "source": "npm:tar-stream@2.2.0",
     "target": "npm:bl@4.1.0",
     "type": "static"
@@ -5525,21 +3230,6 @@
     "type": "static"
   },
   {
-    "source": "npm:to-buffer@1.2.2",
-    "target": "npm:isarray@2.0.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:to-buffer@1.2.2",
-    "target": "npm:safe-buffer@5.2.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:to-buffer@1.2.2",
-    "target": "npm:typed-array-buffer@1.0.3",
-    "type": "static"
-  },
-  {
     "source": "npm:token-types@6.1.2",
     "target": "npm:@borewit/text-codec@0.2.2",
     "type": "static"
@@ -5552,31 +3242,6 @@
   {
     "source": "npm:token-types@6.1.2",
     "target": "npm:ieee754@1.2.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:tree-sitter@0.21.1",
-    "target": "npm:node-addon-api@8.9.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:tree-sitter@0.21.1",
-    "target": "npm:node-gyp-build@4.8.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:tree-sitter-json@0.24.8",
-    "target": "npm:node-addon-api@8.9.2",
-    "type": "static"
-  },
-  {
-    "source": "npm:tree-sitter-json@0.24.8",
-    "target": "npm:node-gyp-build@4.8.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:tree-sitter-json@0.24.8",
-    "target": "npm:tree-sitter@0.21.1",
     "type": "static"
   },
   {
@@ -5612,21 +3277,6 @@
   {
     "source": "npm:type-is@1.6.18",
     "target": "npm:mime-types@2.1.35",
-    "type": "static"
-  },
-  {
-    "source": "npm:typed-array-buffer@1.0.3",
-    "target": "npm:call-bound@1.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:typed-array-buffer@1.0.3",
-    "target": "npm:es-errors@1.3.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:typed-array-buffer@1.0.3",
-    "target": "npm:is-typed-array@1.1.15",
     "type": "static"
   },
   {
@@ -5682,11 +3332,6 @@
   {
     "source": "npm:typeorm@1.1.1",
     "target": "npm:pg@8.23.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:types-ramda@0.30.1",
-    "target": "npm:ts-toolbelt@9.6.0",
     "type": "static"
   },
   {
@@ -5810,21 +3455,6 @@
     "type": "static"
   },
   {
-    "source": "npm:url-parse@1.5.10",
-    "target": "npm:querystringify@2.2.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:url-parse@1.5.10",
-    "target": "npm:requires-port@1.0.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:use-sync-external-store@1.7.0",
-    "target": "npm:react@19.3.0",
-    "type": "static"
-  },
-  {
     "source": "npm:vite@8.3.0",
     "target": "npm:lightningcss@1.33.0",
     "type": "static"
@@ -5861,7 +3491,7 @@
   },
   {
     "source": "npm:vite@8.3.0",
-    "target": "npm:esbuild@0.25.12",
+    "target": "npm:esbuild@0.28.2",
     "type": "static"
   },
   {
@@ -5890,41 +3520,6 @@
     "type": "static"
   },
   {
-    "source": "npm:which-typed-array@1.1.24",
-    "target": "npm:available-typed-arrays@1.0.7",
-    "type": "static"
-  },
-  {
-    "source": "npm:which-typed-array@1.1.24",
-    "target": "npm:call-bind@1.0.9",
-    "type": "static"
-  },
-  {
-    "source": "npm:which-typed-array@1.1.24",
-    "target": "npm:call-bound@1.0.4",
-    "type": "static"
-  },
-  {
-    "source": "npm:which-typed-array@1.1.24",
-    "target": "npm:for-each@0.3.5",
-    "type": "static"
-  },
-  {
-    "source": "npm:which-typed-array@1.1.24",
-    "target": "npm:get-proto@1.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:which-typed-array@1.1.24",
-    "target": "npm:gopd@1.2.0",
-    "type": "static"
-  },
-  {
-    "source": "npm:which-typed-array@1.1.24",
-    "target": "npm:has-tostringtag@1.0.2",
-    "type": "static"
-  },
-  {
     "source": "npm:wrap-ansi@7.0.0",
     "target": "npm:ansi-styles@4.3.0",
     "type": "static"
@@ -5937,11 +3532,6 @@
   {
     "source": "npm:wrap-ansi@7.0.0",
     "target": "npm:strip-ansi@6.0.1",
-    "type": "static"
-  },
-  {
-    "source": "npm:xml-but-prettier@1.0.1",
-    "target": "npm:repeat-string@1.6.1",
     "type": "static"
   },
   {

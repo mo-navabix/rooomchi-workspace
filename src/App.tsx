@@ -48,13 +48,13 @@ const MainContent: React.FC = () => {
 
             <div className="flex flex-1 flex-col min-w-0 min-h-screen">
               <Header onOpenSidebar={() => setSidebarOpen(true)} />
-              <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-8">
+              <main className="flex flex-1 flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-4 sm:pb-6">
                 {isLoading ? (
                   <AppLoadingSkeleton tab={activeTab} />
                 ) : (
                   <div
                     key={activeTab}
-                    className="portal-page"
+                    className="portal-page flex flex-1 flex-col min-h-0"
                   >
                     {activeTab === "dashboard" && <UnifiedDashboardView />}
                     {activeTab === "calendar" && <CalendarView />}

@@ -19,128 +19,280 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "public/assets/logo/didar-logo-dark.png",
-        "hash": "16624322072818249364"
+        "file": "src/index.css",
+        "hash": "7083335968843013270"
       },
       {
-        "file": "public/assets/logo/didar-logo.svg",
-        "hash": "16680815604848713831"
-      },
-      {
-        "file": "src/components/admin/AdminRoomsView.tsx",
-        "hash": "8133362402416286523"
-      },
-      {
-        "file": "src/App.tsx",
-        "hash": "11139770431505557296"
-      },
-      {
-        "file": "src/components/calendar/CalendarTimeGrid.tsx",
-        "hash": "17348370271005036779"
-      },
-      {
-        "file": "src/constants/amenities.ts",
-        "hash": "16620284894806586952"
-      },
-      {
-        "file": "src/constants/brand.ts",
-        "hash": "18226872504396331697"
-      },
-      {
-        "file": "public/assets/logo/didar-logo-stacked.png",
-        "hash": "13324147746472467439"
-      },
-      {
-        "file": "src/components/common/DidarBrandMark.tsx",
-        "hash": "5308936050211495252"
-      },
-      {
-        "file": "src/components/landing/LandingView.tsx",
-        "hash": "17895482527227164221"
-      },
-      {
-        "file": "src/components/dashboard/ModernDashboardView.tsx",
-        "hash": "5579813701025275199"
+        "file": "public/assets/logo/rooomchi-logo-light.svg",
+        "hash": "10440719367097892749"
       },
       {
         "file": "src/components/onboarding/OrgProvisioningModal.tsx",
         "hash": "14784989920274721372"
       },
       {
-        "file": "public/assets/logo/didar-mark.svg",
-        "hash": "17636256619075756940"
+        "file": "src/components/admin/AdminRbacView.tsx",
+        "hash": "6462033877172457545"
       },
       {
-        "file": "src/constants/rbac.ts",
-        "hash": "15067783418552374685"
-      },
-      {
-        "file": "src/components/common/TopHeader.tsx",
-        "hash": "5839865902498658385"
-      },
-      {
-        "file": "server.ts",
-        "hash": "11072760284795810063"
-      },
-      {
-        "file": "src/components/common/PortalFooter.tsx",
-        "hash": "2398244811405996350"
-      },
-      {
-        "file": "public/didar-logo.png",
-        "hash": "13324147746472467439"
+        "file": "metadata.json",
+        "hash": "14806373625807601759"
       },
       {
         "file": "src/components/calendar/CalendarView.tsx",
-        "hash": "15755747181061042317"
+        "hash": "13629963763637631495"
       },
       {
-        "file": "src/services/supportTickets.ts",
-        "hash": "10971733525526439161"
+        "file": "src/components/common/PortalFooter.tsx",
+        "hash": "13389516826451860781"
       },
       {
-        "file": "src/components/common/DidarLogo.tsx",
-        "hash": "17581016910482897960"
+        "file": "public/rooomchi-logo-dark.svg",
+        "hash": "6675358820255526384"
+      },
+      {
+        "file": "src/components/common/Toast.tsx",
+        "hash": "6584049304193790072"
+      },
+      {
+        "file": "src/components/admin/OrgLoginQrModal.tsx",
+        "hash": "1620202217202555185"
+      },
+      {
+        "file": "src/components/common/TimePicker.tsx",
+        "hash": "13850483878749311090"
+      },
+      {
+        "file": "src/components/auth/CompleteProfileModal.tsx",
+        "hash": "11127330752668066239"
+      },
+      {
+        "file": "server.ts",
+        "hash": "9824589374613671792"
+      },
+      {
+        "file": "src/components/common/Header.tsx",
+        "hash": "4246047606628513897"
+      },
+      {
+        "file": "public/assets/logo/didar-logo.svg",
+        "hash": "16680815604848713831"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "16819518798362712960"
       },
       {
         "file": "src/components/common/PersianDatePicker.tsx",
-        "hash": "1660564634462053124"
+        "hash": "9870155213577356709"
       },
       {
-        "file": "src/components/admin/AdminRbacView.tsx",
-        "hash": "2215163097003598772"
+        "file": "src/features/teams/components/TeamsList.tsx",
+        "hash": "10839612793041574506"
       },
       {
-        "file": "src/components/booking/StepperBookingModal.tsx",
-        "hash": "2741007364722500361"
+        "file": "public/assets/logo/rooomchi-mark-dark.svg",
+        "hash": "9296754689270554803"
       },
       {
-        "file": "src/components/common/Sidebar.tsx",
-        "hash": "12414696493227511334"
+        "file": "public/assets/logo/didar-logo-dark.png",
+        "hash": "16624322072818249364"
       },
       {
-        "file": "src/types/index.ts",
-        "hash": "14252912641104858749"
-      },
-      {
-        "file": "src/index.css",
-        "hash": "5452085067678690735"
+        "file": "src/components/dashboard/UnifiedDashboardView.tsx",
+        "hash": "14905220358197935516"
       },
       {
         "file": "src/components/admin/AdminSettingsView.tsx",
-        "hash": "334286053461602969"
+        "hash": "8313473652242580882"
+      },
+      {
+        "file": "src/components/booking/MyBookingsView.tsx",
+        "hash": "640141840541916045"
+      },
+      {
+        "file": "public/didar-logo.svg",
+        "hash": "4543980933865034417"
+      },
+      {
+        "file": "src/components/common/Skeletons.tsx",
+        "hash": "10822847875594737742"
+      },
+      {
+        "file": "src/components/landing/LandingView.tsx",
+        "hash": "4358946748468675584"
+      },
+      {
+        "file": "src/components/booking/RoomBrowser.tsx",
+        "hash": "1223991308953851600"
+      },
+      {
+        "file": "src/features/teams/types.ts",
+        "hash": "15147843414021643490"
+      },
+      {
+        "file": "src/components/common/TopHeader.tsx",
+        "hash": "4514251772262757630"
+      },
+      {
+        "file": ".env.example",
+        "hash": "6069877809152049850"
       },
       {
         "file": "src/components/common/OrgLogoBadge.tsx",
         "hash": "2871024162602382102"
       },
       {
-        "file": "src/components/booking/MyBookingsView.tsx",
-        "hash": "16615567033911647755"
+        "file": "src/components/rooms/ModernRoomView.tsx",
+        "hash": "7839382771317556244"
       },
       {
-        "file": "schema.sql",
-        "hash": "4522071227082547507"
+        "file": "src/components/calendar/CalendarTimeGrid.tsx",
+        "hash": "17348370271005036779"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-stacked.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "src/features/teams/TeamsView.tsx",
+        "hash": "9540643892022799105"
+      },
+      {
+        "file": "bun.lock",
+        "hash": "4114078282751518323"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "17896632225343464329"
+      },
+      {
+        "file": "src/components/dashboard/DashboardView.tsx",
+        "hash": "2114239815928891947"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-dark.svg",
+        "hash": "13472721104218695765"
+      },
+      {
+        "file": "public/assets/logo/didar-logo.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "src/types/index.ts",
+        "hash": "14252912641104858749"
+      },
+      {
+        "file": "src/components/admin/AccessControlView.tsx",
+        "hash": "3053251866603912608"
+      },
+      {
+        "file": "src/components/admin/AdminBookingsView.tsx",
+        "hash": "5956572491717328709"
+      },
+      {
+        "file": "src/features/teams/components/TeamDetail.tsx",
+        "hash": "4309197200838050748"
+      },
+      {
+        "file": "src/components/admin/AdminSupportTicketsView.tsx",
+        "hash": "8300732911780565056"
+      },
+      {
+        "file": "src/context/AppContext.tsx",
+        "hash": "11710780419176556882"
+      },
+      {
+        "file": "src/components/common/DidarLogo.tsx",
+        "hash": "17581016910482897960"
+      },
+      {
+        "file": "src/components/common/SupportChipsBar.tsx",
+        "hash": "8445620321917429725"
+      },
+      {
+        "file": "src/components/dashboard/ModernDashboardView.tsx",
+        "hash": "5579813701025275199"
+      },
+      {
+        "file": "public/assets/logo/rooomchi-logo-dark.svg",
+        "hash": "3248867065908650617"
+      },
+      {
+        "file": "src/components/booking/StepperBookingModal.tsx",
+        "hash": "2741007364722500361"
+      },
+      {
+        "file": "src/App.tsx",
+        "hash": "9976303904634320888"
+      },
+      {
+        "file": "public/didar-logo.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "src/components/common/UserAvatar.tsx",
+        "hash": "334579120663913255"
+      },
+      {
+        "file": "public/assets/logo/rooomchi-mark-light.svg",
+        "hash": "4629778644693963969"
+      },
+      {
+        "file": "index.html",
+        "hash": "2949221146211008632"
+      },
+      {
+        "file": "src/constants/notifications.ts",
+        "hash": "10964465956660628495"
+      },
+      {
+        "file": "src/components/common/Sidebar.tsx",
+        "hash": "12255541056848700045"
+      },
+      {
+        "file": "nx.json",
+        "hash": "12230589572780083299"
+      },
+      {
+        "file": "src/services/supportTickets.ts",
+        "hash": "10971733525526439161"
+      },
+      {
+        "file": "src/utils/avatar.ts",
+        "hash": "5693634492454058361"
+      },
+      {
+        "file": "src/components/common/Logo.tsx",
+        "hash": "1629811239621540688"
+      },
+      {
+        "file": "src/components/booking/ParticipantSelector.tsx",
+        "hash": "8860401556446236991"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-light.png",
+        "hash": "6413593523200156179"
+      },
+      {
+        "file": "public/assets/logo/didar-mark.svg",
+        "hash": "17636256619075756940"
+      },
+      {
+        "file": "src/components/profile/ProfileView.tsx",
+        "hash": "6212854601026740279"
+      },
+      {
+        "file": "src/constants/rbac.ts",
+        "hash": "17321202570466018655"
+      },
+      {
+        "file": "src/constants/amenities.ts",
+        "hash": "8731727203595732603"
+      },
+      {
+        "file": "src/services/apiService.ts",
+        "hash": "1465687118355153752"
       },
       {
         "file": "src/services/dbService.ts",
@@ -151,159 +303,83 @@
         "hash": "5654843495349359336"
       },
       {
+        "file": "schema.sql",
+        "hash": "12317837722136189525"
+      },
+      {
+        "file": "src/components/admin/AdminRoomsView.tsx",
+        "hash": "9517003572209080653"
+      },
+      {
+        "file": "src/components/admin/AdminNotificationsView.tsx",
+        "hash": "15216534121265176510"
+      },
+      {
         "file": "src/components/support/SupportTicketView.tsx",
-        "hash": "4426683775211587734"
+        "hash": "5446176706572995308"
       },
       {
-        "file": "src/components/analytics/AnalyticsView.tsx",
-        "hash": "10275823145390646057"
+        "file": "src/components/profile/AvatarSettings.tsx",
+        "hash": "11875181370673264158"
       },
       {
-        "file": "src/components/rooms/ModernRoomView.tsx",
-        "hash": "7839382771317556244"
-      },
-      {
-        "file": "metadata.json",
-        "hash": "14806373625807601759"
-      },
-      {
-        "file": "public/assets/logo/didar-logo.png",
-        "hash": "13324147746472467439"
-      },
-      {
-        "file": "src/components/admin/AdminBookingsView.tsx",
-        "hash": "13558781496419417970"
-      },
-      {
-        "file": "src/components/common/Logo.tsx",
-        "hash": "8892165566445564062"
-      },
-      {
-        "file": "nx.json",
-        "hash": "12230589572780083299"
-      },
-      {
-        "file": "src/main.tsx",
-        "hash": "10886610349449672931"
-      },
-      {
-        "file": "src/services/apiService.ts",
-        "hash": "13802482224248818394"
-      },
-      {
-        "file": "src/components/common/SupportChipsBar.tsx",
-        "hash": "8445620321917429725"
-      },
-      {
-        "file": "src/components/admin/AdminSupportTicketsView.tsx",
-        "hash": "8654427454880948488"
+        "file": "package.json",
+        "hash": "14466534432403070972"
       },
       {
         "file": "tsconfig.json",
         "hash": "3839412590828012493"
       },
       {
-        "file": "src/context/AppContext.tsx",
-        "hash": "5763433082107516233"
+        "file": "src/features/teams/components/TeamForm.tsx",
+        "hash": "6666076223104543634"
       },
       {
-        "file": "src/utils/jalali.ts",
-        "hash": "3772337549594685034"
-      },
-      {
-        "file": "src/components/common/Skeletons.tsx",
-        "hash": "12048928990212407016"
-      },
-      {
-        "file": "src/components/booking/RoomBrowser.tsx",
-        "hash": "16003036484755832912"
-      },
-      {
-        "file": "package.json",
-        "hash": "3944100150135221002"
-      },
-      {
-        "file": "public/didar-logo.svg",
-        "hash": "4543980933865034417"
-      },
-      {
-        "file": "src/components/profile/ProfileView.tsx",
-        "hash": "13000351497756130446"
-      },
-      {
-        "file": "index.html",
-        "hash": "8091553098282200672"
-      },
-      {
-        "file": "src/components/auth/AuthModal.tsx",
-        "hash": "14671331183309938189"
-      },
-      {
-        "file": ".env.example",
-        "hash": "6069877809152049850"
-      },
-      {
-        "file": "src/components/dashboard/UnifiedDashboardView.tsx",
-        "hash": "5543995764557989868"
+        "file": "src/components/analytics/AnalyticsView.tsx",
+        "hash": "10275823145390646057"
       },
       {
         "file": "src/components/booking/BookingModal.tsx",
-        "hash": "7801821664793372090"
+        "hash": "10026652161120021752"
       },
       {
-        "file": "src/components/common/Header.tsx",
-        "hash": "7654637569042305845"
+        "file": "src/main.tsx",
+        "hash": "10886610349449672931"
       },
       {
-        "file": "public/assets/logo/didar-logo-light.png",
-        "hash": "6413593523200156179"
+        "file": "src/utils/jalali.ts",
+        "hash": "2521420106255951646"
       },
       {
-        "file": "src/components/common/Toast.tsx",
-        "hash": "6584049304193790072"
+        "file": "src/components/common/DidarBrandMark.tsx",
+        "hash": "5308936050211495252"
       },
       {
-        "file": "src/components/dashboard/DashboardView.tsx",
-        "hash": "9317760187206534188"
+        "file": "docs/PROJECT_CONTEXT_AND_AI_PROMPT.md",
+        "hash": "16177369642057128155"
+      },
+      {
+        "file": "public/rooomchi-logo-light.svg",
+        "hash": "16045602385067401897"
+      },
+      {
+        "file": "src/components/auth/AuthModal.tsx",
+        "hash": "15215088764884193040"
+      },
+      {
+        "file": "src/constants/brand.ts",
+        "hash": "1592694755341668736"
+      },
+      {
+        "file": "src/utils/notificationDispatcher.ts",
+        "hash": "259710412613020538"
       },
       {
         "file": "src/config/database.ts",
         "hash": "11615344952812549424"
-      },
-      {
-        "file": "src/components/auth/CompleteProfileModal.tsx",
-        "hash": "11127330752668066239"
-      },
-      {
-        "file": "public/assets/logo/didar-logo-dark.svg",
-        "hash": "13472721104218695765"
-      },
-      {
-        "file": "bun.lock",
-        "hash": "17156835045325904037"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "17896632225343464329"
       }
     ],
     "projectFileMap": {
-      "web": [
-        {
-          "file": "apps/web/project.json",
-          "hash": "4945047285506040260"
-        }
-      ],
-      "shared-types": [
-        {
-          "file": "libs/shared-types/project.json",
-          "hash": "8703531464235155899"
-        },
-        {
-          "file": "libs/shared-types/src/index.ts",
-          "hash": "7182356305792215461"
-        }
-      ],
       "api": [
         {
           "file": "apps/api/project.json",
@@ -311,7 +387,7 @@
         },
         {
           "file": "apps/api/src/app.module.ts",
-          "hash": "724885222314207158"
+          "hash": "12610448095573419785"
         },
         {
           "file": "apps/api/src/common/decorators/current-tenant.decorator.ts",
@@ -387,7 +463,7 @@
         },
         {
           "file": "apps/api/src/config/typeorm.config.ts",
-          "hash": "11368457608728954326"
+          "hash": "13158368684789625636"
         },
         {
           "file": "apps/api/src/database/data-source.ts",
@@ -498,6 +574,42 @@
           "hash": "11183210387008431529"
         },
         {
+          "file": "apps/api/src/modules/teams/dto/add-team-members.dto.ts",
+          "hash": "7279480247417719814"
+        },
+        {
+          "file": "apps/api/src/modules/teams/dto/create-team.dto.ts",
+          "hash": "1665154094166541758"
+        },
+        {
+          "file": "apps/api/src/modules/teams/dto/update-team.dto.ts",
+          "hash": "6478186074812344271"
+        },
+        {
+          "file": "apps/api/src/modules/teams/entities/team-member.entity.ts",
+          "hash": "2592268236615069336"
+        },
+        {
+          "file": "apps/api/src/modules/teams/entities/team.entity.ts",
+          "hash": "3905974633105668109"
+        },
+        {
+          "file": "apps/api/src/modules/teams/team.controller.ts",
+          "hash": "8880409296993638162"
+        },
+        {
+          "file": "apps/api/src/modules/teams/team.module.ts",
+          "hash": "6563755666061123216"
+        },
+        {
+          "file": "apps/api/src/modules/teams/team.repository.ts",
+          "hash": "18034344411366593191"
+        },
+        {
+          "file": "apps/api/src/modules/teams/team.service.ts",
+          "hash": "9254934916355298642"
+        },
+        {
           "file": "apps/api/src/modules/users/dto/assign-role.dto.ts",
           "hash": "15369378959791981340"
         },
@@ -537,8 +649,24 @@
           "file": "apps/api/src/nest-express.ts",
           "hash": "9182794076015870176"
         }
+      ],
+      "web": [
+        {
+          "file": "apps/web/project.json",
+          "hash": "4945047285506040260"
+        }
+      ],
+      "shared-types": [
+        {
+          "file": "libs/shared-types/project.json",
+          "hash": "8703531464235155899"
+        },
+        {
+          "file": "libs/shared-types/src/index.ts",
+          "hash": "3837091033174553981"
+        }
       ]
     }
   },
-  "externalNodesHash": "158879565490756417"
+  "externalNodesHash": "17743493426190002013"
 }
