@@ -476,7 +476,7 @@ export const AdminSettingsView: React.FC = () => {
                     className="text-xs font-mono text-slate-600 dark:text-slate-400 truncate direction-ltr text-left select-all"
                     dir="ltr"
                   >
-                    {typeof window !== 'undefined' ? window.location.origin : 'https://didar.ir'}?auth=login&org={encodeURIComponent(currentOrg?.slug || currentOrg?.id || '')}
+                    {typeof window !== 'undefined' ? window.location.origin : 'https://rooomchi.ir'}?auth=login&org={encodeURIComponent(currentOrg?.slug || currentOrg?.id || '')}
                   </span>
                 </div>
 
@@ -484,7 +484,7 @@ export const AdminSettingsView: React.FC = () => {
                   <button
                     type="button"
                     onClick={async () => {
-                      const url = `${typeof window !== 'undefined' ? window.location.origin : 'https://didar.ir'}?auth=login&org=${encodeURIComponent(currentOrg?.slug || currentOrg?.id || '')}`;
+                      const url = `${typeof window !== 'undefined' ? window.location.origin : 'https://rooomchi.ir'}?auth=login&org=${encodeURIComponent(currentOrg?.slug || currentOrg?.id || '')}`;
                       try {
                         await navigator.clipboard.writeText(url);
                         showToast('لینک مستقیم ورود در حافظه کپی شد', 'success');

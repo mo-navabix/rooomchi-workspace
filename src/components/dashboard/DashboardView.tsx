@@ -123,7 +123,7 @@ export const DashboardView: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-[#10B981] dark:text-[#34D399] border border-emerald-200/60 dark:border-emerald-800/40">
               <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />
-              <span>{currentOrg?.name || 'سازمان دیدار'}</span>
+              <span>{currentOrg?.name || 'سازمان روم‌چی'}</span>
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
               {formatToJalaliDescriptive(todayStr)}
@@ -133,7 +133,7 @@ export const DashboardView: React.FC = () => {
             سلام، {userName} عزیز 👋
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-            به سامانه مدیریت و رزرواسیون جلسات کاری دیدار خوش آمدید.
+            به سامانه مدیریت و رزرواسیون جلسات کاری روم‌چی خوش آمدید.
           </p>
         </div>
 

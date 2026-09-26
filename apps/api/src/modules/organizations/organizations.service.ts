@@ -64,8 +64,8 @@ export class OrganizationsService {
       );
     }
 
-    // 2. Prepare domain (defaults to [slug].didarhub.ir if not specified)
-    const domain = createDto.domain?.trim().toLowerCase() || `${normalizedSlug}.didarhub.ir`;
+    // 2. Prepare domain (defaults to [slug].rooomchi.ir if not specified)
+    const domain = createDto.domain?.trim().toLowerCase() || `${normalizedSlug}.rooomchi.ir`;
 
     // 3. Create organization entity
     const organization = this.organizationRepository.create({

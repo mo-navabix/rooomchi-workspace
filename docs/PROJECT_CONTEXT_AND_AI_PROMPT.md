@@ -1,4 +1,4 @@
-# پرامپت و توضیح کلی پروژه دیدار (Roomchi)
+# پرامپت و توضیح کلی پروژه روم‌چی (Roomchi)
 
 این سند برای گفت‌وگو با هوش مصنوعی دیگر آماده شده است. بلوک‌های پایین را می‌توانید عیناً کپی کنید.
 
@@ -6,7 +6,7 @@
 
 ## نمای کلی محصول
 
-**دیدار** (برند UI: **روم‌چی / Roomchi**) یک سامانه **رزرو و مدیریت اتاق جلسات چند‌سازمانی (multi-tenant)** برای شرکت‌های ایرانی است. زبان رابط کاربری **فارسی** است (تقویم جلالی، فرمت زمان، کپی فارسی).
+**روم‌چی** (برند UI: **روم‌چی / Roomchi**) یک سامانه **رزرو و مدیریت اتاق جلسات چند‌سازمانی (multi-tenant)** برای شرکت‌های ایرانی است. زبان رابط کاربری **فارسی** است (تقویم جلالی، فرمت زمان، کپی فارسی).
 
 قابلیت‌های هدف (برخی در UI/متا آمده، برخی هنوز پیاده نشده):
 
@@ -67,7 +67,7 @@ flowchart LR
 
 - **ورودی:** `src/main.tsx` → `src/App.tsx`
 - **State:** `src/context/AppContext.tsx` — تم، landing vs portal، org، تب، auth، RBAC، اعلان‌ها (بخشی localStorage)
-- **API:** `src/services/apiService.ts` — `fetch('/api/...')` + `didar_auth_token`
+- **API:** `src/services/apiService.ts` — `fetch('/api/...')` + `rooomchi_auth_token`
 - **RBAC:** `src/constants/rbac.ts` — `super_admin`, `org_admin`, `room_manager`, `employee`
 - **برند:** `src/constants/brand.ts` — لوگوی روم‌چی در `public/assets/logo/`
 - **جلالی:** `src/utils/jalali.ts`
@@ -90,7 +90,7 @@ flowchart LR
 
 ## دیتابیس
 
-- `schema.sql` → `didar_db`
+- `schema.sql` → `rooomchi_db`
 - `.env.example` → `DATABASE_URL` یا `DB_*`
 - CRUD API در `src/server/persistence/store.ts`؛ برخی state UI هنوز localStorage (اعلان، تیکت، …)
 
@@ -120,14 +120,14 @@ flowchart LR
 - JWT `organizationId` برای tenancy.
 - بعضی صفحات ادمین ممکن است بیشتر UI/local باشند.
 - RTL فارسی + جلالی.
-- Repo: GitHub `mo-navabix/didar`.
+- Repo: GitHub `mo-navabix/rooomchi`.
 
 ---
 
 ## پرامپت آماده (انگلیسی)
 
 ```
-You are helping me on "Didar" (UI brand: Roomchi / روم‌چی) — an enterprise multi-tenant meeting room booking portal in Persian (RTL, Jalali calendar).
+You are helping me on **Rooomchi** (روم‌چی) — an enterprise multi-tenant meeting room booking portal in Persian (RTL, Jalali calendar).
 
 Stack:
 - Monorepo (Nx): React 19 + Vite 8 + Tailwind 4 frontend in /src
@@ -138,14 +138,14 @@ Stack:
 
 Frontend architecture:
 - App.tsx routes tabs: dashboard, calendar, rooms, my-bookings, analytics, teams, profile, support; admin tabs for rooms, bookings, RBAC, access-control, settings, notifications, support tickets
-- AppContext.tsx: auth, org switching, RBAC can(permission), theme, landing vs app mode, localStorage for token (didar_auth_token) and some settings/notifications
+- AppContext.tsx: auth, org switching, RBAC can(permission), theme, landing vs app mode, localStorage for token (rooomchi_auth_token) and some settings/notifications
 - apiService.ts calls /api/* with Bearer token
 - Roles: super_admin, org_admin, room_manager, employee (see src/constants/rbac.ts)
 
 Backend (server.ts) highlights:
 - JWT auth, multi-tenant filtering by organizationId
 - Endpoints for orgs, rooms, bookings, stats, users, teams, auth (login, register, OTP simulated in memory, profile completion, password reset)
-- Protected system admins (root@didar.ir etc.) cannot be deleted
+- Protected system admins (root@rooomchi.ir etc.) cannot be deleted
 - In-memory seed data (e.g. org-1 TechNova) — data lost on server restart
 
 Recent feature history: monorepo init, analytics UI, branding to Roomchi, auth + mandatory profile completion, protected roles, calendar/time picker improvements, teams CRUD, access control UI, notification system UI/types. Gemini dependency exists but no in-repo Gemini calls found yet.
@@ -164,7 +164,7 @@ Constraints: [frontend only | backend only | no schema changes]
 ## پرامپت آماده (فارسی)
 
 ```
-من روی پروژه «دیدار» (برند UI: روم‌چی / Roomchi) کار می‌کنم — سامانه رزرو اتاق جلسه چند‌سازمانی با رابط فارسی، RTL و تقویم جلالی.
+من روی پروژه «روم‌چی» (برند UI: روم‌چی / Roomchi) کار می‌کنم — سامانه رزرو اتاق جلسه چند‌سازمانی با رابط فارسی، RTL و تقویم جلالی.
 
 فنی:
 - مونورپو Nx: فرانت React 19 در پوشه src با Vite و Tailwind 4

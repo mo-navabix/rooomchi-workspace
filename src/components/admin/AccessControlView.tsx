@@ -210,7 +210,7 @@ export const AccessControlView: React.FC = () => {
       {
         id: `log-${Date.now()}`,
         userName: currentUser?.name || "مدیر سازمان",
-        userEmail: currentUser?.email || "admin@didar.ir",
+        userEmail: currentUser?.email || "admin@rooomchi.ir",
         method: "quick",
         action: "logout",
         ip: "127.0.0.1",

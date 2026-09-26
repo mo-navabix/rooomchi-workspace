@@ -29,8 +29,8 @@ import {
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 
-const SIDEBAR_COLLAPSED_KEY = "didar-portal-sidebar-collapsed";
-const SIDEBAR_STYLE_KEY = "didar-portal-sidebar-style"; // "modern-card" | "classic"
+const SIDEBAR_COLLAPSED_KEY = "rooomchi-portal-sidebar-collapsed";
+const SIDEBAR_STYLE_KEY = "rooomchi-portal-sidebar-style"; // "modern-card" | "classic"
 
 type SidebarProps = {
   mobileOpen: boolean;
@@ -132,8 +132,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     }
   }, [sidebarStyle]);
 
-  const displayName = currentUser?.name || "کاربر دیدار";
-  const displayEmail = currentUser?.email || "user@didar.ir";
+  const displayName = currentUser?.name || "کاربر روم‌چی";
+  const displayEmail = currentUser?.email || "user@rooomchi.ir";
   const displayRole =
     roleMeta?.titleFa?.split(" ").slice(0, 2).join(" ") || "عضو سازمان";
 
@@ -314,7 +314,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               type="button"
               onClick={() => goTo("dashboard")}
               className="flex items-center cursor-pointer text-right group p-1 rounded-xl hover:opacity-95 transition-opacity"
-              title="سامانه دیدار"
+              title="سامانه روم‌چی"
             >
               {collapsed ? (
                 <Logo variant="mark" size="sm" />

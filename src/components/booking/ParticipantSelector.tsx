@@ -68,13 +68,13 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
   // Check prefilled team from session storage
   useEffect(() => {
     try {
-      const prefillRaw = sessionStorage.getItem('didar_prefill_team_emails');
-      const teamName = sessionStorage.getItem('didar_prefill_team_name');
+      const prefillRaw = sessionStorage.getItem('rooomchi_prefill_team_emails');
+      const teamName = sessionStorage.getItem('rooomchi_prefill_team_name');
       if (prefillRaw) {
         const parsed = JSON.parse(prefillRaw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          sessionStorage.removeItem('didar_prefill_team_emails');
-          sessionStorage.removeItem('didar_prefill_team_name');
+          sessionStorage.removeItem('rooomchi_prefill_team_emails');
+          sessionStorage.removeItem('rooomchi_prefill_team_name');
           addMultipleEmails(parsed, teamName || 'تیم انتخابی');
         }
       }

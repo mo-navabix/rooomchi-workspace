@@ -182,7 +182,7 @@ export class UsersService {
     }
 
     // 6. Hash password
-    const rawPassword = createDto.password || 'DidarTemp@2026';
+    const rawPassword = createDto.password || 'RooomchiTemp@2026';
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(rawPassword, salt);
 

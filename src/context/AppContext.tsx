@@ -138,10 +138,10 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_USER_KEY = "didar_auth_user";
-const LOCAL_STORAGE_TOKEN_KEY = "didar_auth_token";
-const LOCAL_STORAGE_THEME_KEY = "didar_theme";
-const LOCAL_STORAGE_VIEW_KEY = "didar_view_mode";
+const LOCAL_STORAGE_USER_KEY = "rooomchi_auth_user";
+const LOCAL_STORAGE_TOKEN_KEY = "rooomchi_auth_token";
+const LOCAL_STORAGE_THEME_KEY = "rooomchi_theme";
+const LOCAL_STORAGE_VIEW_KEY = "rooomchi_view_mode";
 const LOCAL_STORAGE_ACCESS_CONTROL_KEY = "roomchi_access_control_v1";
 
 const DEFAULT_ACCESS_CONTROL: AccessControlConfig = {
@@ -391,8 +391,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       // Create a guest session with this role
       const guestUser: User = {
         id: `guest-${Date.now()}`,
-        name: role === "super_admin" ? "مدیر ارشد دیدار" : "کاربر سازمانی",
-        email: `${role}@didar.ir`,
+        name: role === "super_admin" ? "مدیر ارشد روم‌چی" : "کاربر سازمانی",
+        email: `${role}@rooomchi.ir`,
         orgId: currentOrg?.id || "org-1",
         orgName: currentOrg?.name,
         role,
@@ -476,7 +476,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     closeAuthModal();
     setViewMode("app");
     showToast(
-      `ثبت‌نام با موفقیت انجام شد. به سامانه دیدار خوش آمدید`,
+      `ثبت‌نام با موفقیت انجام شد. به سامانه روم‌چی خوش آمدید`,
       "success",
     );
   };
@@ -485,9 +485,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     const wasGoogle = currentUser?.avatarType === "google";
     clearUserSession();
     if (wasGoogle && accessControl.googleAutoSignOut) {
-      showToast("شما با موفقیت از سامانه دیدار و حساب گوگل خارج شدید", "info");
+      showToast("شما با موفقیت از سامانه روم‌چی و حساب گوگل خارج شدید", "info");
     } else {
-      showToast("شما با موفقیت از سامانه دیدار خارج شدید", "info");
+      showToast("شما با موفقیت از سامانه روم‌چی خارج شدید", "info");
     }
     setActiveTab("dashboard");
     setViewMode("landing");
@@ -514,7 +514,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const quickLoginAs = async (role: UserRole) => {
     const roleAccounts: Record<UserRole, { email: string; password: string }> =
       {
-        super_admin: { email: "admin@didar.ir", password: "password123" },
+        super_admin: { email: "admin@rooomchi.ir", password: "password123" },
         org_admin: { email: "admin@technova.ir", password: "password123" },
         room_manager: {
           email: "facility@technova.ir",

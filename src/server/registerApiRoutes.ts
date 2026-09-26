@@ -82,7 +82,7 @@ export function registerApiRoutes(app: Express): void {
       logo: logo || "🏢",
       primaryColor: primaryColor || "#2563eb",
       plan: plan || "business",
-      contactEmail: contactEmail || `admin@${domain || "didar.ir"}`,
+      contactEmail: contactEmail || `admin@${domain || "rooomchi.ir"}`,
       buildings: buildings?.length ? buildings : ["ساختمان مرکزی"],
       departments: departments?.length
         ? departments
@@ -334,7 +334,7 @@ export function registerApiRoutes(app: Express): void {
     const host = (req.headers["x-forwarded-host"] as string) || req.headers["host"] || "";
     const cleanHost = host.split(":")[0].trim().toLowerCase();
     let detectedSlug: string | null = null;
-    const reserved = new Set(["app", "api", "admin", "www", "mail", "localhost", "127.0.0.1", "didarhub"]);
+    const reserved = new Set(["app", "api", "admin", "www", "mail", "localhost", "127.0.0.1", "rooomchi"]);
 
     if (req.headers["x-organization-slug"]) {
       detectedSlug = String(req.headers["x-organization-slug"]).trim().toLowerCase();
@@ -526,7 +526,7 @@ export function registerApiRoutes(app: Express): void {
       code,
       new Date(Date.now() + 10 * 60 * 1000),
     );
-    console.log(`[DIDAR-AUTH-OTP] Verification code for ${normalizedEmail}: ${code}`);
+    console.log(`[ROOOMCHI-AUTH-OTP] Verification code for ${normalizedEmail}: ${code}`);
     res.json({
       success: true,
       message: `کد تأیید ۶ رقمی به آدرس ${normalizedEmail} ارسال شد`,
@@ -638,7 +638,7 @@ export function registerApiRoutes(app: Express): void {
     const normalizedEmail = email.trim().toLowerCase();
     const user = await store.findUserByEmail(normalizedEmail);
     if (!user) {
-      return res.status(404).json({ error: "کاربری با این آدرس ایمیل در پلتفرم دیدار ثبت نشده است" });
+      return res.status(404).json({ error: "کاربری با این آدرس ایمیل در پلتفرم روم‌چی ثبت نشده است" });
     }
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     await store.setVerificationCode(
@@ -647,7 +647,7 @@ export function registerApiRoutes(app: Express): void {
       code,
       new Date(Date.now() + 15 * 60 * 1000),
     );
-    console.log(`[DIDAR-AUTH] Password reset code for ${normalizedEmail}: ${code}`);
+    console.log(`[ROOOMCHI-AUTH] Password reset code for ${normalizedEmail}: ${code}`);
     res.json({
       success: true,
       message: "کد تأیید ۶ رقمی بازنشانی رمز عبور به ایمیل شما ارسال شد",

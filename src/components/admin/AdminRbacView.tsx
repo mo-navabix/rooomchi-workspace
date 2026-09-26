@@ -67,8 +67,8 @@ export const AdminRbacView: React.FC = () => {
       user.isPermanentAdmin ||
       user.id === 'user-super' ||
       user.id === 'user-super-2' ||
-      user.email?.toLowerCase() === 'admin@didar.ir' ||
-      user.email?.toLowerCase() === 'root@didar.ir'
+      user.email?.toLowerCase() === 'admin@rooomchi.ir' ||
+      user.email?.toLowerCase() === 'root@rooomchi.ir'
     );
 
   const handleRoleChange = async (userId: string, targetRole: UserRole, userName: string) => {
@@ -270,7 +270,7 @@ export const AdminRbacView: React.FC = () => {
                   className="w-full text-xs pr-3.5 pl-9 py-2 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
                 >
                   <option value="all">همه نقش‌ها</option>
-                  <option value="super_admin">مدیر کل دیدار</option>
+                  <option value="super_admin">مدیر کل روم‌چی</option>
                   <option value="org_admin">مدیر سازمان</option>
                   <option value="room_manager">مدیر تشریفات</option>
                   <option value="employee">کارمند عادی</option>
@@ -434,7 +434,7 @@ export const AdminRbacView: React.FC = () => {
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">ماتریس انحصاری مجوزها و دسترسی‌ها</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                مقایسه شفاف اختیارات نقش‌ها در لایه‌های مختلف پلتفرم دیدار
+                مقایسه شفاف اختیارات نقش‌ها در لایه‌های مختلف پلتفرم روم‌چی
               </p>
             </div>
             <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-300 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] px-3 py-1 rounded-lg">
@@ -449,7 +449,7 @@ export const AdminRbacView: React.FC = () => {
                   <th className="px-5 py-3.5">عنوان مجوز و شرح</th>
                   <th className="px-5 py-3.5 text-center">دسته</th>
                   <th className="px-4 py-3.5 text-center text-emerald-800 dark:text-emerald-300 bg-emerald-50/70 dark:bg-emerald-950/30">
-                    مدیر کل دیدار
+                    مدیر کل روم‌چی
                   </th>
                   <th className="px-4 py-3.5 text-center text-emerald-800 dark:text-emerald-300 bg-emerald-50/70 dark:bg-emerald-950/30">
                     مدیر سازمان

@@ -21,13 +21,13 @@
       "@/*": [
         "./*"
       ],
-      "@didar/shared-types": [
+      "@rooomchi/shared-types": [
         "./libs/shared-types/src/index.ts"
       ],
-      "@didar/api/*": [
+      "@rooomchi/api/*": [
         "./apps/api/src/*"
       ],
-      "@didar/web/*": [
+      "@rooomchi/web/*": [
         "./src/*"
       ]
     },

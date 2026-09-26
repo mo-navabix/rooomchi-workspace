@@ -4,8 +4,8 @@ import {
   INITIAL_NOTIFICATION_LOGS,
 } from '../constants/notifications';
 
-const STORAGE_KEY_SETTINGS = 'didar_notification_settings_v1';
-const STORAGE_KEY_LOGS = 'didar_notification_logs_v1';
+const STORAGE_KEY_SETTINGS = 'rooomchi_notification_settings_v1';
+const STORAGE_KEY_LOGS = 'rooomchi_notification_logs_v1';
 
 export function getActiveNotificationSettings(): NotificationSettings {
   try {
@@ -116,7 +116,7 @@ export function triggerBookingNotifications(
 
   // 3. Telegram Notification
   if (settings.telegram.enabled && (!rule || rule.telegram)) {
-    const telegramText = `🤖 [اطلاع‌رسانی دیدار]\n📌 ${
+    const telegramText = `🤖 [اطلاع‌رسانی روم‌چی]\n📌 ${
       event === 'booking_approved'
         ? 'جلسه تأیید شد'
         : event === 'booking_cancelled'

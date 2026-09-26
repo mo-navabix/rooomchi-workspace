@@ -78,19 +78,19 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
     notifyParticipants: true,
     notifyRoomManager: true,
     templateNewBooking:
-      'دیدار: جلسه «{نام_جلسه}» در اتاق {اتاق} برای ساعت {ساعت} ثبت و در انتظار تأیید است.',
+      'روم‌چی: جلسه «{نام_جلسه}» در اتاق {اتاق} برای ساعت {ساعت} ثبت و در انتظار تأیید است.',
     templateApproval:
-      'دیدار: جلسه شما با عنوان «{نام_جلسه}» در سالن {اتاق} برای تاریخ {تاریخ} تأیید شد.',
+      'روم‌چی: جلسه شما با عنوان «{نام_جلسه}» در سالن {اتاق} برای تاریخ {تاریخ} تأیید شد.',
     templateCancellation:
-      'دیدار: جلسه «{نام_جلسه}» در تاریخ {تاریخ} و ساعت {ساعت} لغو شد.',
+      'روم‌چی: جلسه «{نام_جلسه}» در تاریخ {تاریخ} و ساعت {ساعت} لغو شد.',
     templateReminder:
-      'دیدار: یادآوری؛ جلسه «{نام_جلسه}» ۱۵ دقیقه دیگر در سالن {اتاق} آغاز می‌شود.',
+      'روم‌چی: یادآوری؛ جلسه «{نام_جلسه}» ۱۵ دقیقه دیگر در سالن {اتاق} آغاز می‌شود.',
   },
   telegram: {
     enabled: true,
     botToken: '6829104821:AAH8fL0wZ-Xy49qQ912kMop912j',
-    botUsername: '@DidarMeetingBot',
-    targetChatId: '@didar_management_channel',
+    botUsername: '@RooomchiMeetingBot',
+    targetChatId: '@rooomchi_management_channel',
     channelType: 'channel',
     sendRichButtons: true,
     dailyDigestEnabled: true,
@@ -111,7 +111,7 @@ export const INITIAL_NOTIFICATION_LOGS: NotificationLogEntry[] = [
     channel: 'sms',
     recipient: '09123456789 (مهندس علوی)',
     title: 'تأیید جلسه هیئت مدیره',
-    preview: 'دیدار: جلسه شما با عنوان «جلسه راهبردی فصلی» در سالن کنفرانس VIP برای تاریخ ۱۴۰۳/۰۷/۰۵ تأیید شد.',
+    preview: 'روم‌چی: جلسه شما با عنوان «جلسه راهبردی فصلی» در سالن کنفرانس VIP برای تاریخ ۱۴۰۳/۰۷/۰۵ تأیید شد.',
     timestamp: '۱۰ دقیقه پیش',
     status: 'delivered',
     eventType: 'booking_approved',
@@ -119,7 +119,7 @@ export const INITIAL_NOTIFICATION_LOGS: NotificationLogEntry[] = [
   {
     id: 'log-2',
     channel: 'telegram',
-    recipient: '@didar_management_channel',
+    recipient: '@rooomchi_management_channel',
     title: 'درخواست جدید نیازمند بررسی',
     preview: '📌 درخواست رزرو جدید: جلسه بررسی اسپرینت ۲۴ | هماهنگ‌کننده: نیلوفر افشار | سالن ابوریحان',
     timestamp: '۴۲ دقیقه پیش',
@@ -141,7 +141,7 @@ export const INITIAL_NOTIFICATION_LOGS: NotificationLogEntry[] = [
     channel: 'sms',
     recipient: '09351112233 (سارا رضایی)',
     title: 'لغو جلسه مصاحبه فنی',
-    preview: 'دیدار: جلسه «مصاحبه تخصصی ارشد فرانت‌اند» در تاریخ ۱۴۰۳/۰۷/۰۴ لغو شد.',
+    preview: 'روم‌چی: جلسه «مصاحبه تخصصی ارشد فرانت‌اند» در تاریخ ۱۴۰۳/۰۷/۰۴ لغو شد.',
     timestamp: '۳ ساعت پیش',
     status: 'delivered',
     eventType: 'booking_cancelled',
@@ -149,7 +149,7 @@ export const INITIAL_NOTIFICATION_LOGS: NotificationLogEntry[] = [
   {
     id: 'log-5',
     channel: 'telegram',
-    recipient: '@didar_management_channel',
+    recipient: '@rooomchi_management_channel',
     title: 'گزارش صبحگاهی اتاق‌ها',
     preview: '📊 خلاصه روزانه: امروز ۸ جلسه در سالن‌های سازمان برگزار خواهد شد (نرخ اشغال: ۷۸٪).',
     timestamp: 'امروز ۰۸:۰۰',

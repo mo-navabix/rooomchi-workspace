@@ -13,11 +13,11 @@ export interface RoleMeta {
 export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
   super_admin: {
     role: 'super_admin',
-    titleFa: 'مدیر کل پلتفرم دیدار',
+    titleFa: 'مدیر کل پلتفرم روم‌چی',
     titleEn: 'Super Admin',
     badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
     bgLight: 'bg-emerald-50',
-    description: 'دسترسی کامل به تمام سازمان‌ها، پیکربندی سیستم، ممیزی و نظارت بر کل پلتفرم دیدار',
+    description: 'دسترسی کامل به تمام سازمان‌ها، پیکربندی سیستم، ممیزی و نظارت بر کل پلتفرم روم‌چی',
     permissions: [
       'MANAGE_ORGANIZATIONS',
       'MANAGE_ROOMS',
@@ -88,7 +88,7 @@ export const PERMISSION_LIST: PermissionMeta[] = [
   {
     key: 'MANAGE_ORGANIZATIONS',
     titleFa: 'مدیریت کل سازمان‌ها',
-    description: 'افزودن، ویرایش و راه‌اندازی اشتراک برای سازمان‌های مختلف در دیدار',
+    description: 'افزودن، ویرایش و راه‌اندازی اشتراک برای سازمان‌های مختلف در روم‌چی',
     category: 'سازمان',
   },
   {

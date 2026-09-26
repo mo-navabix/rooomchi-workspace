@@ -28,7 +28,7 @@ export const PortalFooter: React.FC = () => {
                   className="inline-flex items-center gap-1.5 hover:text-[#0F786E] dark:hover:text-emerald-400 transition-colors cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  صفحه معرفی دیدار
+                  صفحه معرفی روم‌چی
                 </button>
               </li>
               <li>
@@ -61,7 +61,7 @@ export const PortalFooter: React.FC = () => {
         </div>
 
         <div className="mt-8 pt-5 border-t border-slate-100 dark:border-[#334155]/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400 dark:text-slate-500">
-          <span>© {year} دیدار — تمامی حقوق محفوظ است.</span>
+          <span>© {year} روم‌چی — تمامی حقوق محفوظ است.</span>
           <span className="inline-flex items-center gap-1.5 font-mono text-[10px]">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             سرویس فعال · نسخه ۳.۰

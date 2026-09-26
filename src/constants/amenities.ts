@@ -61,7 +61,7 @@ export const BASE_AMENITIES: Amenity[] = [
 
 export const ALL_AMENITIES: Amenity[] = BASE_AMENITIES;
 
-const CUSTOM_AMENITIES_KEY = 'didar_custom_amenities';
+const CUSTOM_AMENITIES_KEY = 'rooomchi_custom_amenities';
 
 export const getStoredCustomAmenities = (): Amenity[] => {
   if (typeof window === 'undefined') return [];

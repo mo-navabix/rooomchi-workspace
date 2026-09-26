@@ -114,7 +114,7 @@ export const StepperBookingModal: React.FC<Props> = ({ onSuccess }) => {
           </div>
 
           <div className="hidden md:block pt-4 border-t border-slate-200/60 dark:border-[#334155]">
-            <span className="text-[11px] text-slate-400">سامانه دیدار</span>
+            <span className="text-[11px] text-slate-400">سامانه روم‌چی</span>
           </div>
         </div>
 

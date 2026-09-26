@@ -1,5 +1,5 @@
 /**
- * Avatar & Gravatar utility for Didar / Roomchi
+ * Avatar & Gravatar utility for Rooomchi / Roomchi
  */
 
 /**

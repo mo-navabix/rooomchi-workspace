@@ -25,7 +25,7 @@ export type SupportTicket = {
   updatedAt?: string;
 };
 
-export const STORAGE_KEY = 'didar-support-tickets';
+export const STORAGE_KEY = 'rooomchi-support-tickets';
 
 export const categoryLabels: Record<TicketCategory, string> = {
   technical: 'مشکل فنی',

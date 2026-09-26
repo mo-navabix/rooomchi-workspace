@@ -126,7 +126,7 @@ export const LandingView: React.FC = () => {
             type="button"
             onClick={enterApp}
             className="shrink-0 cursor-pointer"
-            aria-label="دیدار"
+            aria-label="روم‌چی"
           >
             <Logo variant="horizontal" size="md" showTagline={false} />
           </button>
@@ -181,7 +181,7 @@ export const LandingView: React.FC = () => {
               </span>
             </h1>
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-lg">
-              دیدار به تیم شما کمک می‌کند اتاق جلسه را سریع رزرو کنید، از تداخل
+              روم‌چی به تیم شما کمک می‌کند اتاق جلسه را سریع رزرو کنید، از تداخل
               جلسات جلوگیری کنید و بهره‌وری فضاهای سازمانی را افزایش دهید.
             </p>
             <div className="flex flex-wrap items-center gap-3">
@@ -279,7 +279,7 @@ export const LandingView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div className="text-right space-y-4 lg:sticky lg:top-24">
             <span className="text-[11px] font-bold text-[#0F786E] dark:text-emerald-300">
-              چرا دیدار؟
+              چرا روم‌چی؟
             </span>
             <h2 className="text-2xl sm:text-3xl font-black leading-snug">
               تمام آنچه برای مدیریت جلسات نیاز دارید
@@ -354,7 +354,7 @@ export const LandingView: React.FC = () => {
               مدیریت جلسات در هر زمان و از هر مکان
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              با اپلیکیشن موبایل دیدار، وضعیت اتاق‌ها را ببینید، جلسه رزرو کنید
+              با اپلیکیشن موبایل روم‌چی، وضعیت اتاق‌ها را ببینید، جلسه رزرو کنید
               و اعلان‌ها را در لحظه دریافت کنید.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -386,7 +386,7 @@ export const LandingView: React.FC = () => {
               مناسب هر نوع سازمان
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-300">
-              از استارتاپ‌های کوچک تا سازمان‌های بزرگ — دیدار با شما مقیاس
+              از استارتاپ‌های کوچک تا سازمان‌های بزرگ — روم‌چی با شما مقیاس
               می‌گیرد.
             </p>
             <button
@@ -521,7 +521,7 @@ export const LandingView: React.FC = () => {
                 <ul className="space-y-2 text-slate-500 dark:text-slate-400">
                   <li className="flex items-center gap-2 justify-end">
                     <Mail className="w-3.5 h-3.5" />
-                    info@didar.ir
+                    info@rooomchi.ir
                   </li>
                   <li className="flex items-center gap-2 justify-end">
                     <Phone className="w-3.5 h-3.5" />
@@ -555,7 +555,7 @@ export const LandingView: React.FC = () => {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400">
-            <p>© {new Date().getFullYear()} دیدار. تمامی حقوق محفوظ است.</p>
+            <p>© {new Date().getFullYear()} روم‌چی. تمامی حقوق محفوظ است.</p>
             <div className="flex items-center gap-3">
               <a
                 href="#"

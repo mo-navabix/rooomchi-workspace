@@ -39,8 +39,8 @@ import {
 import { toPersianDigits } from '../../utils/jalali';
 import { TimePicker } from '../common/TimePicker';
 
-const STORAGE_KEY_SETTINGS = 'didar_notification_settings_v1';
-const STORAGE_KEY_LOGS = 'didar_notification_logs_v1';
+const STORAGE_KEY_SETTINGS = 'rooomchi_notification_settings_v1';
+const STORAGE_KEY_LOGS = 'rooomchi_notification_logs_v1';
 
 // Custom Accessible RTL-safe Toggle Switch
 interface SwitchToggleProps {
@@ -151,7 +151,7 @@ export const AdminNotificationsView: React.FC = () => {
   const [isTestModalOpen, setIsTestModalOpen] = useState(false);
   const [testChannel, setTestChannel] = useState<'sms' | 'telegram' | 'in_app'>('sms');
   const [testPhone, setTestPhone] = useState(settings.sms.managerPhone || '09123456789');
-  const [testChatId, setTestChatId] = useState(settings.telegram.targetChatId || '@didar_management');
+  const [testChatId, setTestChatId] = useState(settings.telegram.targetChatId || '@rooomchi_management');
   const [testEvent, setTestEvent] = useState<string>('booking_approved');
   const [testCustomMessage, setTestCustomMessage] = useState('');
   const [isSendingTest, setIsSendingTest] = useState(false);
@@ -215,13 +215,13 @@ export const AdminNotificationsView: React.FC = () => {
       if (testChannel === 'sms') {
         previewMsg =
           testCustomMessage.trim() ||
-          `دیدار: جلسه تست «بررسی هماهنگی فنی» در سالن کنفرانس برای ساعت ۱۰:۰۰ با موفقیت ثبت شد.`;
+          `روم‌چی: جلسه تست «بررسی هماهنگی فنی» در سالن کنفرانس برای ساعت ۱۰:۰۰ با موفقیت ثبت شد.`;
         targetRecipient = testPhone;
         logTitle = 'پیامک تست ارسال شد';
       } else if (testChannel === 'telegram') {
         previewMsg =
           testCustomMessage.trim() ||
-          `🤖 [ربات تلگرام دیدار]\n📌 جلسه تست هماهنگی با موفقیت ثبت گردید.\n🏢 سالن: VIP سپهر\n⏰ ساعت: ۱۰:۰۰ الی ۱۱:۳۰`;
+          `🤖 [ربات تلگرام روم‌چی]\n📌 جلسه تست هماهنگی با موفقیت ثبت گردید.\n🏢 سالن: VIP سپهر\n⏰ ساعت: ۱۰:۰۰ الی ۱۱:۳۰`;
         targetRecipient = testChatId;
         logTitle = 'ارسال تست به تلگرام';
       } else {
@@ -324,7 +324,7 @@ export const AdminNotificationsView: React.FC = () => {
               <span>مرکز فرماندهی نوتیفیکیشن‌ها و کانال‌های ارتباطی</span>
             </div>
             <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              مدیریت و کنترل اعلان‌های {currentOrg?.name || 'دیدار'}
+              مدیریت و کنترل اعلان‌های {currentOrg?.name || 'روم‌چی'}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
               پیکربندی هوشمند و یکپارچه ارسال هشدارها از طریق پیامک (SMS)، ربات تلگرام و نوتیفیکیشن‌های درون‌برنامه‌ای به دست مدیر
@@ -811,7 +811,7 @@ export const AdminNotificationsView: React.FC = () => {
                         telegram: { ...prev.telegram, botUsername: e.target.value },
                       }))
                     }
-                    placeholder="@DidarMeetingBot"
+                    placeholder="@RooomchiMeetingBot"
                     dir="ltr"
                     className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-hidden"
                   />
@@ -829,7 +829,7 @@ export const AdminNotificationsView: React.FC = () => {
                         telegram: { ...prev.telegram, targetChatId: e.target.value },
                       }))
                     }
-                    placeholder="@didar_management"
+                    placeholder="@rooomchi_management"
                     dir="ltr"
                     className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-hidden"
                   />
@@ -1529,7 +1529,7 @@ export const AdminNotificationsView: React.FC = () => {
                     type="text"
                     value={testChatId}
                     onChange={(e) => setTestChatId(e.target.value)}
-                    placeholder="@didar_management"
+                    placeholder="@rooomchi_management"
                     dir="ltr"
                     className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white font-mono text-left focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-hidden"
                   />
@@ -1550,7 +1550,7 @@ export const AdminNotificationsView: React.FC = () => {
                   rows={3}
                   value={testCustomMessage}
                   onChange={(e) => setTestCustomMessage(e.target.value)}
-                  placeholder="در صورت خالی بودن، متن استاندارد سامانه دیدار ارسال خواهد شد..."
+                  placeholder="در صورت خالی بودن، متن استاندارد سامانه روم‌چی ارسال خواهد شد..."
                   className="w-full text-xs p-3 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 resize-none leading-relaxed focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
                 />
               </div>

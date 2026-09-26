@@ -1,4 +1,4 @@
-# راه‌اندازی پروژه دیدار (Roomchi)
+# راه‌اندازی پروژه روم‌چی (Roomchi)
 
 این سند برای توسعه‌دهندگان و نصب روی **سیستم جدید** (مثلاً بعد از `git clone` روی GitHub) است.
 
@@ -20,7 +20,7 @@
 
 ```bash
 git clone <repository-url>
-cd didar
+cd rooomchi
 npm install
 ```
 
@@ -33,10 +33,10 @@ cp .env.example .env
 در `.env` حداقل اتصال دیتابیس را تنظیم کنید (مقادیر پیش‌فرض Docker):
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/didar_db
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/rooomchi_db
 DB_HOST=localhost
 DB_PORT=5432
-DB_DATABASE=didar_db
+DB_DATABASE=rooomchi_db
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 ```
@@ -51,7 +51,7 @@ npm run dev
 
 ترتیب کار:
 
-1. `docker compose up -d --wait postgres` — ایمیج Postgres 16، volume `didar_pg_data`
+1. `docker compose up -d --wait postgres` — ایمیج Postgres 16، volume `rooomchi_pg_data`
 2. در **اولین ساخت volume**: اجرای `schema.sql` و `schema/02-server-extensions.sql`
 3. `tsx server.ts` — Express API + Vite (HMR) روی پورت **3000**
 
@@ -82,13 +82,13 @@ npm run db:up
 |------|--------|
 | Host | `localhost` |
 | Port | `5432` |
-| Database | `didar_db` |
+| Database | `rooomchi_db` |
 | User / Password | `postgres` / `postgres` |
 
 لیست جدول‌ها:
 
 ```bash
-docker exec -it didar-postgres psql -U postgres -d didar_db -c "\dt"
+docker exec -it rooomchi-postgres psql -U postgres -d rooomchi_db -c "\dt"
 ```
 
 ---
@@ -99,7 +99,7 @@ docker exec -it didar-postgres psql -U postgres -d didar_db -c "\dt"
 
 ```bash
 git clone ...
-cd didar
+cd rooomchi
 npm run db:up
 ```
 
@@ -116,7 +116,7 @@ cp .env.example .env
 
 ```env
 DB_HOST=<IP-ماشین-A>
-DATABASE_URL=postgresql://postgres:postgres@<IP-ماشین-A>:5432/didar_db
+DATABASE_URL=postgresql://postgres:postgres@<IP-ماشین-A>:5432/rooomchi_db
 ```
 
 اجرا **بدون** Docker روی B:
@@ -144,14 +144,14 @@ npm run db:reset
 اگر Postgres دیگری روی 5432 است:
 
 ```bash
-DIDAR_PG_PORT=5433 docker compose up -d --wait postgres
+ROOOMCHI_PG_PORT=5433 docker compose up -d --wait postgres
 ```
 
 در `.env` همان پورت را بگذارید:
 
 ```env
 DB_PORT=5433
-DATABASE_URL=postgresql://postgres:postgres@localhost:5433/didar_db
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/rooomchi_db
 ```
 
 ---

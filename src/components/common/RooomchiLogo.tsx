@@ -1,7 +1,7 @@
 import React from 'react';
 import { Logo, type LogoSize } from './Logo';
 
-export interface DidarLogoProps {
+export interface RooomchiLogoProps {
   className?: string;
   size?: LogoSize;
   showText?: boolean;
@@ -10,9 +10,9 @@ export interface DidarLogoProps {
   isDark?: boolean;
 }
 
-export const DidarLogo: React.FC<DidarLogoProps> = ({ className = '', size = 'md' }) => {
+export const RooomchiLogo: React.FC<RooomchiLogoProps> = ({ className = '', size = 'md' }) => {
   return (
-    <div className={`flex justify-center ${className}`} id="didar-brand-logo">
+    <div className={`flex justify-center ${className}`} id="rooomchi-brand-logo">
       <Logo variant="stacked" size={size} />
     </div>
   );

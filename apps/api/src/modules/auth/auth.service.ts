@@ -36,7 +36,7 @@ export class AuthService {
    * Enterprise Multi-Tenant Subdomain Authentication
    *
    * Automatically isolates user lookup by subdomain tenant context:
-   * - Host: technova.didarhub.ir -> TenantContext: { organizationId, organizationSlug: 'technova' }
+   * - Host: technova.rooomchi.ir -> TenantContext: { organizationId, organizationSlug: 'technova' }
    * - Options:
    *   1. Corporate email + password
    *   2. Employee number + password (organization detected from subdomain)
@@ -85,7 +85,7 @@ export class AuthService {
       // Employee Number login requires organization context from subdomain
       if (!targetOrg) {
         throw new BadRequestException(
-          'Employee number login requires accessing via your organization workspace subdomain (e.g. https://company.didarhub.ir/login) or providing organization slug',
+          'Employee number login requires accessing via your organization workspace subdomain (e.g. https://company.rooomchi.ir/login) or providing organization slug',
         );
       }
 

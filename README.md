@@ -1,11 +1,11 @@
-# دیدار (Roomchi) — سامانه رزرو اتاق جلسات
+# Rooomchi (روم‌چی) — سامانه رزرو اتاق جلسات
 
 [![Node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 
-**دیدار** (برند UI: **روم‌چی / Roomchi**) یک سامانه **چند‌سازمانی (multi-tenant)** برای **رزرو و مدیریت اتاق‌های جلسه** است. رابط کاربری **فارسی**، تقویم **جلالی**، و پنل مدیریت برای سازمان‌ها، اتاق‌ها، رزروها، کاربران و تیم‌ها دارد.
+**Rooomchi** (**روم‌چی**) یک سامانه **چند‌سازمانی (multi-tenant)** برای **رزرو و مدیریت اتاق‌های جلسه** است. رابط کاربری **فارسی**، تقویم **جلالی**، و پنل مدیریت برای سازمان‌ها، اتاق‌ها، رزروها، کاربران و تیم‌ها دارد.
 
 ---
 
@@ -44,7 +44,7 @@
 
 ```bash
 git clone <repository-url>
-cd didar
+cd rooomchi
 npm install
 cp .env.example .env   # Windows: copy .env.example .env
 npm run dev
@@ -63,16 +63,16 @@ npm run dev
 از `.env.example` کپی بگیرید. برای Docker لوکال معمولاً:
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/didar_db
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/rooomchi_db
 DB_HOST=localhost
 DB_PORT=5432
-DB_DATABASE=didar_db
+DB_DATABASE=rooomchi_db
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 JWT_SECRET=your-secret-in-production
 ```
 
-Credentialهای داخل `docker-compose.yml` ثابت هستند (`postgres` / `postgres` / `didar_db`) و از `.env` خوانده نمی‌شوند تا با سرویس‌های ابری قاطی نشوند.
+Credentialهای داخل `docker-compose.yml` ثابت هستند (`postgres` / `postgres` / `rooomchi_db`) و از `.env` خوانده نمی‌شوند تا با سرویس‌های ابری قاطی نشوند.
 
 ---
 
@@ -94,7 +94,7 @@ Credentialهای داخل `docker-compose.yml` ثابت هستند (`postgres` /
 ## ساختار پروژه
 
 ```
-didar/
+rooomchi/
 ├── src/                    # فرانت‌اند React (اپ web)
 ├── server.ts               # نقطه ورود سرور
 ├── src/server/             # routeها و لایه persistence (PostgreSQL)
@@ -128,7 +128,7 @@ REST تحت مسیر `/api/...` (و برخی alias بدون پیشوند `/api` 
 
 | ایمیل | رمز (dev) | نقش |
 |--------|-----------|-----|
-| `admin@didar.ir` | `password123` | Super Admin |
+| `admin@rooomchi.ir` | `password123` | Super Admin |
 | `admin@technova.ir` | `password123` | مدیر سازمان (نمونه) |
 
 ---

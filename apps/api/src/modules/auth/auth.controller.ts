@@ -33,7 +33,7 @@ export class AuthController {
    * Automatically isolates organization from request hostname (subdomain).
    *
    * Example:
-   * Request: Host: technova.didarhub.ir
+   * Request: Host: technova.rooomchi.ir
    * Backend extracts organizationSlug = technova
    */
   @Public()

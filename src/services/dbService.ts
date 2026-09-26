@@ -43,7 +43,7 @@ export function getDbPool(): pg.Pool | null {
       : new Pool({
           host: host || 'localhost',
           port,
-          database: database || 'didar_db',
+          database: database || 'rooomchi_db',
           user: user || 'postgres',
           password: password || '',
           ...(ssl ? { ssl } : {}),
@@ -60,7 +60,7 @@ export function getDbPool(): pg.Pool | null {
       .then(() => {
         isConnected = true;
         lastError = null;
-        console.log('✅ Connected to PostgreSQL database (didar_db) successfully.');
+        console.log('✅ Connected to PostgreSQL database (rooomchi_db) successfully.');
       })
       .catch((err) => {
         isConnected = false;
@@ -83,7 +83,7 @@ export async function checkDbStatus() {
       connected: false,
       message: 'تنظیمات دیتابیس PostgreSQL پیکربندی نشده است (DATABASE_URL تنظیم نشده است).',
       host: process.env.PGHOST || 'localhost',
-      database: process.env.PGDATABASE || 'didar_db',
+      database: process.env.PGDATABASE || 'rooomchi_db',
     };
   }
 
@@ -94,7 +94,7 @@ export async function checkDbStatus() {
     return {
       configured: true,
       connected: true,
-      database: result.rows[0]?.current_database || 'didar_db',
+      database: result.rows[0]?.current_database || 'rooomchi_db',
       version: result.rows[0]?.version,
       timestamp: result.rows[0]?.now,
       message: 'اتصال به PostgreSQL با موفقیت برقرار است.',

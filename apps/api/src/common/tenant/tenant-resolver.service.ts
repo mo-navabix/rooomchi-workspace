@@ -19,7 +19,7 @@ export class TenantResolverService {
     'status',
     'billing',
     'auth',
-    'didarhub',
+    'rooomchi',
     'static',
     'assets',
   ]);
@@ -33,11 +33,11 @@ export class TenantResolverService {
    * Extracts the organization slug from a given hostname or custom header.
    *
    * Examples:
-   * - "technova.didarhub.ir" -> "technova"
-   * - "companya.didarhub.ir:3000" -> "companya"
+   * - "technova.rooomchi.ir" -> "technova"
+   * - "companya.rooomchi.ir:3000" -> "companya"
    * - "technova.localhost" -> "technova"
-   * - "app.didarhub.ir" -> null (central application portal)
-   * - "didarhub.ir" -> null (main landing website)
+   * - "app.rooomchi.ir" -> null (central application portal)
+   * - "rooomchi.ir" -> null (main landing website)
    */
   extractSlugFromHost(host?: string | null): string | null {
     if (!host) return null;
@@ -57,7 +57,7 @@ export class TenantResolverService {
       return parts[0];
     }
 
-    // Example: technova.didarhub.ir -> parts: ['technova', 'didarhub', 'ir'] (length >= 3)
+    // Example: technova.rooomchi.ir -> parts: ['technova', 'rooomchi', 'ir'] (length >= 3)
     if (parts.length >= 3) {
       const subdomain = parts[0];
       if (!this.reservedSubdomains.has(subdomain)) {

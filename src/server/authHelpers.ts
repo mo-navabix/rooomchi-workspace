@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import type { User } from "./types";
 
 export const jwtService = new JwtService({
-  secret: process.env.JWT_SECRET || "didar_enterprise_jwt_super_secret_key_2026",
+  secret: process.env.JWT_SECRET || "rooomchi_jwt_super_secret_key_2026",
 });
 
 export function extractJwtUser(
@@ -27,8 +27,8 @@ export function isProtectedAdmin(
     user.isPermanentAdmin === true ||
     user.id === "user-super" ||
     user.id === "user-super-2" ||
-    user.email?.toLowerCase() === "admin@didar.ir" ||
-    user.email?.toLowerCase() === "root@didar.ir"
+    user.email?.toLowerCase() === "admin@rooomchi.ir" ||
+    user.email?.toLowerCase() === "root@rooomchi.ir"
   );
 }
 

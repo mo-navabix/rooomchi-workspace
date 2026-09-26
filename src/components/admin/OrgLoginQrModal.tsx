@@ -42,7 +42,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
   const printAreaRef = useRef<HTMLDivElement>(null);
 
   // Build the target login URL for this specific organization
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://didar.ir';
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://rooomchi.ir';
   const orgIdentifier = organization?.slug || organization?.id || 'default';
   const loginUrl = `${origin}?auth=login&org=${encodeURIComponent(orgIdentifier)}`;
 
@@ -186,7 +186,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
       // Footer
       ctx.fillStyle = '#64748B';
       ctx.font = '500 24px Vazirmatn, Tahoma, sans-serif';
-      ctx.fillText('سامانه هوشمند رزرواسیون سالن‌ها و جلسات دیدار', width / 2, 1390);
+      ctx.fillText('سامانه هوشمند رزرواسیون سالن‌ها و جلسات روم‌چی', width / 2, 1390);
 
       // Trigger download
       const fullCardData = canvas.toDataURL('image/png');
@@ -332,7 +332,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
               </div>
               <div class="url-text">${loginUrl}</div>
               <div class="footer">
-                سامانه هوشمند مدیریت جلسات و سالن‌ها دیدار
+                سامانه هوشمند مدیریت جلسات و سالن‌ها روم‌چی
               </div>
             </div>
           </body>
@@ -407,7 +407,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
               </label>
               <div className="flex items-center gap-2">
                 {[
-                  { id: '#10B981', label: 'سبز دیدار' },
+                  { id: '#10B981', label: 'سبز روم‌چی' },
                   { id: '#0F786E', label: 'یشمی تیره' },
                   { id: '#0F172A', label: 'مشکی رسمی' },
                   { id: '#1E40AF', label: 'سرمه‌ای' },
@@ -498,7 +498,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
             {/* Sub-text */}
             <div className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              <span>اتصال مستقیم و امن به درگاه سازمانی دیدار</span>
+              <span>اتصال مستقیم و امن به درگاه سازمانی روم‌چی</span>
             </div>
           </div>
 

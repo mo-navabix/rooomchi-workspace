@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import {
-  DIDAR_LOGO_ALT,
+  ROOOMCHI_LOGO_ALT,
   resolveLogoSrc,
   resolveLogoMarkSrc,
   type BrandThemeMode,
@@ -55,7 +55,7 @@ export const Logo: React.FC<LogoProps> = ({
   variant = 'horizontal',
   showText = true,
   theme: logoTheme = 'auto',
-  id = 'didar-logo',
+  id = 'rooomchi-logo',
 }) => {
   const resolvedVariant =
     variant === 'horizontal' && showText === false ? 'mark' : variant;
@@ -70,7 +70,7 @@ export const Logo: React.FC<LogoProps> = ({
         id={id}
         className={`inline-flex shrink-0 overflow-hidden rounded-md select-none ${markFrame[size]} ${className}`}
         role="img"
-        aria-label={DIDAR_LOGO_ALT}
+        aria-label={ROOOMCHI_LOGO_ALT}
       >
         <img
           src={markSrc}
@@ -89,7 +89,7 @@ export const Logo: React.FC<LogoProps> = ({
     <img
       id={id}
       src={src}
-      alt={DIDAR_LOGO_ALT}
+      alt={ROOOMCHI_LOGO_ALT}
       draggable={false}
       className={`w-auto max-w-[min(100%,200px)] ${heightClass} object-contain object-right select-none ${className}`}
     />

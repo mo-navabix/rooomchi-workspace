@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  const logger = new Logger('DidarBootstrap');
+  const logger = new Logger('RooomchiBootstrap');
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
@@ -31,7 +31,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
-  logger.log(`Didar B2B Multi-Tenant NestJS API running on: http://0.0.0.0:${port}/api`);
+  logger.log(`Rooomchi B2B Multi-Tenant NestJS API running on: http://0.0.0.0:${port}/api`);
 }
 
 // If invoked directly

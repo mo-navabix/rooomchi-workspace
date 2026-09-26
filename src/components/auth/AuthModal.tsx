@@ -41,7 +41,7 @@ export const AuthModal: React.FC = () => {
   const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot' | 'reset'>('login');
 
   // Login form state
-  const [loginEmail, setLoginEmail] = useState<string>('admin@didar.ir');
+  const [loginEmail, setLoginEmail] = useState<string>('admin@rooomchi.ir');
   const [loginPassword, setLoginPassword] = useState<string>('password123');
   const [showLoginPassword, setShowLoginPassword] = useState<boolean>(false);
 
@@ -246,7 +246,7 @@ export const AuthModal: React.FC = () => {
             </div>
 
             <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white mt-2">
-              {currentView === 'login' && 'ورود به سامانه دیدار'}
+              {currentView === 'login' && 'ورود به سامانه روم‌چی'}
               {currentView === 'register' && 'ساخت اکانت جدید'}
               {currentView === 'forgot' && 'فراموشی رمز عبور'}
               {currentView === 'reset' && 'تعیین رمز عبور جدید'}
@@ -430,7 +430,7 @@ export const AuthModal: React.FC = () => {
                     onClick={() => quickLoginAs('super_admin')}
                     className="p-2 text-right rounded-lg border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
                   >
-                    <span>مدیر کل دیدار</span>
+                    <span>مدیر کل روم‌چی</span>
                     <span className="text-[9px] bg-emerald-200 dark:bg-emerald-900/60 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-300">
                       Super Admin
                     </span>

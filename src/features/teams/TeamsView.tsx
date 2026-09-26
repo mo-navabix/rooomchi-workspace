@@ -187,8 +187,8 @@ export const TeamsView: React.FC = () => {
 
     // Save to window / sessionStorage for BookingModal to auto-fill
     try {
-      sessionStorage.setItem('didar_prefill_team_emails', JSON.stringify(emails));
-      sessionStorage.setItem('didar_prefill_team_name', team.name);
+      sessionStorage.setItem('rooomchi_prefill_team_emails', JSON.stringify(emails));
+      sessionStorage.setItem('rooomchi_prefill_team_name', team.name);
     } catch {}
 
     openBookingModal();

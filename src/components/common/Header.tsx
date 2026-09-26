@@ -73,7 +73,7 @@ function getPageMeta(
   orgName?: string,
 ): { title: string; subtitle: string } {
   const fallback = {
-    title: "دیدار",
+    title: "روم‌چی",
     subtitle: "سامانه رزرو اتاق جلسات",
   };
   const base = PAGE_META[activeTab] ?? fallback;
@@ -141,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
               type="button"
               onClick={() => setActiveTab("dashboard")}
               className="lg:hidden shrink-0 cursor-pointer"
-              aria-label="دیدار"
+              aria-label="روم‌چی"
             >
               <Logo variant="mark" size="sm" />
             </button>

@@ -7,7 +7,7 @@ function getAuthHeaders(contentJson = false): HeadersInit {
   if (contentJson) {
     headers['Content-Type'] = 'application/json';
   }
-  const token = localStorage.getItem('didar_auth_token');
+  const token = localStorage.getItem('rooomchi_auth_token');
   if (token && token !== 'guest_token' && token !== 'session_token') {
     headers.Authorization = `Bearer ${token}`;
   }
@@ -41,7 +41,7 @@ export class ApiService {
     settings?: { autoApprove: boolean; maxBookingHours: number; allowWeekend: boolean };
     initialRooms?: Partial<Room>[];
   }): Promise<Organization> {
-    const token = localStorage.getItem('didar_auth_token');
+    const token = localStorage.getItem('rooomchi_auth_token');
     const res = await fetch(`${API_BASE}/organizations`, {
       method: 'POST',
       headers: {

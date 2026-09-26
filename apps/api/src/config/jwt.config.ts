@@ -1,5 +1,5 @@
 export const jwtConfig = {
-  secret: process.env.JWT_SECRET || 'didar_enterprise_jwt_super_secret_key_2026',
+  secret: process.env.JWT_SECRET || 'rooomchi_jwt_super_secret_key_2026',
   expiresIn: process.env.JWT_EXPIRES_IN || '7d',
 };
 
