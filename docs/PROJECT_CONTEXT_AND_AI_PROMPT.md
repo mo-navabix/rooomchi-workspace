@@ -27,20 +27,18 @@ flowchart LR
   end
   subgraph runtime [Dev runtime server.ts]
     Express[Express REST API]
-    Memory[In-memory orgs rooms users bookings teams]
+    Persistence[src/server/persistence store]
     Vite[Vite HMR for React]
-    DbCheck[dbService check only]
+    Postgres[(PostgreSQL Docker + schema.sql)]
   end
   subgraph future [Parallel not main dev path]
     NestAPI[apps/api NestJS TypeORM]
-    Postgres[(PostgreSQL schema.sql)]
   end
   Views --> AppContext
   AppContext --> ApiService
   ApiService --> Express
-  Express --> Memory
-  Express --> DbCheck
-  DbCheck -.-> Postgres
+  Express --> Persistence
+  Persistence --> Postgres
   NestAPI -.-> Postgres
 ```
 
@@ -51,13 +49,15 @@ flowchart LR
 | مسیر | نقش |
 |------|-----|
 | `src/` | فرانت‌اند اصلی React 19 (اپ `web` در Nx به همین `src` اشاره می‌کند) |
-| `server.ts` | **سرور اجرای روزمره**: Express + تمام REST API + در حالت dev، Vite middleware (~۲۴۰۰ خط) |
+| `server.ts` | **سرور اجرای روزمره**: bootstrap کوتاه؛ routeها در `src/server/registerApiRoutes.ts` |
+| `src/server/persistence/` | CRUD PostgreSQL (orgs, rooms, bookings, users, teams, OTP) |
 | `apps/api/` | **NestJS 12** در حال ساخت: auth، organizations، users، roles، teams؛ TypeORM entities؛ tenant middleware + JWT guards |
 | `libs/shared-types/` | تایپ‌های مشترک (نقش‌ها، Booking، Team، NotificationSettings و …) |
 | `schema.sql` | اسکیمای PostgreSQL + seed فارسی |
-| `src/services/dbService.ts` | Pool Postgres؛ فقط برای `/api/db/status` — **CRUD اصلی هنوز in-memory در server.ts** |
+| `src/services/dbService.ts` | Pool Postgres برای API و `/api/db/status` |
+| `docker-compose.yml` | Postgres 16 لوکال؛ `npm run dev` آن را بالا می‌آورد |
 
-**اجرای محلی:** `npm run dev` → `tsx server.ts` روی پورت **3000**.
+**اجرای محلی:** `npm run dev` → Docker Postgres + `tsx server.ts` روی پورت **3000**. راهنما: [SETUP.md](SETUP.md).
 
 **Nx:** `nx.json` + `apps/web` و `apps/api`.
 
@@ -76,9 +76,9 @@ flowchart LR
 
 ---
 
-## معماری بک‌اند (فعال: server.ts)
+## معماری بک‌اند (فعال: Express + PostgreSQL)
 
-داده در **آرایه‌های in-memory** با seed اولیه (مثلاً TechNova). ری‌استارت سرور = از دست رفتن تغییرات حافظه.
+داده در **PostgreSQL** (`schema.sql` + `schema/02-server-extensions.sql`). seed دمو در `src/server/persistence/seed.ts` در اولین استارت.
 
 **Endpointهای نمونه:** health، db/status، organizations، rooms، bookings، stats، auth (login/register/OTP/profile/password)، users، teams.
 
@@ -92,7 +92,7 @@ flowchart LR
 
 - `schema.sql` → `didar_db`
 - `.env.example` → `DATABASE_URL` یا `DB_*`
-- اسکیما آماده؛ **CRUD اصلی روی Postgres سوئیچ نشده**
+- CRUD API در `src/server/persistence/store.ts`؛ برخی state UI هنوز localStorage (اعلان، تیکت، …)
 
 ---
 
