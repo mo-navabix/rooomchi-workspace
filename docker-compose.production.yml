@@ -1,0 +1,4 @@
+# Convenience wrapper — run from repo root:
+#   docker compose -f docker-compose.production.yml --env-file .env up -d --build
+include:
+  - path: deployment/docker-compose.production.yml

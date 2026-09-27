@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import type { Booking, Organization, Room, TeamMemberRecord, TeamRecord, User, VerificationPurpose } from "../types";
 import { query } from "./db";
+import { runSqlFile } from "./sql-runner";
 import { formatGregorianIsoLocal } from "../../utils/jalali";
 import {
   mapBookingRow,
@@ -13,17 +14,53 @@ import {
   toIsoDate,
 } from "./mappers";
 
+export async function usersTableExists(): Promise<boolean> {
+  try {
+    const { rows } = await query<{ t: string | null }>(
+      "SELECT to_regclass('public.users')::text AS t",
+    );
+    return Boolean(rows[0]?.t);
+  } catch {
+    return false;
+  }
+}
+
+async function organizationsTableExists(): Promise<boolean> {
+  try {
+    const { rows } = await query<{ t: string | null }>(
+      "SELECT to_regclass('public.organizations')::text AS t",
+    );
+    return Boolean(rows[0]?.t);
+  } catch {
+    return false;
+  }
+}
+
+/** Applies schema.sql when the database volume is empty (no docker init scripts). */
+export async function ensureBaseSchema(): Promise<void> {
+  if (await usersTableExists()) return;
+
+  const repairPath = path.join(process.cwd(), "schema", "01-repair-core-tables.sql");
+  if ((await organizationsTableExists()) && fs.existsSync(repairPath)) {
+    console.log("📦 Repairing missing core tables (users, rooms, bookings)…");
+    await runSqlFile("schema/01-repair-core-tables.sql");
+    console.log("✅ Core tables repaired.");
+    return;
+  }
+
+  const basePath = path.join(process.cwd(), "schema.sql");
+  if (!fs.existsSync(basePath)) {
+    throw new Error("schema.sql not found — cannot bootstrap database");
+  }
+  console.log("📦 Applying base schema (schema.sql)…");
+  await runSqlFile("schema.sql");
+  console.log("✅ Base schema applied.");
+}
+
 export async function ensureServerSchema(): Promise<void> {
   const extensionsPath = path.join(process.cwd(), "schema", "02-server-extensions.sql");
   if (!fs.existsSync(extensionsPath)) return;
-  const sql = fs.readFileSync(extensionsPath, "utf8");
-  const statements = sql
-    .split(";")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0 && !s.startsWith("--"));
-  for (const statement of statements) {
-    await query(`${statement};`);
-  }
+  await runSqlFile("schema/02-server-extensions.sql");
 }
 
 // --- Organizations ---

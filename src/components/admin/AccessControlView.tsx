@@ -132,6 +132,8 @@ const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
   },
 ];
 
+import { ApiService } from "../../services/apiService";
+
 export const AccessControlView: React.FC = () => {
   const {
     currentOrg,
@@ -146,10 +148,37 @@ export const AccessControlView: React.FC = () => {
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(INITIAL_AUDIT_LOGS);
   const [newDomainInput, setNewDomainInput] = useState("");
 
+  const persistOrgAuthFromUi = async (next: Partial<typeof accessControl>) => {
+    if (!currentOrg?.id) return;
+    const merged = { ...accessControl, ...next };
+    try {
+      await ApiService.updateOrganizationAuthSettings(currentOrg.id, {
+        localEnabled: merged.emailPasswordAuthEnabled,
+        googleEnabled: merged.googleAuthEnabled,
+        authPolicies: {
+          selfRegistrationEnabled: merged.selfRegistrationEnabled,
+        },
+        googleConfiguration: {
+          allowedDomains: merged.allowedGoogleDomains,
+        },
+      });
+    } catch {
+      showToast("ذخیره روی سرور ناموفق بود؛ تنظیمات فقط محلی به‌روز شد.", "error");
+    }
+  };
+
   const handleToggle = (key: keyof typeof accessControl, label: string) => {
     const currentVal = Boolean(accessControl[key]);
     const nextVal = !currentVal;
-    updateAccessControl({ [key]: nextVal });
+    const patch = { [key]: nextVal } as Partial<typeof accessControl>;
+    updateAccessControl(patch);
+    if (
+      key === "googleAuthEnabled" ||
+      key === "emailPasswordAuthEnabled" ||
+      key === "selfRegistrationEnabled"
+    ) {
+      void persistOrgAuthFromUi(patch);
+    }
     showToast(
       `${label} ${nextVal ? "«فعال»" : "«غیرفعال»"} شد.`,
       nextVal ? "success" : "info"

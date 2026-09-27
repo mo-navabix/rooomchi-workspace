@@ -13,8 +13,15 @@ export function asyncRoute(
         });
         return;
       }
-      console.error(err);
-      res.status(500).json({ error: "Internal Server Error", message: err?.message || "خطای سرور" });
+      const statusCode =
+        err && typeof err === "object" && "statusCode" in err
+          ? Number((err as { statusCode: number }).statusCode) || 500
+          : 500;
+      if (statusCode >= 500) console.error(err);
+      res.status(statusCode).json({
+        error: statusCode === 401 ? "Unauthorized" : statusCode === 403 ? "Forbidden" : "Error",
+        message: err?.message || "خطای سرور",
+      });
     });
   };
 }

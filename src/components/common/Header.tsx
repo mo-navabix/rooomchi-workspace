@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
     activeTab,
     setActiveTab,
     isAuthenticated,
-    openAuthModal,
+    goToLogin,
     theme,
     toggleTheme,
     notifications,
@@ -256,7 +256,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
           {!isAuthenticated && (
             <button
               type="button"
-              onClick={() => openAuthModal("login")}
+              onClick={() => goToLogin()}
               className="flex items-center gap-1.5 h-10 px-4 rounded-full text-xs font-bold text-white btn-brand cursor-pointer"
             >
               <LogIn className="w-4 h-4" />

@@ -128,7 +128,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
   // Build the target login URL for this specific organization
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://rooomchi.ir';
   const orgIdentifier = organization?.slug || organization?.id || 'default';
-  const loginUrl = `${origin}?auth=login&org=${encodeURIComponent(orgIdentifier)}`;
+  const loginUrl = `${origin}/login?org=${encodeURIComponent(orgIdentifier)}`;
 
   useEffect(() => {
     if (!isOpen || !organization) return;

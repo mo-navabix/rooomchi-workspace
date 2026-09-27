@@ -1,0 +1,48 @@
+stages:
+  - install
+  - test
+  - build
+  - docker
+
+variables:
+  NODE_VERSION: "22"
+
+default:
+  image: node:${NODE_VERSION}-alpine
+
+cache:
+  key: npm
+  paths:
+    - node_modules/
+
+install:
+  stage: install
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+
+lint:
+  stage: test
+  script:
+    - npm run lint
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+docker-backend:
+  stage: docker
+  image: docker:27
+  services:
+    - docker:27-dind
+  script:
+    - docker build -f deployment/backend/Dockerfile -t rooomchi-backend:$CI_COMMIT_SHA .
+    - docker build -f deployment/frontend/Dockerfile -t rooomchi-frontend:$CI_COMMIT_SHA .
+  rules:
+    - if: $CI_COMMIT_BRANCH

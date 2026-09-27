@@ -49,7 +49,7 @@ CREATE TABLE organization_auth_settings (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_auth_settings_org ON organization_auth_settings(organization_id);
+CREATE INDEX IF NOT EXISTS idx_auth_settings_org ON organization_auth_settings(organization_id);
 -- ----------------------------------------------------------------------------
 CREATE TABLE users (
     id VARCHAR(64) PRIMARY KEY,

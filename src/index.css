@@ -258,6 +258,31 @@
     @apply outline-none ring-2 ring-[rgb(var(--brand-primary-rgb)/0.35)] border-[var(--brand-primary)];
   }
 
+  .portal-auth-input {
+    @apply w-full text-sm rounded-xl border outline-none transition-colors;
+    @apply border-slate-200 bg-slate-50 text-slate-900;
+    @apply focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.35)] focus:border-[var(--brand-primary)];
+  }
+
+  html.dark .portal-auth-input {
+    background-color: var(--otagh-surface, #0f172a);
+    border-color: var(--otagh-border, #334155);
+    color: #f1f5f9;
+  }
+
+  html.dark .portal-auth-input::placeholder {
+    color: #64748b;
+  }
+
+  html.dark .portal-auth-input:-webkit-autofill,
+  html.dark .portal-auth-input:-webkit-autofill:hover,
+  html.dark .portal-auth-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f1f5f9;
+    caret-color: #f1f5f9;
+    box-shadow: 0 0 0 1000px var(--otagh-surface, #0f172a) inset;
+    border-color: var(--otagh-border, #334155);
+  }
+
   .brand-icon-tile {
     @apply flex items-center justify-center rounded-xl shrink-0;
     background-color: var(--brand-primary-ultra-light);

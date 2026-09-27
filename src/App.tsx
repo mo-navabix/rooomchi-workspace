@@ -22,6 +22,7 @@ import { SupportTicketView } from "./components/support/SupportTicketView";
 import { BookingModal } from "./components/booking/BookingModal";
 import { OrgProvisioningModal } from "./components/onboarding/OrgProvisioningModal";
 import { AuthModal } from "./components/auth/AuthModal";
+import { OrgLoginPage } from "./components/auth/OrgLoginPage";
 import { CompleteProfileModal } from "./components/auth/CompleteProfileModal";
 import { AppLoadingSkeleton } from "./components/common/Skeletons";
 import { PortalFooter } from "./components/common/PortalFooter";
@@ -35,8 +36,9 @@ const MainContent: React.FC = () => {
   return (
     <div className="portal-shell min-h-screen flex flex-col font-sans transition-colors overflow-x-clip w-full max-w-full">
       {viewMode === "landing" ? (
-        // Dedicated Standalone Landing Page View
         <LandingView />
+      ) : viewMode === "login" ? (
+        <OrgLoginPage />
       ) : (
         // Enterprise Meeting Rooms Portal View
         <>

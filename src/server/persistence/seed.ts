@@ -1,7 +1,8 @@
 import { query } from "./db";
 import { runSqlFile } from "./sql-runner";
-import { ensureServerSchema, insertUser } from "./store";
+import { ensureBaseSchema, ensureServerSchema, insertUser, usersTableExists } from "./store";
 import type { User } from "../types";
+import { hashPassword } from "../auth/password.service";
 
 export const DEFAULT_DEMO_PASSWORD = "password123";
 
@@ -138,21 +139,64 @@ export async function seedReferenceData(): Promise<void> {
   console.log(`✅ Reference seed SQL applied (${count} statement(s)).`);
 }
 
-export async function seedDevUsers(options?: { force?: boolean }): Promise<void> {
-  if (!options?.force) {
-    const { rows } = await query<{ c: string }>(
-      "SELECT COUNT(*)::text AS c FROM users WHERE id = 'user-super'",
+export function isDemoLoginSyncEnabled(): boolean {
+  return (
+    process.env.ROOOMCHI_DEMO_MODE === "true" ||
+    process.env.NODE_ENV !== "production"
+  );
+}
+
+/** Ensures DB users can sign in for demos (password: password123). */
+export async function ensureDemoLoginPasswords(): Promise<void> {
+  if (!isDemoLoginSyncEnabled()) return;
+  if (!(await usersTableExists())) return;
+
+  const hashed = await hashPassword(DEFAULT_DEMO_PASSWORD);
+  const demoEmails = DEMO_USERS.map((u) => u.email.toLowerCase());
+
+  for (const email of demoEmails) {
+    await query(
+      `UPDATE users SET password_hash = $1, updated_at = NOW()
+       WHERE LOWER(email) = $2`,
+      [hashed, email],
     );
-    if (Number(rows[0]?.c) > 0) {
-      console.log("ℹ️  Demo users already present (user-super). Use --force-users to retry inserts.");
-      return;
-    }
   }
 
+  const { rowCount } = await query(
+    `UPDATE users SET password_hash = $1, updated_at = NOW()
+     WHERE password_hash IS NULL OR password_hash = '' OR password_hash = $2`,
+    [hashed, DEFAULT_DEMO_PASSWORD],
+  );
+
+  if ((rowCount ?? 0) > 0 || demoEmails.length > 0) {
+    console.log(
+      `✅ Demo login passwords synced (${DEFAULT_DEMO_PASSWORD} — bcrypt). SQL users without hash included.`,
+    );
+  }
+}
+
+export async function seedDevUsers(options?: { force?: boolean }): Promise<void> {
+  const skipInsert =
+    !options?.force &&
+    Number(
+      (
+        await query<{ c: string }>(
+          "SELECT COUNT(*)::text AS c FROM users WHERE id = 'user-super'",
+        )
+      ).rows[0]?.c,
+    ) > 0;
+
+  if (skipInsert) {
+    console.log("ℹ️  Demo users already present (user-super). Syncing demo passwords…");
+    await ensureDemoLoginPasswords();
+    return;
+  }
+
+  const hashedDefault = await hashPassword(DEFAULT_DEMO_PASSWORD);
   let inserted = 0;
   for (const u of DEMO_USERS) {
     try {
-      await insertUser(u);
+      await insertUser({ ...u, password: hashedDefault });
       inserted += 1;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
@@ -165,11 +209,13 @@ export async function seedDevUsers(options?: { force?: boolean }): Promise<void>
   console.log(
     `✅ Demo users seed finished (${inserted} new, password: ${DEFAULT_DEMO_PASSWORD} for new accounts).`,
   );
+  await ensureDemoLoginPasswords();
 }
 
 /** Ensures demo accounts from the legacy in-memory server exist in PostgreSQL. */
 export async function seedDevDataIfNeeded(): Promise<void> {
   await seedDevUsers();
+  await ensureDemoLoginPasswords();
 }
 
 export async function syncDatabase(options: SyncDatabaseOptions = {}): Promise<void> {
@@ -178,6 +224,7 @@ export async function syncDatabase(options: SyncDatabaseOptions = {}): Promise<v
   const demoUsers = options.demoUsers !== false;
 
   if (schema) {
+    await ensureBaseSchema();
     await ensureServerSchema();
     console.log("✅ Server schema extensions applied.");
   }

@@ -89,7 +89,7 @@ const solutions = [
 
 export const LandingView: React.FC = () => {
   const {
-    openAuthModal,
+    goToLogin,
     openProvisioningModal,
     setViewMode,
     setActiveTab,
@@ -146,11 +146,11 @@ export const LandingView: React.FC = () => {
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
               type="button"
-              onClick={() => openAuthModal("login")}
+              onClick={() => goToLogin()}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-lighter)] hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
             >
               <LogIn className="w-4 h-4" />
-              <span>ورود / ثبت‌نام</span>
+              <span>ورود پرسنل سازمان</span>
             </button>
             <button
               type="button"

@@ -4,36 +4,48 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { getDbPool } from "./src/services/dbService";
 import { registerApiRoutes } from "./src/server/registerApiRoutes";
-import { ensureServerSchema } from "./src/server/persistence/store";
+import { ensureBaseSchema, ensureServerSchema } from "./src/server/persistence/store";
 import { seedDevDataIfNeeded } from "./src/server/persistence/seed";
+import { logger } from "./src/server/logger";
+import { registerSecurityMiddleware } from "./src/server/middleware/security";
+import { registerRequestLogger } from "./src/server/middleware/requestLogger";
 
 async function startServer() {
   const pool = getDbPool();
   if (pool) {
     try {
-      await ensureServerSchema();
-      await seedDevDataIfNeeded();
-      console.log("✅ API persistence: PostgreSQL");
+      if (process.env.SKIP_SCHEMA_ENSURE !== "true") {
+        await ensureBaseSchema();
+        await ensureServerSchema();
+      }
+      if (process.env.NODE_ENV !== "production") {
+        await seedDevDataIfNeeded();
+      }
+      logger.info("PostgreSQL persistence ready");
     } catch (err) {
-      console.warn("⚠️ Database init warning:", err);
+      logger.warn({ err }, "database_init_warning");
     }
   } else {
-    console.warn("⚠️ DATABASE_URL not set — API routes will return 503 until Postgres is configured.");
+    logger.warn("DATABASE_URL not set — API routes may return 503");
   }
 
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
+  const apiOnly =
+    process.env.API_ONLY === "true" || process.env.SERVE_STATIC === "false";
 
-  app.use(express.json());
+  app.use(express.json({ limit: "2mb" }));
+  registerRequestLogger(app);
+  registerSecurityMiddleware(app);
   registerApiRoutes(app);
 
-  if (process.env.NODE_ENV !== "production") {
+  if (!apiOnly && process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
+  } else if (!apiOnly) {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (_req, res) => {
@@ -42,7 +54,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Enterprise Meeting Room Server running on http://localhost:${PORT}`);
+    logger.info({ port: PORT, apiOnly }, "server_listening");
   });
 }
 

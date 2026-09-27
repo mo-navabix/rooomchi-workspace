@@ -2,8 +2,16 @@ import type { Request } from "express";
 import { JwtService } from "@nestjs/jwt";
 import type { Booking, User } from "./types";
 
+function resolveJwtSecret(): string {
+  const secret = process.env.JWT_SECRET?.trim();
+  if (process.env.NODE_ENV === "production" && !secret) {
+    throw new Error("JWT_SECRET must be set in production");
+  }
+  return secret || "rooomchi_jwt_dev_only_change_in_production";
+}
+
 export const jwtService = new JwtService({
-  secret: process.env.JWT_SECRET || "rooomchi_jwt_super_secret_key_2026",
+  secret: resolveJwtSecret(),
 });
 
 export function extractJwtUser(

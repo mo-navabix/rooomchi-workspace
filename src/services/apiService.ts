@@ -3,6 +3,17 @@ import { Booking, Organization, Room, Stats, User, UserRole, Team } from '../typ
 
 const API_BASE = '/api';
 
+function normalizeAuthUser(
+  raw: User & { organizationId?: string; firstName?: string; lastName?: string },
+): User {
+  if (!raw) return raw;
+  return {
+    ...raw,
+    orgId: raw.orgId || raw.organizationId || '',
+    name: raw.name || [raw.firstName, raw.lastName].filter(Boolean).join(' '),
+  };
+}
+
 function toClientUser(raw: User): User {
   return {
     ...raw,
@@ -221,7 +232,66 @@ export class ApiService {
   }
 
   // --- Auth & RBAC ---
-  static async login(credentials: { email: string; password: string }): Promise<{ user: User; token: string; message: string }> {
+  static async getOrganizationAuthSettings(orgId: string): Promise<import('../types/orgAuth').OrganizationAuthSettingsPublic> {
+    const res = await fetch(`${API_BASE}/organizations/${orgId}/auth-settings`);
+    if (!res.ok) throw new Error('خطا در دریافت تنظیمات احراز هویت');
+    return res.json();
+  }
+
+  static async getOrganizationAuthSettingsBySlug(slug: string) {
+    const res = await fetch(`${API_BASE}/auth/organizations/${encodeURIComponent(slug)}/settings`);
+    if (!res.ok) throw new Error('تنظیمات احراز هویت سازمان یافت نشد');
+    return res.json() as Promise<{
+      organization: { id: string; name: string; slug?: string };
+    } & import('../types/orgAuth').OrganizationAuthSettingsPublic>;
+  }
+
+  static async updateOrganizationAuthSettings(
+    orgId: string,
+    payload: Record<string, unknown>,
+  ): Promise<import('../types/orgAuth').OrganizationAuthSettingsPublic> {
+    const res = await fetch(`${API_BASE}/organizations/${orgId}/auth-settings`, {
+      method: 'PUT',
+      headers: { ...getAuthHeaders(true), 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || 'خطا در ذخیره تنظیمات');
+    }
+    return res.json();
+  }
+
+  static async ldapLogin(payload: {
+    username: string;
+    password: string;
+    organizationSlug?: string;
+    organizationId?: string;
+  }): Promise<{ user: User; token: string; message: string }> {
+    const res = await fetch(`${API_BASE}/auth/ldap/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'ورود LDAP ناموفق');
+    }
+    const body = await res.json();
+    const token = body.accessToken || body.token;
+    const user = normalizeAuthUser(body.user);
+    return { ...body, token, user, message: body.message };
+  }
+
+  static startGoogleOAuth(params: { organizationSlug?: string; organizationId?: string; redirectAfter?: string }) {
+    const q = new URLSearchParams();
+    if (params.organizationId) q.set('organizationId', params.organizationId);
+    if (params.organizationSlug) q.set('organizationSlug', params.organizationSlug);
+    if (params.redirectAfter) q.set('redirectAfter', params.redirectAfter);
+    window.location.href = `${API_BASE}/auth/google/start?${q.toString()}`;
+  }
+
+  static async login(credentials: { email: string; password: string; organizationSlug?: string }): Promise<{ user: User; token: string; message: string }> {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -233,15 +303,7 @@ export class ApiService {
     }
     const body = await res.json();
     const token = body.accessToken || body.token;
-    const user = body.user
-      ? {
-          ...body.user,
-          orgId: body.user.orgId || body.user.organizationId,
-          name:
-            body.user.name ||
-            [body.user.firstName, body.user.lastName].filter(Boolean).join(' '),
-        }
-      : body.user;
+    const user = normalizeAuthUser(body.user);
     return { ...body, token, user, message: body.message || 'ورود موفق' };
   }
 

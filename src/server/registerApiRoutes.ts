@@ -1,7 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { checkDbStatus } from "../services/dbService";
 import {
-  jwtService,
   extractJwtUser,
   isBookingOrganizer,
   isProtectedAdmin,
@@ -10,6 +9,8 @@ import {
 import { asyncRoute, stripPassword } from "./http";
 import type { Booking, Organization, Room, TeamRecord, User } from "./types";
 import * as store from "./persistence/store";
+import { registerAuthRoutes } from "./auth/auth.routes";
+import { normalizePasswordForStorage } from "./auth/password.service";
 
 async function populateTeamResponse(team: TeamRecord) {
   const members = await store.getTeamMembersPopulated(team.id);
@@ -22,10 +23,23 @@ async function populateTeamResponse(team: TeamRecord) {
   };
 }
 
+async function healthPayload() {
+  const db = await checkDbStatus();
+  const database = db.connected ? "connected" : "disconnected";
+  const status = db.connected ? "healthy" : "unhealthy";
+  return { status, database, timestamp: new Date().toISOString() };
+}
+
 export function registerApiRoutes(app: Express): void {
-  app.get("/api/health", (_req, res) => {
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
-  });
+  app.get("/health", asyncRoute(async (_req, res) => {
+    const body = await healthPayload();
+    res.status(body.status === "healthy" ? 200 : 503).json(body);
+  }));
+
+  app.get("/api/health", asyncRoute(async (_req, res) => {
+    const body = await healthPayload();
+    res.status(body.status === "healthy" ? 200 : 503).json(body);
+  }));
 
   app.get("/api/db/status", asyncRoute(async (_req, res) => {
     res.json(await checkDbStatus());
@@ -390,355 +404,7 @@ export function registerApiRoutes(app: Express): void {
     );
   }));
 
-  // --- Auth ---
-  const handleLogin = asyncRoute(async (req, res) => {
-    const { email, employeeNumber, organizationCode, organizationSlug, password } = req.body;
-    if (!password) return res.status(400).json({ error: "لطفاً رمز عبور را وارد کنید" });
-
-    const host = (req.headers["x-forwarded-host"] as string) || req.headers["host"] || "";
-    const cleanHost = host.split(":")[0].trim().toLowerCase();
-    let detectedSlug: string | null = null;
-    const reserved = new Set(["app", "api", "admin", "www", "mail", "localhost", "127.0.0.1", "rooomchi"]);
-
-    if (req.headers["x-organization-slug"]) {
-      detectedSlug = String(req.headers["x-organization-slug"]).trim().toLowerCase();
-    } else if (organizationSlug) {
-      detectedSlug = organizationSlug.trim().toLowerCase();
-    } else if (cleanHost.includes(".")) {
-      const parts = cleanHost.split(".");
-      if (parts.length >= 2 && !reserved.has(parts[0])) detectedSlug = parts[0];
-    }
-
-    let targetOrg: Organization | null = null;
-    if (detectedSlug) {
-      targetOrg = await store.findOrganizationBySlugOrCode(detectedSlug);
-    } else if (organizationCode) {
-      targetOrg = await store.findOrganizationBySlugOrCode(organizationCode.trim());
-    }
-
-    let user: User | undefined;
-
-    if (email) {
-      const normalizedEmail = email.trim().toLowerCase();
-      user = (await store.findUserByEmail(normalizedEmail)) ?? undefined;
-      if (!user) {
-        return res.status(401).json({
-          statusCode: 401,
-          error: "Unauthorized",
-          message: "کاربری با این ایمیل یافت نشد. لطفاً از بخش ثبت‌نام اقدام به ایجاد حساب کاربری نمایید",
-        });
-      }
-      if (targetOrg && user.organizationId !== targetOrg.id) {
-        return res.status(401).json({
-          statusCode: 401,
-          error: "Unauthorized",
-          message: `کاربر '${normalizedEmail}' متعلق به فضای سازمانی '${targetOrg.name}' نیست`,
-        });
-      }
-    } else if (employeeNumber) {
-      if (!targetOrg) {
-        return res.status(400).json({
-          statusCode: 400,
-          error: "Bad Request",
-          message:
-            "ورود با شماره پرسنلی نیازمند ورود از طریق ساب‌دامین اختصاصی سازمان یا ارسال اسلاگ سازمان است",
-        });
-      }
-      if (targetOrg.status !== "ACTIVE") {
-        return res.status(403).json({
-          statusCode: 403,
-          error: "Forbidden",
-          message: `سازمان '${targetOrg.name}' در وضعیت ${targetOrg.status} قرار دارد`,
-        });
-      }
-      user = (await store.findUserByEmployeeNumber(targetOrg.id, employeeNumber)) ?? undefined;
-      if (!user) {
-        return res.status(401).json({
-          statusCode: 401,
-          error: "Unauthorized",
-          message: "شماره پرسنلی یا مشخصات وارد شده برای این سازمان معتبر نیست",
-        });
-      }
-    } else {
-      return res.status(400).json({
-        statusCode: 400,
-        error: "Bad Request",
-        message: "ورود نیازمند ایمیل یا شماره پرسنلی و رمز عبور است",
-      });
-    }
-
-    const expectedPassword = user.password || "password123";
-    if (expectedPassword !== password) {
-      return res.status(401).json({
-        statusCode: 401,
-        error: "Unauthorized",
-        message: "رمز عبور وارد شده نادرست است",
-      });
-    }
-
-    if (user.status === "SUSPENDED" || user.status === "suspended") {
-      return res.status(403).json({ statusCode: 403, error: "Forbidden", message: "حساب کاربری معلق شده است" });
-    }
-    if (user.status === "INACTIVE") {
-      return res.status(403).json({ statusCode: 403, error: "Forbidden", message: "حساب کاربری غیرفعال است" });
-    }
-
-    const nowIso = new Date().toISOString();
-    await store.updateUser(user.id, { lastLoginAt: nowIso, lastLogin: nowIso });
-    const orgId = user.organizationId || "org-1";
-    const role = (user.role || "EMPLOYEE").toString().toUpperCase();
-    const token = jwtService.sign({ userId: user.id, organizationId: orgId, role });
-
-    res.json({
-      accessToken: token,
-      token,
-      tokenType: "Bearer",
-      requiresPasswordChange: user.status === "INVITED",
-      user: { ...stripPassword(user), organizationId: orgId, role },
-      message: `خوش آمدید، ${user.firstName || user.name || user.email}`,
-    });
-  });
-
-  app.post("/api/auth/login", handleLogin);
-  app.post("/auth/login", handleLogin);
-
-  const handleChangePassword = asyncRoute(async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-    const caller = extractJwtUser(req);
-    if (!caller) {
-      return res.status(401).json({ statusCode: 401, error: "Unauthorized", message: "JWT الزامی است" });
-    }
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ statusCode: 400, error: "Bad Request", message: "رمز فعلی و جدید الزامی است" });
-    }
-    const user = await store.getUserById(caller.userId);
-    if (!user) return res.status(404).json({ error: "کاربر یافت نشد" });
-    if (user.password && user.password !== currentPassword) {
-      return res.status(400).json({ error: "رمز عبور فعلی تطابق ندارد" });
-    }
-    await store.updateUser(user.id, { password: newPassword.trim(), status: "ACTIVE" });
-    res.json({ message: "رمز عبور با موفقیت تغییر کرد" });
-  });
-
-  app.post("/api/auth/change-password", handleChangePassword);
-  app.post("/auth/change-password", handleChangePassword);
-
-  const handleOpenRegister = asyncRoute(async (req, res) => {
-    const { name, email, password, department, jobTitle, phone, orgId } = req.body;
-    if (!email || !email.includes("@")) return res.status(400).json({ error: "آدرس ایمیل معتبر الزامی است" });
-    if (!password || password.trim().length < 4) {
-      return res.status(400).json({ error: "رمز عبور با حداقل ۴ کاراکتر الزامی است" });
-    }
-    const normalizedEmail = email.trim().toLowerCase();
-    if (await store.emailExists(normalizedEmail)) {
-      return res.status(409).json({
-        statusCode: 409,
-        error: "Conflict",
-        message: "کاربری با این ایمیل قبلاً ثبت‌نام کرده است",
-      });
-    }
-    const orgs = await store.listOrganizations();
-    const targetOrg = (orgId && (await store.getOrganizationById(orgId))) || orgs[0];
-    const isProfileComplete = Boolean(name?.trim() && phone?.trim());
-    const newUser = await store.insertUser({
-      id: `usr-${Date.now()}`,
-      organizationId: targetOrg.id,
-      employeeNumber: `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
-      firstName: name ? name.trim().split(" ")[0] : "",
-      lastName: name ? name.trim().split(" ").slice(1).join(" ") : "",
-      name: name?.trim() || normalizedEmail.split("@")[0],
-      email: normalizedEmail,
-      password: password.trim(),
-      status: "ACTIVE",
-      role: "EMPLOYEE",
-      department: department?.trim() || targetOrg.departments?.[0] || "فنی و مهندسی",
-      jobTitle: jobTitle?.trim() || "کارشناس",
-      phone: phone?.trim() || "",
-      isProfileComplete,
-      orgName: targetOrg.name,
-      createdAt: new Date().toISOString(),
-      lastLoginAt: new Date().toISOString(),
-    });
-    const token = jwtService.sign({
-      userId: newUser.id,
-      organizationId: targetOrg.id,
-      role: "EMPLOYEE",
-    });
-    res.status(201).json({
-      accessToken: token,
-      token,
-      tokenType: "Bearer",
-      user: stripPassword(newUser),
-      isProfileComplete,
-      message: "ثبت‌نام با موفقیت انجام شد",
-    });
-  });
-
-  app.post("/api/auth/register", handleOpenRegister);
-  app.post("/auth/register", handleOpenRegister);
-
-  const handleSendOtp = asyncRoute(async (req, res) => {
-    const { email } = req.body;
-    if (!email || !email.includes("@")) {
-      return res.status(400).json({ error: "لطفاً یک ایمیل سازمانی معتبر وارد نمایید" });
-    }
-    const normalizedEmail = email.trim().toLowerCase();
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    await store.setVerificationCode(
-      normalizedEmail,
-      "login_otp",
-      code,
-      new Date(Date.now() + 10 * 60 * 1000),
-    );
-    console.log(`[ROOOMCHI-AUTH-OTP] Verification code for ${normalizedEmail}: ${code}`);
-    res.json({
-      success: true,
-      message: `کد تأیید ۶ رقمی به آدرس ${normalizedEmail} ارسال شد`,
-      simulatedCode: code,
-    });
-  });
-
-  app.post("/api/auth/send-otp", handleSendOtp);
-  app.post("/auth/send-otp", handleSendOtp);
-
-  const handleVerifyOtp = asyncRoute(async (req, res) => {
-    const { email, code } = req.body;
-    if (!email || !code) return res.status(400).json({ error: "ایمیل و کد تأیید الزامی هستند" });
-    const normalizedEmail = email.trim().toLowerCase();
-    const stored = await store.getVerificationCode(normalizedEmail, "login_otp");
-    const isCodeValid =
-      (stored && stored.code === code.trim() && Date.now() <= stored.expiresAt) || code.trim() === "123456";
-    if (!isCodeValid) {
-      return res.status(400).json({ error: "کد تأیید وارد شده نامعتبر است یا منقضی شده است" });
-    }
-    await store.deleteVerificationCode(normalizedEmail, "login_otp");
-
-    let user = await store.findUserByEmail(normalizedEmail);
-    let isNewUser = false;
-    if (!user) {
-      isNewUser = true;
-      const orgs = await store.listOrganizations();
-      const defaultOrg = orgs[0];
-      user = await store.insertUser({
-        id: `usr-${Date.now()}`,
-        organizationId: defaultOrg.id,
-        employeeNumber: `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
-        firstName: "",
-        lastName: "",
-        name: normalizedEmail.split("@")[0],
-        email: normalizedEmail,
-        status: "ACTIVE",
-        role: "EMPLOYEE",
-        department: defaultOrg.departments?.[0] || "فنی و مهندسی",
-        jobTitle: "کارشناس",
-        phone: "",
-        isProfileComplete: false,
-        orgName: defaultOrg.name,
-        createdAt: new Date().toISOString(),
-        lastLoginAt: new Date().toISOString(),
-      });
-    } else {
-      await store.updateUser(user.id, { lastLoginAt: new Date().toISOString() });
-      user = (await store.getUserById(user.id))!;
-    }
-
-    const orgId = user!.organizationId;
-    const role = (user!.role || "EMPLOYEE").toString().toUpperCase();
-    const token = jwtService.sign({ userId: user!.id, organizationId: orgId, role });
-    res.json({
-      accessToken: token,
-      token,
-      tokenType: "Bearer",
-      user: stripPassword(user!),
-      isProfileComplete: user!.isProfileComplete ?? false,
-      isNewUser,
-      message: isNewUser ? "ثبت‌نام اولیه انجام شد" : "ورود با موفقیت انجام شد",
-    });
-  });
-
-  app.post("/api/auth/verify-otp", handleVerifyOtp);
-  app.post("/auth/verify-otp", handleVerifyOtp);
-
-  const handleCompleteProfile = asyncRoute(async (req, res) => {
-    const caller = extractJwtUser(req);
-    const { userId, email, name, phone, department, jobTitle, password } = req.body;
-    if (!name?.trim()) return res.status(400).json({ error: "نام و نام خانوادگی الزامی است" });
-    if (!phone?.trim()) return res.status(400).json({ error: "شماره همراه الزامی است" });
-
-    let targetUser: User | null = null;
-    if (caller?.userId) targetUser = await store.getUserById(caller.userId);
-    if (!targetUser && userId) targetUser = await store.getUserById(userId);
-    if (!targetUser && email) targetUser = await store.findUserByEmail(email);
-    if (!targetUser) return res.status(404).json({ error: "کاربر مورد نظر یافت نشد" });
-
-    const trimmedName = name.trim();
-    const patch: Partial<User> = {
-      name: trimmedName,
-      firstName: trimmedName.split(" ")[0],
-      lastName: trimmedName.split(" ").slice(1).join(" "),
-      phone: phone.trim(),
-      isProfileComplete: true,
-    };
-    if (department) patch.department = department.trim();
-    if (jobTitle) patch.jobTitle = jobTitle.trim();
-    if (password && password.trim().length >= 4) patch.password = password.trim();
-
-    const updated = await store.updateUser(targetUser.id, patch);
-    res.json({
-      success: true,
-      message: "مشخصات شما با موفقیت تکمیل و ثبت شد",
-      user: stripPassword(updated!),
-    });
-  });
-
-  app.post("/api/auth/complete-profile", handleCompleteProfile);
-  app.post("/auth/complete-profile", handleCompleteProfile);
-  app.patch("/api/auth/profile", handleCompleteProfile);
-  app.put("/api/auth/profile", handleCompleteProfile);
-
-  app.post("/api/auth/forgot-password", asyncRoute(async (req, res) => {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: "لطفاً آدرس ایمیل خود را وارد کنید" });
-    const normalizedEmail = email.trim().toLowerCase();
-    const user = await store.findUserByEmail(normalizedEmail);
-    if (!user) {
-      return res.status(404).json({ error: "کاربری با این آدرس ایمیل در پلتفرم روم‌چی ثبت نشده است" });
-    }
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    await store.setVerificationCode(
-      normalizedEmail,
-      "password_reset",
-      code,
-      new Date(Date.now() + 15 * 60 * 1000),
-    );
-    console.log(`[ROOOMCHI-AUTH] Password reset code for ${normalizedEmail}: ${code}`);
-    res.json({
-      success: true,
-      message: "کد تأیید ۶ رقمی بازنشانی رمز عبور به ایمیل شما ارسال شد",
-      simulatedCode: code,
-    });
-  }));
-
-  app.post("/api/auth/reset-password", asyncRoute(async (req, res) => {
-    const { email, code, newPassword } = req.body;
-    if (!email || !code || !newPassword) {
-      return res.status(400).json({ error: "ایمیل، کد تأیید و رمز عبور جدید الزامی است" });
-    }
-    const normalizedEmail = email.trim().toLowerCase();
-    const stored = await store.getVerificationCode(normalizedEmail, "password_reset");
-    if (!stored || stored.code !== code.trim()) {
-      return res.status(400).json({ error: "کد تأیید وارد شده نامعتبر یا منقضی شده است" });
-    }
-    if (Date.now() > stored.expiresAt) {
-      await store.deleteVerificationCode(normalizedEmail, "password_reset");
-      return res.status(400).json({ error: "کد تأیید منقضی شده است" });
-    }
-    const user = await store.findUserByEmail(normalizedEmail);
-    if (!user) return res.status(404).json({ error: "کاربر یافت نشد" });
-    await store.updateUser(user.id, { password: newPassword.trim() });
-    await store.deleteVerificationCode(normalizedEmail, "password_reset");
-    res.json({ success: true, message: "رمز عبور شما با موفقیت تغییر کرد" });
-  }));
+  registerAuthRoutes(app);
 
   // --- Users ---
   async function createEmployeeHandler(req: Request, res: Response) {
@@ -786,6 +452,12 @@ export function registerApiRoutes(app: Express): void {
     const formattedName = name || `${finalFirstName} ${finalLastName}`.trim();
     const assignedRole = (role || "EMPLOYEE").toString().toUpperCase();
 
+    const plainPassword = password || (process.env.NODE_ENV === "production" ? "" : "password123");
+    if (!plainPassword) {
+      return res.status(400).json({ message: "رمز عبور الزامی است" });
+    }
+    const hashedPassword = await normalizePasswordForStorage(plainPassword);
+
     const newUser = await store.insertUser({
       id: `user-${Date.now()}`,
       organizationId: orgId,
@@ -794,7 +466,7 @@ export function registerApiRoutes(app: Express): void {
       lastName: finalLastName,
       name: formattedName,
       email: normalizedEmail,
-      password: password || "password123",
+      password: hashedPassword,
       status: (status || "ACTIVE").toUpperCase(),
       role: assignedRole,
       department: department || org.departments?.[0] || "عمومی",

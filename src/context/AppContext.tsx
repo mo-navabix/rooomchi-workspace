@@ -23,6 +23,12 @@ import {
   applyOrgBrandTheme,
   clearOrgBrandThemeOverrides,
 } from "../utils/orgBrandTheme";
+import {
+  navigateToAppHome,
+  navigateToLandingPath,
+  navigateToLoginPath,
+  readLoginRoute,
+} from "../utils/appNavigation";
 
 interface ToastInfo {
   id: string;
@@ -32,7 +38,7 @@ interface ToastInfo {
 
 export type AuthModalView = "login" | "register" | "otp" | "forgot" | "reset";
 export type AppTheme = "light" | "dark";
-export type ViewMode = "landing" | "app";
+export type ViewMode = "landing" | "login" | "app";
 
 interface AppContextType {
   // Theme & View Mode
@@ -40,6 +46,8 @@ interface AppContextType {
   toggleTheme: () => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
+  goToLogin: (options?: { org?: string; authView?: AuthModalView }) => void;
+  goToLanding: () => void;
 
   // Tenancy & Data
   organizations: Organization[];
@@ -86,7 +94,17 @@ interface AppContextType {
   // Auth Actions
   openAuthModal: (view?: AuthModalView) => void;
   closeAuthModal: () => void;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: {
+    email: string;
+    password: string;
+    organizationSlug?: string;
+  }) => Promise<void>;
+  completeAuthLogin: (res: {
+    user: User;
+    token?: string;
+    accessToken?: string;
+    message?: string;
+  }) => void;
   register: (data: {
     name: string;
     email: string;
@@ -128,11 +146,7 @@ interface AppContextType {
   clearAllNotifications: () => void;
 
   // Google Login & Profile Sync
-  loginWithGoogle: (customGoogleUser?: {
-    email?: string;
-    name?: string;
-    picture?: string;
-  }) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   syncGoogleProfile: (googleEmail?: string) => Promise<void>;
 
   // Access Control & Security Policies
@@ -176,10 +190,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 
   const [viewMode, setViewModeState] = useState<ViewMode>(() => {
     try {
+      const route = readLoginRoute();
+      if (route.onLoginPage) return "login";
       const saved = localStorage.getItem(LOCAL_STORAGE_VIEW_KEY);
-      if (saved === "landing" || saved === "app") return saved;
+      if (saved === "landing" || saved === "app" || saved === "login") {
+        return saved;
+      }
     } catch {}
-    // Default to landing page for visitors
     return "landing";
   });
 
@@ -266,6 +283,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [authModalView, setAuthModalView] = useState<AuthModalView>("login");
   const [pendingResetEmail, setPendingResetEmail] = useState<string>("");
 
+  const goToLogin = useCallback(
+    (options?: { org?: string; authView?: AuthModalView }) => {
+      setViewMode("login");
+      navigateToLoginPath(options?.org ?? null);
+      if (options?.authView && options.authView !== "login") {
+        setAuthModalView(options.authView);
+        setIsAuthModalOpen(true);
+      }
+    },
+    [],
+  );
+
+  const goToLanding = useCallback(() => {
+    setViewMode("landing");
+    navigateToLandingPath();
+  }, []);
+
   // If currentUser exists, use their role, else fallback to 'employee'
   const userRole: UserRole = normalizeUserRole(currentUser?.role);
   const isAuthenticated = !!currentUser;
@@ -331,40 +365,72 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [viewMode, currentOrg?.id, currentOrg?.primaryColor, theme]);
 
-  // Handle QR code scanning / deep-link entry (?auth=login&org=...)
+  // Deep-link: /login?org=... or legacy ?auth=login&org=...
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     if (organizations.length === 0) return;
 
     try {
+      const route = readLoginRoute();
       const searchParams = new URLSearchParams(window.location.search);
-      const authParam = searchParams.get('auth');
-      const orgParam = searchParams.get('org');
+      const authParam = searchParams.get("auth") || route.auth;
+      const orgParam = searchParams.get("org") || route.org;
 
-      if (orgParam) {
-        const decodedOrg = decodeURIComponent(orgParam).toLowerCase().trim();
-        const matched = organizations.find(
+      const resolveOrg = (raw: string) => {
+        const decodedOrg = decodeURIComponent(raw).toLowerCase().trim();
+        return organizations.find(
           (o) =>
             o.id.toLowerCase() === decodedOrg ||
             (o.slug && o.slug.toLowerCase() === decodedOrg) ||
-            o.name.toLowerCase() === decodedOrg
+            o.name.toLowerCase() === decodedOrg,
         );
+      };
+
+      if (orgParam) {
+        const matched = resolveOrg(orgParam);
         if (matched) {
           setCurrentOrg(matched);
-          if (authParam === 'login' || authParam === 'register') {
-            setAuthModalView(authParam);
-            setIsAuthModalOpen(true);
-            showToast(`به صفحه ورود اختصاصی «${matched.name}» هدایت شدید`, 'info');
-          }
         }
-      } else if (authParam === 'login' || authParam === 'register') {
-        setAuthModalView(authParam);
-        setIsAuthModalOpen(true);
+      }
+
+      const wantsLogin =
+        route.onLoginPage ||
+        authParam === "login" ||
+        authParam === "register";
+
+      if (wantsLogin) {
+        setViewMode("login");
+        if (orgParam) {
+          const matched = resolveOrg(orgParam);
+          navigateToLoginPath(matched?.slug || matched?.id || orgParam, true);
+          if (matched) {
+            showToast(`صفحه ورود «${matched.name}»`, "info");
+          }
+        } else if (route.onLoginPage) {
+          navigateToLoginPath(null, true);
+        }
+        if (authParam === "register") {
+          setAuthModalView("register");
+          setIsAuthModalOpen(true);
+        }
       }
     } catch (e) {
-      console.error('Failed to parse URL query params', e);
+      console.error("Failed to parse URL query params", e);
     }
   }, [organizations, showToast]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onPopState = () => {
+      const route = readLoginRoute();
+      if (route.onLoginPage) setViewMode("login");
+      else if (window.location.pathname === "/" || window.location.pathname === "") {
+        setViewMode("landing");
+      }
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   // Sync user state with localStorage
   const saveUserSession = (user: User, token: string) => {
@@ -440,6 +506,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 
   // Auth Operations
   const openAuthModal = (view: AuthModalView = "login") => {
+    if (view === "login") {
+      goToLogin();
+      return;
+    }
     setAuthModalView(view);
     setIsAuthModalOpen(true);
   };
@@ -448,22 +518,32 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     setIsAuthModalOpen(false);
   };
 
-  const login = async (credentials: { email: string; password: string }) => {
-    const res = await ApiService.login(credentials);
-    const token = res.token || (res as { accessToken?: string }).accessToken;
-    if (!token) {
-      throw new Error("توکن احراز هویت از سرور دریافت نشد");
-    }
+  const completeAuthLogin = (res: {
+    user: User;
+    token?: string;
+    accessToken?: string;
+    message?: string;
+  }) => {
+    const token = res.token || res.accessToken;
+    if (!token) throw new Error("توکن احراز هویت از سرور دریافت نشد");
     saveUserSession(res.user, token);
     closeAuthModal();
     setViewMode("app");
-    showToast(`خوش آمدید، ${res.user.name}`, "success");
-
-    // Switch to user's org if available
+    navigateToAppHome(true);
+    showToast(res.message || `خوش آمدید، ${res.user.name}`, "success");
     if (res.user.orgId) {
       const org = organizations.find((o) => o.id === res.user.orgId);
       if (org) setCurrentOrg(org);
     }
+  };
+
+  const login = async (credentials: {
+    email: string;
+    password: string;
+    organizationSlug?: string;
+  }) => {
+    const res = await ApiService.login(credentials);
+    completeAuthLogin(res);
   };
 
   const register = async (data: {
@@ -488,6 +568,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     saveUserSession(res.user, token);
     closeAuthModal();
     setViewMode("app");
+    navigateToAppHome(true);
     showToast(
       `ثبت‌نام با موفقیت انجام شد. به سامانه روم‌چی خوش آمدید`,
       "success",
@@ -503,7 +584,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       showToast("شما با موفقیت از سامانه روم‌چی خارج شدید", "info");
     }
     setActiveTab("dashboard");
-    setViewMode("landing");
+    goToLogin();
   };
 
   const forgotPassword = async (email: string) => {
@@ -631,7 +712,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     // 1. If not authenticated at all:
     if (!currentUser) {
       showToast("برای رزرو اتاق، لطفاً وارد سامانه شوید یا ثبت‌نام کنید", "info");
-      openAuthModal("login");
+      goToLogin();
       return;
     }
 
@@ -761,50 +842,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   // ==========================================
   // Google Login & Profile Sync
   // ==========================================
-  const loginWithGoogle = async (customGoogleUser?: {
-    email?: string;
-    name?: string;
-    picture?: string;
-  }) => {
-    if (!accessControl.googleAuthEnabled) {
-      showToast(
-        "ورود با حساب گوگل طبق سیاست امنیتی سازمان توسط مدیر غیرفعال شده است.",
-        "error",
-      );
+  const loginWithGoogle = async () => {
+    const orgId = currentOrg?.id || organizations[0]?.id;
+    const slug = currentOrg?.slug;
+    if (!orgId && !slug) {
+      showToast("ابتدا سازمان را انتخاب کنید.", "error");
       return;
     }
-
-    const email = customGoogleUser?.email || "mohammad.navabi.2025@gmail.com";
-    const name = customGoogleUser?.name || "محمد نوابی";
-    // Authentic Google Profile Photo
-    const picture =
-      customGoogleUser?.picture ||
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=240&auto=format&fit=crop&q=80";
-
-    const googleUser: User = {
-      id: `user-google-${Date.now()}`,
-      name,
-      email,
-      orgId: currentOrg?.id || (organizations[0]?.id || "org-1"),
-      orgName: currentOrg?.name || "سازمان نوآوری و فناوری",
-      role: "org_admin",
-      department: "فناوری اطلاعات و ارتباطات",
-      jobTitle: "مدیر ارشد سیستم‌ها",
-      phone: "09121112233",
-      avatar: picture,
-      avatarType: "google",
-      status: "active",
-      createdAt: new Date().toISOString(),
-      isProfileComplete: true,
-    };
-
-    saveUserSession(googleUser, `google_auth_token_${Date.now()}`);
-    closeAuthModal();
-    setViewMode("app");
-    showToast(
-      `ورود با حساب گوگل موفقیت‌آمیز بود! تصویر پروفایل Gmail با نمایه شما ست شد.`,
-      "success",
-    );
+    ApiService.startGoogleOAuth({
+      organizationId: orgId,
+      organizationSlug: slug,
+      redirectAfter: "/",
+    });
   };
 
   const syncGoogleProfile = async (googleEmail?: string) => {
@@ -830,6 +879,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         toggleTheme,
         viewMode,
         setViewMode,
+        goToLogin,
+        goToLanding,
 
         organizations,
         currentOrg,
@@ -874,6 +925,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         openAuthModal,
         closeAuthModal,
         login,
+        completeAuthLogin,
         register,
         sendOtp,
         verifyOtp,
