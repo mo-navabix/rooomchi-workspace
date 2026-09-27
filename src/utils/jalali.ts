@@ -205,6 +205,29 @@ export function jalaliToIsoString(jy: number, jm: number, jd: number): string {
 }
 
 /**
+ * Gregorian YYYY-MM-DD in the **local** calendar (browser/OS timezone).
+ * Prefer this over `date.toISOString().split('T')[0]` — UTC shifts the day in Iran (UTC+3:30).
+ */
+export function formatGregorianIsoLocal(date: Date = new Date()): string {
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  const mm = m < 10 ? `0${m}` : `${m}`;
+  const dd = d < 10 ? `0${d}` : `${d}`;
+  return `${y}-${mm}-${dd}`;
+}
+
+/** Today as YYYY-MM-DD in Asia/Tehran (for server stats aligned with Iranian users). */
+export function formatGregorianIsoTehran(date: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Tehran',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+}
+
+/**
  * Get current Jalali date
  */
 export function getCurrentJalaliDate(): JalaliDate {

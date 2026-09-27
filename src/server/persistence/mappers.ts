@@ -1,9 +1,15 @@
 import type { Booking, Organization, Room, User } from "../types";
+import { normalizeUserRole, normalizeUserStatus } from "../../constants/rbac";
+import { formatGregorianIsoLocal } from "../../utils/jalali";
 
+/** Map Postgres `date` / API values to YYYY-MM-DD without UTC day shift. */
 export function toIsoDate(value: unknown): string {
   if (!value) return "";
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  if (value instanceof Date) return formatGregorianIsoLocal(value);
   const s = String(value);
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const parsed = new Date(s);
+  if (!Number.isNaN(parsed.getTime())) return formatGregorianIsoLocal(parsed);
   return s.length >= 10 ? s.slice(0, 10) : s;
 }
 
@@ -129,8 +135,8 @@ export function mapUserRow(row: Record<string, unknown>, orgName?: string): User
     name: name || String(row.email),
     email: String(row.email),
     password: row.password_hash ? String(row.password_hash) : undefined,
-    status: String(row.status || "ACTIVE"),
-    role: toApiRole(String(row.role || "employee")),
+    status: normalizeUserStatus(String(row.status || "ACTIVE")),
+    role: normalizeUserRole(String(row.role || "employee")),
     lastLoginAt: row.last_login_at ? toIsoDateTime(row.last_login_at) : null,
     lastLogin: row.last_login_at ? toIsoDateTime(row.last_login_at) : undefined,
     createdAt: toIsoDateTime(row.created_at),

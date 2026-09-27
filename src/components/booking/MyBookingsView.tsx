@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Booking } from '../../types';
+import { formatGregorianIsoLocal } from '../../utils/jalali';
 import {
   Calendar,
   Clock,
@@ -23,7 +24,7 @@ export const MyBookingsView: React.FC = () => {
   const [filterTab, setFilterTab] = useState<'all' | 'upcoming' | 'pending' | 'cancelled'>('all');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = formatGregorianIsoLocal();
 
   const fetchBookings = async () => {
     if (!currentOrg) return;

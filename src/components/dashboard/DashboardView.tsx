@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { DashboardSkeleton } from '../common/Skeletons';
 import {
+  formatGregorianIsoLocal,
   formatToJalaliDescriptive,
   getCurrentJalaliDate,
   toPersianDigits,
@@ -37,7 +38,7 @@ export const DashboardView: React.FC = () => {
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = formatGregorianIsoLocal();
 
   useEffect(() => {
     if (!currentOrg) return;

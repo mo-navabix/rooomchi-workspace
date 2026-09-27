@@ -13,7 +13,7 @@ import {
   TrendingUp,
   MoreVertical,
 } from 'lucide-react';
-import { toPersianDigits } from '../../utils/jalali';
+import { formatGregorianIsoLocal, toPersianDigits } from '../../utils/jalali';
 
 export const ModernDashboardView: React.FC = () => {
   const { currentOrg, openBookingModal, setActiveTab } = useApp();
@@ -23,7 +23,7 @@ export const ModernDashboardView: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chartRange, setChartRange] = useState<'week' | 'month'>('week');
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = formatGregorianIsoLocal();
 
   useEffect(() => {
     if (!currentOrg) return;

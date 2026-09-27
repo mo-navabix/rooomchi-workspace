@@ -307,19 +307,12 @@ export const TimePicker: React.FC<TimePickerProps> = ({
   const dialogSubtitle = subtitle || `ساعات کاری: ${minTime} الی ${maxTime}`;
 
   return (
-    <div className={`${compact ? 'inline-block' : 'space-y-1.5'} ${className}`} id={id}>
+    <div className={`${compact ? 'inline-block' : 'flex flex-col gap-1.5 min-w-0'} ${className}`} id={id}>
       {label && !compact && (
-        <div className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400">
-          <div className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
-            <span>{label}</span>
-            {required && <span className="text-rose-500">*</span>}
-          </div>
-          {durationText && (
-            <span className="text-[10px] font-semibold text-[#0F786E] dark:text-[#5eead4] bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200/50">
-              {durationText}
-            </span>
-          )}
+        <div className="flex items-center gap-1.5 min-h-[20px] text-xs font-bold text-slate-600 dark:text-slate-400">
+          <Clock className="w-3.5 h-3.5 shrink-0 text-[#0F786E] dark:text-[#5eead4]" />
+          <span className="truncate">{label}</span>
+          {required && <span className="text-rose-500 shrink-0">*</span>}
         </div>
       )}
 
@@ -345,8 +338,18 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-slate-800 dark:text-slate-100">
           {formattedDisplay}
         </span>
-        <Clock className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-[#0F786E] dark:text-[#5eead4]`} />
+        <Clock className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} shrink-0 text-[#0F786E] dark:text-[#5eead4]`} />
       </button>
+
+      {!compact && (
+        <div className="min-h-[18px] flex items-center justify-center">
+          {durationText ? (
+            <p className="text-[10px] font-semibold text-[#0F786E] dark:text-[#5eead4] leading-tight">
+              {durationText}
+            </p>
+          ) : null}
+        </div>
+      )}
 
       {/* Centered Modal Dialog for Wheel Picker */}
       {isOpen && (

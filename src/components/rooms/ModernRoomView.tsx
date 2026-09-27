@@ -17,7 +17,7 @@ import {
 import { toPersianDigits } from '../../utils/jalali';
 
 export const ModernRoomView: React.FC = () => {
-  const { currentOrg, openBookingModal } = useApp();
+  const { currentOrg, setActiveTab, can, openBookingModal } = useApp();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [filterCapacity, setFilterCapacity] = useState<string>('all');
   const [filterFloor, setFilterFloor] = useState<string>('all');
@@ -50,13 +50,16 @@ export const ModernRoomView: React.FC = () => {
         </div>
 
         {/* Action Button: + افزودن اتاق (Dark Blue/Navy pill matching screenshot) */}
-        <button
-          onClick={() => openBookingModal()}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] dark:bg-[#0F786E] hover:bg-slate-800 transition-colors shadow-xs cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>افزودن اتاق</span>
-        </button>
+        {can('MANAGE_ROOMS') && (
+          <button
+            type="button"
+            onClick={() => setActiveTab('admin-rooms')}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] dark:bg-[#0F786E] hover:bg-slate-800 transition-colors shadow-xs cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>افزودن اتاق</span>
+          </button>
+        )}
       </div>
 
       {/* Filter Row matching screenshot */}

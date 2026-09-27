@@ -783,6 +783,7 @@ export function registerApiRoutes(app: Express): void {
 
   const handleUpdateRole = asyncRoute(async (req, res) => {
     const { role } = req.body;
+    if (!role) return res.status(400).json({ error: "نقش (role) الزامی است" });
     const caller = extractJwtUser(req);
     const user = await store.getUserById(req.params.id);
     if (!user) return res.status(404).json({ error: "کاربر یافت نشد" });
@@ -792,10 +793,9 @@ export function registerApiRoutes(app: Express): void {
     if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== user.organizationId) {
       return res.status(403).json({ statusCode: 403, error: "Forbidden", message: "عدم دسترسی" });
     }
-    const normalizedRole = role.toString().toUpperCase();
-    const updated = await store.updateUser(user.id, { role: normalizedRole });
+    const updated = await store.updateUser(user.id, { role: String(role) });
     const safeUser = stripPassword(updated!);
-    res.json({ message: `Employee role updated to ${normalizedRole}`, user: safeUser, ...safeUser });
+    res.json({ message: `Employee role updated to ${safeUser.role}`, user: safeUser, ...safeUser });
   });
 
   app.patch("/api/users/:id/role", handleUpdateRole);
@@ -807,7 +807,7 @@ export function registerApiRoutes(app: Express): void {
     const caller = extractJwtUser(req);
     const user = await store.getUserById(req.params.id);
     if (!user) return res.status(404).json({ error: "کاربر یافت نشد" });
-    const normalizedStatus = status.toString().toUpperCase();
+    const normalizedStatus = status.toString().toLowerCase() === "suspended" ? "SUSPENDED" : "ACTIVE";
     if (isProtectedAdmin(user) && normalizedStatus !== "ACTIVE") {
       return res.status(403).json({ statusCode: 403, error: "امکان تعلیق مدیران اصلی وجود ندارد" });
     }

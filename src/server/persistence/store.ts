@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import type { Booking, Organization, Room, TeamMemberRecord, TeamRecord, User, VerificationPurpose } from "../types";
 import { query } from "./db";
+import { formatGregorianIsoLocal, formatGregorianIsoTehran } from "../../utils/jalali";
 import {
   mapBookingRow,
   mapOrganizationRow,
@@ -700,7 +701,7 @@ export async function getStatsData(orgId?: string) {
   const rooms = await listRooms(orgId ? { orgId } : {});
   const bookings = await listBookings(orgId ? { orgId } : {});
   const orgBookings = bookings.filter((b) => b.status !== "cancelled");
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = formatGregorianIsoTehran();
   const todayBookings = orgBookings.filter((b) => b.date === todayStr);
   const now = new Date();
   const currentHourStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
@@ -724,7 +725,7 @@ export async function getStatsData(orgId?: string) {
   const weeklyUsage = [-3, -2, -1, 0, 1, 2, 3].map((offset) => {
     const d = new Date();
     d.setDate(d.getDate() + offset);
-    const iso = d.toISOString().split("T")[0];
+    const iso = formatGregorianIsoTehran(d);
     const count = orgBookings.filter((b) => b.date === iso).length;
     return {
       day: dayNames[d.getDay()],

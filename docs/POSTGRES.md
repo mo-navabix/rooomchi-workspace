@@ -58,6 +58,10 @@ DB_PASSWORD=postgres
 | `npm run db:down` | توقف Postgres (و pgAdmin اگر بالا بود) |
 | `npm run db:logs` | لاگ Postgres |
 | `npm run db:reset` | **حذف volume دیتابیس** + ساخت دوباره + اجرای `schema.sql` |
+| `npm run db:sync` | **سینک seed** با DB موجود: extensions + دادهٔ مرجع + کاربران دمو |
+| `npm run db:seed` | extensions + دادهٔ مرجع + کاربران دمو (`admin@rooomchi.ir` و …) |
+| `npm run db:schema` | فقط `schema/02-server-extensions.sql` |
+| `npm run db:status` | تست اتصال و شمارش ردیف‌های جداول |
 | `npm run dev` | Postgres (منتظر healthy) + سرور اپ |
 | `npm run dev:app` | فقط اپ (DB روی ماشین دیگر) |
 
@@ -71,6 +75,21 @@ DB_PASSWORD=postgres
 2. `schema/02-server-extensions.sql` — ستون‌ها و جدول OTP  
 
 بعد از `npm run dev`، سرور Express یک‌بار `seedDevDataIfNeeded()` را اجرا می‌کند (کاربران دمو مثل `admin@rooomchi.ir`).
+
+اگر DB از قبل وجود دارد و می‌خواهید دادهٔ نمونه را **بدون پاک کردن volume** هم‌تراز کنید:
+
+```bash
+npm run db:up
+npm run db:sync
+```
+
+فلگ‌های CLI (`tsx scripts/db-cli.ts --help`):
+
+- `--force-users` — درج دوبارهٔ کاربران دمو (در صورت نبودن conflict)
+- `--no-reference` — بدون `schema/idempotent-seed.sql`
+- `--no-demo` — فقط دادهٔ SQL، بدون کاربران Express
+
+رمز پیش‌فرض کاربران دمو: `password123`
 
 بررسی سلامت:
 
@@ -181,9 +200,25 @@ docker exec -it rooomchi-postgres psql -U postgres -d rooomchi_db
 | `\l` | لیست دیتابیس‌ها |
 | `\q` | خروج |
 
-نمونه کوئری:
+### ⚠️ کوئری را روی کدام دیتابیس بزنید؟
+
+در pgAdmin دو دیتابیس می‌بینید: **`postgres`** (خالی، بدون جدول `rooms`) و **`rooomchi_db`** (دادهٔ اپ).
+
+اگر `SELECT * FROM rooms` روی **`postgres`** بزنید خطا می‌گیرید یا نتیجه خالی است.  
+**Query Tool** را از روی **`rooomchi_db`** باز کنید (راست‌کلیک → Query Tool).
+
+تأیید سریع از مرورگر/ترمینال:
+
+```bash
+curl http://localhost:3000/api/db/status
+```
+
+فیلد `database` باید `rooomchi_db` باشد؛ `tableCounts.rooms` باید با لیست سایت یکی باشد.
+
+نمونه کوئری (روی **`rooomchi_db`**):
 
 ```sql
+SELECT id, name, code, organization_id, created_at FROM rooms ORDER BY created_at DESC;
 SELECT id, email, role FROM users LIMIT 10;
 SELECT COUNT(*) FROM bookings;
 ```

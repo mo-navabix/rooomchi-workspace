@@ -1,7 +1,10 @@
 import pg from 'pg';
 import { getDatabaseSsl } from '../config/database';
 
-const { Pool } = pg;
+const { Pool, types } = pg;
+
+// Keep SQL `date` as YYYY-MM-DD strings (avoid Date → toISOString() shifting the day in UTC+3:30).
+types.setTypeParser(1082, (val: string) => val);
 
 let pool: pg.Pool | null = null;
 let isConnected = false;
@@ -89,6 +92,20 @@ export async function checkDbStatus() {
 
   try {
     const result = await currentPool.query('SELECT current_database(), version(), NOW()');
+    let tableCounts: Record<string, number> | undefined;
+    try {
+      const counts = await currentPool.query<{ table_name: string; c: string }>(`
+        SELECT 'rooms' AS table_name, COUNT(*)::text AS c FROM rooms
+        UNION ALL SELECT 'bookings', COUNT(*)::text FROM bookings
+        UNION ALL SELECT 'users', COUNT(*)::text FROM users
+      `);
+      tableCounts = {};
+      for (const row of counts.rows) {
+        tableCounts[row.table_name] = Number(row.c);
+      }
+    } catch {
+      tableCounts = undefined;
+    }
     isConnected = true;
     lastError = null;
     return {
@@ -97,6 +114,7 @@ export async function checkDbStatus() {
       database: result.rows[0]?.current_database || 'rooomchi_db',
       version: result.rows[0]?.version,
       timestamp: result.rows[0]?.now,
+      tableCounts,
       message: 'اتصال به PostgreSQL با موفقیت برقرار است.',
     };
   } catch (err: any) {

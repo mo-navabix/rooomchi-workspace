@@ -175,6 +175,13 @@ export function normalizeUserRole(role: string | undefined | null): UserRole {
   return 'employee';
 }
 
+/** Maps DB/API status strings to client `active` | `suspended`. */
+export function normalizeUserStatus(status: string | undefined | null): 'active' | 'suspended' {
+  const s = String(status ?? '').trim().toUpperCase();
+  if (s === 'SUSPENDED' || s === 'INACTIVE') return 'suspended';
+  return 'active';
+}
+
 export function getRoleMeta(role: string | undefined | null): RoleMeta {
   return ROLE_DEFINITIONS[normalizeUserRole(role)];
 }

@@ -11,6 +11,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import {
+  formatGregorianIsoLocal,
   formatToJalali,
   formatToJalaliDescriptive,
   PERSIAN_WEEK_DAYS,
@@ -40,13 +41,13 @@ function useMatchMedia(query: string): boolean {
 }
 
 function todayIso(): string {
-  return new Date().toISOString().split('T')[0];
+  return formatGregorianIsoLocal();
 }
 
 function addDaysToIso(iso: string, delta: number): string {
   const d = new Date(`${iso}T12:00:00`);
   d.setDate(d.getDate() + delta);
-  return d.toISOString().split('T')[0];
+  return formatGregorianIsoLocal(d);
 }
 
 function dayInfoFromIso(isoDate: string): CalendarDayInfo {
@@ -84,7 +85,7 @@ export const CalendarView: React.FC = () => {
     for (let i = 0; i < 7; i++) {
       const d = new Date(shanbeh);
       d.setDate(shanbeh.getDate() + i);
-      const isoStr = d.toISOString().split('T')[0];
+      const isoStr = formatGregorianIsoLocal(d);
       days.push({
         dayIndex: i,
         name: PERSIAN_WEEK_DAYS[i].name,

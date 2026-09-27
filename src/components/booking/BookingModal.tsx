@@ -4,7 +4,7 @@ import { ApiService } from '../../services/apiService';
 import { Room, Booking } from '../../types';
 import { PersianDatePicker } from '../common/PersianDatePicker';
 import { TimePicker } from '../common/TimePicker';
-import { toPersianDigits } from '../../utils/jalali';
+import { formatGregorianIsoLocal, toPersianDigits } from '../../utils/jalali';
 import { X, Calendar, AlertTriangle, ChevronDown, UserPlus } from 'lucide-react';
 import { ParticipantSelector } from './ParticipantSelector';
 import { triggerBookingNotifications } from '../../utils/notificationDispatcher';
@@ -30,7 +30,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const [selectedRoomId, setSelectedRoomId] = useState<string>('');
   const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = formatGregorianIsoLocal();
   const orgWorkStart = currentOrg?.workHours?.start || '08:00';
   const orgWorkEnd = currentOrg?.workHours?.end || '18:00';
 
@@ -342,27 +342,30 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
             required
           />
 
-          <div className="grid grid-cols-2 gap-3">
-            <TimePicker
-              id="input-booking-start"
-              label="شروع"
-              value={startTime}
-              onChange={setStartTime}
-              minTime={orgWorkStart}
-              maxTime={orgWorkEnd}
-              required
-            />
-            <TimePicker
-              id="input-booking-end"
-              label="پایان"
-              value={endTime}
-              onChange={setEndTime}
-              minTime={orgWorkStart}
-              maxTime={orgWorkEnd}
-              isEndTime
-              referenceStartTime={startTime}
-              required
-            />
+          <div className="space-y-1.5">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">بازه زمانی</span>
+            <div className="grid grid-cols-2 gap-3 items-start">
+              <TimePicker
+                id="input-booking-start"
+                label="شروع"
+                value={startTime}
+                onChange={setStartTime}
+                minTime={orgWorkStart}
+                maxTime={orgWorkEnd}
+                required
+              />
+              <TimePicker
+                id="input-booking-end"
+                label="پایان"
+                value={endTime}
+                onChange={setEndTime}
+                minTime={orgWorkStart}
+                maxTime={orgWorkEnd}
+                isEndTime
+                referenceStartTime={startTime}
+                required
+              />
+            </div>
           </div>
 
           <ParticipantSelector

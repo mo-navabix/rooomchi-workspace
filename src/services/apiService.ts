@@ -1,6 +1,15 @@
+import { normalizeUserRole, normalizeUserStatus } from '../constants/rbac';
 import { Booking, Organization, Room, Stats, User, UserRole, Team } from '../types';
 
 const API_BASE = '/api';
+
+function toClientUser(raw: User): User {
+  return {
+    ...raw,
+    role: normalizeUserRole(raw.role),
+    status: normalizeUserStatus(raw.status),
+  };
+}
 
 function getAuthHeaders(contentJson = false): HeadersInit {
   const headers: Record<string, string> = {};
@@ -361,7 +370,7 @@ export class ApiService {
     });
     if (!res.ok) throw new Error('خطا در دریافت لیست کاربران');
     const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? data.map((u: User) => toClientUser(u)) : [];
   }
 
   static async createUser(data: {
@@ -382,7 +391,7 @@ export class ApiService {
       const err = await res.json().catch(() => ({ error: 'خطا در ایجاد کاربر' }));
       throw new Error(err.error || 'خطا در افزودن کاربر');
     }
-    return res.json();
+    return toClientUser(await res.json());
   }
 
   static async updateUserRole(userId: string, role: UserRole): Promise<User> {
@@ -395,7 +404,7 @@ export class ApiService {
       const err = await res.json().catch(() => ({ error: 'خطا در تغییر نقش کاربر' }));
       throw new Error(err.error || err.message || 'خطا در تغییر نقش کاربر');
     }
-    return res.json();
+    return toClientUser(await res.json());
   }
 
   static async updateUserStatus(userId: string, status: 'active' | 'suspended'): Promise<User> {
@@ -408,7 +417,7 @@ export class ApiService {
       const err = await res.json().catch(() => ({ error: 'خطا در تغییر وضعیت کاربر' }));
       throw new Error(err.error || err.message || 'خطا در تغییر وضعیت کاربر');
     }
-    return res.json();
+    return toClientUser(await res.json());
   }
 
   static async deleteUser(userId: string): Promise<void> {

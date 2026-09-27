@@ -173,6 +173,7 @@ export const AdminRoomsView: React.FC = () => {
       setRooms(data);
     } catch (err) {
       console.error(err);
+      showToast('خطا در بارگذاری اتاق‌ها از سرور — دادهٔ محلی نمایش داده نمی‌شود', 'error');
     } finally {
       setIsLoading(false);
     }

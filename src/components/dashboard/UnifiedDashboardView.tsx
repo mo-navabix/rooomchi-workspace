@@ -3,7 +3,7 @@ import { useApp } from "../../context/AppContext";
 import { ApiService } from "../../services/apiService";
 import { Booking, Room, Stats } from "../../types";
 import { Calendar, Clock, DoorOpen, Users, TrendingUp, AlertTriangle, ArrowLeft } from "lucide-react";
-import { toPersianDigits } from "../../utils/jalali";
+import { formatGregorianIsoLocal, toPersianDigits } from "../../utils/jalali";
 import { UnifiedDashboardSkeleton } from "../common/Skeletons";
 
 export const UnifiedDashboardView: React.FC = () => {
@@ -20,7 +20,7 @@ export const UnifiedDashboardView: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chartRange, setChartRange] = useState<"week" | "month">("week");
 
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = formatGregorianIsoLocal();
 
   useEffect(() => {
     if (!currentOrg) return;
