@@ -63,7 +63,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       try {
         const [roomsData, bookingsData] = await Promise.all([
           ApiService.getRooms({ orgId: currentOrg.id, status: 'available' }),
-          ApiService.getBookings({ orgId: currentOrg.id, date }),
+          ApiService.getBookings({ orgId: currentOrg.id, date, scope: 'all' }),
         ]);
         setAvailableRooms(roomsData);
         setExistingBookings(bookingsData);
@@ -87,7 +87,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     if (!currentOrg || !isBookingModalOpen) return;
     const refreshBookings = async () => {
       try {
-        const bookingsData = await ApiService.getBookings({ orgId: currentOrg.id, date });
+        const bookingsData = await ApiService.getBookings({ orgId: currentOrg.id, date, scope: 'all' });
         setExistingBookings(bookingsData);
       } catch (err) {
         console.error(err);

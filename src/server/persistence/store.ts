@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import type { Booking, Organization, Room, TeamMemberRecord, TeamRecord, User, VerificationPurpose } from "../types";
 import { query } from "./db";
-import { formatGregorianIsoLocal, formatGregorianIsoTehran } from "../../utils/jalali";
+import { formatGregorianIsoLocal } from "../../utils/jalali";
 import {
   mapBookingRow,
   mapOrganizationRow,
@@ -295,6 +295,7 @@ export async function listBookings(filters: {
   date?: string;
   department?: string;
   status?: string;
+  forUser?: { id?: string; email?: string };
 }): Promise<Booking[]> {
   const clauses: string[] = [];
   const params: unknown[] = [];
@@ -318,6 +319,32 @@ export async function listBookings(filters: {
   if (filters.status) {
     clauses.push(`b.status = $${i++}`);
     params.push(filters.status);
+  }
+  if (filters.forUser) {
+    const { id, email } = filters.forUser;
+    const parts: string[] = [];
+    if (id) {
+      parts.push(`b.organizer_id = $${i}`);
+      params.push(id);
+      i++;
+    }
+    if (email?.trim()) {
+      const emailParam = email.trim().toLowerCase();
+      parts.push(`LOWER(b.organizer_email) = $${i}`);
+      params.push(emailParam);
+      i++;
+      parts.push(
+        `EXISTS (
+          SELECT 1 FROM jsonb_array_elements_text(COALESCE(b.attendee_emails, '[]'::jsonb)) AS ae(val)
+          WHERE LOWER(ae.val) = $${i}
+        )`,
+      );
+      params.push(emailParam);
+      i++;
+    }
+    if (parts.length > 0) {
+      clauses.push(`(${parts.join(" OR ")})`);
+    }
   }
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
   const { rows } = await query(
@@ -346,7 +373,10 @@ export async function hasBookingConflict(
   return rows.length > 0;
 }
 
-export async function createBooking(booking: Booking): Promise<Booking> {
+export async function createBooking(
+  booking: Booking,
+  options?: { organizerId?: string | null },
+): Promise<Booking> {
   await query(
     `INSERT INTO bookings (
       id, organization_id, room_id, title, description, organizer_name, organizer_email,
@@ -361,7 +391,7 @@ export async function createBooking(booking: Booking): Promise<Booking> {
       booking.description || "",
       booking.organizerName,
       booking.organizerEmail,
-      null,
+      options?.organizerId ?? null,
       booking.date,
       booking.startTime,
       booking.endTime,
@@ -697,11 +727,102 @@ export async function deleteVerificationCode(email: string, purpose: Verificatio
 
 // --- Stats ---
 
-export async function getStatsData(orgId?: string) {
+type MeetingGoalCategory = "planning" | "client" | "team";
+
+const MONTHLY_GOAL_LABELS: Record<MeetingGoalCategory, string> = {
+  planning: "جلسات برنامه‌ریزی",
+  client: "جلسات با مشتری",
+  team: "جلسات تیمی",
+};
+
+const MONTHLY_GOAL_TARGETS: Record<MeetingGoalCategory, number> = {
+  planning: 8,
+  client: 4,
+  team: 8,
+};
+
+function meetingGoalCategory(title: string): MeetingGoalCategory {
+  if (/مشتری|کارفرما|فروش|قرارداد|vip/i.test(title)) return "client";
+  if (/تیم|اسپرینت|محصول|هماهنگی|مارکتینگ|استنداپ|داخلی/i.test(title)) return "team";
+  return "planning";
+}
+
+function isBookingCompleted(
+  b: Booking,
+  todayStr: string,
+  currentHourStr: string,
+): boolean {
+  if (b.status === "completed") return true;
+  if (b.status === "cancelled") return false;
+  if (b.date < todayStr) return true;
+  if (b.date === todayStr && b.endTime <= currentHourStr) return true;
+  return false;
+}
+
+function isoDateParts(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function buildUsageBuckets(
+  bookings: Booking[],
+  buckets: { day: string; date: string; match: (b: Booking) => boolean }[],
+  todayStr: string,
+  currentHourStr: string,
+) {
+  const counts = buckets.map((bucket) => {
+    const dayBookings = bookings.filter(bucket.match);
+    const completedCount = dayBookings.filter((b) =>
+      isBookingCompleted(b, todayStr, currentHourStr),
+    ).length;
+    return { ...bucket, count: dayBookings.length, completedCount };
+  });
+  const maxCount = Math.max(1, ...counts.map((c) => c.count));
+  return counts.map((c) => ({
+    day: c.day,
+    date: c.date,
+    count: c.count,
+    completedCount: c.completedCount,
+    percentage: Math.round((c.count / maxCount) * 100),
+    completedPercentage: Math.round((c.completedCount / maxCount) * 100),
+  }));
+}
+
+function buildMonthlyGoals(monthBookings: Booking[]) {
+  const counts: Record<MeetingGoalCategory, number> = {
+    planning: 0,
+    client: 0,
+    team: 0,
+  };
+  monthBookings.forEach((b) => {
+    counts[meetingGoalCategory(b.title)] += 1;
+  });
+  return (["planning", "client", "team"] as MeetingGoalCategory[]).map((key) => {
+    const count = counts[key];
+    const target = MONTHLY_GOAL_TARGETS[key];
+    return {
+      label: MONTHLY_GOAL_LABELS[key],
+      count,
+      target,
+      pct: Math.min(100, Math.round((count / target) * 100)),
+    };
+  });
+}
+
+export async function getStatsData(options?: {
+  orgId?: string;
+  forUser?: { id?: string; email?: string };
+}) {
+  const orgId = options?.orgId;
   const rooms = await listRooms(orgId ? { orgId } : {});
-  const bookings = await listBookings(orgId ? { orgId } : {});
+  const bookings = await listBookings({
+    orgId,
+    forUser: options?.forUser,
+  });
   const orgBookings = bookings.filter((b) => b.status !== "cancelled");
-  const todayStr = formatGregorianIsoTehran();
+  const todayStr = formatGregorianIsoLocal();
   const todayBookings = orgBookings.filter((b) => b.date === todayStr);
   const now = new Date();
   const currentHourStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
@@ -722,18 +843,39 @@ export async function getStatsData(orgId?: string) {
     departmentCounts[b.department] = (departmentCounts[b.department] || 0) + 1;
   });
   const dayNames = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"];
-  const weeklyUsage = [-3, -2, -1, 0, 1, 2, 3].map((offset) => {
+
+  const weeklyBuckets = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() + offset);
-    const iso = formatGregorianIsoTehran(d);
-    const count = orgBookings.filter((b) => b.date === iso).length;
+    d.setDate(d.getDate() - (6 - i));
+    const iso = isoDateParts(d);
     return {
       day: dayNames[d.getDay()],
       date: iso,
-      count,
-      percentage: Math.min(100, Math.round((count / Math.max(1, rooms.length * 4)) * 100)),
+      match: (b: Booking) => b.date === iso,
     };
   });
+  const weeklyUsage = buildUsageBuckets(orgBookings, weeklyBuckets, todayStr, currentHourStr);
+
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const monthBookings = orgBookings.filter((b) => b.date.startsWith(monthPrefix));
+
+  const monthlyBuckets: { day: string; date: string; match: (b: Booking) => boolean }[] = [];
+  for (let start = 1; start <= lastDay; start += 7) {
+    const end = Math.min(start + 6, lastDay);
+    const startIso = `${monthPrefix}-${String(start).padStart(2, "0")}`;
+    const endIso = `${monthPrefix}-${String(end).padStart(2, "0")}`;
+    monthlyBuckets.push({
+      day: `هفته ${monthlyBuckets.length + 1}`,
+      date: startIso,
+      match: (b) => b.date >= startIso && b.date <= endIso,
+    });
+  }
+  const monthlyUsage = buildUsageBuckets(orgBookings, monthlyBuckets, todayStr, currentHourStr);
+  const monthlyGoals = buildMonthlyGoals(monthBookings);
+
   let totalMinutes = 0;
   let countedBookings = 0;
   orgBookings.forEach((b) => {
@@ -748,13 +890,18 @@ export async function getStatsData(orgId?: string) {
     }
   });
   const avgMeetingDurationMinutes =
-    countedBookings > 0 ? Math.round(totalMinutes / countedBookings) : 75;
+    countedBookings > 0 ? Math.round(totalMinutes / countedBookings) : 0;
+
+  const personalScope = Boolean(options?.forUser);
   const capacitySlots = Math.max(1, rooms.length * 8);
-  const utilizationRate = Math.min(
-    95,
-    Math.max(45, Math.round((todayBookings.length / capacitySlots) * 100 + 40)),
-  );
-  const topRoomObj = popularRooms[0] || { name: rooms[0]?.name || "اتاق جلسات", count: 4 };
+  const utilizationRate = personalScope
+    ? Math.min(100, Math.round((monthBookings.length / 16) * 100))
+    : Math.min(
+        95,
+        Math.max(45, Math.round((todayBookings.length / capacitySlots) * 100 + 40)),
+      );
+
+  const topRoomObj = popularRooms[0] || { name: rooms[0]?.name || "اتاق جلسات", count: 0 };
   return {
     totalRooms: rooms.length,
     availableRoomsNow: Math.max(0, rooms.length - activeNow.length),
@@ -762,16 +909,19 @@ export async function getStatsData(orgId?: string) {
     todayBookingsCount: todayBookings.length,
     pendingApprovals,
     totalHistoricalBookings: orgBookings.length,
+    thisMonthBookingsCount: monthBookings.length,
     popularRooms,
     departmentStats: departmentCounts,
     utilizationRate,
     weeklyUsage,
+    monthlyUsage,
+    monthlyGoals,
     avgMeetingDurationMinutes,
     topRoom: {
       name: topRoomObj.name,
       occupancyRate: Math.min(
         95,
-        Math.round((topRoomObj.count / Math.max(1, orgBookings.length)) * 100 + 50),
+        Math.round((topRoomObj.count / Math.max(1, orgBookings.length)) * 100 + (personalScope ? 0 : 50)),
       ),
       bookingsCount: topRoomObj.count,
     },

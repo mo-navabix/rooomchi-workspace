@@ -42,3 +42,16 @@ export function canManageTeams(role?: string): boolean {
     upper === "ROOM_MANAGER"
   );
 }
+
+/** Roles that may list all organization bookings (calendar admin, analytics, etc.). */
+export function canViewAllOrgBookings(role?: string): boolean {
+  if (!role) return false;
+  const upper = role.toUpperCase();
+  return (
+    upper === "SUPER_ADMIN" ||
+    upper === "ORGANIZATION_ADMIN" ||
+    upper === "ORG_ADMIN" ||
+    upper === "ROOM_MANAGER" ||
+    upper === "MANAGER"
+  );
+}

@@ -46,7 +46,7 @@ export const AdminBookingsView: React.FC = () => {
     if (!currentOrg) return;
     try {
       setIsLoading(true);
-      const data = await ApiService.getBookings({ orgId: currentOrg.id });
+      const data = await ApiService.getBookings({ orgId: currentOrg.id, scope: 'all' });
       setBookings(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);

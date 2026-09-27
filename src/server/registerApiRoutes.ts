@@ -1,6 +1,11 @@
 import type { Express, Request, Response } from "express";
 import { checkDbStatus } from "../services/dbService";
-import { jwtService, extractJwtUser, isProtectedAdmin, canManageTeams } from "./authHelpers";
+import {
+  jwtService,
+  extractJwtUser,
+  isProtectedAdmin,
+  canManageTeams,
+} from "./authHelpers";
 import { asyncRoute, stripPassword } from "./http";
 import type { Booking, Organization, Room, TeamRecord, User } from "./types";
 import * as store from "./persistence/store";
@@ -214,13 +219,29 @@ export function registerApiRoutes(app: Express): void {
   }));
 
   app.get("/api/bookings", asyncRoute(async (req, res) => {
-    const { orgId, roomId, date, department, status } = req.query;
+    const { orgId, roomId, date, department, status, scope } = req.query;
+    const jwtUser = extractJwtUser(req);
+    const scopeAll = scope === "all" || scope === "org";
+
+    let forUser: { id?: string; email?: string } | undefined;
+    if (jwtUser && !scopeAll) {
+      const dbUser = await store.getUserById(jwtUser.userId);
+      forUser = {
+        id: jwtUser.userId,
+        email: dbUser?.email || undefined,
+      };
+    }
+    if (!jwtUser) {
+      return res.json([]);
+    }
+
     const bookings = await store.listBookings({
       orgId: orgId ? String(orgId) : undefined,
       roomId: roomId ? String(roomId) : undefined,
       date: date ? String(date) : undefined,
       department: department ? String(department) : undefined,
       status: status ? String(status) : undefined,
+      forUser,
     });
     res.json(bookings);
   }));
@@ -301,7 +322,10 @@ export function registerApiRoutes(app: Express): void {
       createdAt: new Date().toISOString(),
     };
 
-    await store.createBooking(newBooking);
+    const jwtUser = extractJwtUser(req);
+    await store.createBooking(newBooking, {
+      organizerId: jwtUser?.userId ?? null,
+    });
     res.status(201).json(newBooking);
   }));
 
@@ -322,8 +346,29 @@ export function registerApiRoutes(app: Express): void {
   }));
 
   app.get("/api/stats", asyncRoute(async (req, res) => {
-    const { orgId } = req.query;
-    res.json(await store.getStatsData(orgId ? String(orgId) : undefined));
+    const { orgId, scope } = req.query;
+    const jwtUser = extractJwtUser(req);
+    const scopeAll = scope === "all" || scope === "org";
+
+    if (!jwtUser) {
+      return res.json(await store.getStatsData({ orgId: orgId ? String(orgId) : undefined }));
+    }
+
+    let forUser: { id?: string; email?: string } | undefined;
+    if (!scopeAll) {
+      const dbUser = await store.getUserById(jwtUser.userId);
+      forUser = {
+        id: jwtUser.userId,
+        email: dbUser?.email || undefined,
+      };
+    }
+
+    res.json(
+      await store.getStatsData({
+        orgId: orgId ? String(orgId) : undefined,
+        forUser,
+      }),
+    );
   }));
 
   // --- Auth ---

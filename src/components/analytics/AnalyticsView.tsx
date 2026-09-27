@@ -28,9 +28,9 @@ export const AnalyticsView: React.FC = () => {
     try {
       setIsLoading(true);
       const [statsData, roomsData, bookingsData] = await Promise.all([
-        ApiService.getStats(currentOrg.id),
+        ApiService.getStats(currentOrg.id, { scope: 'all' }),
         ApiService.getRooms({ orgId: currentOrg.id }),
-        ApiService.getBookings({ orgId: currentOrg.id }),
+        ApiService.getBookings({ orgId: currentOrg.id, scope: 'all' }),
       ]);
       setStats(statsData);
       setRooms(roomsData);

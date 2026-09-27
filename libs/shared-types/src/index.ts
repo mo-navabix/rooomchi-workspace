@@ -141,7 +141,24 @@ export interface Stats {
   departmentStats: Record<string, number>;
   // Extended Analytics
   utilizationRate?: number; // e.g. 86
-  weeklyUsage?: { day: string; date: string; count: number; percentage: number }[];
+  weeklyUsage?: {
+    day: string;
+    date: string;
+    count: number;
+    completedCount?: number;
+    percentage: number;
+    completedPercentage?: number;
+  }[];
+  monthlyUsage?: {
+    day: string;
+    date: string;
+    count: number;
+    completedCount?: number;
+    percentage: number;
+    completedPercentage?: number;
+  }[];
+  monthlyGoals?: { label: string; pct: number; count: number; target: number }[];
+  thisMonthBookingsCount?: number;
   avgMeetingDurationMinutes?: number;
   topRoom?: { name: string; occupancyRate: number; bookingsCount: number };
   monthlyTrend?: { label: string; count: number }[];

@@ -12,7 +12,6 @@ import {
   Sliders,
   ShieldCheck,
   X,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Layers,
@@ -33,7 +32,26 @@ import { ActiveTab } from "../../types";
 const SIDEBAR_COLLAPSED_KEY = "rooomchi-portal-sidebar-collapsed";
 const SIDEBAR_STYLE_KEY = "rooomchi-portal-sidebar-style"; // "modern-card" | "classic"
 
-const SIDEBAR_GROUPS_KEY = "rooomchi-portal-sidebar-open-groups";
+const MAIN_NAV_TABS: ActiveTab[] = [
+  "dashboard",
+  "rooms",
+  "calendar",
+  "my-bookings",
+  "teams",
+  "support-ticket",
+  "profile",
+];
+
+const ADMIN_NAV_TABS: ActiveTab[] = [
+  "admin-bookings",
+  "admin-rooms",
+  "access-control",
+  "admin-rbac",
+  "analytics",
+  "admin-notifications",
+  "admin-support-tickets",
+  "admin-settings",
+];
 
 type SidebarProps = {
   mobileOpen: boolean;
@@ -44,13 +62,7 @@ type NavItem = {
   id: ActiveTab;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-};
-
-type NavGroup = {
-  id: string;
-  title: string;
-  icon: React.ComponentType<{ className?: string }>;
-  items: NavItem[];
+  permissionCheck?: boolean;
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
@@ -87,18 +99,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   const normalizedRole = normalizeUserRole(userRole);
   const isEmployee = normalizedRole === "employee";
 
-  const [openGroups, setOpenGroups] = useState<Set<string>>(() => {
-    try {
-      const raw = localStorage.getItem(SIDEBAR_GROUPS_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as string[];
-        return new Set(parsed);
-      }
-    } catch {
-      /* ignore */
-    }
-    return new Set(["home", "meetings", "admin-ops"]);
-  });
+  const [mode, setMode] = useState<"personal" | "business">("personal");
 
   // User dropdown menu
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -108,12 +109,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    try {
-      localStorage.setItem(SIDEBAR_GROUPS_KEY, JSON.stringify([...openGroups]));
-    } catch {
-      /* ignore */
+    if (isEmployee) {
+      setMode("personal");
+      return;
     }
-  }, [openGroups]);
+    if (ADMIN_NAV_TABS.includes(activeTab)) {
+      setMode("business");
+    } else if (MAIN_NAV_TABS.includes(activeTab)) {
+      setMode("personal");
+    }
+  }, [activeTab, isEmployee]);
 
   useEffect(() => {
     try {
@@ -136,101 +141,88 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   const displayRole =
     roleMeta?.titleFa?.split(" ").slice(0, 2).join(" ") || "عضو سازمان";
 
-  const navGroups: NavGroup[] = useMemo(() => {
-    const groups: NavGroup[] = [
+  const personalNavItems: NavItem[] = useMemo(
+    () => [
+      { id: "dashboard", label: "داشبورد", icon: LayoutDashboard },
+      { id: "rooms", label: "رزرو اتاق‌ها و سالن‌ها", icon: DoorOpen },
+      { id: "calendar", label: "تقویم جلسات", icon: Calendar },
+      { id: "my-bookings", label: "جلسات من", icon: CalendarCheck },
+      { id: "teams", label: "تیم‌ها و همکاران", icon: Users },
+      { id: "support-ticket", label: "پشتیبانی و تیکت من", icon: Ticket },
+      { id: "profile", label: "پروفایل من", icon: User },
+    ],
+    [],
+  );
+
+  const businessNavItems: NavItem[] = useMemo(() => {
+    const items: NavItem[] = [
       {
-        id: "home",
-        title: "خانه",
-        icon: LayoutDashboard,
-        items: [{ id: "dashboard", label: "داشبورد", icon: LayoutDashboard }],
+        id: "admin-bookings",
+        label: "نظارت بر رزروها",
+        icon: CalendarCheck,
+        permissionCheck: can("APPROVE_BOOKINGS"),
       },
       {
-        id: "meetings",
-        title: "رزرو و جلسات",
-        icon: Calendar,
-        items: [
-          { id: "rooms", label: "اتاق‌ها و سالن‌ها", icon: DoorOpen },
-          { id: "calendar", label: "تقویم جلسات", icon: Calendar },
-          { id: "my-bookings", label: "رزروهای من", icon: CalendarCheck },
-        ],
+        id: "admin-rooms",
+        label: "مدیریت اتاق‌ها و تجهیزات",
+        icon: Layers,
+        permissionCheck: can("MANAGE_ROOMS"),
       },
       {
-        id: "collab",
-        title: "تیم و پشتیبانی",
-        icon: Users,
-        items: [
-          { id: "teams", label: "تیم‌ها", icon: Users },
-          { id: "support-ticket", label: "تیکت پشتیبانی", icon: Ticket },
-        ],
+        id: "access-control",
+        label: "کنترل دسترسی‌ها و امنیت",
+        icon: KeyRound,
+        permissionCheck: can("MANAGE_USERS_ROLES"),
+      },
+      {
+        id: "admin-rbac",
+        label: "کاربران و سطوح دسترسی",
+        icon: ShieldCheck,
+        permissionCheck: can("MANAGE_USERS_ROLES"),
+      },
+      {
+        id: "analytics",
+        label: "گزارش‌ها و آمار سازمان",
+        icon: BarChart3,
+      },
+      {
+        id: "admin-notifications",
+        label: "مدیریت اعلان‌ها (SMS و تلگرام)",
+        icon: BellRing,
+        permissionCheck: can("MANAGE_ORG_SETTINGS"),
+      },
+      {
+        id: "admin-support-tickets",
+        label: "تیکت‌های سازمانی",
+        icon: Ticket,
+        permissionCheck: can("MANAGE_ORG_SETTINGS"),
+      },
+      {
+        id: "admin-settings",
+        label: "تنظیمات سازمان",
+        icon: Sliders,
+        permissionCheck: can("MANAGE_ORG_SETTINGS"),
       },
     ];
+    return items.filter((i) => i.permissionCheck === undefined || i.permissionCheck);
+  }, [can]);
 
-    if (!isEmployee) {
-      const adminOps: NavItem[] = [];
-      if (can("APPROVE_BOOKINGS")) {
-        adminOps.push({ id: "admin-bookings", label: "نظارت رزروها", icon: CalendarCheck });
-      }
-      if (can("MANAGE_ROOMS")) {
-        adminOps.push({ id: "admin-rooms", label: "مدیریت اتاق‌ها", icon: Layers });
-      }
-      adminOps.push({ id: "analytics", label: "گزارش و آمار", icon: BarChart3 });
-      if (adminOps.length > 0) {
-        groups.push({ id: "admin-ops", title: "مدیریت عملیات", icon: BarChart3, items: adminOps });
-      }
+  const showBusinessMode = !isEmployee && businessNavItems.length > 0;
+  const activeMainItems =
+    isEmployee || mode === "personal" ? personalNavItems : businessNavItems;
 
-      const adminSecurity: NavItem[] = [];
-      if (can("MANAGE_USERS_ROLES")) {
-        adminSecurity.push({ id: "access-control", label: "کنترل دسترسی", icon: KeyRound });
-        adminSecurity.push({ id: "admin-rbac", label: "کاربران و نقش‌ها", icon: ShieldCheck });
-      }
-      if (adminSecurity.length > 0) {
-        groups.push({
-          id: "admin-security",
-          title: "امنیت و کاربران",
-          icon: ShieldCheck,
-          items: adminSecurity,
-        });
-      }
-
-      const adminConfig: NavItem[] = [];
-      if (can("MANAGE_ORG_SETTINGS")) {
-        adminConfig.push({ id: "admin-notifications", label: "اعلان‌ها", icon: BellRing });
-        adminConfig.push({ id: "admin-support-tickets", label: "تیکت‌های سازمان", icon: Ticket });
-        adminConfig.push({ id: "admin-settings", label: "تنظیمات سازمان", icon: Sliders });
-      }
-      if (adminConfig.length > 0) {
-        groups.push({ id: "admin-config", title: "پیکربندی", icon: Sliders, items: adminConfig });
-      }
+  const handleSwitchToBusiness = () => {
+    setMode("business");
+    if (!ADMIN_NAV_TABS.includes(activeTab)) {
+      setActiveTab(businessNavItems[0]?.id || "admin-bookings");
     }
+  };
 
-    groups.push({
-      id: "account",
-      title: "حساب من",
-      icon: User,
-      items: [{ id: "profile", label: "پروفایل", icon: User }],
-    });
-
-    return groups.filter((g) => g.items.length > 0);
-  }, [can, isEmployee]);
-
-  useEffect(() => {
-    const group = navGroups.find((g) => g.items.some((i) => i.id === activeTab));
-    if (!group) return;
-    setOpenGroups((prev) => {
-      if (prev.has(group.id)) return prev;
-      const next = new Set(prev);
-      next.add(group.id);
-      return next;
-    });
-  }, [activeTab, navGroups]);
-
-  const toggleGroup = (groupId: string) => {
-    setOpenGroups((prev) => {
-      const next = new Set(prev);
-      if (next.has(groupId)) next.delete(groupId);
-      else next.add(groupId);
-      return next;
-    });
+  const handleSwitchToPersonal = () => {
+    setMode("personal");
+    if (!MAIN_NAV_TABS.includes(activeTab)) {
+      setActiveTab("dashboard");
+    }
   };
 
   const goTo = (id: ActiveTab) => {
@@ -265,7 +257,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   }, [searchQuery, isEmployee]);
 
   const isModern = sidebarStyle === "modern-card";
-  const shellWidth = collapsed ? "w-[72px]" : "w-[248px]";
+  const shellWidth = collapsed ? "w-[76px]" : "w-[275px]";
 
   return (
     <>
@@ -360,115 +352,98 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             </div>
           </div>
 
-          {!collapsed && (
-            <div className="px-3 pb-1">
-              <p className="text-xs font-bold text-slate-400 dark:text-slate-500 tracking-wide">
-                منوی سامانه
-              </p>
-            </div>
+          {showBusinessMode && (
+            !collapsed ? (
+              <div className="px-3.5 pt-1 pb-2.5">
+                <div className="bg-slate-100/90 dark:bg-slate-800/70 p-1 rounded-2xl flex items-center gap-1 border border-slate-200/50 dark:border-white/5">
+                  <button
+                    type="button"
+                    onClick={handleSwitchToPersonal}
+                    className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      mode === "personal"
+                        ? "bg-[#0F786E] text-white shadow-sm shadow-[#0F786E]/30"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    }`}
+                  >
+                    شخصی
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSwitchToBusiness}
+                    className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      mode === "business"
+                        ? "bg-[#0F786E] text-white shadow-sm shadow-[#0F786E]/30"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    }`}
+                  >
+                    سازمانی
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="py-2 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (mode === "personal") {
+                      handleSwitchToBusiness();
+                    } else {
+                      handleSwitchToPersonal();
+                    }
+                  }}
+                  title={`حالت فعلی: ${mode === "personal" ? "شخصی" : "سازمانی"} (برای تغییر کلیک کنید)`}
+                  className="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full p-0.5 cursor-pointer transition-colors relative"
+                >
+                  <span
+                    className={`block w-4 h-4 rounded-full bg-[#0F786E] shadow-sm transition-transform duration-200 ${
+                      mode === "business" ? "-translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+            )
           )}
         </div>
 
-        {/* MIDDLE NAVIGATION — expanded scrolls; collapsed shows one icon per group (no scroll) */}
-        <div
-          className={`flex-1 min-h-0 px-2 py-1 ${
-            collapsed ? "overflow-hidden" : "overflow-y-auto overflow-x-hidden"
-          }`}
-        >
-          <nav
-            className={collapsed ? "space-y-1" : "space-y-2"}
-            aria-label="منوی سامانه"
-          >
-            {collapsed
-              ? navGroups.map((group) => {
-                  const activeInGroup = group.items.find((i) => i.id === activeTab);
-                  const target = activeInGroup ?? group.items[0];
-                  const Icon = activeInGroup?.icon ?? group.icon;
-                  return (
-                    <button
-                      key={group.id}
-                      type="button"
-                      id={`sidebar-nav-group-${group.id}`}
-                      title={group.title}
-                      onClick={() => goTo(target.id)}
-                      className={`relative w-full flex items-center justify-center rounded-lg p-2 cursor-pointer text-slate-600 dark:text-slate-300 ${
-                        activeInGroup ? "font-bold" : ""
-                      }`}
-                    >
-                      <Icon className="w-[18px] h-[18px] shrink-0" />
-                    </button>
-                  );
-                })
-              : navGroups.map((group) => {
-                  const GroupIcon = group.icon;
-                  const isOpen = openGroups.has(group.id);
-                  const isSingleItem = group.items.length === 1;
-
-                  if (isSingleItem && group.id === "home") {
-                    const item = group.items[0];
-                    const Icon = item.icon;
-                    const isActive = activeTab === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        id={`sidebar-nav-${item.id}`}
-                        onClick={() => goTo(item.id)}
-                        className={`relative w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm cursor-pointer text-slate-700 dark:text-slate-200 ${
-                          isActive ? "font-bold" : "font-medium"
-                        }`}
-                      >
-                        <Icon className="w-[18px] h-[18px] shrink-0" />
-                        <span className="flex-1 text-right truncate">{item.label}</span>
-                      </button>
-                    );
-                  }
-
-                  return (
-                    <div key={group.id} className="rounded-xl">
-                      <button
-                        type="button"
-                        onClick={() => toggleGroup(group.id)}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 cursor-pointer rounded-xl"
-                        aria-expanded={isOpen}
-                      >
-                        <GroupIcon className="w-4 h-4 shrink-0 text-slate-400" />
-                        <span className="flex-1 text-right text-sm font-bold truncate text-slate-600 dark:text-slate-300">
-                          {group.title}
-                        </span>
-                        <ChevronDown
-                          className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
-                            isOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-
-                      {isOpen && (
-                        <ul className="pb-1.5 pr-1 space-y-0.5">
-                          {group.items.map((item) => {
-                            const Icon = item.icon;
-                            const isActive = activeTab === item.id;
-                            return (
-                              <li key={item.id}>
-                                <button
-                                  type="button"
-                                  id={`sidebar-nav-${item.id}`}
-                                  onClick={() => goTo(item.id)}
-                                  className={`relative w-full flex items-center gap-2.5 rounded-lg pr-2 pl-2 py-2 mr-3 text-sm cursor-pointer text-slate-700 dark:text-slate-200 ${
-                                    isActive ? "font-bold" : "font-medium"
-                                  }`}
-                                >
-                                  <Icon className="w-4 h-4 shrink-0 text-slate-400" />
-                                  <span className="flex-1 text-right truncate">{item.label}</span>
-                                </button>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      )}
-                    </div>
-                  );
-                })}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-1 space-y-3">
+          <nav className="space-y-1">
+            {activeMainItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  id={`sidebar-nav-${item.id}`}
+                  title={collapsed ? item.label : undefined}
+                  onClick={() => goTo(item.id)}
+                  className={`group relative w-full flex items-center gap-3 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                    collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
+                  } ${
+                    isActive
+                      ? "bg-[#0F786E]/10 dark:bg-[#0F786E]/20 text-[#0F786E] dark:text-[#5eead4] font-bold shadow-2xs"
+                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                  }`}
+                >
+                  {isActive && (
+                    <span
+                      className="absolute right-1 top-2 bottom-2 w-1 rounded-full bg-[#0F786E] dark:bg-[#5eead4]"
+                      aria-hidden
+                    />
+                  )}
+                  <Icon
+                    className={`w-[18px] h-[18px] shrink-0 transition-colors ${
+                      isActive
+                        ? "text-[#0F786E] dark:text-[#5eead4]"
+                        : "text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200"
+                    }`}
+                  />
+                  {!collapsed && (
+                    <span className="flex-1 text-right truncate">{item.label}</span>
+                  )}
+                </button>
+              );
+            })}
           </nav>
         </div>
 

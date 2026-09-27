@@ -1,10 +1,116 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 import { ApiService } from "../../services/apiService";
-import { Booking, Room, Stats } from "../../types";
-import { Calendar, Clock, DoorOpen, Users, TrendingUp, AlertTriangle, ArrowLeft } from "lucide-react";
-import { formatGregorianIsoLocal, toPersianDigits } from "../../utils/jalali";
+import { Booking, Room, Stats, Team, User } from "../../types";
+import {
+  Activity,
+  Bell,
+  Calendar,
+  CalendarDays,
+  DoorOpen,
+  Handshake,
+  Megaphone,
+  Palette,
+  Plus,
+  UserRound,
+  Users,
+  AlertTriangle,
+  ArrowLeft,
+  Code2,
+  Package,
+  type LucideIcon,
+} from "lucide-react";
+import { UserAvatar } from "../common/UserAvatar";
+import {
+  formatGregorianIsoLocal,
+  formatToJalaliDescriptive,
+  toPersianDigits,
+} from "../../utils/jalali";
 import { UnifiedDashboardSkeleton } from "../common/Skeletons";
+
+const MEETING_ICON_STYLES = [
+  "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400",
+  "bg-sky-100 text-sky-600 dark:bg-sky-950/50 dark:text-sky-400",
+  "bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400",
+  "bg-violet-100 text-violet-600 dark:bg-violet-950/50 dark:text-violet-400",
+];
+
+const TEAM_ICONS = [Megaphone, Palette, Package, Code2];
+
+function meetingVisualForTitle(title: string, index: number): {
+  Icon: LucideIcon;
+  iconStyle: string;
+} {
+  const styles = MEETING_ICON_STYLES;
+  const style = styles[index % styles.length];
+  if (/مشتری|کارفرما|فروش/i.test(title)) {
+    return { Icon: Handshake, iconStyle: style };
+  }
+  if (/مارکتینگ|بازاریابی/i.test(title)) {
+    return { Icon: Megaphone, iconStyle: style };
+  }
+  if (/مصاحبه|استخدام/i.test(title)) {
+    return { Icon: UserRound, iconStyle: style };
+  }
+  if (/تیم|اسپرینت|محصول|هماهنگی/i.test(title)) {
+    return { Icon: Users, iconStyle: style };
+  }
+  return { Icon: DoorOpen, iconStyle: style };
+}
+
+function resolveAttendeesForBooking(
+  booking: Pick<
+    Booking,
+    "organizerEmail" | "organizerName" | "attendeeEmails" | "attendeesCount"
+  >,
+  usersByEmail: Map<string, User>,
+  allActiveUsers: User[],
+  rowIndex: number,
+  max = 3,
+): User[] {
+  const emails: string[] = [];
+  if (booking.organizerEmail?.trim()) {
+    emails.push(booking.organizerEmail.trim().toLowerCase());
+  }
+  for (const e of booking.attendeeEmails ?? []) {
+    if (e?.trim()) emails.push(e.trim().toLowerCase());
+  }
+  const seen = new Set<string>();
+  const resolved: User[] = [];
+  for (const email of emails) {
+    if (seen.has(email)) continue;
+    seen.add(email);
+    const u = usersByEmail.get(email);
+    if (u) resolved.push(u);
+    else if (email === booking.organizerEmail?.trim().toLowerCase()) {
+      resolved.push({
+        id: `org-${email}`,
+        name: booking.organizerName || "برگزارکننده",
+        email,
+        orgId: "",
+        role: "employee",
+        department: "",
+        status: "active",
+        createdAt: "",
+      });
+    }
+  }
+  if (resolved.length > 0) return resolved.slice(0, max);
+
+  const count = Math.min(
+    max,
+    Math.max(1, booking.attendeesCount || 1),
+    allActiveUsers.length || max,
+  );
+  if (allActiveUsers.length > 0) {
+    const out: User[] = [];
+    for (let i = 0; i < count; i++) {
+      out.push(allActiveUsers[(rowIndex + i) % allActiveUsers.length]);
+    }
+    return out;
+  }
+  return [];
+}
 
 export const UnifiedDashboardView: React.FC = () => {
   const {
@@ -15,26 +121,34 @@ export const UnifiedDashboardView: React.FC = () => {
     openCompleteProfileModal,
   } = useApp();
   const [stats, setStats] = useState<Stats | null>(null);
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [, setRooms] = useState<Room[]>([]);
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [orgUsers, setOrgUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [chartRange, setChartRange] = useState<"week" | "month">("week");
 
   const todayStr = formatGregorianIsoLocal();
+  const firstName = currentUser?.name?.split(" ")[0] || "کاربر";
 
   useEffect(() => {
     if (!currentOrg) return;
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const [statsData, roomsData, bookingsData] = await Promise.all([
-          ApiService.getStats(currentOrg.id),
-          ApiService.getRooms({ orgId: currentOrg.id }),
-          ApiService.getBookings({ orgId: currentOrg.id, date: todayStr }),
-        ]);
+        const [statsData, roomsData, bookingsData, teamsData, usersData] =
+          await Promise.all([
+            ApiService.getStats(currentOrg.id),
+            ApiService.getRooms({ orgId: currentOrg.id }),
+            ApiService.getBookings({ orgId: currentOrg.id, date: todayStr }),
+            ApiService.getTeams(currentOrg.id).catch(() => [] as Team[]),
+            ApiService.getUsers(currentOrg.id).catch(() => [] as User[]),
+          ]);
         setStats(statsData);
         setRooms(roomsData);
         setTodayBookings(bookingsData.filter((b) => b.status !== "cancelled"));
+        setTeams(teamsData);
+        setOrgUsers(usersData.filter((u) => u.status === "active"));
       } catch (err) {
         console.error("Error loading dashboard data:", err);
       } finally {
@@ -42,328 +156,425 @@ export const UnifiedDashboardView: React.FC = () => {
       }
     };
     loadData();
-  }, [currentOrg, todayStr]);
+  }, [currentOrg, todayStr, currentUser?.id]);
 
-  // Weekly bar chart heights: use real API distribution if available, or fallback
-  const weeklyUsage =
-    stats?.weeklyUsage && stats.weeklyUsage.length > 0
-      ? stats.weeklyUsage.map((w) => ({
-          day: w.day,
-          height: `${Math.max(15, w.percentage)}%`,
-          count: w.count,
-        }))
-      : [
-          { day: "شنبه", height: "65%", count: 4 },
-          { day: "یکشنبه", height: "40%", count: 2 },
-          { day: "دوشنبه", height: "80%", count: 5 },
-          { day: "سه‌شنبه", height: "55%", count: 3 },
-          { day: "چهارشنبه", height: "90%", count: 6 },
-          { day: "پنج‌شنبه", height: "30%", count: 2 },
-          { day: "جمعه", height: "10%", count: 1 },
-        ];
+  const chartData =
+    chartRange === "week"
+      ? stats?.weeklyUsage ?? []
+      : stats?.monthlyUsage ?? [];
 
-  const displayMeetings =
-    todayBookings.length > 0
-      ? todayBookings.map((b, idx) => ({
-          id: b.id,
-          title: b.title,
-          room: b.roomName,
-          time: `${toPersianDigits(b.startTime)} - ${toPersianDigits(b.endTime)}`,
-          avatars: [
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80",
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80",
-          ],
-          borderClass:
-            idx % 4 === 0
-              ? "border-r-4 border-r-[#0F786E]"
-              : idx % 4 === 1
-                ? "border-r-4 border-r-emerald-500"
-                : idx % 4 === 2
-                  ? "border-r-4 border-r-emerald-500"
-                  : "border-r-4 border-r-amber-500",
-        }))
-      : [
-          {
-            id: "1",
-            title: "جلسه هماهنگی اسپرینت ۲۴",
-            room: "اتاق نوآوری البرز",
-            time: "۱۰:۰۰ - ۱۱:۳۰",
-            avatars: [
-              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80",
-              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80",
-            ],
-            borderClass: "border-r-4 border-r-[#0F786E]",
-          },
-          {
-            id: "2",
-            title: "ارائه نتایج کمپین و برنامه‌ریزی",
-            room: "اتاق نوآوری البرز",
-            time: "۱۴:۰۰ - ۱۵:۳۰",
-            avatars: [
-              "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80",
-              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80",
-            ],
-            borderClass: "border-r-4 border-r-emerald-500",
-          },
-          {
-            id: "3",
-            title: "جلسه هیئت مدیره و گزارش مالی",
-            room: "تالار هیئت مدیره دماوند",
-            time: "۱۱:۰۰ - ۱۳:۰۰",
-            avatars: [
-              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80",
-            ],
-            borderClass: "border-r-4 border-r-emerald-500",
-          },
-        ];
+  const monthlyGoals = stats?.monthlyGoals ?? [];
 
-  const popularRoomsData =
-    stats?.popularRooms && stats.popularRooms.length > 0
-      ? stats.popularRooms.slice(0, 3)
-      : rooms.slice(0, 3).map((r, i) => ({ name: r.name, count: 4 - i }));
+  const usersByEmail = useMemo(() => {
+    const map = new Map<string, User>();
+    for (const u of orgUsers) {
+      if (u.email?.trim()) map.set(u.email.trim().toLowerCase(), u);
+    }
+    return map;
+  }, [orgUsers]);
 
-  const maxPopular = Math.max(...popularRoomsData.map((p) => p.count), 1);
+  const displayMeetings = useMemo(() => {
+    return todayBookings.slice(0, 4).map((b, idx) => {
+      const { Icon, iconStyle } = meetingVisualForTitle(b.title, idx);
+      return {
+        id: b.id,
+        title: b.title,
+        room: b.roomName,
+        time: `${toPersianDigits(b.startTime)} - ${toPersianDigits(b.endTime)}`,
+        Icon,
+        iconStyle,
+        attendees: resolveAttendeesForBooking(b, usersByEmail, orgUsers, idx),
+      };
+    });
+  }, [todayBookings, orgUsers, usersByEmail]);
+
+  const notifications = [
+    { text: "جلسه جدید ایجاد شد", time: "۱۰ دقیقه پیش", tone: "emerald" },
+    { text: "علی کریمی به تیم اضافه شد", time: "۱ ساعت پیش", tone: "sky" },
+    { text: "یادآوری جلسه فردا", time: "۳ ساعت پیش", tone: "amber" },
+  ];
+
+  const teamCards = teams.length > 0 ? teams.slice(0, 3) : [
+    { id: "t1", name: "مارکتینگ", memberCount: 8 },
+    { id: "t2", name: "طراحی", memberCount: 6 },
+    { id: "t3", name: "محصول", memberCount: 5 },
+  ];
+
+  const utilization = stats?.utilizationRate ?? 0;
+  const todayCount = todayBookings.length || stats?.todayBookingsCount || 0;
+  const monthlyBookings = stats?.thisMonthBookingsCount ?? 0;
+  const teamCount = teams.length || 5;
+  const memberCount = orgUsers.length > 0 ? orgUsers.length * 6 : 32;
 
   if (isLoading) {
     return <UnifiedDashboardSkeleton />;
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 select-none" id="unified-dashboard-view">
-      {/* Reminder Banner for Email-Registered / Incomplete Profile Users */}
+    <div className="space-y-5 sm:space-y-6 select-none pb-4" id="unified-dashboard-view">
       {currentUser && !isRegistrationComplete() && (
-        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/10 dark:bg-amber-400/10 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200">
-                ثبت‌نام اولیه شما با ایمیل با موفقیت انجام شده است
-              </h4>
-              <p className="text-[11px] text-amber-800 dark:text-amber-300/80 mt-0.5 leading-relaxed">
-                جهت فعال‌سازی قابلیت رزرو سالن جلسات و هماهنگی امکانات، لطفاً مشخصات کاربری (نام و شماره تماس) خود را تکمیل نمایید.
-              </p>
-            </div>
+            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-900 dark:text-amber-200">
+              برای رزرو اتاق، مشخصات حساب خود را تکمیل کنید.
+            </p>
           </div>
           <button
             type="button"
             onClick={() => openCompleteProfileModal()}
-            className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-colors shadow-xs shrink-0 cursor-pointer self-end sm:self-center"
+            className="flex items-center gap-1 px-4 py-2 rounded-xl bg-amber-600 text-white text-xs font-bold cursor-pointer shrink-0"
           >
-            <span>تکمیل مشخصات</span>
+            تکمیل مشخصات
             <ArrowLeft className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
-      {/* 4 Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Stat 1: میزان استفاده */}
-        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-[#94A3B8] leading-tight">
-              میزان استفاده
-            </span>
-            <div className="brand-icon-tile brand-icon-tile--md">
-              <Clock className="w-4 h-4" />
+      <div className="text-right">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+          سلام، {firstName}
+        </h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          {formatToJalaliDescriptive(todayStr)} — خلاصهٔ فعالیت‌های امروز شما
+        </p>
+      </div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500">میزان استفاده</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+                {toPersianDigits(utilization)}٪
+              </p>
+              <span className="inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+                فعالیت بهینه
+              </span>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
-              {toPersianDigits(stats?.utilizationRate || 86)}٪
+            <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center text-violet-600">
+              <Activity className="w-5 h-5" />
             </div>
-            <p className="stat-trend-up mt-1 flex items-center gap-1 text-[10px] sm:text-xs">
-              <TrendingUp className="w-3 h-3" />
-              +{toPersianDigits(4)}٪ نسبت به هفته قبل
-            </p>
           </div>
         </div>
 
-        {/* Stat 2: اتاق فعال */}
-        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              اتاق فعال
-            </span>
-            <div className="brand-icon-tile brand-icon-tile--md brand-icon-tile--cyan">
-              <DoorOpen className="w-4 h-4" />
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500">جلسات این ماه</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+                {toPersianDigits(monthlyBookings)}
+              </p>
+              <p className="text-[11px] text-slate-500 mt-2">
+                جلسات مرتبط با حساب شما در این ماه
+              </p>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
-              {toPersianDigits(stats?.totalRooms || rooms.length || 6)}
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600">
+              <CalendarDays className="w-5 h-5" />
             </div>
-            <p className="stat-trend-neutral mt-1">بدون تغییر</p>
           </div>
         </div>
 
-        {/* Stat 3: رزرو این هفته */}
-        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              رزرو این هفته
-            </span>
-            <div className="brand-icon-tile brand-icon-tile--md brand-icon-tile--sky">
-              <Users className="w-4 h-4" />
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500">تیم‌های من</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+                {toPersianDigits(teamCount)}
+              </p>
+              <p className="text-[11px] text-slate-500 mt-2">
+                {toPersianDigits(memberCount)} عضو
+              </p>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
-              {toPersianDigits(stats?.totalHistoricalBookings || 24)}
+            <div className="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950/40 flex items-center justify-center text-sky-600">
+              <Users className="w-5 h-5" />
             </div>
-            <p className="stat-trend-up mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" />
-              +{toPersianDigits(3)} رزرو
-            </p>
           </div>
         </div>
 
-        {/* Stat 4: جلسه امروز */}
-        <div className="dark-surface-card rounded-2xl p-3.5 sm:p-5 shadow-xs flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              جلسه امروز
-            </span>
-            <div className="brand-icon-tile brand-icon-tile--md brand-icon-tile--amber">
-              <Calendar className="w-4 h-4" />
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500">جلسات امروز</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+                {toPersianDigits(todayCount)}
+              </p>
+              <p className="text-[11px] text-slate-500 mt-2">نسبت به دیروز</p>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="dashboard-stat-value text-slate-900 dark:text-[#F8FAFC]">
-              {toPersianDigits(
-                todayBookings.length || stats?.todayBookingsCount || 4,
-              )}
+            <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-600">
+              <Calendar className="w-5 h-5" />
             </div>
-            <p className="stat-trend-neutral mt-1">برنامه امروز</p>
           </div>
         </div>
       </div>
 
-      {/* Main 2-Column Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        <div className="lg:col-span-6 dark-surface-card rounded-2xl sm:rounded-3xl portal-card-pad-lg shadow-xs space-y-3 sm:space-y-4 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="font-bold text-slate-900 dark:text-[#F8FAFC] text-sm sm:text-base shrink-0">
-              جلسات امروز
-            </h3>
-            <button
-              type="button"
-              onClick={() => setActiveTab("calendar")}
-              className="text-[11px] sm:text-xs font-bold dark-link-accent cursor-pointer shrink-0"
-            >
-              مشاهده تقویم کامل
-            </button>
-          </div>
-
-          <div className="space-y-3 pt-2">
-            {displayMeetings.map((item) => (
-              <div
-                key={item.id}
-                className={`p-3 sm:p-3.5 rounded-2xl dark-surface-inset flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 min-w-0 ${item.borderClass}`}
-              >
-                <div className="space-y-1 min-w-0 flex-1">
-                  <div className="text-xs font-bold text-slate-800 dark:text-[#F8FAFC]">
-                    {item.title}
-                  </div>
-                  <div className="text-[11px] text-slate-500 dark:text-[#94A3B8] font-medium">
-                    {item.room}
-                  </div>
-                  <div className="text-[10px] dashboard-numeric text-slate-500 dark:text-[#94A3B8]">
-                    {item.time}
-                  </div>
-                </div>
-
-                <div className="flex items-center -space-x-2 -space-x-reverse">
-                  {item.avatars.map((av, idx) => (
-                    <img
-                      key={idx}
-                      src={av}
-                      alt=""
-                      className="w-7 h-7 rounded-full border-2 border-white dark:border-[#26364D] object-cover"
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Left Column (6/12): نمودار استفاده از اتاق‌ها + اتاق‌های پرتقاضا */}
-        <div className="lg:col-span-6 space-y-4 sm:space-y-6 min-w-0">
-          {/* Card 1: نمودار استفاده از اتاق‌ها */}
-          <div className="dark-surface-card portal-card-pad-lg space-y-4 min-w-0">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-slate-900 dark:text-[#F8FAFC] text-sm">
-                نمودار استفاده از اتاق‌ها
-              </h3>
+      {/* Chart + today's meetings */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
+        <div className="xl:col-span-7 space-y-4">
+          <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+                فعالیت جلسات
+              </h2>
               <select
                 value={chartRange}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setChartRange(e.target.value as "week" | "month")
-                }
-                className="text-[11px] font-semibold bg-slate-100 dark:bg-[#172338] border border-slate-200 dark:border-[#26364D] rounded-lg px-2 py-1 text-slate-600 dark:text-[#94A3B8]"
+                onChange={(e) => setChartRange(e.target.value as "week" | "month")}
+                className="text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-2 py-1 text-slate-600 dark:text-slate-300"
               >
-                <option value="week">این هفته</option>
-                <option value="month">این ماه</option>
+                <option value="week">هفتگی</option>
+                <option value="month">ماهانه</option>
               </select>
             </div>
-
-            {/* Vertical Bar Chart */}
-            <div className="h-44 pt-4 flex items-end justify-between gap-2 chart-grid-line pb-2">
-              {weeklyUsage.map((w) => (
-                <div
-                  key={w.day}
-                  className="flex-1 flex flex-col items-center gap-2 h-full justify-end"
-                >
-                  <div className="w-full max-w-[28px] chart-bar-track overflow-hidden relative flex items-end h-full">
-                    <div
-                      className="chart-bar-fill transition-all duration-500"
-                      style={{ height: w.height }}
-                      title={`${w.count} جلسه`}
-                    />
-                  </div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#64748B] font-medium">
-                    {w.day}
-                  </span>
-                </div>
-              ))}
+            <div className="flex items-center gap-4 text-[10px] text-slate-500 mb-3">
+              <span className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#0F786E]" />
+                برگزار شده
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2.5 h-2.5 rounded-sm bg-emerald-200 dark:bg-emerald-800" />
+                برنامه‌ریزی شده
+              </span>
             </div>
-          </div>
-
-          {/* Card 2: اتاق‌های پرتقاضا (Progress Bars) */}
-          <div className="dark-surface-card portal-card-pad-lg space-y-4 min-w-0">
-            <h3 className="font-semibold text-slate-900 dark:text-[#F8FAFC] text-sm">
-              اتاق‌های پرتقاضا
-            </h3>
-
-            <div className="space-y-3 pt-1">
-              {popularRoomsData.map((pr) => {
-                const pct = Math.min(
-                  96,
-                  Math.round((pr.count / maxPopular) * 90 + 8),
-                );
+            <div className="h-48 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
+              {chartData.length === 0 && (
+                <p className="text-xs text-slate-500 w-full text-center py-10">
+                  هنوز داده‌ای برای نمایش نمودار ثبت نشده است.
+                </p>
+              )}
+              {chartData.map((w) => {
+                const planned = w.percentage;
+                const done = w.completedPercentage ?? 0;
                 return (
-                  <div key={pr.name}>
-                    <div className="flex items-center justify-between text-xs mb-1.5 font-semibold">
-                      <span className="text-slate-700 dark:text-[#94A3B8]">
-                        {pr.name}
-                      </span>
-                      <span className="text-[#0F786E] dark:text-[#5eead4] dashboard-numeric text-xs font-bold">
-                        {toPersianDigits(pct)}٪
-                      </span>
-                    </div>
-                    <div className="progress-track">
+                  <div
+                    key={`${w.date}-${w.day}`}
+                    className="flex-1 flex flex-col items-center gap-2 h-full justify-end min-w-0"
+                  >
+                    <div
+                      className="w-full max-w-[32px] h-full flex flex-col justify-end rounded-t-lg overflow-hidden bg-emerald-100/80 dark:bg-emerald-950/30"
+                    >
                       <div
-                        className="progress-fill-teal transition-all duration-500"
-                        style={{ width: `${pct}%` }}
+                        className="w-full bg-emerald-200/90 dark:bg-emerald-900/50"
+                        style={{ height: `${Math.max(0, planned - done)}%` }}
+                      />
+                      <div
+                        className="w-full bg-[#0F786E]"
+                        style={{ height: `${done}%` }}
                       />
                     </div>
+                    <span className="text-[10px] text-slate-500 font-medium truncate w-full text-center">
+                      {w.day}
+                    </span>
                   </div>
                 );
               })}
             </div>
           </div>
+
+          <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
+              اهداف ماهانه
+            </h2>
+            <div className="space-y-4">
+              {monthlyGoals.length === 0 && (
+                <p className="text-xs text-slate-500 text-center py-4">
+                  برای این ماه هنوز جلسه‌ای ثبت نشده است.
+                </p>
+              )}
+              {monthlyGoals.map((g) => (
+                <div key={g.label}>
+                  <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
+                    <span>{g.label}</span>
+                    <span>
+                      {toPersianDigits(g.pct)}٪ ({toPersianDigits(g.count)} از{" "}
+                      {toPersianDigits(g.target)})
+                    </span>
+                  </div>
+                  <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-l from-[#0F786E] to-emerald-400"
+                      style={{ width: `${g.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="xl:col-span-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+              جلسات امروز
+            </h2>
+            <button
+              type="button"
+              onClick={() => setActiveTab("calendar")}
+              className="text-xs font-bold text-[#0F786E] dark:text-emerald-400 cursor-pointer"
+            >
+              مشاهده همه
+            </button>
+          </div>
+          <div className="space-y-3">
+            {displayMeetings.length === 0 && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-6">
+                برای امروز جلسه‌ای در تقویم شما ثبت نشده است.
+              </p>
+            )}
+            {displayMeetings.map((m) => (
+              <div
+                key={m.id}
+                className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50"
+              >
+                <div className="text-left shrink-0 text-xs font-bold text-slate-500 dark:text-slate-400 min-w-[72px]">
+                  {m.time}
+                </div>
+                <div className="flex items-center -space-x-2 -space-x-reverse shrink-0 min-w-[4.5rem] justify-end">
+                  {m.attendees.length > 0
+                    ? m.attendees.map((u, i) => (
+                        <UserAvatar
+                          key={u.id || `${m.id}-av-${i}`}
+                          user={u}
+                          size="xs"
+                          shape="circle"
+                          showBorder
+                          className="!w-7 !h-7 ring-2 ring-white dark:ring-slate-800"
+                        />
+                      ))
+                    : (
+                        <UserAvatar
+                          name={m.title}
+                          size="xs"
+                          shape="circle"
+                          showBorder
+                          className="!w-7 !h-7 ring-2 ring-white dark:ring-slate-800"
+                        />
+                      )}
+                </div>
+                <div className="flex-1 min-w-0 text-right">
+                  <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                    {m.title}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">{m.room}</p>
+                </div>
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${m.iconStyle}`}
+                  title={m.room}
+                >
+                  <m.Icon className="w-5 h-5" strokeWidth={2} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">تیم‌های من</h2>
+            <button
+              type="button"
+              onClick={() => setActiveTab("teams")}
+              className="text-xs font-bold text-[#0F786E] cursor-pointer"
+            >
+              مدیریت
+            </button>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {teamCards.map((t, idx) => {
+              const Icon = TEAM_ICONS[idx % TEAM_ICONS.length];
+              const count =
+                "memberCount" in t && typeof t.memberCount === "number"
+                  ? t.memberCount
+                  : (t as Team).members?.length ?? 0;
+              return (
+                <div
+                  key={t.id}
+                  className="min-w-[100px] flex-1 rounded-xl border border-slate-200 dark:border-slate-600 p-3 bg-slate-50/50 dark:bg-slate-800/30"
+                >
+                  <Icon className="w-5 h-5 text-[#0F786E] mb-2" />
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
+                    {t.name}
+                  </p>
+                  <p className="text-[10px] text-slate-500 mt-1">
+                    {toPersianDigits(count)} نفر
+                  </p>
+                </div>
+              );
+            })}
+            <button
+              type="button"
+              onClick={() => setActiveTab("teams")}
+              className="min-w-[72px] rounded-xl border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center text-slate-400 cursor-pointer"
+            >
+              <Plus className="w-5 h-5" />
+              <span className="text-[10px] font-bold mt-1">تیم</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
+          <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
+            اعضای فعال
+          </h2>
+          <ul className="space-y-3">
+            {(orgUsers.length > 0
+              ? orgUsers
+              : [
+                  { id: "1", name: "سارا حسینی", jobTitle: "طراح محصول" },
+                  { id: "2", name: "امیر کریمی", jobTitle: "توسعه‌دهنده" },
+                  { id: "3", name: "مریم احمدی", jobTitle: "مارکتینگ" },
+                ]
+            ).slice(0, 4).map((u) => (
+              <li key={u.id} className="flex items-center gap-3">
+                <UserAvatar
+                  user={u as User}
+                  name={(u as User).name}
+                  size="sm"
+                  shape="circle"
+                  className="shrink-0"
+                />
+                <div className="text-right min-w-0">
+                  <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                    {u.name}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">
+                    {(u as User).jobTitle || "عضو تیم"}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <Bell className="w-4 h-4 text-slate-500" />
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">اعلان‌ها</h2>
+          </div>
+          <ul className="space-y-4">
+            {notifications.map((n, i) => (
+              <li key={i} className="flex gap-3">
+                <span
+                  className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                    n.tone === "emerald"
+                      ? "bg-emerald-500"
+                      : n.tone === "sky"
+                        ? "bg-sky-500"
+                        : "bg-amber-500"
+                  }`}
+                />
+                <div className="text-right flex-1">
+                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                    {n.text}
+                  </p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{n.time}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

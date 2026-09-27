@@ -116,7 +116,7 @@ export const CalendarView: React.FC = () => {
     try {
       setIsLoading(true);
       const [bookingsData, roomsData] = await Promise.all([
-        ApiService.getBookings({ orgId: currentOrg.id }),
+        ApiService.getBookings({ orgId: currentOrg.id, scope: 'all' }),
         ApiService.getRooms({ orgId: currentOrg.id }),
       ]);
       setBookings(bookingsData.filter((b) => b.status !== 'cancelled'));

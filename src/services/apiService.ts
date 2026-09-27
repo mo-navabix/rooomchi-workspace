@@ -142,16 +142,24 @@ export class ApiService {
     date?: string;
     department?: string;
     status?: string;
+    /** `all` = entire org (admins + calendar); default = current user only */
+    scope?: 'all' | 'mine';
   }): Promise<Booking[]> {
     const params = new URLSearchParams();
     if (filters) {
-      Object.entries(filters).forEach(([key, val]) => {
+      const { scope, ...rest } = filters;
+      Object.entries(rest).forEach(([key, val]) => {
         if (val !== undefined && val !== null && val !== '') {
           params.append(key, String(val));
         }
       });
+      if (scope === 'all') {
+        params.append('scope', 'all');
+      }
     }
-    const res = await fetch(`${API_BASE}/bookings?${params.toString()}`);
+    const res = await fetch(`${API_BASE}/bookings?${params.toString()}`, {
+      headers: getAuthHeaders(),
+    });
     if (!res.ok) throw new Error('خطا در دریافت لیست رزروها');
     return res.json();
   }
@@ -185,9 +193,17 @@ export class ApiService {
   }
 
   // Analytics
-  static async getStats(orgId?: string): Promise<Stats> {
-    const params = orgId ? `?orgId=${orgId}` : '';
-    const res = await fetch(`${API_BASE}/stats${params}`);
+  static async getStats(
+    orgId?: string,
+    options?: { scope?: 'all' | 'mine' },
+  ): Promise<Stats> {
+    const params = new URLSearchParams();
+    if (orgId) params.set('orgId', orgId);
+    if (options?.scope === 'all') params.set('scope', 'all');
+    const qs = params.toString();
+    const res = await fetch(`${API_BASE}/stats${qs ? `?${qs}` : ''}`, {
+      headers: getAuthHeaders(),
+    });
     if (!res.ok) throw new Error('خطا در دریافت آمار');
     return res.json();
   }
