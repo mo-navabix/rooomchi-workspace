@@ -1,28 +1,24 @@
 import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
 import { getRoleMeta } from "../../constants/rbac";
-import { Logo } from "./Logo";
 import {
-  Plus,
-  ChevronDown,
   Sparkles,
   LogIn,
   Menu,
   LogOut,
-  UserPlus,
   Sun,
   Moon,
   Bell,
-  Search,
   User,
   UserCheck,
-  AlertCircle,
   Calendar,
   CheckCheck,
   X,
+  ChevronDown,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 import { UserAvatar } from "./UserAvatar";
+import { toPersianDigits } from "../../utils/jalali";
 
 type HeaderProps = {
   onOpenSidebar: () => void;
@@ -31,10 +27,14 @@ type HeaderProps = {
 const PAGE_META: Partial<
   Record<ActiveTab, { title: string; subtitle: string }>
 > = {
-  dashboard: { title: "داشبورد", subtitle: "نمای کلی جلسات و وضعیت فضاها" },
+  dashboard: {
+    title: "داشبورد",
+    subtitle: "نمایی از وضعیت جلسات و فعالیت‌های شما",
+  },
   calendar: { title: "تقویم جلسات", subtitle: "برنامه زمانی اتاق‌ها و جلسات" },
   rooms: { title: "اتاق‌ها", subtitle: "جستجو و رزرو سالن‌های جلسه" },
   "my-bookings": { title: "جلسات من", subtitle: "رزروها و جلسات شما" },
+  teams: { title: "تیم‌ها", subtitle: "مدیریت تیم‌ها و اعضا" },
   analytics: { title: "گزارش‌ها و آمار", subtitle: "تحلیل بهره‌وری و استفاده از فضا" },
   "admin-rooms": {
     title: "مدیریت اتاق‌ها",
@@ -47,15 +47,15 @@ const PAGE_META: Partial<
   "admin-rbac": { title: "کاربران", subtitle: "نقش‌ها و دسترسی پرسنل" },
   "access-control": {
     title: "کنترل دسترسی‌ها",
-    subtitle: "مدیریت مجوزها، امنیت و روش‌های ورود و خروج",
+    subtitle: "مدیریت مجوزها و روش‌های ورود",
   },
   "admin-settings": {
     title: "تنظیمات سازمان",
     subtitle: "پیکربندی سیاست‌ها و برندینگ",
   },
   "admin-notifications": {
-    title: "مدیریت اعلان‌ها و پیام‌ها",
-    subtitle: "پیکربندی ارسال نوتیفیکیشن‌ها از طریق SMS، تلگرام و سیستم داخلی",
+    title: "مدیریت اعلان‌ها",
+    subtitle: "پیکربندی SMS، تلگرام و اعلان داخلی",
   },
   "admin-support-tickets": {
     title: "تیکت‌های پشتیبانی",
@@ -68,26 +68,13 @@ const PAGE_META: Partial<
   },
 };
 
-function getPageMeta(
-  activeTab: ActiveTab,
-  orgName?: string,
-): { title: string; subtitle: string } {
-  const fallback = {
-    title: "روم‌چی",
-    subtitle: "سامانه رزرو اتاق جلسات",
-  };
-  const base = PAGE_META[activeTab] ?? fallback;
-  if (!orgName) return base;
-
-  const orgSubtitles: Partial<Record<ActiveTab, string>> = {
-    dashboard: `مروری بر وضعیت جلسات و فضای کاری ${orgName}`,
-    calendar: `مشاهده تقویم هفتگی و وضعیت اشغال اتاق‌های ${orgName}`,
-    analytics: `تحلیل هوشمند استفاده از اتاق‌های ${orgName}`,
-    "my-bookings": `مدیریت و پیگیری جلسات ثبت‌شده در ${orgName}`,
-  };
-
-  const subtitle = orgSubtitles[activeTab];
-  return subtitle ? { ...base, subtitle } : base;
+function getPageMeta(activeTab: ActiveTab): { title: string; subtitle: string } {
+  return (
+    PAGE_META[activeTab] ?? {
+      title: "روم‌چی",
+      subtitle: "سامانه رزرو اتاق جلسات",
+    }
+  );
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
@@ -95,19 +82,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
     userRole,
     activeTab,
     setActiveTab,
-    openBookingModal,
     openCompleteProfileModal,
     isRegistrationComplete,
     currentUser,
-    currentOrg,
     isAuthenticated,
     openAuthModal,
     logout,
     theme,
     toggleTheme,
     setViewMode,
-    searchQuery,
-    setSearchQuery,
     notifications,
     unreadNotificationsCount,
     markNotificationAsRead,
@@ -118,387 +101,270 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  const page = getPageMeta(activeTab, currentOrg?.name);
+  const page = getPageMeta(activeTab);
   const currentRoleMeta = getRoleMeta(userRole);
+  const isDark = theme === "dark";
 
   return (
-    <header className="sticky top-0 z-40 w-full pt-2.5 sm:pt-3.5 px-4 sm:px-6 lg:px-8 pb-1">
-      <div className="w-full rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-[#111C2E]/90 border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-black/20 backdrop-blur-md px-4 sm:px-6">
-        <div className="flex items-center gap-2 sm:gap-4 h-14 sm:h-16">
-          {/* RTL start: menu + page context */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+    <header
+      className="sticky top-0 z-40 w-full bg-white dark:bg-[#0f172a] border-b border-slate-200/80 dark:border-white/[0.06]"
+    >
+      <div className="flex w-full items-center justify-between gap-4 h-[4.25rem] sm:h-[4.5rem] px-4 sm:px-5 lg:px-6">
+        {/* راست هدر (RTL): خط سبز + عنوان */}
+        <div className="flex min-w-0 flex-1 items-center justify-start gap-3">
+          <div
+            className="w-1 self-stretch min-h-[2.75rem] rounded-full bg-[#0F786E] shrink-0"
+            aria-hidden
+          />
+          <div className="min-w-0 py-0.5 text-right">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate leading-tight">
+              {page.title}
+            </h1>
+            <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+              {page.subtitle}
+            </p>
+          </div>
+          <button
+            type="button"
+            id="btn-mobile-menu"
+            onClick={onOpenSidebar}
+            className="lg:hidden flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 cursor-pointer shrink-0 ms-1"
+            aria-label="باز کردن منو"
+          >
+            <Menu className="w-5 h-5" strokeWidth={2} />
+          </button>
+        </div>
+
+        {/* چپ هدر (RTL): تم | اعلان | پروفایل */}
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <button
+            type="button"
+            id="btn-theme-toggle"
+            onClick={toggleTheme}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:text-[#0F786E] dark:hover:text-amber-300 hover:bg-slate-100/80 dark:hover:bg-white/5 cursor-pointer transition-colors"
+            aria-label={isDark ? "تم روشن" : "تم تاریک"}
+            title={isDark ? "تم روشن" : "تم تاریک"}
+          >
+            {isDark ? (
+              <Sun className="w-5 h-5" strokeWidth={1.75} />
+            ) : (
+              <Moon className="w-5 h-5" strokeWidth={1.75} />
+            )}
+          </button>
+
+          <div className="relative">
             <button
               type="button"
-              id="btn-mobile-menu"
-              onClick={onOpenSidebar}
-              className="portal-icon-btn lg:hidden cursor-pointer shrink-0"
-              aria-label="باز کردن منو"
+              id="btn-header-notifications"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
+              title="اعلان‌ها"
+              aria-expanded={isNotificationsOpen}
+              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
             >
-              <Menu className="w-5 h-5" />
+              <Bell className="w-5 h-5" strokeWidth={1.75} />
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute top-1 left-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                  {unreadNotificationsCount > 9
+                    ? `${toPersianDigits(9)}+`
+                    : toPersianDigits(unreadNotificationsCount)}
+                </span>
+              )}
             </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("dashboard")}
-              className="lg:hidden shrink-0 cursor-pointer"
-              aria-label="روم‌چی"
-            >
-              <Logo variant="mark" size="sm" />
-            </button>
-
-            <div className="min-w-0 hidden sm:block">
-              <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#F8FAFC] truncate leading-tight">
-                {page.title}
-              </h1>
-              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-[#94A3B8] truncate">
-                {page.subtitle}
-              </p>
-            </div>
+            {isNotificationsOpen && (
+              <>
+                <button
+                  type="button"
+                  className="fixed inset-0 z-40 bg-slate-950/30 sm:bg-transparent cursor-default"
+                  onClick={() => setIsNotificationsOpen(false)}
+                  aria-label="بستن اعلان‌ها"
+                />
+                <div className="fixed inset-x-3 top-[4.5rem] sm:absolute sm:inset-auto sm:left-0 sm:mt-2 w-auto sm:w-96 max-h-[80vh] dark-surface-card rounded-2xl shadow-xl z-50 border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
+                  <div className="p-3 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/50">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-[#0F786E]" />
+                      اعلان‌ها
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      {notifications.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={markAllNotificationsAsRead}
+                          className="text-[11px] text-[#0F786E] font-medium cursor-pointer flex items-center gap-1"
+                        >
+                          <CheckCheck className="w-3.5 h-3.5" />
+                          خواندن همه
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setIsNotificationsOpen(false)}
+                        className="p-1 sm:hidden cursor-pointer"
+                        aria-label="بستن"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="overflow-y-auto max-h-72 divide-y divide-slate-100 dark:divide-slate-700">
+                    {notifications.length === 0 ? (
+                      <p className="py-10 text-center text-xs text-slate-500">اعلانی نیست</p>
+                    ) : (
+                      notifications.map((n) => (
+                        <div
+                          key={n.id}
+                          onClick={() => {
+                            markNotificationAsRead(n.id);
+                            if (n.type === "meeting_booked") {
+                              setActiveTab("calendar");
+                              setIsNotificationsOpen(false);
+                            }
+                          }}
+                          className={`p-3 flex gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
+                            !n.isRead ? "bg-emerald-50/50 dark:bg-emerald-950/20" : ""
+                          }`}
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-[#0F786E] shrink-0">
+                            {n.type === "meeting_booked" ? (
+                              <Calendar className="w-4 h-4" />
+                            ) : (
+                              <Sparkles className="w-4 h-4" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                              {n.title}
+                            </p>
+                            <p className="text-[11px] text-slate-500 line-clamp-2 mt-0.5">{n.message}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div className="p-2 border-t border-slate-100 dark:border-slate-700 flex justify-between text-[11px]">
+                    {notifications.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={clearAllNotifications}
+                        className="text-slate-500 hover:text-rose-600 cursor-pointer"
+                      >
+                        پاک کردن همه
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTab("calendar");
+                        setIsNotificationsOpen(false);
+                      }}
+                      className="font-bold text-slate-600 dark:text-slate-300 cursor-pointer ms-auto"
+                    >
+                      تقویم
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Search */}
-          <div className="hidden md:flex flex-1 max-w-md">
-            <div className="relative w-full">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="جستجو در جلسات، اتاق‌ها، افراد..."
-                className="portal-search pr-10 pl-3 py-2.5 focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Notification Bell Dropdown */}
+          {isAuthenticated && currentUser ? (
             <div className="relative">
               <button
                 type="button"
-                id="btn-header-notifications"
-                className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl portal-icon-btn relative cursor-pointer"
-                title="اعلان‌ها"
-                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                id="btn-user-profile-menu"
+                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                className="flex items-center gap-1.5 sm:gap-2 pl-1 pr-0.5 rounded-full hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
+                aria-expanded={isUserDropdownOpen}
               >
-                <Bell className="w-4 h-4" />
-                {unreadNotificationsCount > 0 && (
-                  <span className="absolute -top-1 -left-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-[#1E293B] shadow-xs animate-pulse">
-                    {unreadNotificationsCount > 9 ? "+9" : unreadNotificationsCount}
-                  </span>
-                )}
+                <UserAvatar
+                  user={currentUser}
+                  size="sm"
+                  shape="rounded"
+                  className="w-9 h-9 sm:w-10 sm:h-10 !rounded-xl"
+                />
+                <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 hidden sm:block" strokeWidth={2} />
               </button>
 
-              {isNotificationsOpen && (
+              {isUserDropdownOpen && (
                 <>
                   <button
                     type="button"
-                    className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-2xs sm:bg-transparent sm:backdrop-blur-none cursor-default"
-                    onClick={() => setIsNotificationsOpen(false)}
-                    aria-label="بستن اعلان‌ها"
+                    className="fixed inset-0 z-20 cursor-default"
+                    onClick={() => setIsUserDropdownOpen(false)}
                   />
-                  <div className="fixed inset-x-3 top-16 sm:absolute sm:inset-auto sm:left-0 sm:mt-2 w-auto sm:w-96 max-h-[82vh] sm:max-h-[32rem] dark-surface-card rounded-2xl shadow-2xl z-50 border border-slate-200/90 dark:border-[#334155] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
-                    {/* Popover Header */}
-                    <div className="p-3.5 border-b border-slate-100 dark:border-[#26364D] flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/70 shrink-0">
-                      <div className="flex items-center gap-2">
-                        <Bell className="w-4 h-4 text-[#0F786E] dark:text-[#5eead4]" />
-                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                          اعلان‌ها و رویدادهای جلسات
-                        </h4>
-                        {unreadNotificationsCount > 0 && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#5eead4] border border-emerald-200 dark:border-emerald-800/40">
-                            {unreadNotificationsCount} جدید
-                          </span>
-                        )}
+                  <div className="absolute left-0 mt-2 w-64 dark-surface-card rounded-2xl shadow-xl py-2 z-30 border border-slate-200 dark:border-white/10">
+                    <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700 flex gap-3">
+                      <UserAvatar user={currentUser} size="md" shape="circle" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold truncate">{currentUser.name}</p>
+                        <p className="text-[11px] text-slate-500 truncate" dir="ltr">{currentUser.email}</p>
+                        <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${currentRoleMeta.badgeClass}`}>
+                          {currentRoleMeta.titleFa}
+                        </span>
                       </div>
-
-                      <div className="flex items-center gap-2">
-                        {notifications.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={markAllNotificationsAsRead}
-                            className="text-[11px] font-medium text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer flex items-center gap-1"
-                          >
-                            <CheckCheck className="w-3.5 h-3.5" />
-                            <span>خواندن همه</span>
-                          </button>
-                        )}
+                    </div>
+                    <div className="p-1.5">
+                      {!isRegistrationComplete() && (
                         <button
                           type="button"
-                          onClick={() => setIsNotificationsOpen(false)}
-                          className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors sm:hidden cursor-pointer"
-                          aria-label="بستن"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            openCompleteProfileModal();
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-amber-700 rounded-lg bg-amber-50 dark:bg-amber-950/30 cursor-pointer mb-1"
                         >
-                          <X className="w-4 h-4" />
+                          <UserCheck className="w-4 h-4" />
+                          تکمیل مشخصات
                         </button>
-                      </div>
-                    </div>
-
-                    {/* Notifications List */}
-                    <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-[#26364D] max-h-72 sm:max-h-80">
-                      {notifications.length === 0 ? (
-                        <div className="py-8 px-4 text-center">
-                          <Bell className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto mb-2 opacity-50" />
-                          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                            هیچ اعلانی در حال حاضر وجود ندارد
-                          </p>
-                        </div>
-                      ) : (
-                        notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            onClick={() => {
-                              markNotificationAsRead(n.id);
-                              if (n.type === "meeting_booked") {
-                                setActiveTab("calendar");
-                                setIsNotificationsOpen(false);
-                              }
-                            }}
-                            className={`p-3.5 hover:bg-slate-50 dark:hover:bg-[#0F172A] transition-colors cursor-pointer flex items-start gap-3 ${
-                              !n.isRead
-                                ? "bg-emerald-50/40 dark:bg-emerald-950/20"
-                                : ""
-                            }`}
-                          >
-                            <div
-                              className={`w-8 h-8 rounded-xl shrink-0 flex items-center justify-center text-xs font-bold ${
-                                !n.isRead
-                                  ? "bg-emerald-500/10 text-[#0F786E] dark:text-[#5eead4] border border-emerald-500/20"
-                                  : "bg-slate-100 dark:bg-slate-800 text-slate-500"
-                              }`}
-                            >
-                              {n.type === "meeting_booked" ? (
-                                <Calendar className="w-4 h-4" />
-                              ) : (
-                                <Sparkles className="w-4 h-4" />
-                              )}
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-1 mb-1">
-                                <h5 className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                                  {n.title}
-                                </h5>
-                                {!n.isRead && (
-                                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                                )}
-                              </div>
-                              <p className="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
-                                {n.message}
-                              </p>
-                              {n.roomName && (
-                                <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
-                                  <span className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded font-medium text-slate-700 dark:text-slate-300">
-                                    {n.roomName}
-                                  </span>
-                                  {n.date && <span>• {n.date}</span>}
-                                  {n.startTime && (
-                                    <span>
-                                      • ساعت {n.startTime} تا {n.endTime}
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))
                       )}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="p-2.5 border-t border-slate-100 dark:border-[#26364D] bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between shrink-0">
-                      <div className="flex items-center gap-2">
-                        {notifications.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={clearAllNotifications}
-                            className="text-[11px] text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium cursor-pointer"
-                          >
-                            پاک کردن همه
-                          </button>
-                        )}
-                        {(userRole === 'org_admin' || userRole === 'super_admin' || userRole === 'room_manager') && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveTab("admin-notifications");
-                              setIsNotificationsOpen(false);
-                            }}
-                            className="text-[11px] text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer flex items-center gap-1 font-semibold"
-                          >
-                            <span>مدیریت SMS و تلگرام</span>
-                          </button>
-                        )}
-                      </div>
                       <button
                         type="button"
                         onClick={() => {
-                          setActiveTab("calendar");
-                          setIsNotificationsOpen(false);
+                          setIsUserDropdownOpen(false);
+                          setActiveTab("profile");
                         }}
-                        className="text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:underline cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
                       >
-                        تقویم جلسات
+                        <User className="w-4 h-4 text-slate-400" />
+                        پروفایل من
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setViewMode("landing");
+                        }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0F786E] rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/20 cursor-pointer"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        صفحه معرفی
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        خروج
                       </button>
                     </div>
                   </div>
                 </>
               )}
             </div>
-
-            {/* Theme Toggle Button */}
+          ) : (
             <button
               type="button"
-              id="btn-theme-toggle"
-              onClick={toggleTheme}
-              className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl portal-icon-btn cursor-pointer"
-              aria-label="تغییر تم"
+              onClick={() => openAuthModal("login")}
+              className="flex items-center gap-1.5 h-10 px-4 rounded-full text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer"
             >
-              {theme === "dark" ? (
-                <Sun className="w-4 h-4" />
-              ) : (
-                <Moon className="w-4 h-4 text-[#0F786E]" />
-              )}
+              <LogIn className="w-4 h-4" />
+              ورود
             </button>
-
-            {/* Quick Book Meeting Button */}
-            <button
-              type="button"
-              id="btn-quick-book"
-              onClick={() => openBookingModal()}
-              className="portal-btn-primary hidden sm:flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-xl text-xs font-bold text-white cursor-pointer shadow-sm shrink-0"
-            >
-              <Plus className="w-4 h-4" />
-              <span>رزرو جلسه</span>
-            </button>
-
-            {/* User Profile Menu Button (The Circled Element) */}
-            {isAuthenticated && currentUser ? (
-              <div className="relative shrink-0">
-                <button
-                  type="button"
-                  id="btn-user-profile-menu"
-                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                  className="h-10 px-2.5 shrink-0 flex items-center justify-center gap-2 rounded-xl portal-icon-btn hover:border-[#14B8A6]/40 cursor-pointer"
-                  title={currentUser.name}
-                >
-                  <UserAvatar
-                    user={currentUser}
-                    size="xs"
-                    className="w-6 h-6 rounded-lg shrink-0"
-                  />
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                </button>
-
-                {isUserDropdownOpen && (
-                  <>
-                    <button
-                      type="button"
-                      className="fixed inset-0 z-20 cursor-default"
-                      onClick={() => setIsUserDropdownOpen(false)}
-                    />
-                    <div className="absolute left-0 mt-2 w-64 max-w-[calc(100vw-1.5rem)] dark-surface-card rounded-2xl shadow-xl py-2 z-30 border border-slate-200/80 dark:border-white/10">
-                      <div className="px-4 py-3 border-b border-slate-100 dark:border-[#26364D] flex items-center gap-3">
-                        <UserAvatar user={currentUser} size="md" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                              {currentUser.name}
-                            </p>
-                            {!isRegistrationComplete() && (
-                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40">
-                                تکمیل‌نشده
-                              </span>
-                            )}
-                          </div>
-                          <p
-                            className="text-[11px] text-slate-500 font-mono mt-0.5 truncate"
-                            dir="ltr"
-                          >
-                            {currentUser.email}
-                          </p>
-                          <span
-                            className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${currentRoleMeta.badgeClass}`}
-                          >
-                            {currentRoleMeta.titleFa}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-1.5 space-y-0.5">
-                        {!isRegistrationComplete() && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsUserDropdownOpen(false);
-                              openCompleteProfileModal();
-                            }}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/40 cursor-pointer mb-1 border border-amber-200/60 dark:border-amber-800/40"
-                          >
-                            <UserCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                            <span>تکمیل مشخصات کاربری</span>
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsUserDropdownOpen(false);
-                            setActiveTab("profile");
-                          }}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-[#334155] cursor-pointer"
-                        >
-                          <User className="w-4 h-4 text-slate-400" />
-                          پروفایل من
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsUserDropdownOpen(false);
-                            setViewMode("landing");
-                          }}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0F786E] dark:text-emerald-400 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/30 cursor-pointer"
-                        >
-                          <Sparkles className="w-4 h-4" />
-                          صفحه معرفی
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsUserDropdownOpen(false);
-                            logout();
-                          }}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          خروج
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => openAuthModal("login")}
-                  className="h-10 flex items-center justify-center gap-1.5 px-3.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] transition-colors cursor-pointer shadow-xs shrink-0"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>ورود / ثبت‌نام</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile page title */}
-        <div className="sm:hidden pb-2.5 -mt-0.5 min-w-0">
-          <h1 className="text-base font-bold text-slate-900 dark:text-[#F8FAFC] truncate">
-            {page.title}
-          </h1>
-          <p className="text-[11px] text-slate-500 dark:text-[#94A3B8] line-clamp-2 leading-relaxed">
-            {page.subtitle}
-          </p>
+          )}
         </div>
       </div>
     </header>

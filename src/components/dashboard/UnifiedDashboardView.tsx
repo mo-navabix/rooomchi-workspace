@@ -119,6 +119,7 @@ export const UnifiedDashboardView: React.FC = () => {
     currentUser,
     isRegistrationComplete,
     openCompleteProfileModal,
+    openBookingModal,
   } = useApp();
   const [stats, setStats] = useState<Stats | null>(null);
   const [, setRooms] = useState<Room[]>([]);
@@ -231,13 +232,25 @@ export const UnifiedDashboardView: React.FC = () => {
         </div>
       )}
 
-      <div className="text-right">
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-          سلام، {firstName}
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          {formatToJalaliDescriptive(todayStr)} — خلاصهٔ فعالیت‌های امروز شما
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-right min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+            سلام، {firstName}
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {formatToJalaliDescriptive(todayStr)} — خلاصهٔ فعالیت‌های امروز شما
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() =>
+            isRegistrationComplete() ? openBookingModal() : openCompleteProfileModal()
+          }
+          className="portal-btn-primary flex items-center justify-center gap-2 h-11 px-5 rounded-xl text-sm font-bold cursor-pointer shadow-sm shadow-[#0F786E]/15 dark:shadow-black/30 shrink-0 w-full sm:w-auto"
+        >
+          <Plus className="w-4 h-4" />
+          <span>رزرو اتاق جلسه جدید</span>
+        </button>
       </div>
 
       {/* Stat cards */}
@@ -519,7 +532,7 @@ export const UnifiedDashboardView: React.FC = () => {
           <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
             اعضای فعال
           </h2>
-          <ul className="space-y-3">
+          <ul className="divide-y divide-slate-200/90 dark:divide-slate-700/60">
             {(orgUsers.length > 0
               ? orgUsers
               : [
@@ -528,7 +541,7 @@ export const UnifiedDashboardView: React.FC = () => {
                   { id: "3", name: "مریم احمدی", jobTitle: "مارکتینگ" },
                 ]
             ).slice(0, 4).map((u) => (
-              <li key={u.id} className="flex items-center gap-3">
+              <li key={u.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                 <UserAvatar
                   user={u as User}
                   name={(u as User).name}
@@ -554,9 +567,9 @@ export const UnifiedDashboardView: React.FC = () => {
             <Bell className="w-4 h-4 text-slate-500" />
             <h2 className="text-sm font-bold text-slate-900 dark:text-white">اعلان‌ها</h2>
           </div>
-          <ul className="space-y-4">
+          <ul className="divide-y divide-slate-200/90 dark:divide-slate-700/60">
             {notifications.map((n, i) => (
-              <li key={i} className="flex gap-3">
+              <li key={i} className="flex gap-3 py-3.5 first:pt-0 last:pb-0">
                 <span
                   className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
                     n.tone === "emerald"

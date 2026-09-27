@@ -336,18 +336,28 @@
   .portal-btn-primary {
     background-color: #0f786e;
     color: #fff;
+    border: 1px solid rgb(15 120 110 / 0.35);
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .portal-btn-primary:hover {
     background-color: #0d6b63;
+    border-color: rgb(13 107 99 / 0.45);
   }
 
   html.dark .portal-btn-primary {
-    background-color: #14b8a6;
+    background-color: #0f786e;
+    color: #fff;
+    border-color: rgb(52 211 153 / 0.25);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
   }
 
   html.dark .portal-btn-primary:hover {
-    background-color: #0f766e;
+    background-color: #119384;
+    border-color: rgb(52 211 153 / 0.4);
   }
 
   .sidebar-nav-item {

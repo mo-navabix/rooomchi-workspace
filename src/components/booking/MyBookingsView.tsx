@@ -14,7 +14,9 @@ import {
   Coffee,
   Share2,
   Trash2,
+  CalendarDays,
 } from 'lucide-react';
+import { toPersianDigits } from '../../utils/jalali';
 import { MyBookingsSkeleton } from '../common/Skeletons';
 
 export const MyBookingsView: React.FC = () => {
@@ -71,6 +73,11 @@ export const MyBookingsView: React.FC = () => {
     return true;
   });
 
+  const upcomingCount = bookings.filter(
+    (b) => b.status !== 'cancelled' && b.date >= todayStr,
+  ).length;
+  const pendingCount = bookings.filter((b) => b.status === 'pending_approval').length;
+
   const getStatusBadge = (status: Booking['status']) => {
     switch (status) {
       case 'confirmed':
@@ -106,10 +113,35 @@ export const MyBookingsView: React.FC = () => {
   return (
     <div className="space-y-4 sm:space-y-6 min-w-0">
       {/* Header & Filter Tabs */}
-      <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col gap-3 transition-colors">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 sm:justify-end">
-          {/* Tabs */}
-          <div className="portal-tabs-scroll bg-slate-100 dark:bg-[#0F172A] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#334155]">
+      <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs transition-colors">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="min-w-0 text-right">
+              <p className="text-sm font-bold text-slate-900 dark:text-white">
+                مدیریت جلسات شما
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {toPersianDigits(filteredBookings.length)} مورد در نمای فعلی
+                {pendingCount > 0 && (
+                  <span className="text-amber-600 dark:text-amber-400 font-semibold">
+                    {' '}
+                    · {toPersianDigits(pendingCount)} در انتظار تأیید
+                  </span>
+                )}
+              </p>
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40">
+                  <CalendarDays className="w-3 h-3" />
+                  {toPersianDigits(upcomingCount)} پیش‌رو
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  {toPersianDigits(bookings.length)} کل رزروها
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="portal-tabs-scroll bg-slate-100 dark:bg-[#0F172A] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#334155] shrink-0 max-w-full">
             <button
               onClick={() => setFilterTab('all')}
               className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
@@ -234,8 +266,14 @@ export const MyBookingsView: React.FC = () => {
         ))}
 
         {filteredBookings.length === 0 && (
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-12 text-center text-slate-400 text-xs">
-            هیچ جلسه‌ای در این بخش یافت نشد.
+          <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-10 sm:p-12 text-center">
+            <Calendar className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+              هیچ جلسه‌ای در این بخش یافت نشد
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              فیلتر دیگری را امتحان کنید یا از منوی رزرو اتاق، جلسه جدید ثبت کنید.
+            </p>
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Team } from '../../../types';
+import { toPersianDigits } from '../../../utils/jalali';
 import {
   Users,
   Plus,
@@ -12,7 +13,6 @@ import {
   Building2,
   Shield,
   Clock,
-  UserCheck,
 } from 'lucide-react';
 
 interface TeamsListProps {
@@ -48,29 +48,43 @@ export const TeamsList: React.FC<TeamsListProps> = ({
     );
   });
 
-  return (
-    <div className="space-y-6">
-      {/* Header Bar & Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-[#0F786E] dark:text-[#5eead4] border border-emerald-100 dark:border-emerald-800/40">
-              <Users className="w-5 h-5" />
-            </span>
-            تیم‌ها و گروه‌های کاری سازمان
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            ایجاد گروه‌های از پیش تعریف‌شده برای افزودن یک‌کلیکه تمام اعضا در زمان رزرو جلسات
-          </p>
-        </div>
+  const totalMembers = teams.reduce(
+    (sum, t) => sum + (t.memberCount ?? t.members?.length ?? 0),
+    0,
+  );
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+  return (
+    <div className="space-y-4 sm:space-y-6 min-w-0">
+      <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs transition-colors">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="min-w-0 flex-1 text-right">
+            <p className="text-sm font-bold text-slate-900 dark:text-white">
+              تیم‌ها و گروه‌های کاری سازمان
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {search.trim()
+                ? `${toPersianDigits(filtered.length)} نتیجه از ${toPersianDigits(teams.length)} تیم`
+                : `${toPersianDigits(teams.length)} تیم ثبت‌شده در سازمان`}
+            </p>
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40">
+                <Users className="w-3 h-3" />
+                {toPersianDigits(teams.length)} تیم
+              </span>
+              {totalMembers > 0 && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  {toPersianDigits(totalMembers)} عضو
+                </span>
+              )}
+            </div>
+          </div>
+
           {canManage && (
             <button
               type="button"
               id="btn-create-new-team"
               onClick={onCreateTeam}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0F786E] hover:bg-[#0D6B63] text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow transition-all cursor-pointer"
+              className="portal-btn-primary w-full lg:w-auto inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs font-bold cursor-pointer shadow-sm shadow-[#0F786E]/15 dark:shadow-black/30 shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>ایجاد تیم جدید</span>
@@ -79,9 +93,8 @@ export const TeamsList: React.FC<TeamsListProps> = ({
         </div>
       </div>
 
-      {/* Filter / Search Row */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#1E293B] p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
-        <div className="relative w-full sm:w-80">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#1E293B] p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-[#334155] shadow-xs">
+        <div className="relative w-full sm:max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
@@ -89,15 +102,8 @@ export const TeamsList: React.FC<TeamsListProps> = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="جستجوی نام یا شرح تیم..."
-            className="w-full pr-10 pl-4 py-2 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 dark:text-white"
+            className="w-full pr-10 pl-4 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 dark:text-white"
           />
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 w-full sm:w-auto justify-end">
-          <span>تعداد کل تیم‌ها:</span>
-          <span className="font-bold text-slate-800 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
-            {teams.length}
-          </span>
         </div>
       </div>
 

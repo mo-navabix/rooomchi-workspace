@@ -16,7 +16,89 @@ import {
   Layers,
   Smartphone,
 } from 'lucide-react';
-import { OrgLogoBadge } from '../common/OrgLogoBadge';
+import { OrgLogoBadge, isImageLogo } from '../common/OrgLogoBadge';
+
+function roundRectPath(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    if (!src.startsWith('data:')) {
+      img.crossOrigin = 'anonymous';
+    }
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('logo load failed'));
+    img.src = src;
+  });
+}
+
+/** Overlay organization logo in QR center (requires errorCorrectionLevel H). */
+async function composeQrWithCenterLogo(
+  qrDataUrl: string,
+  logo: string | undefined,
+  logoRatio = 0.22,
+): Promise<string> {
+  if (!logo?.trim()) return qrDataUrl;
+
+  const qrImg = await loadImage(qrDataUrl);
+  const canvas = document.createElement('canvas');
+  canvas.width = qrImg.width;
+  canvas.height = qrImg.height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return qrDataUrl;
+
+  ctx.drawImage(qrImg, 0, 0);
+
+  const inner = Math.round(canvas.width * logoRatio);
+  const pad = Math.round(inner * 0.14);
+  const box = inner + pad * 2;
+  const x = (canvas.width - box) / 2;
+  const y = (canvas.height - box) / 2;
+  const radius = box * 0.16;
+
+  roundRectPath(ctx, x, y, box, box, radius);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+  ctx.strokeStyle = '#E2E8F0';
+  ctx.lineWidth = Math.max(2, canvas.width * 0.004);
+  ctx.stroke();
+
+  try {
+    if (isImageLogo(logo)) {
+      const logoImg = await loadImage(logo);
+      ctx.save();
+      roundRectPath(ctx, x + pad, y + pad, inner, inner, radius * 0.85);
+      ctx.clip();
+      ctx.drawImage(logoImg, x + pad, y + pad, inner, inner);
+      ctx.restore();
+    } else {
+      ctx.font = `bold ${Math.round(inner * 0.55)}px system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(logo.trim(), canvas.width / 2, canvas.height / 2);
+    }
+  } catch {
+    return qrDataUrl;
+  }
+
+  return canvas.toDataURL('image/png');
+}
 
 interface OrgLoginQrModalProps {
   isOpen: boolean;
@@ -38,6 +120,8 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
   const [templateType, setTemplateType] = useState<'stand' | 'poster' | 'badge'>('stand');
   const [customHeaderTitle, setCustomHeaderTitle] = useState<string>('ورود سریع به سامانه جلسات');
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [qrDisplayUrl, setQrDisplayUrl] = useState<string>('');
+  const [showLogoInQr, setShowLogoInQr] = useState<boolean>(true);
 
   const printAreaRef = useRef<HTMLDivElement>(null);
 
@@ -88,7 +172,28 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
       });
   }, [isOpen, organization, loginUrl, selectedColor]);
 
+  useEffect(() => {
+    if (!qrDataUrl || !organization) {
+      setQrDisplayUrl('');
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const composed =
+        showLogoInQr && organization.logo
+          ? await composeQrWithCenterLogo(qrDataUrl, organization.logo)
+          : qrDataUrl;
+      if (!cancelled) setQrDisplayUrl(composed);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [qrDataUrl, showLogoInQr, organization?.logo]);
+
   if (!isOpen || !organization) return null;
+
+  const qrForExport = qrDisplayUrl || qrDataUrl;
+  const canShowLogoInQr = Boolean(organization.logo?.trim());
 
   const handleCopyLink = async () => {
     try {
@@ -103,7 +208,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
 
   // Download high-res PNG poster card
   const handleDownloadPng = () => {
-    if (!qrDataUrl) return;
+    if (!qrForExport) return;
 
     // Create a high-res canvas with complete organization branding card
     const canvas = document.createElement('canvas');
@@ -117,7 +222,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
       // Fallback: download pure QR
       const link = document.createElement('a');
       link.download = `QR-${organization.name}-Login.png`;
-      link.href = qrDataUrl;
+      link.href = qrForExport;
       link.click();
       return;
     }
@@ -196,7 +301,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
       link.click();
       onShowToast?.('تصویر باکیفیت پوستر QR با موفقیت دانلود شد', 'success');
     };
-    qrImg.src = qrDataUrl;
+    qrImg.src = qrForExport;
   };
 
   // Download vector SVG
@@ -325,7 +430,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
               <h1 class="org-title">${organization.name}</h1>
               <p class="subtitle">${customHeaderTitle || 'ورود سریع به سامانه جلسات و اتاق‌ها'}</p>
               <div class="qr-wrapper">
-                <img src="${qrDataUrl}" alt="QR Code" />
+                <img src="${qrForExport}" alt="QR Code" />
               </div>
               <div class="instruction">
                 دوربین گوشی خود را روبه‌روی بارکد بگیرید تا مستقیم به صفحه ورود هدایت شوید.
@@ -448,6 +553,25 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
             </div>
           </div>
 
+          {canShowLogoInQr && (
+            <label
+              className="flex items-center gap-2.5 p-3.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-slate-800 cursor-pointer select-none"
+            >
+              <input
+                type="checkbox"
+                checked={showLogoInQr}
+                onChange={(e) => setShowLogoInQr(e.target.checked)}
+                className="w-4 h-4 rounded accent-[#0F786E] cursor-pointer"
+              />
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                نمایش لوگو سازمان در مرکز بارکد
+              </span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 ms-auto hidden sm:inline">
+                (مناسب چاپ استند و پوستر)
+              </span>
+            </label>
+          )}
+
           {/* QR Stand Preview Card (Target for visual preview and print layout) */}
           <div
             ref={printAreaRef}
@@ -476,13 +600,13 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
 
             {/* QR Box */}
             <div className="relative inline-flex p-3 rounded-2xl bg-white border border-slate-200/80 shadow-inner justify-center items-center">
-              {isGenerating ? (
+              {isGenerating || (qrDataUrl && !qrDisplayUrl) ? (
                 <div className="w-48 h-48 flex items-center justify-center text-xs text-slate-400">
                   در حال ایجاد بارکد...
                 </div>
-              ) : qrDataUrl ? (
+              ) : qrForExport ? (
                 <img
-                  src={qrDataUrl}
+                  src={qrForExport}
                   alt={`QR Code for ${organization.name}`}
                   className="w-48 h-48 sm:w-52 sm:h-52 object-contain"
                 />
