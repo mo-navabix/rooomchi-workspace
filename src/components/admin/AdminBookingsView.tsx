@@ -116,7 +116,7 @@ export const AdminBookingsView: React.FC = () => {
   const renderStatusBadge = (status: Booking['status']) => {
     if (status === 'confirmed') {
       return (
-        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100/90 dark:bg-emerald-950/60 px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-emerald-200/60 dark:border-emerald-900/50 inline-flex items-center gap-1.5 shadow-2xs">
+        <span className="text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-[rgb(var(--brand-primary-rgb)/0.12)]/90 dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-3.5 py-1.5 rounded-xl whitespace-nowrap border border-brand-soft/60 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] inline-flex items-center gap-1.5 shadow-2xs">
           <Check className="w-3.5 h-3.5" />
           <span>تأیید شده</span>
         </span>
@@ -144,8 +144,8 @@ export const AdminBookingsView: React.FC = () => {
       <div className="bg-white dark:bg-[#1E293B] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-[#10B981]" />
+            <div className="text-xs font-semibold text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] flex items-center gap-1.5">
+              <Calendar className="w-4 h-4 text-[var(--brand-primary-light)]" />
               <span>نظارت جامع و مدیریت رزروهای سازمانی</span>
             </div>
             <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-0.5">
@@ -166,7 +166,7 @@ export const AdminBookingsView: React.FC = () => {
               }}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'cards'
-                  ? 'bg-white dark:bg-[#334155] text-[#0F786E] dark:text-[#34D399] shadow-xs'
+                  ? 'bg-white dark:bg-[#334155] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
               title="نمایش کارتی بهینه‌سازی‌شده برای موبایل و تبلت"
@@ -182,7 +182,7 @@ export const AdminBookingsView: React.FC = () => {
               }}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'table'
-                  ? 'bg-white dark:bg-[#334155] text-[#0F786E] dark:text-[#34D399] shadow-xs'
+                  ? 'bg-white dark:bg-[#334155] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
               title="نمایش جدولی فشرده"
@@ -221,10 +221,10 @@ export const AdminBookingsView: React.FC = () => {
           </div>
 
           {/* Badge 3: تأیید شده */}
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-900/60 text-xs">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            <span className="text-emerald-800 dark:text-emerald-300 font-medium">تأیید شده:</span>
-            <span className="font-extrabold text-emerald-900 dark:text-emerald-200 px-2 py-0.5 rounded-lg bg-white dark:bg-emerald-900/50 shadow-2xs">
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft/80 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.4)] text-xs">
+            <CheckCircle2 className="w-4 h-4 text-brand dark:text-[var(--brand-primary-on-dark)] shrink-0" />
+            <span className="text-brand dark:text-[var(--brand-primary-on-dark)] font-medium">تأیید شده:</span>
+            <span className="font-extrabold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] px-2 py-0.5 rounded-lg bg-white dark:bg-[rgb(var(--brand-primary-rgb)/0.18)] shadow-2xs">
               {toPersianDigits(counts.confirmed)}
             </span>
           </div>
@@ -251,7 +251,7 @@ export const AdminBookingsView: React.FC = () => {
               placeholder="جستجوی عنوان، هماهنگ‌کننده یا اتاق..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs pl-4 pr-10 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+              className="w-full text-xs pl-4 pr-10 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
             />
             {searchQuery && (
               <button
@@ -270,7 +270,7 @@ export const AdminBookingsView: React.FC = () => {
             <select
               value={filterDepartment}
               onChange={(e) => setFilterDepartment(e.target.value)}
-              className="w-full text-xs pr-10 pl-10 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
+              className="w-full text-xs pr-10 pl-10 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer"
             >
               <option value="all">همه دپارتمان‌ها و واحدها</option>
               {(currentOrg?.departments ?? []).map((d) => (
@@ -288,7 +288,7 @@ export const AdminBookingsView: React.FC = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full text-xs pr-10 pl-10 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
+              className="w-full text-xs pr-10 pl-10 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer"
             >
               <option value="all">همه وضعیت‌های ثبت‌شده</option>
               <option value="pending_approval">در انتظار تأیید مدیریت (اقدام فوری)</option>
@@ -320,7 +320,7 @@ export const AdminBookingsView: React.FC = () => {
                 setFilterDepartment('all');
                 setFilterStatus('all');
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#10B981] dark:text-[#34D399] bg-emerald-50 dark:bg-emerald-950/40 rounded-xl hover:bg-emerald-100 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] rounded-xl hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>پاکسازی فیلترها</span>
@@ -391,7 +391,7 @@ export const AdminBookingsView: React.FC = () => {
                       <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">
                         {b.date}
                       </span>
-                      <span className="text-[11px] text-[#10B981] dark:text-[#34D399] font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40">
+                      <span className="text-[11px] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] font-bold px-2 py-0.5 rounded-md bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)]">
                         {b.startTime} الی {b.endTime}
                       </span>
                     </div>
@@ -422,7 +422,7 @@ export const AdminBookingsView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleUpdateStatus(b.id, 'confirmed', b.title)}
-                      className="w-full py-2.5 px-4 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                      className="w-full py-2.5 px-4 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
                     >
                       <Check className="w-4 h-4" />
                       <span>تأیید جلسه</span>
@@ -439,7 +439,7 @@ export const AdminBookingsView: React.FC = () => {
                 ) : b.status === 'confirmed' ? (
                   <div className="flex items-center justify-between w-full px-1">
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                      <CheckCircle2 className="w-4 h-4 text-[var(--brand-primary)]" />
                       <span>جلسه نهایی و در تقویم ثبت شده</span>
                     </span>
                     <button
@@ -508,7 +508,7 @@ export const AdminBookingsView: React.FC = () => {
                       <div className="font-semibold text-slate-800 dark:text-slate-200" dir="ltr">
                         {b.date}
                       </div>
-                      <div className="text-[11px] text-[#10B981] dark:text-[#34D399] mt-0.5">
+                      <div className="text-[11px] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] mt-0.5">
                         {b.startTime} الی {b.endTime}
                       </div>
                     </td>
@@ -529,7 +529,7 @@ export const AdminBookingsView: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(b.id, 'confirmed', b.title)}
-                              className="px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/50 hover:bg-emerald-200 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                              className="px-3 py-1.5 text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                               title="تأیید این جلسه"
                             >
                               <Check className="w-3.5 h-3.5" />

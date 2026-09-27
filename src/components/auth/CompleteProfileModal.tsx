@@ -137,13 +137,13 @@ export const CompleteProfileModal: React.FC = () => {
 
           {/* Pending room indicator if triggered from room card */}
           {pendingRoomForBooking && (
-            <div className="mt-3 px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/40 flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300">
+            <div className="mt-3 px-3 py-2 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-brand-soft/70 dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 flex items-center justify-between text-xs text-brand dark:text-[var(--brand-primary-on-dark)]">
               <div className="flex items-center gap-2">
-                <DoorOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <DoorOpen className="w-4 h-4 text-brand dark:text-[var(--brand-primary-on-dark)]" />
                 <span>اتاق انتخابی شما:</span>
                 <span className="font-bold">{pendingRoomForBooking.name}</span>
               </div>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400">
+              <span className="text-[10px] text-brand dark:text-[var(--brand-primary-on-dark)]">
                 (پس از ثبت، فرم رزرو باز می‌شود)
               </span>
             </div>
@@ -185,7 +185,7 @@ export const CompleteProfileModal: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="مثال: سارا محمدی"
-                className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/20 focus:border-[#0F786E]"
+                className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.20)] focus:border-[var(--brand-primary)]"
               />
             </div>
           </div>
@@ -204,7 +204,7 @@ export const CompleteProfileModal: React.FC = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="0912xxxxxxx"
-                className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 text-right focus:outline-none focus:ring-2 focus:ring-[#0F786E]/20 focus:border-[#0F786E]"
+                className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 text-right focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.20)] focus:border-[var(--brand-primary)]"
               />
             </div>
             <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
@@ -223,7 +223,7 @@ export const CompleteProfileModal: React.FC = () => {
                 <select
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F786E]/20 focus:border-[#0F786E]"
+                  className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.20)] focus:border-[var(--brand-primary)]"
                 >
                   {departments.map((dept) => (
                     <option key={dept} value={dept}>
@@ -246,7 +246,7 @@ export const CompleteProfileModal: React.FC = () => {
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
                   placeholder="مثال: مدیر فنی"
-                  className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/20 focus:border-[#0F786E]"
+                  className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.20)] focus:border-[var(--brand-primary)]"
                 />
               </div>
             </div>
@@ -266,7 +266,7 @@ export const CompleteProfileModal: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="حداقل ۴ کاراکتر (جهت ورود با ایمیل و رمز عبور)"
-                className="w-full pr-10 pl-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/20 focus:border-[#0F786E] text-left"
+                className="w-full pr-10 pl-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.20)] focus:border-[var(--brand-primary)] text-left"
                 dir="ltr"
               />
               <button
@@ -294,7 +294,7 @@ export const CompleteProfileModal: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] disabled:opacity-50 transition-colors shadow-sm cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white btn-brand disabled:opacity-50 transition-colors shadow-sm cursor-pointer"
             >
               {isSubmitting ? (
                 <>

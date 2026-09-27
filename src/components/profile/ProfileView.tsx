@@ -82,7 +82,7 @@ export const ProfileView: React.FC = () => {
         <button
           type="button"
           onClick={() => openAuthModal("login")}
-          className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer shadow-xs"
+          className="px-4 py-2 rounded-xl text-xs font-bold text-white btn-brand cursor-pointer shadow-xs"
         >
           ورود به سیستم
         </button>
@@ -107,12 +107,12 @@ export const ProfileView: React.FC = () => {
               user={currentUser}
               name={name}
               size="lg"
-              className="shadow-xs ring-2 ring-[#0F786E]/20"
+              className="shadow-xs ring-2 ring-[rgb(var(--brand-primary-rgb)/0.20)]"
             />
             <button
               type="button"
               onClick={() => setShowAvatarSection((prev) => !prev)}
-              className="absolute -bottom-1 -left-1 p-1.5 rounded-lg bg-[#0F786E] text-white hover:bg-[#0D6B63] shadow-xs border-2 border-white dark:border-[#0F172A] cursor-pointer transition-transform hover:scale-105"
+              className="absolute -bottom-1 -left-1 p-1.5 rounded-lg bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-hover)] shadow-xs border-2 border-white dark:border-[#0F172A] cursor-pointer transition-transform hover:scale-105"
               title="تغییر تصویر نمایه"
             >
               <Camera className="w-3 h-3" />
@@ -175,7 +175,7 @@ export const ProfileView: React.FC = () => {
       >
         <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
           <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-[#0F786E]" />
+            <User className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
             مشخصات کاربری و پرسنلی
           </h3>
           <span className="text-[11px] text-slate-400">
@@ -191,7 +191,7 @@ export const ProfileView: React.FC = () => {
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
               required
             />
           </label>
@@ -219,7 +219,7 @@ export const ProfileView: React.FC = () => {
               onChange={(e) => setPhone(e.target.value)}
               dir="ltr"
               placeholder="09xxxxxxxxx"
-              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
             />
           </label>
 
@@ -232,7 +232,7 @@ export const ProfileView: React.FC = () => {
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               placeholder="مثال: توسعه محصول"
-              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
             />
           </label>
 
@@ -245,7 +245,7 @@ export const ProfileView: React.FC = () => {
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
               placeholder="مثال: سرپرست تیم فنی"
-              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
             />
           </label>
         </div>
@@ -254,7 +254,7 @@ export const ProfileView: React.FC = () => {
           <button
             type="submit"
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] disabled:opacity-60 cursor-pointer shadow-xs transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white btn-brand disabled:opacity-60 cursor-pointer shadow-xs transition-colors"
           >
             <Save className="w-3.5 h-3.5" />
             <span>{isSaving ? "در حال ثبت…" : "ذخیره تغییرات"}</span>
@@ -267,7 +267,7 @@ export const ProfileView: React.FC = () => {
         <div className="dark-surface-card rounded-2xl p-4 border border-slate-200/80 dark:border-white/10 shadow-xs flex items-center justify-between">
           <div className="space-y-0.5">
             <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-[#0F786E]" />
+              <Shield className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
               امنیت حساب
             </h4>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -277,7 +277,7 @@ export const ProfileView: React.FC = () => {
           <button
             type="button"
             onClick={() => openAuthModal("forgot")}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-[#0F786E] dark:text-[#5eead4] flex items-center gap-1.5 cursor-pointer transition-colors"
+            className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center gap-1.5 cursor-pointer transition-colors"
           >
             <KeyRound className="w-3 h-3" />
             <span>بازنشانی رمز</span>
@@ -287,12 +287,12 @@ export const ProfileView: React.FC = () => {
         <div className="dark-surface-card rounded-2xl p-4 border border-slate-200/80 dark:border-white/10 shadow-xs flex items-center justify-between text-xs">
           <div className="space-y-0.5">
             <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-[#0F786E]" />
+              <Calendar className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
               سوابق دسترسی
             </h4>
             <span className="text-[11px] text-slate-500">تاریخ عضویت: {createdLabel}</span>
           </div>
-          <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-1 rounded-md border border-emerald-200/50">
+          <span className="text-[11px] font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-2 py-1 rounded-md border border-brand-soft/50">
             ورود موفق
           </span>
         </div>

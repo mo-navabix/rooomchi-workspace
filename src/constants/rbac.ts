@@ -15,8 +15,8 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
     role: 'super_admin',
     titleFa: 'مدیر کل پلتفرم روم‌چی',
     titleEn: 'Super Admin',
-    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    bgLight: 'bg-emerald-50',
+    badgeClass: 'bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand border-brand-soft',
+    bgLight: 'bg-brand-soft',
     description: 'دسترسی کامل به تمام سازمان‌ها، پیکربندی سیستم، ممیزی و نظارت بر کل پلتفرم روم‌چی',
     permissions: [
       'MANAGE_ORGANIZATIONS',
@@ -35,8 +35,8 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
     role: 'org_admin',
     titleFa: 'مدیر ارشد سازمان',
     titleEn: 'Organization Admin',
-    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    bgLight: 'bg-emerald-50',
+    badgeClass: 'bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand border-brand-soft',
+    bgLight: 'bg-brand-soft',
     description: 'مدیریت تمام اتاق‌ها، پرسنل، تأیید درخواست‌های رزرو، ساعات کاری و قوانین سازمانی',
     permissions: [
       'MANAGE_ROOMS',
@@ -54,8 +54,8 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
     role: 'room_manager',
     titleFa: 'مدیر تشریفات و اتاق‌ها',
     titleEn: 'Room & Facility Manager',
-    badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
-    bgLight: 'bg-teal-50',
+    badgeClass: 'bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand border-brand-soft',
+    bgLight: 'bg-brand-soft',
     description: 'مدیریت تجهیزات فیزیکی اتاق‌ها، تعیین وضعیت تعمیرات، بررسی تشریفات و پذیرایی جلسات',
     permissions: [
       'MANAGE_ROOMS',

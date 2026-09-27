@@ -188,8 +188,20 @@ export class ApiService {
   }
 
   static async cancelBooking(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/bookings/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('خطا در لغو رزرو');
+    const res = await fetch(`${API_BASE}/bookings/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      let message = 'خطا در لغو رزرو';
+      try {
+        const body = await res.json();
+        if (body?.error) message = String(body.error);
+      } catch {
+        /* ignore */
+      }
+      throw new Error(message);
+    }
   }
 
   // Analytics

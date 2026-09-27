@@ -87,7 +87,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
       <button
         type="button"
         onClick={onCancel}
-        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[#0F786E] dark:hover:text-[#5eead4] transition-colors cursor-pointer"
+        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-on-dark)] transition-colors cursor-pointer"
       >
         <ArrowRight className="w-4 h-4" />
         <span>انصراف و بازگشت</span>
@@ -97,7 +97,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
       <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 shadow-xs">
         <div className="pb-5 border-b border-slate-100 dark:border-slate-800">
           <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-[#0F786E] dark:text-[#5eead4]">
+            <span className="p-2 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]">
               <Users className="w-5 h-5" />
             </span>
             {isEditing ? `ویرایش تیم «${initialTeam?.name}»` : 'تعریف تیم / گروه کاری جدید'}
@@ -129,7 +129,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="مثال: تیم محصول، تیم فنی و مهندسی، شورای سرمایه‌گذاری..."
-              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 dark:text-white"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] dark:text-white"
               required
             />
           </div>
@@ -148,7 +148,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="شرح مختصری از اعضا و ماموریت این تیم بنویسید..."
-              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 dark:text-white resize-none"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] dark:text-white resize-none"
             />
           </div>
 
@@ -156,10 +156,10 @@ export const TeamForm: React.FC<TeamFormProps> = ({
           <div className="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-[#0F786E]" />
+                <Users className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                 انتخاب اعضای تیم از بین پرسنل سازمان
               </label>
-              <span className="text-[11px] font-bold text-[#0F786E] dark:text-[#5eead4] bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md">
+              <span className="text-[11px] font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-2 py-0.5 rounded-md">
                 {selectedUserIds.length} نفر انتخاب شده
               </span>
             </div>
@@ -175,7 +175,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                 value={memberSearch}
                 onChange={(e) => setMemberSearch(e.target.value)}
                 placeholder="جستجو در بین همکاران..."
-                className="w-full pr-9 pl-3 py-2 text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 dark:text-white"
+                className="w-full pr-9 pl-3 py-2 text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] dark:text-white"
               />
             </div>
 
@@ -194,7 +194,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                       onClick={() => handleToggleUser(user.id)}
                       className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-[#0F786E]/40 dark:border-[#5eead4]/40'
+                          ? 'bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border-[rgb(var(--brand-primary-rgb)/0.40)] dark:border-[rgb(var(--brand-primary-rgb)/0.40)]'
                           : 'bg-white dark:bg-[#0F172A] border-slate-200/80 dark:border-slate-800 hover:border-slate-300'
                       }`}
                     >
@@ -202,7 +202,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                         <div
                           className={`w-5 h-5 rounded-md flex items-center justify-center border transition-colors shrink-0 ${
                             isSelected
-                              ? 'bg-[#0F786E] border-[#0F786E] text-white'
+                              ? 'bg-[var(--brand-primary)] border-[var(--brand-primary)] text-white'
                               : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
                           }`}
                         >
@@ -241,7 +241,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
               type="submit"
               id="btn-save-team-form"
               disabled={isSubmitting || !name.trim()}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] rounded-xl shadow-xs hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-white btn-brand rounded-xl shadow-xs hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'در حال ذخیره‌سازی...' : isEditing ? 'ذخیره تغییرات تیم' : 'ایجاد تیم'}</span>

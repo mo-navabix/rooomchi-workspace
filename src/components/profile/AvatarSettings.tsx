@@ -128,7 +128,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#0F786E]/10 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-[rgb(var(--brand-primary-rgb)/0.10)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center">
             <Camera className="w-4 h-4" />
           </div>
           <div>
@@ -160,7 +160,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
           onClick={() => setSelectedMode('initials')}
           className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             selectedMode === 'initials'
-              ? 'bg-[#0F786E] text-white shadow-xs'
+              ? 'bg-[var(--brand-primary)] text-white shadow-xs'
               : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
           }`}
         >
@@ -173,7 +173,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
           onClick={() => setSelectedMode('google')}
           className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             selectedMode === 'google'
-              ? 'bg-[#0F786E] text-white shadow-xs'
+              ? 'bg-[var(--brand-primary)] text-white shadow-xs'
               : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
           }`}
         >
@@ -203,7 +203,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
           onClick={() => setSelectedMode('custom')}
           className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             selectedMode === 'custom'
-              ? 'bg-[#0F786E] text-white shadow-xs'
+              ? 'bg-[var(--brand-primary)] text-white shadow-xs'
               : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
           }`}
         >
@@ -216,7 +216,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
           onClick={() => setSelectedMode('gravatar')}
           className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
             selectedMode === 'gravatar'
-              ? 'bg-[#0F786E] text-white shadow-xs'
+              ? 'bg-[var(--brand-primary)] text-white shadow-xs'
               : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
           }`}
         >
@@ -255,7 +255,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer transition-colors shadow-2xs">
-                <Upload className="w-3.5 h-3.5 text-[#0F786E]" />
+                <Upload className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                 <span>{isUploading ? 'در حال پردازش...' : 'انتخاب فایل از دستگاه'}</span>
                 <input
                   type="file"
@@ -274,7 +274,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
               placeholder="یا لینک اینترنتی تصویر را اینجا وارد کنید (https://...)"
               value={customAvatarUrl}
               onChange={(e) => setCustomAvatarUrl(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
               dir="ltr"
             />
           </div>
@@ -334,7 +334,7 @@ export const AvatarSettings: React.FC<Props> = ({ onClose }) => {
           <button
             type="button"
             onClick={handleSave}
-            className="px-4 py-2 rounded-xl bg-[#0F786E] hover:bg-[#0d6b63] text-white text-xs font-bold shadow-xs cursor-pointer transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl btn-brand text-white text-xs font-bold shadow-xs cursor-pointer transition-colors flex items-center gap-1.5"
           >
             <Check className="w-3.5 h-3.5" />
             <span>ذخیره تغییرات</span>

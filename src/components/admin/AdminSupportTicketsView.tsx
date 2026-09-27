@@ -29,7 +29,7 @@ import {
 import { AdminBookingsSkeleton } from '../common/Skeletons';
 
 const statusBadge: Record<SupportTicket['status'], string> = {
-  open: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
+  open: 'bg-brand-soft text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)]',
   in_progress: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
   resolved: 'bg-slate-100 text-slate-600 dark:bg-[#334155] dark:text-slate-300',
 };
@@ -139,7 +139,7 @@ export const AdminSupportTicketsView: React.FC = () => {
     <div className="space-y-4 sm:space-y-6 min-w-0">
       <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs space-y-4">
         <div>
-          <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
+          <div className="text-xs font-semibold text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] flex items-center gap-1.5">
             <Ticket className="w-3.5 h-3.5" />
             <span>پشتیبانی سازمان</span>
           </div>
@@ -162,7 +162,7 @@ export const AdminSupportTicketsView: React.FC = () => {
               onClick={() => setFilterStatus(key)}
               className={`rounded-xl border px-3 py-2.5 text-right transition-colors cursor-pointer ${
                 filterStatus === key
-                  ? 'border-[#0F786E] bg-emerald-50/80 dark:bg-emerald-950/30'
+                  ? 'border-[var(--brand-primary)] bg-brand-soft/80 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)]'
                   : 'border-slate-200 dark:border-[#334155] hover:bg-slate-50 dark:hover:bg-[#0F172A]/50'
               }`}
             >
@@ -180,14 +180,14 @@ export const AdminSupportTicketsView: React.FC = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="جستجو بر اساس شناسه، عنوان، نام یا ایمیل کاربر..."
-              className="w-full pr-10 pl-3 py-2.5 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0F786E]/30 focus:border-[#0F786E] transition-all"
+              className="w-full pr-10 pl-3 py-2.5 rounded-xl text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.30)] focus:border-[var(--brand-primary)] transition-all"
             />
           </div>
           <div className="relative sm:col-span-3">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as typeof filterStatus)}
-              className="w-full appearance-none pr-3.5 pl-9 py-2.5 rounded-xl text-xs font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/30 focus:border-[#0F786E] transition-all"
+              className="w-full appearance-none pr-3.5 pl-9 py-2.5 rounded-xl text-xs font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.30)] focus:border-[var(--brand-primary)] transition-all"
             >
               <option value="all">همه وضعیت‌ها</option>
               {(Object.keys(statusLabels) as SupportTicket['status'][]).map((s) => (
@@ -200,7 +200,7 @@ export const AdminSupportTicketsView: React.FC = () => {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value as typeof filterCategory)}
-              className="w-full appearance-none pr-3.5 pl-9 py-2.5 rounded-xl text-xs font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/30 focus:border-[#0F786E] transition-all"
+              className="w-full appearance-none pr-3.5 pl-9 py-2.5 rounded-xl text-xs font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.30)] focus:border-[var(--brand-primary)] transition-all"
             >
               <option value="all">همه دسته‌ها</option>
               {(Object.keys(categoryLabels) as TicketCategory[]).map((c) => (
@@ -228,7 +228,7 @@ export const AdminSupportTicketsView: React.FC = () => {
                     type="button"
                     onClick={() => openDetail(t)}
                     className={`w-full text-right px-4 py-4 hover:bg-slate-50 dark:hover:bg-[#0F172A]/40 transition-colors cursor-pointer ${
-                      selectedId === t.id ? 'bg-emerald-50/60 dark:bg-emerald-950/20' : ''
+                      selectedId === t.id ? 'bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.1)]' : ''
                     }`}
                   >
                     <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -311,7 +311,7 @@ export const AdminSupportTicketsView: React.FC = () => {
                   <select
                     value={draftStatus}
                     onChange={(e) => setDraftStatus(e.target.value as SupportTicket['status'])}
-                    className="w-full appearance-none pr-4 pl-10 py-3 rounded-xl text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] transition-all shadow-2xs"
+                    className="w-full appearance-none pr-4 pl-10 py-3 rounded-xl text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:border-[var(--brand-primary-light)] transition-all shadow-2xs"
                   >
                     {(Object.keys(statusLabels) as SupportTicket['status'][]).map((s) => (
                       <option key={s} value={s}>
@@ -332,7 +332,7 @@ export const AdminSupportTicketsView: React.FC = () => {
                   onChange={(e) => setDraftNote(e.target.value)}
                   rows={3}
                   placeholder="برای تیم پشتیبانی؛ کاربر این متن را نمی‌بیند."
-                  className="w-full px-4 py-3 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] resize-y transition-all"
+                  className="w-full px-4 py-3 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:border-[var(--brand-primary-light)] resize-y transition-all"
                 />
               </div>
 
@@ -340,7 +340,7 @@ export const AdminSupportTicketsView: React.FC = () => {
                 type="button"
                 disabled={saving}
                 onClick={handleSave}
-                className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] disabled:opacity-60 cursor-pointer"
+                className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] disabled:opacity-60 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 {saving ? 'در حال ذخیره…' : 'ذخیره تغییرات'}

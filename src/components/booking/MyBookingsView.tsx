@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Booking } from '../../types';
-import { formatGregorianIsoLocal } from '../../utils/jalali';
+import { isBookingOrganizer } from '../../utils/bookingPermissions';
+import {
+  formatGregorianIsoLocal,
+  formatToJalaliDescriptive,
+  toPersianDigits,
+} from '../../utils/jalali';
 import {
   Calendar,
   Clock,
@@ -16,11 +21,10 @@ import {
   Trash2,
   CalendarDays,
 } from 'lucide-react';
-import { toPersianDigits } from '../../utils/jalali';
 import { MyBookingsSkeleton } from '../common/Skeletons';
 
 export const MyBookingsView: React.FC = () => {
-  const { currentOrg, showToast } = useApp();
+  const { currentOrg, currentUser, showToast } = useApp();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filterTab, setFilterTab] = useState<'all' | 'upcoming' | 'pending' | 'cancelled'>('all');
@@ -58,7 +62,7 @@ export const MyBookingsView: React.FC = () => {
   };
 
   const handleCopyMeetingDetails = (booking: Booking) => {
-    const text = `دعوت به جلسه: ${booking.title}\nاتاق: ${booking.roomName}\nتاریخ: ${booking.date}\nساعت: ${booking.startTime} الی ${booking.endTime}\nبرگزارکننده: ${booking.organizerName}`;
+    const text = `دعوت به جلسه: ${booking.title}\nاتاق: ${booking.roomName}\nتاریخ: ${formatToJalaliDescriptive(booking.date)}\nساعت: ${toPersianDigits(booking.startTime)} الی ${toPersianDigits(booking.endTime)}\nبرگزارکننده: ${booking.organizerName}`;
     navigator.clipboard.writeText(text);
     showToast('متن دعوتنامه جلسه در کلیپ‌بورد کپی شد', 'info');
   };
@@ -82,7 +86,7 @@ export const MyBookingsView: React.FC = () => {
     switch (status) {
       case 'confirmed':
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/40 px-2.5 py-1 rounded-full">
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-2.5 py-1 rounded-full">
             <CheckCircle2 className="w-3.5 h-3.5" />
             <span>تأیید شده</span>
           </span>
@@ -130,7 +134,7 @@ export const MyBookingsView: React.FC = () => {
                 )}
               </p>
               <div className="flex flex-wrap items-center gap-2 mt-2">
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)]">
                   <CalendarDays className="w-3 h-3" />
                   {toPersianDigits(upcomingCount)} پیش‌رو
                 </span>
@@ -215,19 +219,19 @@ export const MyBookingsView: React.FC = () => {
 
                 <div className="flex items-center gap-1.5 font-medium">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{b.date}</span>
+                  <span>{formatToJalaliDescriptive(b.date)}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5 font-medium">
                   <Clock className="w-3.5 h-3.5 text-slate-400" />
                   <span>
-                    {b.startTime} تا {b.endTime}
+                    {toPersianDigits(b.startTime)} تا {toPersianDigits(b.endTime)}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5 font-medium">
                   <Users className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{b.attendeesCount} نفر حاضرین</span>
+                  <span>{toPersianDigits(b.attendeesCount)} نفر حاضرین</span>
                 </div>
 
                 {b.cateringNeeded && (
@@ -251,7 +255,9 @@ export const MyBookingsView: React.FC = () => {
                 <span>اشتراک</span>
               </button>
 
-              {b.status !== 'cancelled' && (
+              {b.status !== 'cancelled' &&
+                currentUser &&
+                isBookingOrganizer(b, currentUser) && (
                 <button
                   type="button"
                   onClick={() => handleCancelBooking(b.id, b.title)}

@@ -3,6 +3,7 @@ import { checkDbStatus } from "../services/dbService";
 import {
   jwtService,
   extractJwtUser,
+  isBookingOrganizer,
   isProtectedAdmin,
   canManageTeams,
 } from "./authHelpers";
@@ -323,10 +324,11 @@ export function registerApiRoutes(app: Express): void {
     };
 
     const jwtUser = extractJwtUser(req);
+    const organizerId = jwtUser?.userId ?? null;
     await store.createBooking(newBooking, {
-      organizerId: jwtUser?.userId ?? null,
+      organizerId,
     });
-    res.status(201).json(newBooking);
+    res.status(201).json({ ...newBooking, organizerId });
   }));
 
   app.patch("/api/bookings/:id/status", asyncRoute(async (req, res) => {
@@ -340,6 +342,23 @@ export function registerApiRoutes(app: Express): void {
   }));
 
   app.delete("/api/bookings/:id", asyncRoute(async (req, res) => {
+    const jwtUser = extractJwtUser(req);
+    if (!jwtUser) {
+      return res.status(401).json({ error: "برای لغو رزرو باید وارد حساب شوید" });
+    }
+    const existing = await store.getBookingById(req.params.id);
+    if (!existing) return res.status(404).json({ error: "رزرو مورد نظر یافت نشد" });
+    const dbUser = await store.getUserById(jwtUser.userId);
+    if (
+      !isBookingOrganizer(existing, {
+        userId: jwtUser.userId,
+        email: dbUser?.email,
+      })
+    ) {
+      return res.status(403).json({
+        error: "فقط برگزارکننده جلسه می‌تواند این رزرو را لغو کند",
+      });
+    }
     const booking = await store.cancelBooking(req.params.id);
     if (!booking) return res.status(404).json({ error: "رزرو مورد نظر یافت نشد" });
     res.json({ success: true, message: "رزرو با موفقیت لغو گردید", booking });

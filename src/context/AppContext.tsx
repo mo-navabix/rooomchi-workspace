@@ -19,6 +19,10 @@ import {
 } from "../types";
 import { ApiService } from "../services/apiService";
 import { hasPermission, normalizeUserRole } from "../constants/rbac";
+import {
+  applyOrgBrandTheme,
+  clearOrgBrandThemeOverrides,
+} from "../utils/orgBrandTheme";
 
 interface ToastInfo {
   id: string;
@@ -317,6 +321,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     refreshOrganizations();
   }, []);
+
+  /** Org theme applies only inside the portal; landing keeps Rooomchi CSS defaults. */
+  useEffect(() => {
+    if (viewMode === "landing") {
+      clearOrgBrandThemeOverrides();
+    } else {
+      applyOrgBrandTheme(currentOrg?.primaryColor);
+    }
+  }, [viewMode, currentOrg?.id, currentOrg?.primaryColor, theme]);
 
   // Handle QR code scanning / deep-link entry (?auth=login&org=...)
   useEffect(() => {

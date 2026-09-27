@@ -70,7 +70,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
 
   return (
     <div
-      className={`relative inline-flex items-center justify-center shrink-0 overflow-hidden select-none font-bold transition-transform ${container} ${roundedClass} ${borderClass} ${className} bg-gradient-to-tr from-[#0F786E] to-emerald-500 text-white shadow-xs`}
+      className={`relative inline-flex items-center justify-center shrink-0 overflow-hidden select-none font-bold transition-transform ${container} ${roundedClass} ${borderClass} ${className} bg-gradient-to-tr from-[var(--brand-primary)] to-[var(--brand-primary-light)] text-white shadow-xs`}
       title={name}
     >
       {showImage ? (

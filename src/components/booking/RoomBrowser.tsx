@@ -113,7 +113,7 @@ export const RoomBrowser: React.FC = () => {
             placeholder="جستجو بر اساس نام اتاق، کد اتاق (مثال: ALB-101) یا ساختمان..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full text-xs pl-3 pr-10 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-[#0F172A] focus:outline-hidden focus:ring-2 focus:ring-[#10B981] transition-colors"
+            className="w-full text-xs pl-3 pr-10 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-[#0F172A] focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] transition-colors"
           />
         </div>
 
@@ -125,7 +125,7 @@ export const RoomBrowser: React.FC = () => {
               id="filter-capacity"
               value={selectedCapacity}
               onChange={(e) => setSelectedCapacity(e.target.value)}
-              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
+              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
             >
               <option value="all">همه ظرفیت‌ها</option>
               <option value="small">جلسات کوچک (تا ۶ نفر)</option>
@@ -141,7 +141,7 @@ export const RoomBrowser: React.FC = () => {
               id="filter-amenity"
               value={selectedAmenity}
               onChange={(e) => setSelectedAmenity(e.target.value)}
-              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
+              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
             >
               <option value="all">همه امکانات و تجهیزات</option>
               {getAllAmenitiesList().map((a) => (
@@ -159,7 +159,7 @@ export const RoomBrowser: React.FC = () => {
               id="filter-building"
               value={selectedBuilding}
               onChange={(e) => setSelectedBuilding(e.target.value)}
-              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
+              className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
             >
               <option value="all">همه ساختمان‌ها</option>
               {(currentOrg?.buildings ?? []).map((b) => (
@@ -246,14 +246,14 @@ export const RoomBrowser: React.FC = () => {
                     <div className="flex items-center gap-1 text-[11px] font-semibold">
                       <span
                         className={`w-2 h-2 rounded-full ${
-                          isMaintenance ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'
+                          isMaintenance ? 'bg-amber-500 animate-pulse' : 'bg-[var(--brand-primary)]'
                         }`}
                       />
                       <span
                         className={
                           isMaintenance
                             ? 'text-amber-600 dark:text-amber-400'
-                            : 'text-emerald-600 dark:text-emerald-400'
+                            : 'text-brand dark:text-[var(--brand-primary-on-dark)]'
                         }
                       >
                         {isMaintenance ? 'تعمیرات' : 'آماده رزرو'}
@@ -264,7 +264,7 @@ export const RoomBrowser: React.FC = () => {
                   {/* Simplified Amenities Strip with Icon Previews */}
                   <div
                     onClick={() => setAmenitiesModalRoom(room)}
-                    className="w-full flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-[#0F172A] hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30 border border-slate-200/80 dark:border-white/5 transition-colors cursor-pointer group/btn"
+                    className="w-full flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-[#0F172A] hover:bg-brand-soft/70 dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-slate-200/80 dark:border-white/5 transition-colors cursor-pointer group/btn"
                     title="مشاهده جزئیات امکانات و تجهیزات"
                   >
                     <div className="flex items-center gap-1 overflow-hidden">
@@ -287,7 +287,7 @@ export const RoomBrowser: React.FC = () => {
                           <div
                             key={amId}
                             title={am?.nameFa || amId}
-                            className="w-6.5 h-6.5 rounded-lg bg-white dark:bg-slate-800 text-[#0F786E] dark:text-[#5eead4] border border-slate-200/70 dark:border-white/10 flex items-center justify-center shrink-0 shadow-2xs group-hover/btn:border-emerald-300"
+                            className="w-6.5 h-6.5 rounded-lg bg-white dark:bg-slate-800 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] border border-slate-200/70 dark:border-white/10 flex items-center justify-center shrink-0 shadow-2xs group-hover/btn:border-brand-soft"
                           >
                             <IconComp className="w-3.5 h-3.5" />
                           </div>
@@ -299,7 +299,7 @@ export const RoomBrowser: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] font-bold text-[#0F786E] dark:text-[#5eead4] group-hover/btn:underline shrink-0 flex items-center gap-1">
+                    <span className="text-[11px] font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] group-hover/btn:underline shrink-0 flex items-center gap-1">
                       <SlidersHorizontal className="w-3 h-3" />
                       <span>{amenityCount} قابلیت</span>
                     </span>
@@ -313,7 +313,7 @@ export const RoomBrowser: React.FC = () => {
                   id={`btn-book-room-${room.id}`}
                   disabled={isMaintenance}
                   onClick={() => openBookingModal(room)}
-                  className="w-full py-2 px-3 bg-[#0F786E] hover:bg-[#0D6B63] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
+                  className="w-full py-2 px-3 btn-brand disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
                 >
                   <CalendarCheck className="w-3.5 h-3.5" />
                   <span>{isMaintenance ? 'غیرقابل رزرو (تعمیرات)' : 'رزرو این اتاق'}</span>
@@ -345,7 +345,7 @@ export const RoomBrowser: React.FC = () => {
             {/* Header (No top-right close X button) */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-900/50">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0">
                   <SlidersHorizontal className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
@@ -362,7 +362,7 @@ export const RoomBrowser: React.FC = () => {
             {/* Content List */}
             <div className="p-4 overflow-y-auto space-y-3">
               <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-emerald-500" />
+                <Check className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                 <span>تجهیزات و امکانات فعال اتاق:</span>
               </div>
 
@@ -389,7 +389,7 @@ export const RoomBrowser: React.FC = () => {
                       key={amId}
                       className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200"
                     >
-                      <div className="w-6 h-6 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center text-[#0F786E] dark:text-[#5eead4] shrink-0 shadow-2xs">
+                      <div className="w-6 h-6 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] shrink-0 shadow-2xs">
                         <IconComp className="w-3.5 h-3.5" />
                       </div>
                       <span className="font-medium text-[11px] leading-snug">

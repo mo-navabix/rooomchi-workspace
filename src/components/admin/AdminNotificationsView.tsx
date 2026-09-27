@@ -64,8 +64,8 @@ const SwitchToggle: React.FC<SwitchToggleProps> = ({
     color === 'sky'
       ? 'bg-sky-500 dark:bg-sky-600'
       : color === 'teal'
-      ? 'bg-teal-600 dark:bg-teal-500'
-      : 'bg-emerald-500 dark:bg-emerald-600';
+      ? 'bg-[var(--brand-primary)] dark:bg-brand-soft0'
+      : 'bg-[var(--brand-primary)] dark:bg-[var(--brand-primary)]';
 
   const isMd = size === 'md';
 
@@ -319,8 +319,8 @@ export const AdminNotificationsView: React.FC = () => {
       <div className="bg-white dark:bg-[#1E293B] p-5 sm:p-6 lg:p-7 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-[#334155] shadow-xs transition-colors space-y-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1.5 text-right">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/50 border border-teal-200/80 dark:border-teal-900/50 text-xs font-bold text-[#0F786E] dark:text-[#34D399]">
-              <BellRing className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#34D399]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft/80 dark:border-[rgb(var(--brand-primary-rgb)/0.35)] text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)]">
+              <BellRing className="w-3.5 h-3.5 text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)]" />
               <span>مرکز فرماندهی نوتیفیکیشن‌ها و کانال‌های ارتباطی</span>
             </div>
             <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -336,9 +336,9 @@ export const AdminNotificationsView: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsTestModalOpen(true)}
-              className="px-4 py-2.5 rounded-xl text-xs font-bold text-teal-800 dark:text-teal-200 bg-teal-50 dark:bg-teal-950/50 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-900/60 transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+              className="px-4 py-2.5 rounded-xl text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.22)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.4)] transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
             >
-              <Zap className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              <Zap className="w-4 h-4 text-brand dark:text-[var(--brand-primary-on-dark)]" />
               <span>شبیه‌ساز و ارسال تست</span>
             </button>
 
@@ -346,7 +346,7 @@ export const AdminNotificationsView: React.FC = () => {
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="px-5 py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="px-5 py-2.5 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? 'در حال ذخیره...' : 'ذخیره پیکربندی'}</span>
@@ -359,11 +359,11 @@ export const AdminNotificationsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <span
               className={`w-2.5 h-2.5 rounded-full ${
-                settings.sms.enabled ? 'bg-emerald-500 ring-2 ring-emerald-500/20' : 'bg-slate-400'
+                settings.sms.enabled ? 'bg-[var(--brand-primary)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.2)]' : 'bg-slate-400'
               }`}
             />
             <span className="font-medium text-slate-500 dark:text-slate-400">پیامک (SMS):</span>
-            <span className={`font-bold ${settings.sms.enabled ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-400'}`}>
+            <span className={`font-bold ${settings.sms.enabled ? 'text-brand dark:text-[var(--brand-primary-on-dark)]' : 'text-slate-400'}`}>
               {settings.sms.enabled ? `فعال (${SMS_PROVIDERS.find(p => p.id === settings.sms.provider)?.name.split(' ')[0] || 'متصل'})` : 'غیرفعال'}
             </span>
           </div>
@@ -387,11 +387,11 @@ export const AdminNotificationsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <span
               className={`w-2.5 h-2.5 rounded-full ${
-                settings.inApp.enabled ? 'bg-teal-500 ring-2 ring-teal-500/20' : 'bg-slate-400'
+                settings.inApp.enabled ? 'bg-brand-soft0 ring-2 ring-[rgb(var(--brand-primary-rgb)/0.2)]' : 'bg-slate-400'
               }`}
             />
             <span className="font-medium text-slate-500 dark:text-slate-400">اعلان درون اپلیکیشن:</span>
-            <span className={`font-bold ${settings.inApp.enabled ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400'}`}>
+            <span className={`font-bold ${settings.inApp.enabled ? 'text-brand dark:text-[var(--brand-primary-on-dark)]' : 'text-slate-400'}`}>
               {settings.inApp.enabled ? (settings.inApp.soundEnabled ? 'فعال + آلارم صوتی' : 'فعال (بی‌صدا)') : 'غیرفعال'}
             </span>
           </div>
@@ -453,7 +453,7 @@ export const AdminNotificationsView: React.FC = () => {
               {/* Card Header */}
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[#334155] gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-[#10B981] flex items-center justify-center shrink-0 border border-emerald-200/60 dark:border-emerald-900/50">
+                  <div className="w-10 h-10 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary-light)] flex items-center justify-center shrink-0 border border-brand-soft/60 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)]">
                     <Smartphone className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
@@ -495,7 +495,7 @@ export const AdminNotificationsView: React.FC = () => {
                       },
                     }))
                   }
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
                 >
                   {SMS_PROVIDERS.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -525,7 +525,7 @@ export const AdminNotificationsView: React.FC = () => {
                     }
                     placeholder="kav_live_9482..."
                     dir="ltr"
-                    className="w-full text-xs pl-9 pr-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
+                    className="w-full text-xs pl-9 pr-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
                   />
                   <button
                     type="button"
@@ -555,7 +555,7 @@ export const AdminNotificationsView: React.FC = () => {
                     }
                     placeholder="3000500600"
                     dir="ltr"
-                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
+                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -573,7 +573,7 @@ export const AdminNotificationsView: React.FC = () => {
                     }
                     placeholder="09123456789"
                     dir="ltr"
-                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
+                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
                   />
                 </div>
               </div>
@@ -597,7 +597,7 @@ export const AdminNotificationsView: React.FC = () => {
                           sms: { ...prev.sms, notifyOrganizer: e.target.checked },
                         }))
                       }
-                      className="w-4 h-4 rounded text-[#10B981] focus:ring-[#10B981] cursor-pointer"
+                      className="w-4 h-4 rounded text-[var(--brand-primary-light)] focus:ring-[var(--brand-primary-light)] cursor-pointer"
                     />
                   </label>
 
@@ -614,7 +614,7 @@ export const AdminNotificationsView: React.FC = () => {
                           sms: { ...prev.sms, notifyParticipants: e.target.checked },
                         }))
                       }
-                      className="w-4 h-4 rounded text-[#10B981] focus:ring-[#10B981] cursor-pointer"
+                      className="w-4 h-4 rounded text-[var(--brand-primary-light)] focus:ring-[var(--brand-primary-light)] cursor-pointer"
                     />
                   </label>
 
@@ -631,7 +631,7 @@ export const AdminNotificationsView: React.FC = () => {
                           sms: { ...prev.sms, notifyRoomManager: e.target.checked },
                         }))
                       }
-                      className="w-4 h-4 rounded text-[#10B981] focus:ring-[#10B981] cursor-pointer"
+                      className="w-4 h-4 rounded text-[var(--brand-primary-light)] focus:ring-[var(--brand-primary-light)] cursor-pointer"
                     />
                   </label>
                 </div>
@@ -662,28 +662,28 @@ export const AdminNotificationsView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => insertPlaceholder('{نام_جلسه}')}
-                    className="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors cursor-pointer"
+                    className="px-2 py-0.5 rounded bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] transition-colors cursor-pointer"
                   >
                     + نام جلسه
                   </button>
                   <button
                     type="button"
                     onClick={() => insertPlaceholder('{اتاق}')}
-                    className="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors cursor-pointer"
+                    className="px-2 py-0.5 rounded bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] transition-colors cursor-pointer"
                   >
                     + سالن
                   </button>
                   <button
                     type="button"
                     onClick={() => insertPlaceholder('{ساعت}')}
-                    className="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors cursor-pointer"
+                    className="px-2 py-0.5 rounded bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] transition-colors cursor-pointer"
                   >
                     + ساعت
                   </button>
                   <button
                     type="button"
                     onClick={() => insertPlaceholder('{تاریخ}')}
-                    className="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors cursor-pointer"
+                    className="px-2 py-0.5 rounded bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] transition-colors cursor-pointer"
                   >
                     + تاریخ
                   </button>
@@ -698,16 +698,16 @@ export const AdminNotificationsView: React.FC = () => {
                       sms: { ...prev.sms, [smsTemplateKey]: e.target.value },
                     }))
                   }
-                  className="w-full text-xs p-3 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 resize-none leading-relaxed focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
+                  className="w-full text-xs p-3 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 resize-none leading-relaxed focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
                 />
 
                 {/* Smartphone Realistic Bubble Preview */}
-                <div className="bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/50 p-3.5 rounded-xl space-y-1.5">
-                  <div className="text-[10px] text-emerald-800 dark:text-emerald-300 font-bold flex items-center justify-between">
+                <div className="bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-brand-soft/70 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] p-3.5 rounded-xl space-y-1.5">
+                  <div className="text-[10px] text-brand dark:text-[var(--brand-primary-on-dark)] font-bold flex items-center justify-between">
                     <span>پیش‌نمایش پیام دریافتی (خط {settings.sms.lineNumber})</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-mono">همین الان</span>
+                    <span className="text-brand dark:text-[var(--brand-primary-on-dark)] font-mono">همین الان</span>
                   </div>
-                  <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-[#1E293B] p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
+                  <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-[#1E293B] p-2.5 rounded-lg border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.25)]">
                     {(settings.sms[smsTemplateKey] || '')
                       .replace('{نام_جلسه}', 'جلسه استراتژی محصول')
                       .replace('{اتاق}', 'سالن سیمرغ')
@@ -726,7 +726,7 @@ export const AdminNotificationsView: React.FC = () => {
                   setTestChannel('sms');
                   setIsTestModalOpen(true);
                 }}
-                className="w-full py-2.5 px-4 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-900/60 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                className="w-full py-2.5 px-4 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.4)] rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>ارسال پیامک آزمایشی (Test SMS)</span>
@@ -979,7 +979,7 @@ export const AdminNotificationsView: React.FC = () => {
                       <span className="flex-1 text-center py-1.5 bg-[#242F3D] hover:bg-[#2F3D4D] rounded-lg text-[11px] font-semibold text-sky-300 cursor-pointer">
                         🔍 مشاهده در پرتال
                       </span>
-                      <span className="flex-1 text-center py-1.5 bg-[#242F3D] hover:bg-[#2F3D4D] rounded-lg text-[11px] font-semibold text-emerald-300 cursor-pointer">
+                      <span className="flex-1 text-center py-1.5 bg-[#242F3D] hover:bg-[#2F3D4D] rounded-lg text-[11px] font-semibold text-[var(--brand-primary-lighter)] cursor-pointer">
                         ✅ تأیید فوری جلسه
                       </span>
                     </div>
@@ -1010,7 +1010,7 @@ export const AdminNotificationsView: React.FC = () => {
               {/* Card Header */}
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[#334155] gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 border border-teal-200/60 dark:border-teal-900/50">
+                  <div className="w-10 h-10 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0 border border-brand-soft/60 dark:border-[rgb(var(--brand-primary-rgb)/0.35)]">
                     <Bell className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
@@ -1040,7 +1040,7 @@ export const AdminNotificationsView: React.FC = () => {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155]">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-teal-100/60 dark:bg-teal-950/60 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] flex items-center justify-center text-brand dark:text-[var(--brand-primary-on-dark)] shrink-0">
                       {settings.inApp.soundEnabled ? (
                         <Volume2 className="w-4 h-4" />
                       ) : (
@@ -1110,7 +1110,7 @@ export const AdminNotificationsView: React.FC = () => {
                       inApp: { ...prev.inApp, retentionDays: Number(e.target.value) },
                     }))
                   }
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:outline-hidden"
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.2)] focus:border-[var(--brand-primary)] focus:outline-hidden"
                 >
                   <option value={7}>۷ روز گذشته</option>
                   <option value={14}>۱۴ روز گذشته (پیش‌فرض پیشنهادی)</option>
@@ -1128,7 +1128,7 @@ export const AdminNotificationsView: React.FC = () => {
                   پیش‌نمایش کارت اعلان درون‌برنامه‌ای:
                 </span>
                 <div className="p-3.5 bg-slate-50 dark:bg-[#0F172A] rounded-xl border border-slate-200 dark:border-[#334155] flex items-start gap-3 shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-teal-500/10 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-brand-soft0/10 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0">
                     <Calendar className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -1136,7 +1136,7 @@ export const AdminNotificationsView: React.FC = () => {
                       <h5 className="text-xs font-bold text-slate-900 dark:text-white truncate">
                         تأیید جلسه هماهنگی پروژه‌ها
                       </h5>
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-[var(--brand-primary)] shrink-0" />
                     </div>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                       جلسه شما در سالن ابوریحان برای ساعت ۱۴:۰۰ تأیید گردید.
@@ -1154,7 +1154,7 @@ export const AdminNotificationsView: React.FC = () => {
                   setTestChannel('in_app');
                   setIsTestModalOpen(true);
                 }}
-                className="w-full py-2.5 px-4 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-800 dark:text-teal-200 border border-teal-200 dark:border-teal-900/60 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                className="w-full py-2.5 px-4 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.4)] rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
               >
                 <Bell className="w-3.5 h-3.5" />
                 <span>ارسال اعلان تستی به هدر (Test In-App)</span>
@@ -1195,13 +1195,13 @@ export const AdminNotificationsView: React.FC = () => {
                   <th className="px-5 py-4 whitespace-nowrap">عنوان رویداد و شرح کاربردی</th>
                   <th className="px-4 py-4 text-center whitespace-nowrap">
                     <span className="inline-flex items-center gap-1.5">
-                      <Bell className="w-4 h-4 text-teal-600" />
+                      <Bell className="w-4 h-4 text-brand" />
                       <span>اعلان درون‌برنامه‌ای</span>
                     </span>
                   </th>
                   <th className="px-4 py-4 text-center whitespace-nowrap">
                     <span className="inline-flex items-center gap-1.5">
-                      <Smartphone className="w-4 h-4 text-emerald-600" />
+                      <Smartphone className="w-4 h-4 text-brand" />
                       <span>پیامک (SMS)</span>
                     </span>
                   </th>
@@ -1237,7 +1237,7 @@ export const AdminNotificationsView: React.FC = () => {
                         onClick={() => handleToggleRule(rule.id, 'inApp')}
                         className={`w-9 h-9 rounded-xl inline-flex items-center justify-center transition-all cursor-pointer ${
                           rule.inApp
-                            ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-300 dark:border-teal-800 shadow-2xs'
+                            ? 'bg-teal-100 dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-teal-300 dark:border-teal-800 shadow-2xs'
                             : 'bg-slate-100 dark:bg-[#0F172A] text-slate-400 border border-slate-200 dark:border-slate-800'
                         }`}
                         title={rule.inApp ? 'فعال (کلیک برای غیرفعال‌سازی)' : 'غیرفعال (کلیک برای فعال‌سازی)'}
@@ -1253,7 +1253,7 @@ export const AdminNotificationsView: React.FC = () => {
                         onClick={() => handleToggleRule(rule.id, 'sms')}
                         className={`w-9 h-9 rounded-xl inline-flex items-center justify-center transition-all cursor-pointer ${
                           rule.sms
-                            ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 shadow-2xs'
+                            ? 'bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)] shadow-2xs'
                             : 'bg-slate-100 dark:bg-[#0F172A] text-slate-400 border border-slate-200 dark:border-slate-800'
                         }`}
                         title={rule.sms ? 'پیامک فعال' : 'پیامک غیرفعال'}
@@ -1309,7 +1309,7 @@ export const AdminNotificationsView: React.FC = () => {
                 value={logSearchQuery}
                 onChange={(e) => setLogSearchQuery(e.target.value)}
                 placeholder="جستجو در گیرنده، عنوان یا متن پیام..."
-                className="w-full text-xs pl-3.5 pr-10 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:outline-hidden"
+                className="w-full text-xs pl-3.5 pr-10 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.2)] focus:border-[var(--brand-primary)] focus:outline-hidden"
               />
             </div>
 
@@ -1331,7 +1331,7 @@ export const AdminNotificationsView: React.FC = () => {
                   onClick={() => setLogFilterChannel('sms')}
                   className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
                     logFilterChannel === 'sms'
-                      ? 'bg-white dark:bg-[#334155] text-emerald-600 dark:text-emerald-400 shadow-2xs font-bold'
+                      ? 'bg-white dark:bg-[#334155] text-brand dark:text-[var(--brand-primary-on-dark)] shadow-2xs font-bold'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                   }`}
                 >
@@ -1353,7 +1353,7 @@ export const AdminNotificationsView: React.FC = () => {
                   onClick={() => setLogFilterChannel('in_app')}
                   className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
                     logFilterChannel === 'in_app'
-                      ? 'bg-white dark:bg-[#334155] text-teal-600 dark:text-teal-400 shadow-2xs font-bold'
+                      ? 'bg-white dark:bg-[#334155] text-brand dark:text-[var(--brand-primary-on-dark)] shadow-2xs font-bold'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                   }`}
                 >
@@ -1392,10 +1392,10 @@ export const AdminNotificationsView: React.FC = () => {
                     <div
                       className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                         log.channel === 'sms'
-                          ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50'
+                          ? 'bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft/60 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)]'
                           : log.channel === 'telegram'
                           ? 'bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 border border-sky-200/60 dark:border-sky-900/50'
-                          : 'bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200/60 dark:border-teal-900/50'
+                          : 'bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft/60 dark:border-[rgb(var(--brand-primary-rgb)/0.35)]'
                       }`}
                     >
                       {log.channel === 'sms' && <Smartphone className="w-4 h-4" />}
@@ -1415,7 +1415,7 @@ export const AdminNotificationsView: React.FC = () => {
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                          <span className="text-xs text-brand dark:text-[var(--brand-primary-on-dark)] font-semibold flex items-center gap-1">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>تحویل شد</span>
                           </span>
@@ -1443,7 +1443,7 @@ export const AdminNotificationsView: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
           <div className="bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-[#334155] w-full max-w-lg overflow-hidden transition-colors text-right">
             {/* Modal Header */}
-            <div className="px-6 py-4 bg-[#10B981] text-white flex items-center justify-between border-b border-[#0D6B63]">
+            <div className="px-6 py-4 bg-[var(--brand-primary-light)] text-white flex items-center justify-between border-b border-[var(--brand-primary-hover)]">
               <div className="flex items-center gap-2.5">
                 <Zap className="w-5 h-5" />
                 <h3 className="text-sm font-bold">شبیه‌ساز و ارسال آزمایشی اعلان به کانال‌ها</h3>
@@ -1469,11 +1469,11 @@ export const AdminNotificationsView: React.FC = () => {
                     onClick={() => setTestChannel('sms')}
                     className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
                       testChannel === 'sms'
-                        ? 'border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200 font-bold shadow-2xs'
+                        ? 'border-brand bg-brand-soft text-[var(--brand-primary)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)] font-bold shadow-2xs'
                         : 'border-slate-200 dark:border-[#334155] text-slate-600 dark:text-slate-400'
                     }`}
                   >
-                    <Smartphone className="w-5 h-5 text-emerald-600" />
+                    <Smartphone className="w-5 h-5 text-brand" />
                     <span className="text-xs">پیامک (SMS)</span>
                   </button>
 
@@ -1495,11 +1495,11 @@ export const AdminNotificationsView: React.FC = () => {
                     onClick={() => setTestChannel('in_app')}
                     className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
                       testChannel === 'in_app'
-                        ? 'border-teal-500 bg-teal-50 text-teal-900 dark:bg-teal-950/50 dark:text-teal-200 font-bold shadow-2xs'
+                        ? 'border-teal-500 bg-brand-soft text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)] font-bold shadow-2xs'
                         : 'border-slate-200 dark:border-[#334155] text-slate-600 dark:text-slate-400'
                     }`}
                   >
-                    <Bell className="w-5 h-5 text-teal-600" />
+                    <Bell className="w-5 h-5 text-brand" />
                     <span className="text-xs">درون‌برنامه‌ای</span>
                   </button>
                 </div>
@@ -1517,7 +1517,7 @@ export const AdminNotificationsView: React.FC = () => {
                     onChange={(e) => setTestPhone(e.target.value)}
                     placeholder="09123456789"
                     dir="ltr"
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white font-mono text-left focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
+                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white font-mono text-left focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
                   />
                 </div>
               ) : testChannel === 'telegram' ? (
@@ -1535,7 +1535,7 @@ export const AdminNotificationsView: React.FC = () => {
                   />
                 </div>
               ) : (
-                <div className="p-3.5 bg-teal-50/60 dark:bg-teal-950/30 border border-teal-200/70 dark:border-teal-900/50 rounded-xl text-xs text-teal-800 dark:text-teal-300 flex items-center gap-2.5">
+                <div className="p-3.5 bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.1)] border border-brand-soft/70 dark:border-[rgb(var(--brand-primary-rgb)/0.35)] rounded-xl text-xs text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center gap-2.5">
                   <Info className="w-4 h-4 shrink-0" />
                   <span>این پیام بلافاصله در زنگوله بالای صفحه (Header) برای شما ثبت خواهد شد.</span>
                 </div>
@@ -1551,7 +1551,7 @@ export const AdminNotificationsView: React.FC = () => {
                   value={testCustomMessage}
                   onChange={(e) => setTestCustomMessage(e.target.value)}
                   placeholder="در صورت خالی بودن، متن استاندارد سامانه روم‌چی ارسال خواهد شد..."
-                  className="w-full text-xs p-3 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 resize-none leading-relaxed focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-hidden"
+                  className="w-full text-xs p-3 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 resize-none leading-relaxed focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
                 />
               </div>
 
@@ -1568,7 +1568,7 @@ export const AdminNotificationsView: React.FC = () => {
                   type="button"
                   onClick={handleExecuteTest}
                   disabled={isSendingTest}
-                  className="px-5 py-2.5 text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-2 disabled:opacity-50"
+                  className="px-5 py-2.5 text-xs font-bold text-white bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-2 disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{isSendingTest ? 'در حال ارسال و استعلام...' : 'ارسال تست واقعی'}</span>

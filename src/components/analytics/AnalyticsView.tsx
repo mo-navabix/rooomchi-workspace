@@ -117,7 +117,7 @@ export const AnalyticsView: React.FC = () => {
             <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100 truncate" title={topRoomName}>
               {topRoomName}
             </div>
-            <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
+            <div className="text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] mt-1 flex items-center gap-1">
               <span>{toPersianDigits(topRoomOccupancy)}% نرخ اشغال</span>
               <TrendingUp className="w-3.5 h-3.5" />
             </div>
@@ -138,7 +138,7 @@ export const AnalyticsView: React.FC = () => {
             <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100">
               {toPersianDigits(avgDurationMinutes)} دقیقه
             </div>
-            <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+            <div className="text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] mt-1">
               متوسط زمان برگزاری جلسات
             </div>
           </div>
@@ -158,7 +158,7 @@ export const AnalyticsView: React.FC = () => {
             <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100">
               {toPersianDigits(totalMeetingsCount)} جلسه
             </div>
-            <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+            <div className="text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] mt-1">
               در {toPersianDigits(rooms.length)} اتاق فعال
             </div>
           </div>
@@ -196,13 +196,13 @@ export const AnalyticsView: React.FC = () => {
             {/* Area Fill */}
             <path
               d={areaD}
-              fill="url(#chart-grad)"
+              fill="url(#chart-grad-meetings)"
             />
 
             {/* Line Path */}
             <path
               d={pathD}
-              stroke="#10B981"
+              stroke="var(--brand-primary)"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -211,15 +211,15 @@ export const AnalyticsView: React.FC = () => {
             {/* Nodes */}
             {points.map((pt, i) => (
               <g key={i}>
-                <circle cx={pt.x} cy={pt.y} r="5" fill="#0F786E" />
+                <circle cx={pt.x} cy={pt.y} r="5" fill="var(--brand-primary)" />
                 <circle cx={pt.x} cy={pt.y} r="2.5" fill="#FFFFFF" />
               </g>
             ))}
 
             <defs>
-              <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#34D399" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#34D399" stopOpacity="0.0" />
+              <linearGradient id="chart-grad-meetings" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--brand-primary-lighter)" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="var(--brand-primary-lighter)" stopOpacity="0" />
               </linearGradient>
             </defs>
           </svg>
@@ -243,7 +243,7 @@ export const AnalyticsView: React.FC = () => {
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
               محبوب‌ترین اتاق‌ها (تعداد رزرو)
             </h3>
-            <BarChart2 className="w-4 h-4 text-emerald-600" />
+            <BarChart2 className="w-4 h-4 text-brand" />
           </div>
 
           <div className="space-y-3 pt-1">
@@ -260,13 +260,13 @@ export const AnalyticsView: React.FC = () => {
                 <div key={idx}>
                   <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                     <span className="text-slate-700 dark:text-slate-300">{item.name}</span>
-                    <span className="text-[#0F786E] font-mono">
+                    <span className="text-[var(--brand-primary)] font-mono">
                       {toPersianDigits(item.count)} رزرو
                     </span>
                   </div>
                   <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#0F786E] rounded-full transition-all duration-500"
+                      className="h-full bg-[var(--brand-primary)] rounded-full transition-all duration-500"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
@@ -282,7 +282,7 @@ export const AnalyticsView: React.FC = () => {
             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
               میزان استفاده بر اساس دپارتمان‌ها
             </h3>
-            <Users className="w-4 h-4 text-emerald-500" />
+            <Users className="w-4 h-4 text-[var(--brand-primary)]" />
           </div>
 
           <div className="space-y-3 pt-1">
@@ -293,7 +293,7 @@ export const AnalyticsView: React.FC = () => {
                   0
                 );
                 const percent = Math.min(100, Math.round((count / Math.max(1, totalDepts)) * 100));
-                const colors = ['bg-[#10B981]', 'bg-emerald-500', 'bg-emerald-500', 'bg-amber-500'];
+                const colors = ['bg-[var(--brand-primary-light)]', 'bg-[var(--brand-primary)]', 'bg-[var(--brand-primary)]', 'bg-amber-500'];
                 const barColor = colors[idx % colors.length];
 
                 return (

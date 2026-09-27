@@ -39,7 +39,7 @@ export const AdminSettingsView: React.FC = () => {
   const [logo, setLogo] = useState<string>('🏢');
   const [logoTab, setLogoTab] = useState<'presets' | 'custom'>('presets');
   const [customLogoUrl, setCustomLogoUrl] = useState<string>('');
-  const [primaryColor, setPrimaryColor] = useState<string>('#2563eb');
+  const [primaryColor, setPrimaryColor] = useState<string>('#0f786e');
   const [contactEmail, setContactEmail] = useState<string>('');
   const [startHour, setStartHour] = useState<string>('08:00');
   const [endHour, setEndHour] = useState<string>('19:00');
@@ -64,7 +64,7 @@ export const AdminSettingsView: React.FC = () => {
     } else {
       setLogoTab('presets');
     }
-    setPrimaryColor(currentOrg.primaryColor);
+    setPrimaryColor(currentOrg.primaryColor || '#0f786e');
     setContactEmail(currentOrg.contactEmail);
     setStartHour(currentOrg.workHours?.start || '08:00');
     setEndHour(currentOrg.workHours?.end || '19:00');
@@ -152,8 +152,8 @@ export const AdminSettingsView: React.FC = () => {
         <div className="flex items-center gap-3 min-w-0">
           <OrgLogoBadge logo={logo} name={orgName || currentOrg?.name} size="lg" className="shrink-0" />
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
+            <div className="text-xs font-semibold text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] flex items-center gap-1.5">
+              <Sliders className="w-3.5 h-3.5 text-[var(--brand-primary-light)] shrink-0" />
               <span>پیکربندی اختصاصی سازمان</span>
             </div>
             <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-0.5 break-words">
@@ -169,13 +169,13 @@ export const AdminSettingsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsQrModalOpen(true)}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-[#0F786E] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-800/70 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow cursor-pointer shrink-0"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.22)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/70 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow cursor-pointer shrink-0"
           >
             <QrCode className="w-3.5 h-3.5" />
             <span>بارکد اختصاصی ورود (QR)</span>
           </button>
 
-          <span className="text-xs font-bold px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#10B981] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-900/50 shrink-0 text-center">
+          <span className="text-xs font-bold px-3 py-2 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] shrink-0 text-center">
             اشتراک: {(currentOrg?.plan ?? 'business').toUpperCase()}
           </span>
         </div>
@@ -185,7 +185,7 @@ export const AdminSettingsView: React.FC = () => {
         {/* Branding Box */}
         <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-5 transition-colors">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#334155] pb-3 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#10B981]" />
+            <Sparkles className="w-4 h-4 text-[var(--brand-primary-light)]" />
             <span>هویت و برندینگ سازمانی (White-labeling)</span>
           </h3>
 
@@ -198,7 +198,7 @@ export const AdminSettingsView: React.FC = () => {
                 type="text"
                 value={orgName}
                 onChange={(e) => setOrgName(e.target.value)}
-                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                 required
               />
             </div>
@@ -211,7 +211,7 @@ export const AdminSettingsView: React.FC = () => {
                 type="email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
-                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                 required
               />
             </div>
@@ -247,7 +247,7 @@ export const AdminSettingsView: React.FC = () => {
                   onClick={() => setLogoTab('custom')}
                   className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
                     logoTab === 'custom'
-                      ? 'bg-white dark:bg-[#334155] text-[#10B981] dark:text-[#34D399] shadow-xs font-bold'
+                      ? 'bg-white dark:bg-[#334155] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] shadow-xs font-bold'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -268,7 +268,7 @@ export const AdminSettingsView: React.FC = () => {
                       onClick={() => setLogo(icon)}
                       className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl border transition-all ${
                         logo === icon
-                          ? 'border-[#10B981] bg-emerald-50 dark:bg-emerald-950/60 shadow-xs ring-2 ring-[#10B981]/40 scale-105'
+                          ? 'border-[var(--brand-primary-light)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] shadow-xs ring-2 ring-[rgb(var(--brand-primary-rgb)/0.40)] scale-105'
                           : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#1E293B] hover:border-slate-300 dark:hover:border-slate-600'
                       }`}
                     >
@@ -277,7 +277,7 @@ export const AdminSettingsView: React.FC = () => {
                   ))}
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <Info className="w-3.5 h-3.5 text-[var(--brand-primary)] shrink-0" />
                   <span>آیکون انتخابی در تمامی هدرها، کارت‌ها و منوهای کشویی سازمان نمایش داده می‌شود.</span>
                 </div>
               </div>
@@ -316,11 +316,11 @@ export const AdminSettingsView: React.FC = () => {
                       }}
                       className={`p-5 rounded-xl border-2 border-dashed text-center cursor-pointer transition-all ${
                         isDragging
-                          ? 'border-[#10B981] bg-emerald-50/50 dark:bg-emerald-950/30'
-                          : 'border-slate-300 dark:border-[#334155] hover:border-emerald-400 dark:hover:border-emerald-600 bg-white dark:bg-[#1E293B]'
+                          ? 'border-[var(--brand-primary-light)] bg-brand-soft/50 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)]'
+                          : 'border-slate-300 dark:border-[#334155] hover:border-[var(--brand-primary-light)] dark:hover:border-[var(--brand-primary-light)] bg-white dark:bg-[#1E293B]'
                       }`}
                     >
-                      <div className="w-10 h-10 mx-auto rounded-full bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-[#10B981] dark:text-[#34D399] mb-2">
+                      <div className="w-10 h-10 mx-auto rounded-full bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] flex items-center justify-center text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] mb-2">
                         <Upload className="w-5 h-5" />
                       </div>
                       <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
@@ -343,12 +343,12 @@ export const AdminSettingsView: React.FC = () => {
                           placeholder="https://example.com/logo.png"
                           value={customLogoUrl}
                           onChange={(e) => setCustomLogoUrl(e.target.value)}
-                          className="flex-1 text-xs px-3.5 py-2 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                          className="flex-1 text-xs px-3.5 py-2 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                         />
                         <button
                           type="button"
                           onClick={handleApplyUrl}
-                          className="px-3 py-2 text-xs font-semibold bg-emerald-600 hover:bg-[#0D6B63] text-white rounded-xl transition-colors shrink-0 cursor-pointer"
+                          className="px-3 py-2 text-xs font-semibold bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl transition-colors shrink-0 cursor-pointer"
                         >
                           اعمال لینک
                         </button>
@@ -360,7 +360,7 @@ export const AdminSettingsView: React.FC = () => {
                   <div className="lg:col-span-5 bg-white dark:bg-[#1E293B] p-4 rounded-xl border border-slate-200 dark:border-[#334155] space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <ImageIcon className="w-3.5 h-3.5 text-[#10B981]" />
+                        <ImageIcon className="w-3.5 h-3.5 text-[var(--brand-primary-light)]" />
                         <span>پیش‌نمایش در سایزهای استاندارد</span>
                       </span>
 
@@ -401,8 +401,8 @@ export const AdminSettingsView: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 bg-emerald-50/50 dark:bg-emerald-950/20 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
-                      <div className="font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 bg-brand-soft/50 dark:bg-[rgb(var(--brand-primary-rgb)/0.1)] p-2.5 rounded-lg border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.25)]">
+                      <div className="font-semibold text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" />
                         <span>مشخصات استاندارد لوگو:</span>
                       </div>
@@ -428,7 +428,7 @@ export const AdminSettingsView: React.FC = () => {
                     onClick={() => setPrimaryColor(c)}
                     className={`w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center ${
                       primaryColor === c
-                        ? 'border-slate-900 dark:border-white scale-110 shadow-md ring-2 ring-emerald-500/30'
+                        ? 'border-slate-900 dark:border-white scale-110 shadow-md ring-2 ring-[var(--brand-primary)]/30'
                         : 'border-transparent hover:scale-105'
                     }`}
                     style={{ backgroundColor: c }}
@@ -445,7 +445,7 @@ export const AdminSettingsView: React.FC = () => {
         <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-4 transition-colors">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 dark:border-[#334155] gap-3">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <QrCode className="w-4 h-4 text-[#10B981]" />
+              <QrCode className="w-4 h-4 text-[var(--brand-primary-light)]" />
               <span>بارکد اختصاصی ورود هوشمند به سازمان (QR Code)</span>
             </h3>
 
@@ -453,7 +453,7 @@ export const AdminSettingsView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsQrModalOpen(true)}
-                className="px-3.5 py-1.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-1.5 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>مدیریت، چاپ و خروجی QR</span>
@@ -501,7 +501,7 @@ export const AdminSettingsView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsQrModalOpen(true)}
-                    className="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                    className="px-2.5 py-1.5 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.22)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/80 text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>مشاهده پیش‌نمایش بارکد</span>
@@ -511,15 +511,15 @@ export const AdminSettingsView: React.FC = () => {
 
               <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                   <span>انتقال آنی به فرم لاگین با اسکن دوربین</span>
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                   <span>خروجی باکیفیت وکتور SVG و پوستر PNG</span>
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                   <span>سازگار با چاپگرهای اداری سایز A4 / A5</span>
                 </span>
               </div>
@@ -529,13 +529,13 @@ export const AdminSettingsView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsQrModalOpen(true)}
-                className="group relative p-4 bg-slate-50 dark:bg-[#0F172A] hover:bg-emerald-50/50 dark:hover:bg-[#0F172A]/80 border-2 border-dashed border-slate-200 dark:border-[#334155] hover:border-emerald-400 rounded-2xl transition-all text-center flex flex-col items-center gap-2 cursor-pointer w-full max-w-[220px]"
+                className="group relative p-4 bg-slate-50 dark:bg-[#0F172A] hover:bg-brand-soft/50 dark:hover:bg-[#0F172A]/80 border-2 border-dashed border-slate-200 dark:border-[#334155] hover:border-[var(--brand-primary-light)] rounded-2xl transition-all text-center flex flex-col items-center gap-2 cursor-pointer w-full max-w-[220px]"
               >
-                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#1E293B] shadow-xs border border-slate-200/80 dark:border-slate-700 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#1E293B] shadow-xs border border-slate-200/80 dark:border-slate-700 flex items-center justify-center text-brand dark:text-[var(--brand-primary-on-dark)] group-hover:scale-105 transition-transform">
                   <QrCode className="w-9 h-9" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <span className="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-brand dark:group-hover:text-[var(--brand-primary-on-dark)] transition-colors">
                     چاپ و تنظیم بارکد ورود
                   </span>
                   <span className="text-[11px] text-slate-400 block mt-0.5">
@@ -551,7 +551,7 @@ export const AdminSettingsView: React.FC = () => {
         <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-4 transition-colors">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-[#334155]">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center">
                 <BellRing className="w-4 h-4" />
               </div>
               <div>
@@ -567,7 +567,7 @@ export const AdminSettingsView: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('admin-notifications')}
-              className="px-3.5 py-1.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer self-start sm:self-auto shrink-0"
+              className="px-3.5 py-1.5 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer self-start sm:self-auto shrink-0"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>مدیریت و پیکربندی کانال‌ها</span>
@@ -577,14 +577,14 @@ export const AdminSettingsView: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* SMS Status */}
             <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-[#334155] flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0">
                 <Smartphone className="w-4 h-4" />
               </div>
               <div className="min-w-0">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
                   پیامک (SMS Gateway)
                 </span>
-                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                <span className="text-[11px] text-brand dark:text-[var(--brand-primary-on-dark)] font-semibold">
                   وب‌سرویس فعال (کاوه‌نگار)
                 </span>
               </div>
@@ -607,14 +607,14 @@ export const AdminSettingsView: React.FC = () => {
 
             {/* In-App Status */}
             <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-[#334155] flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0">
                 <BellRing className="w-4 h-4" />
               </div>
               <div className="min-w-0">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
                   نوتیفیکیشن پلتفرم
                 </span>
-                <span className="text-[11px] text-teal-600 dark:text-teal-400 font-semibold">
+                <span className="text-[11px] text-brand dark:text-[var(--brand-primary-on-dark)] font-semibold">
                   زنگوله + پاپ‌آپ فعال
                 </span>
               </div>
@@ -625,7 +625,7 @@ export const AdminSettingsView: React.FC = () => {
         {/* Booking Policies Box */}
         <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] p-6 shadow-xs space-y-4 transition-colors">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[#334155] pb-3 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-[#10B981]" />
+            <Clock className="w-4 h-4 text-[var(--brand-primary-light)]" />
             <span>سیاست‌ها و محدودیت‌های زمانی رزرواسیون</span>
           </h3>
 
@@ -639,14 +639,14 @@ export const AdminSettingsView: React.FC = () => {
                   type="time"
                   value={startHour}
                   onChange={(e) => setStartHour(e.target.value)}
-                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                 />
                 <span className="text-xs text-slate-400 font-medium">تا</span>
                 <input
                   type="time"
                   value={endHour}
                   onChange={(e) => setEndHour(e.target.value)}
-                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                 />
               </div>
             </div>
@@ -659,7 +659,7 @@ export const AdminSettingsView: React.FC = () => {
                 <select
                   value={maxBookingHours}
                   onChange={(e) => setMaxBookingHours(Number(e.target.value))}
-                  className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden cursor-pointer"
+                  className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden cursor-pointer"
                 >
                   <option value={2}>حداکثر ۲ ساعت</option>
                   <option value={3}>حداکثر ۳ ساعت</option>
@@ -677,7 +677,7 @@ export const AdminSettingsView: React.FC = () => {
                 type="checkbox"
                 checked={autoApprove}
                 onChange={(e) => setAutoApprove(e.target.checked)}
-                className="w-4 h-4 text-[#10B981] rounded cursor-pointer"
+                className="w-4 h-4 text-[var(--brand-primary-light)] rounded cursor-pointer"
               />
               <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 select-none">
                 تأیید خودکار رزروها برای تمام پرسنل سازمان
@@ -689,7 +689,7 @@ export const AdminSettingsView: React.FC = () => {
                 type="checkbox"
                 checked={allowWeekend}
                 onChange={(e) => setAllowWeekend(e.target.checked)}
-                className="w-4 h-4 text-[#10B981] rounded cursor-pointer"
+                className="w-4 h-4 text-[var(--brand-primary-light)] rounded cursor-pointer"
               />
               <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 select-none">
                 امکان رزرو در روزهای تعطیل و آخر هفته
@@ -704,7 +704,7 @@ export const AdminSettingsView: React.FC = () => {
             type="submit"
             id="btn-save-org-settings"
             disabled={isSaving}
-            className="px-6 py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+            className="px-6 py-2.5 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span>{isSaving ? 'در حال ذخیره‌سازی...' : 'ذخیره تنظیمات سازمان'}</span>

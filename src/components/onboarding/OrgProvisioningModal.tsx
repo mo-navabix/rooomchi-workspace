@@ -240,13 +240,13 @@ export const OrgProvisioningModal: React.FC = () => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-950/75 backdrop-blur-xs">
       <div className="relative w-full max-w-3xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#334155] overflow-hidden my-6 transition-colors">
         {/* Header */}
-        <div className="px-6 py-5 bg-gradient-to-r from-[#0F786E] via-[#10B981] to-[#0F786E] text-white flex items-center justify-between border-b border-[#334155]">
+        <div className="px-6 py-5 bg-gradient-to-r from-[var(--brand-primary)] via-[var(--brand-primary-light)] to-[var(--brand-primary)] text-white flex items-center justify-between border-b border-[#334155]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-600/30 text-[#10B981] border border-emerald-500/30">
+            <div className="p-2.5 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.3)] text-[var(--brand-primary-light)] border border-[rgb(var(--brand-primary-rgb)/0.3)]">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-emerald-300 dark:text-[#34D399]">
+              <div className="text-[11px] font-semibold text-[var(--brand-primary-lighter)] dark:text-[var(--brand-primary-lighter)]">
                 سیستم چندمستأجره ماژولار (Multi-Tenant Onboarding)
               </div>
               <h2 className="text-base sm:text-lg font-bold text-white">
@@ -276,9 +276,9 @@ export const OrgProvisioningModal: React.FC = () => {
                 key={s.num}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${
                   step === s.num
-                    ? 'bg-[#10B981] text-white shadow-xs'
+                    ? 'bg-[var(--brand-primary-light)] text-white shadow-xs'
                     : step > s.num
-                    ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40'
+                    ? 'bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40'
                     : 'text-slate-400 dark:text-slate-500'
                 }`}
               >
@@ -295,7 +295,7 @@ export const OrgProvisioningModal: React.FC = () => {
           {/* STEP 1: Organization & Plan */}
           {step === 1 && (
             <div className="space-y-4">
-              <div className="bg-emerald-50/80 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-900/50 text-xs text-emerald-950 dark:text-emerald-200 leading-relaxed">
+              <div className="bg-brand-soft/80 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] p-3.5 rounded-xl border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] text-xs text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] leading-relaxed">
                 هر سازمانی که سامانه را تهیه کند، یک محیط کاری کاملاً ایزوله با دیتای ساختمان‌ها، دپارتمان‌ها، اتاق‌ها و تم رنگی خودش دریافت خواهد کرد.
               </div>
 
@@ -310,7 +310,7 @@ export const OrgProvisioningModal: React.FC = () => {
                     placeholder="مثال: شرکت ارتباطات پیشتاز ایران"
                     value={orgName}
                     onChange={(e) => setOrgName(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
                     required
                   />
                 </div>
@@ -325,7 +325,7 @@ export const OrgProvisioningModal: React.FC = () => {
                     placeholder="admin@yourcompany.ir"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-left"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-left"
                     dir="ltr"
                     required
                   />
@@ -341,7 +341,7 @@ export const OrgProvisioningModal: React.FC = () => {
                     placeholder="your-company"
                     value={orgSlug}
                     onChange={(e) => setOrgSlug(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-left"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-left"
                     dir="ltr"
                   />
                 </div>
@@ -355,7 +355,7 @@ export const OrgProvisioningModal: React.FC = () => {
                       id="select-new-org-plan"
                       value={plan}
                       onChange={(e: any) => setPlan(e.target.value)}
-                      className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white cursor-pointer font-medium"
+                      className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white cursor-pointer font-medium"
                     >
                       <option value="starter">پلن استارتر (تا ۵ اتاق جلسه - تیم‌های نوپا)</option>
                       <option value="business">پلن تجاری (تا ۲۰ اتاق جلسه + تأیید ادمین)</option>
@@ -373,16 +373,16 @@ export const OrgProvisioningModal: React.FC = () => {
                   onClick={() => setPlan('starter')}
                   className={`p-3 rounded-xl border text-right transition-all cursor-pointer ${
                     plan === 'starter'
-                      ? 'border-[#10B981] bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20'
+                      ? 'border-[var(--brand-primary-light)] bg-brand-soft/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.2)]'
                       : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-bold text-xs text-slate-900 dark:text-white">استارتر</span>
-                    {plan === 'starter' && <Check className="w-3.5 h-3.5 text-[#10B981] dark:text-[#34D399]" />}
+                    {plan === 'starter' && <Check className="w-3.5 h-3.5 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)]" />}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">تا ۵ اتاق جلسه</div>
-                  <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-1">تیم‌های در حال رشد</div>
+                  <div className="text-[10px] text-brand dark:text-[var(--brand-primary-on-dark)] font-bold mt-1">تیم‌های در حال رشد</div>
                 </button>
 
                 <button
@@ -390,16 +390,16 @@ export const OrgProvisioningModal: React.FC = () => {
                   onClick={() => setPlan('business')}
                   className={`p-3 rounded-xl border text-right transition-all cursor-pointer ${
                     plan === 'business'
-                      ? 'border-[#10B981] bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20'
+                      ? 'border-[var(--brand-primary-light)] bg-brand-soft/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.2)]'
                       : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-bold text-xs text-slate-900 dark:text-white">تجاری (پیشنهادی)</span>
-                    {plan === 'business' && <Check className="w-3.5 h-3.5 text-[#10B981] dark:text-[#34D399]" />}
+                    {plan === 'business' && <Check className="w-3.5 h-3.5 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)]" />}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">تا ۲۰ اتاق جلسه</div>
-                  <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-1">تأیید هوشمند + گزارشات</div>
+                  <div className="text-[10px] text-brand dark:text-[var(--brand-primary-on-dark)] font-bold mt-1">تأیید هوشمند + گزارشات</div>
                 </button>
 
                 <button
@@ -407,16 +407,16 @@ export const OrgProvisioningModal: React.FC = () => {
                   onClick={() => setPlan('enterprise')}
                   className={`p-3 rounded-xl border text-right transition-all cursor-pointer ${
                     plan === 'enterprise'
-                      ? 'border-[#10B981] bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20'
+                      ? 'border-[var(--brand-primary-light)] bg-brand-soft/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.2)]'
                       : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-bold text-xs text-slate-900 dark:text-white">سازمانی نامحدود</span>
-                    {plan === 'enterprise' && <Check className="w-3.5 h-3.5 text-[#10B981] dark:text-[#34D399]" />}
+                    {plan === 'enterprise' && <Check className="w-3.5 h-3.5 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)]" />}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">اتاق‌ها و شعبات نامحدود</div>
-                  <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-1">شعبات متعدد + پشتیبانی ۲۴/۷</div>
+                  <div className="text-[10px] text-brand dark:text-[var(--brand-primary-on-dark)] font-bold mt-1">شعبات متعدد + پشتیبانی ۲۴/۷</div>
                 </button>
               </div>
 
@@ -468,7 +468,7 @@ export const OrgProvisioningModal: React.FC = () => {
                         onClick={() => setSelectedLogo(icon)}
                         className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg border transition-all cursor-pointer ${
                           selectedLogo === icon
-                            ? 'border-[#10B981] bg-emerald-50 dark:bg-emerald-950/60 shadow-xs ring-2 ring-emerald-500/20'
+                            ? 'border-[var(--brand-primary-light)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] shadow-xs ring-2 ring-[rgb(var(--brand-primary-rgb)/0.2)]'
                             : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-slate-300 dark:hover:border-slate-600'
                         }`}
                       >
@@ -490,7 +490,7 @@ export const OrgProvisioningModal: React.FC = () => {
                             const f = e.target.files?.[0];
                             if (f) handleFileUpload(f);
                           }}
-                          className="w-full text-xs text-slate-500 file:mr-0 file:ml-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-[#10B981] dark:file:bg-emerald-950/50 dark:file:text-[#34D399] hover:file:bg-emerald-100 cursor-pointer"
+                          className="w-full text-xs text-slate-500 file:mr-0 file:ml-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-soft file:text-[var(--brand-primary-light)] dark:file:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:file:text-[var(--brand-primary-lighter)] hover:file:bg-[rgb(var(--brand-primary-rgb)/0.12)] cursor-pointer"
                         />
                       </div>
                       <div>
@@ -509,7 +509,7 @@ export const OrgProvisioningModal: React.FC = () => {
                           <button
                             type="button"
                             onClick={handleApplyUrl}
-                            className="px-2.5 py-1.5 bg-[#10B981] text-white rounded-lg text-xs font-semibold hover:bg-[#0D6B63]"
+                            className="px-2.5 py-1.5 bg-[var(--brand-primary-light)] text-white rounded-lg text-xs font-semibold hover:bg-[var(--brand-primary-hover)]"
                           >
                             تأیید
                           </button>
@@ -564,13 +564,13 @@ export const OrgProvisioningModal: React.FC = () => {
                     placeholder="نام ساختمان (مثال: برج مرکزی سعادت‌آباد، کارخانه پردیس)"
                     value={buildingInput}
                     onChange={(e) => setBuildingInput(e.target.value)}
-                    className="flex-1 text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                    className="flex-1 text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
                   />
                   <button
                     type="button"
                     id="btn-add-building"
                     onClick={handleAddBuilding}
-                    className="px-3.5 py-2 bg-[#10B981] text-white rounded-lg text-xs font-semibold hover:bg-[#0D6B63] flex items-center gap-1 transition-colors"
+                    className="px-3.5 py-2 bg-[var(--brand-primary-light)] text-white rounded-lg text-xs font-semibold hover:bg-[var(--brand-primary-hover)] flex items-center gap-1 transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>افزودن</span>
@@ -582,7 +582,7 @@ export const OrgProvisioningModal: React.FC = () => {
                       key={b}
                       className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 text-xs rounded-lg border border-slate-200 dark:border-[#334155]"
                     >
-                      <Building2 className="w-3.5 h-3.5 text-[#10B981] dark:text-[#10B981]" />
+                      <Building2 className="w-3.5 h-3.5 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-light)]" />
                       <span>{b}</span>
                       {buildings.length > 1 && (
                         <button
@@ -610,13 +610,13 @@ export const OrgProvisioningModal: React.FC = () => {
                     placeholder="نام واحد (مثال: تحقیق و توسعه، امور قراردادها)"
                     value={departmentInput}
                     onChange={(e) => setDepartmentInput(e.target.value)}
-                    className="flex-1 text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#10B981] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                    className="flex-1 text-xs px-3 py-2 border border-slate-200 dark:border-[#334155] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
                   />
                   <button
                     type="button"
                     id="btn-add-dept"
                     onClick={handleAddDepartment}
-                    className="px-3.5 py-2 bg-[#10B981] text-white rounded-lg text-xs font-semibold hover:bg-[#0D6B63] flex items-center gap-1 transition-colors"
+                    className="px-3.5 py-2 bg-[var(--brand-primary-light)] text-white rounded-lg text-xs font-semibold hover:bg-[var(--brand-primary-hover)] flex items-center gap-1 transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>افزودن</span>
@@ -628,7 +628,7 @@ export const OrgProvisioningModal: React.FC = () => {
                       key={d}
                       className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 text-xs rounded-lg border border-slate-200 dark:border-[#334155]"
                     >
-                      <Users className="w-3.5 h-3.5 text-[#10B981] dark:text-[#10B981]" />
+                      <Users className="w-3.5 h-3.5 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-light)]" />
                       <span>{d}</span>
                       {departments.length > 1 && (
                         <button
@@ -677,7 +677,7 @@ export const OrgProvisioningModal: React.FC = () => {
                       id="checkbox-auto-approve"
                       checked={autoApprove}
                       onChange={(e) => setAutoApprove(e.target.checked)}
-                      className="w-4 h-4 text-[#10B981] rounded"
+                      className="w-4 h-4 text-[var(--brand-primary-light)] rounded"
                     />
                     <label htmlFor="checkbox-auto-approve" className="text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
                       تأیید خودکار رزروها (بدون نیاز به تأیید دستی ادمین)
@@ -704,7 +704,7 @@ export const OrgProvisioningModal: React.FC = () => {
                   type="button"
                   id="btn-add-room-row"
                   onClick={handleAddCustomRoom}
-                  className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-[#10B981] dark:text-[#34D399] hover:bg-emerald-100 dark:hover:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-900/50 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
+                  className="px-3 py-1.5 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.22)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>افزودن اتاق دیگر</span>
@@ -719,7 +719,7 @@ export const OrgProvisioningModal: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-[#10B981] dark:text-[#34D399] flex items-center justify-center text-[10px] font-bold">
+                        <span className="w-5 h-5 rounded-full bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.25)] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] flex items-center justify-center text-[10px] font-bold">
                           {idx + 1}
                         </span>
                         <span>{room.name || `اتاق ${idx + 1}`}</span>
@@ -793,7 +793,7 @@ export const OrgProvisioningModal: React.FC = () => {
                               onClick={() => handleToggleRoomAmenity(idx, amenity.id)}
                               className={`px-2 py-1 rounded text-[10px] font-medium border transition-colors ${
                                 hasIt
-                                  ? 'bg-[#10B981] text-white border-[#10B981]'
+                                  ? 'bg-[var(--brand-primary-light)] text-white border-[var(--brand-primary-light)]'
                                   : 'bg-white dark:bg-[#0F172A] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-[#334155] hover:bg-slate-100 dark:hover:bg-[#334155]'
                               }`}
                             >
@@ -812,9 +812,9 @@ export const OrgProvisioningModal: React.FC = () => {
           {/* STEP 4: Review & Provision */}
           {step === 4 && (
             <div className="space-y-4">
-              <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-xl flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <div className="text-xs text-emerald-900 dark:text-emerald-200 leading-relaxed">
+              <div className="p-4 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] rounded-xl flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-brand dark:text-[var(--brand-primary-on-dark)] shrink-0 mt-0.5" />
+                <div className="text-xs text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] leading-relaxed">
                   <div className="font-bold mb-1">آماده استقرار و تحویل سامانه به سازمان شما!</div>
                   تمام اطلاعات سازمانی، ساختار شعب، واحدهای سازمانی و اتاق‌های جلسات ثبت شدند. با کلیک بر روی دکمه زیر، سامانه به شکل کامل کانفیگ شده و تحویل داده می‌شود.
                 </div>
@@ -886,7 +886,7 @@ export const OrgProvisioningModal: React.FC = () => {
                   }
                   setStep(step + 1);
                 }}
-                className="px-5 py-2 text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+                className="px-5 py-2 text-xs font-bold text-white bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
               >
                 <span>مرحله بعد</span>
                 <ChevronLeft className="w-4 h-4" />
@@ -897,7 +897,7 @@ export const OrgProvisioningModal: React.FC = () => {
                 id="btn-provision-finish"
                 disabled={isSubmitting}
                 onClick={handleProvisionSubmit}
-                className="px-6 py-2 text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-xl shadow-sm transition-all flex items-center gap-2"
+                className="px-6 py-2 text-xs font-bold text-white bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-primary-hover)] hover:from-[var(--brand-primary-hover)] hover:to-[var(--brand-primary-hover)] rounded-xl shadow-sm transition-all flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <span>در حال آماده‌سازی و بارگذاری داده‌ها...</span>

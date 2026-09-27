@@ -101,7 +101,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[#0F786E] dark:hover:text-[#5eead4] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-on-dark)] transition-colors cursor-pointer"
         >
           <ArrowRight className="w-4 h-4" />
           <span>بازگشت به لیست تیم‌ها</span>
@@ -111,7 +111,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
           <button
             type="button"
             onClick={() => onBookMeetingWithTeam(team)}
-            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#0F786E] hover:bg-[#0D6B63] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow transition-all cursor-pointer"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl btn-brand text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow transition-all cursor-pointer"
           >
             <Calendar className="w-4 h-4" />
             <span>رزرو جلسه برای این تیم</span>
@@ -145,7 +145,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
       <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-teal-500/30 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center font-black text-xl border border-emerald-500/20">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--brand-primary-light)]/15 to-[rgb(var(--brand-primary-rgb)/0.3)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center font-black text-xl border border-[rgb(var(--brand-primary-rgb)/0.2)]">
               {team.name.slice(0, 2)}
             </div>
             <div>
@@ -159,7 +159,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-[#0F786E] dark:text-[#5eead4] text-xs font-bold flex items-center gap-1.5">
+            <div className="px-3 py-1.5 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] text-xs font-bold flex items-center gap-1.5">
               <Users className="w-4 h-4" />
               <span>{members.length} عضو فعال</span>
             </div>
@@ -183,7 +183,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#0F786E]" />
+              <Users className="w-4 h-4 text-[var(--brand-primary)]" />
               لیست اعضای تیم
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -196,7 +196,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
               type="button"
               id="btn-open-add-member-modal"
               onClick={() => setIsAddingMember(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-[#0F786E] dark:text-[#5eead4] text-xs font-bold border border-emerald-200 dark:border-emerald-800/40 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] text-xs font-bold border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 transition-colors cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
               <span>افزودن عضو جدید</span>
@@ -215,7 +215,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
               <button
                 type="button"
                 onClick={() => setIsAddingMember(true)}
-                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0F786E] text-white text-xs font-bold cursor-pointer"
+                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--brand-primary)] text-white text-xs font-bold cursor-pointer"
               >
                 <UserPlus className="w-3.5 h-3.5" />
                 افزودن عضو
@@ -281,7 +281,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
             {/* Modal Header */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
-                <UserPlus className="w-4 h-4 text-[#0F786E]" />
+                <UserPlus className="w-4 h-4 text-[var(--brand-primary)]" />
                 افزودن اعضا به تیم «{team.name}»
               </h3>
               <button
@@ -305,7 +305,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
                   value={searchMemberQuery}
                   onChange={(e) => setSearchMemberQuery(e.target.value)}
                   placeholder="جستجوی پرسنل بر اساس نام، ایمیل یا دپارتمان..."
-                  className="w-full pr-9 pl-3 py-2 text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 dark:text-white"
+                  className="w-full pr-9 pl-3 py-2 text-xs bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] dark:text-white"
                 />
               </div>
 
@@ -315,7 +315,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
                   <button
                     type="button"
                     onClick={() => setSelectedUserIds([])}
-                    className="text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer"
+                    className="text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline cursor-pointer"
                   >
                     لغو انتخاب‌ها
                   </button>
@@ -339,7 +339,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
                         onClick={() => handleToggleSelectCandidate(user.id)}
                         className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${
                           isSelected
-                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-[#0F786E]/40 dark:border-[#5eead4]/40'
+                            ? 'bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border-[rgb(var(--brand-primary-rgb)/0.40)] dark:border-[rgb(var(--brand-primary-rgb)/0.40)]'
                             : 'bg-white dark:bg-[#0F172A] border-slate-200/80 dark:border-slate-800 hover:border-slate-300'
                         }`}
                       >
@@ -347,7 +347,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center border transition-colors shrink-0 ${
                               isSelected
-                                ? 'bg-[#0F786E] border-[#0F786E] text-white'
+                                ? 'bg-[var(--brand-primary)] border-[var(--brand-primary)] text-white'
                                 : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
                             }`}
                           >
@@ -389,7 +389,7 @@ export const TeamDetail: React.FC<TeamDetailProps> = ({
                 type="button"
                 disabled={selectedUserIds.length === 0 || isSubmitting}
                 onClick={handleConfirmAddMembers}
-                className="px-4 py-2 rounded-xl bg-[#0F786E] hover:bg-[#0D6B63] text-white text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-xl btn-brand text-white text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 {isSubmitting ? 'در حال افزودن...' : `افزودن (${selectedUserIds.length}) عضو`}
               </button>

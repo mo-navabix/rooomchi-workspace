@@ -47,7 +47,7 @@ const features = [
     title: "رزرو آسان",
     desc: "رزرو جلسه در چند ثانیه با تقویم تعاملی و تأیید خودکار.",
     icon: CalendarCheck,
-    tone: "bg-emerald-50 text-[#0F786E] dark:bg-emerald-500/15 dark:text-emerald-300",
+    tone: "bg-brand-soft text-[var(--brand-primary)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)]",
   },
   {
     title: "گزارش‌های دقیق",
@@ -136,7 +136,7 @@ export const LandingView: React.FC = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="hover:text-[#0F786E] dark:hover:text-emerald-300 transition-colors"
+                className="hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-lighter)] transition-colors"
               >
                 {link.label}
               </a>
@@ -147,7 +147,7 @@ export const LandingView: React.FC = () => {
             <button
               type="button"
               onClick={() => openAuthModal("login")}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[#0F786E] dark:hover:text-emerald-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-lighter)] hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
             >
               <LogIn className="w-4 h-4" />
               <span>ورود / ثبت‌نام</span>
@@ -155,7 +155,7 @@ export const LandingView: React.FC = () => {
             <button
               type="button"
               onClick={startFree}
-              className="inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] shadow-sm transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold text-white btn-brand shadow-sm transition-colors cursor-pointer"
             >
               شروع رایگان
             </button>
@@ -170,13 +170,13 @@ export const LandingView: React.FC = () => {
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           <div className="order-2 lg:order-1 text-right space-y-6">
-            <span className="inline-block text-[11px] font-bold text-[#0F786E] dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-500/20">
+            <span className="inline-block text-[11px] font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.1)] px-3 py-1 rounded-full border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.2)]">
               مدیریت هوشمند فضاهای اداری
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-black leading-tight tracking-tight text-[#0F172A] dark:text-white">
               فضایی بهتر برای
               <br />
-              <span className="text-[#0F786E] dark:text-emerald-400">
+              <span className="text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]">
                 تصمیم‌های بهتر
               </span>
             </h1>
@@ -188,7 +188,7 @@ export const LandingView: React.FC = () => {
               <button
                 type="button"
                 onClick={startFree}
-                className="px-6 py-3 rounded-full bg-[#0F786E] hover:bg-[#0D6B63] text-white text-sm font-bold shadow-md shadow-emerald-900/10 transition-colors cursor-pointer"
+                className="px-6 py-3 rounded-full btn-brand text-white text-sm font-bold shadow-md shadow-[rgb(var(--brand-primary-rgb)/0.1)] transition-colors cursor-pointer"
               >
                 شروع رایگان
               </button>
@@ -197,21 +197,21 @@ export const LandingView: React.FC = () => {
                 onClick={enterApp}
                 className="inline-flex items-center gap-2 px-4 py-3 rounded-full text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
-                <Play className="w-4 h-4 text-[#0F786E]" />
+                <Play className="w-4 h-4 text-[var(--brand-primary)]" />
                 تماشای ویدیو
               </button>
             </div>
             <ul className="flex flex-wrap gap-4 sm:gap-6 pt-2 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
               <li className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+                <ShieldCheck className="w-4 h-4 text-[var(--brand-primary-light)]" />
                 امن و قابل اعتماد
               </li>
               <li className="flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-[#10B981]" />
+                <Users className="w-4 h-4 text-[var(--brand-primary-light)]" />
                 مناسب برای همه تیم‌ها
               </li>
               <li className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-[#10B981]" />
+                <Zap className="w-4 h-4 text-[var(--brand-primary-light)]" />
                 نصب سریع
               </li>
             </ul>
@@ -229,7 +229,7 @@ export const LandingView: React.FC = () => {
               <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
                 اتاق ۱
               </p>
-              <p className="text-xs font-black text-[#0F786E] dark:text-emerald-300 mt-0.5">
+              <p className="text-xs font-black text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] mt-0.5">
                 در حال استفاده
               </p>
               <p className="text-[10px] font-mono text-slate-500 mt-1">
@@ -241,8 +241,8 @@ export const LandingView: React.FC = () => {
                 جلسات امروز
               </p>
               <div className="mt-2 space-y-1.5">
-                <div className="h-2 rounded-full bg-emerald-100 dark:bg-emerald-900/40 w-full" />
-                <div className="h-2 rounded-full bg-emerald-200 dark:bg-emerald-800/50 w-4/5" />
+                <div className="h-2 rounded-full bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] w-full" />
+                <div className="h-2 rounded-full bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.35)] w-4/5" />
               </div>
             </div>
           </div>
@@ -278,7 +278,7 @@ export const LandingView: React.FC = () => {
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div className="text-right space-y-4 lg:sticky lg:top-24">
-            <span className="text-[11px] font-bold text-[#0F786E] dark:text-emerald-300">
+            <span className="text-[11px] font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]">
               چرا روم‌چی؟
             </span>
             <h2 className="text-2xl sm:text-3xl font-black leading-snug">
@@ -290,7 +290,7 @@ export const LandingView: React.FC = () => {
             </p>
             <a
               href="#solutions"
-              className="inline-flex items-center gap-2 text-sm font-bold text-[#0F786E] dark:text-emerald-300 hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline"
             >
               آشنایی بیشتر با امکانات
               <ArrowLeft className="w-4 h-4" />
@@ -323,13 +323,13 @@ export const LandingView: React.FC = () => {
       {/* Mobile app */}
       <section
         id="resources"
-        className="bg-[#ECFDF5] dark:bg-emerald-950/20 border-y border-emerald-100/80 dark:border-emerald-900/30"
+        className="bg-[var(--brand-gradient-soft-start)] dark:bg-[rgb(var(--brand-primary-rgb)/0.1)] border-y border-brand-soft/80 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.25)]"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div className="flex justify-center gap-4 order-2 lg:order-1">
             <div className="w-[140px] sm:w-[160px] h-[280px] sm:h-[320px] rounded-[2rem] bg-slate-900 border-4 border-slate-800 shadow-2xl p-2">
               <div className="w-full h-full rounded-[1.4rem] bg-white dark:bg-slate-800 overflow-hidden p-3">
-                <div className="h-3 w-16 rounded bg-emerald-100 dark:bg-emerald-900/50 mb-3" />
+                <div className="h-3 w-16 rounded bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.18)] mb-3" />
                 <div className="space-y-2">
                   {[1, 2, 3, 4].map((i) => (
                     <div
@@ -341,7 +341,7 @@ export const LandingView: React.FC = () => {
               </div>
             </div>
             <div className="w-[140px] sm:w-[160px] h-[280px] sm:h-[320px] rounded-[2rem] bg-slate-900 border-4 border-slate-800 shadow-2xl p-2 mt-8">
-              <div className="w-full h-full rounded-[1.4rem] bg-[#0F786E] flex flex-col items-center justify-center text-white p-4 text-center">
+              <div className="w-full h-full rounded-[1.4rem] bg-[var(--brand-primary)] flex flex-col items-center justify-center text-white p-4 text-center">
                 <p className="text-xs font-bold">رزرو موفق</p>
                 <p className="text-[10px] mt-2 opacity-90">
                   اتاق نوآوری — ۱۴:۰۰
@@ -392,7 +392,7 @@ export const LandingView: React.FC = () => {
             <button
               type="button"
               onClick={enterApp}
-              className="inline-flex items-center gap-2 text-sm font-bold text-[#0F786E] dark:text-emerald-300 hover:underline cursor-pointer"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline cursor-pointer"
             >
               مشاهده راهکارها
               <ArrowLeft className="w-4 h-4" />
@@ -417,7 +417,7 @@ export const LandingView: React.FC = () => {
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
                   {s.desc}
                 </p>
-                <span className="inline-flex text-[10px] font-bold text-[#0F786E] dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full">
+                <span className="inline-flex text-[10px] font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.1)] px-2.5 py-1 rounded-full">
                   ظرفیت {s.capacity}
                 </span>
               </div>
@@ -431,7 +431,7 @@ export const LandingView: React.FC = () => {
         id="pricing"
         className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20"
       >
-        <div className="rounded-3xl bg-[#ECFDF5] dark:bg-emerald-950/25 border border-emerald-100 dark:border-emerald-900/40 p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="rounded-3xl bg-[var(--brand-gradient-soft-start)] dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)] p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="text-right space-y-4">
             <h2 className="text-xl sm:text-2xl font-black">
               همین حالا شروع کنید و بهره‌وری تیم خود را افزایش دهید
@@ -440,13 +440,13 @@ export const LandingView: React.FC = () => {
               <button
                 type="button"
                 onClick={startFree}
-                className="px-6 py-3 rounded-full bg-[#0F786E] hover:bg-[#0D6B63] text-white text-sm font-bold cursor-pointer"
+                className="px-6 py-3 rounded-full btn-brand text-white text-sm font-bold cursor-pointer"
               >
                 شروع رایگان
               </button>
               <a
                 href="#contact"
-                className="px-6 py-3 rounded-full border-2 border-[#0F786E] text-[#0F786E] dark:text-emerald-300 dark:border-emerald-500 text-sm font-bold inline-flex items-center justify-center hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors"
+                className="px-6 py-3 rounded-full border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] dark:border-brand text-sm font-bold inline-flex items-center justify-center hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors"
               >
                 تماس با ما
               </a>
@@ -481,12 +481,12 @@ export const LandingView: React.FC = () => {
                 <p className="font-black mb-3">محصول</p>
                 <ul className="space-y-2 text-slate-500 dark:text-slate-400">
                   <li>
-                    <a href="#features" className="hover:text-[#0F786E]">
+                    <a href="#features" className="hover:text-[var(--brand-primary)]">
                       امکانات
                     </a>
                   </li>
                   <li>
-                    <a href="#pricing" className="hover:text-[#0F786E]">
+                    <a href="#pricing" className="hover:text-[var(--brand-primary)]">
                       قیمت‌گذاری
                     </a>
                   </li>
@@ -494,7 +494,7 @@ export const LandingView: React.FC = () => {
                     <button
                       type="button"
                       onClick={enterApp}
-                      className="hover:text-[#0F786E] cursor-pointer"
+                      className="hover:text-[var(--brand-primary)] cursor-pointer"
                     >
                       دمو
                     </button>
@@ -505,12 +505,12 @@ export const LandingView: React.FC = () => {
                 <p className="font-black mb-3">منابع</p>
                 <ul className="space-y-2 text-slate-500 dark:text-slate-400">
                   <li>
-                    <a href="#resources" className="hover:text-[#0F786E]">
+                    <a href="#resources" className="hover:text-[var(--brand-primary)]">
                       راهنما
                     </a>
                   </li>
                   <li>
-                    <a href="#customers" className="hover:text-[#0F786E]">
+                    <a href="#customers" className="hover:text-[var(--brand-primary)]">
                       مشتریان
                     </a>
                   </li>
@@ -542,11 +542,11 @@ export const LandingView: React.FC = () => {
                   value={newsletterEmail}
                   onChange={(e) => setNewsletterEmail(e.target.value)}
                   placeholder="ایمیل شما"
-                  className="flex-1 min-w-0 h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:border-[#0F786E]"
+                  className="flex-1 min-w-0 h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-xs outline-none focus:border-[var(--brand-primary)]"
                 />
                 <button
                   type="submit"
-                  className="h-10 w-10 shrink-0 rounded-xl bg-[#0F786E] text-white flex items-center justify-center cursor-pointer"
+                  className="h-10 w-10 shrink-0 rounded-xl bg-[var(--brand-primary)] text-white flex items-center justify-center cursor-pointer"
                   aria-label="ثبت ایمیل"
                 >
                   <Plus className="w-4 h-4" />

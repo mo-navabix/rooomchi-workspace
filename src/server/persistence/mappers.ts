@@ -108,6 +108,7 @@ export function mapBookingRow(row: Record<string, unknown>, roomName?: string): 
     description: row.description ? String(row.description) : "",
     organizerName: String(row.organizer_name),
     organizerEmail: String(row.organizer_email),
+    organizerId: row.organizer_id ? String(row.organizer_id) : null,
     department: row.department ? String(row.department) : "عمومی",
     date: toIsoDate(row.date),
     startTime: String(row.start_time),

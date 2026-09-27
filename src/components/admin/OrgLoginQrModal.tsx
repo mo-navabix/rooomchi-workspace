@@ -116,7 +116,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [qrSvg, setQrSvg] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
-  const [selectedColor, setSelectedColor] = useState<string>('#10B981');
+  const [selectedColor, setSelectedColor] = useState<string>('#0F786E');
   const [templateType, setTemplateType] = useState<'stand' | 'poster' | 'badge'>('stand');
   const [customHeaderTitle, setCustomHeaderTitle] = useState<string>('ورود سریع به سامانه جلسات');
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -129,6 +129,14 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://rooomchi.ir';
   const orgIdentifier = organization?.slug || organization?.id || 'default';
   const loginUrl = `${origin}?auth=login&org=${encodeURIComponent(orgIdentifier)}`;
+
+  useEffect(() => {
+    if (!isOpen || !organization) return;
+    const orgColor = organization.primaryColor?.trim();
+    if (orgColor && /^#[0-9A-Fa-f]{3,8}$/.test(orgColor)) {
+      setSelectedColor(orgColor);
+    }
+  }, [isOpen, organization?.id, organization?.primaryColor]);
 
   useEffect(() => {
     if (!isOpen || !organization) return;
@@ -474,7 +482,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
         {/* Modal Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-[#334155] flex items-center justify-between bg-slate-50/80 dark:bg-[#0F172A]/70">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#34D399] flex items-center justify-center shrink-0 shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] flex items-center justify-center shrink-0 shadow-2xs">
               <QrCode className="w-5 h-5" />
             </div>
             <div>
@@ -482,7 +490,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
                 <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                   بارکد اختصاصی ورود به {organization.name}
                 </h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]">
                   QR ورود
                 </span>
               </div>
@@ -548,7 +556,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
                 value={customHeaderTitle}
                 onChange={(e) => setCustomHeaderTitle(e.target.value)}
                 placeholder="مثال: ورود سریع به سامانه جلسات"
-                className="w-full text-xs px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-[#1E293B] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                className="w-full text-xs px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-[#1E293B] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
               />
             </div>
           </div>
@@ -561,7 +569,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
                 type="checkbox"
                 checked={showLogoInQr}
                 onChange={(e) => setShowLogoInQr(e.target.checked)}
-                className="w-4 h-4 rounded accent-[#0F786E] cursor-pointer"
+                className="w-4 h-4 rounded accent-[var(--brand-primary)] cursor-pointer"
               />
               <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 نمایش لوگو سازمان در مرکز بارکد
@@ -614,14 +622,14 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
             </div>
 
             {/* Instruction Badge */}
-            <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-xl p-2.5 text-xs text-emerald-800 dark:text-emerald-300 font-semibold flex items-center justify-center gap-1.5">
-              <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <div className="bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/60 rounded-xl p-2.5 text-xs text-brand dark:text-[var(--brand-primary-on-dark)] font-semibold flex items-center justify-center gap-1.5">
+              <Smartphone className="w-4 h-4 text-brand dark:text-[var(--brand-primary-on-dark)] shrink-0" />
               <span>دوربین گوشی را مقابل بارکد بگیرید</span>
             </div>
 
             {/* Sub-text */}
             <div className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
               <span>اتصال مستقیم و امن به درگاه سازمانی روم‌چی</span>
             </div>
           </div>
@@ -648,7 +656,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
               >
                 {copied ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    <Check className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                     <span>کپی شد!</span>
                   </>
                 ) : (
@@ -679,7 +687,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
             <button
               type="button"
               onClick={handlePrint}
-              className="px-4 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>چاپ مستقیم (استند / پوستر)</span>
@@ -691,7 +699,7 @@ export const OrgLoginQrModal: React.FC<OrgLoginQrModalProps> = ({
               onClick={handleDownloadPng}
               className="px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
             >
-              <FileImage className="w-4 h-4 text-emerald-500" />
+              <FileImage className="w-4 h-4 text-[var(--brand-primary)]" />
               <span>خروجی کارت (PNG)</span>
             </button>
 

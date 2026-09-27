@@ -230,11 +230,11 @@ export const AuthModal: React.FC = () => {
         dir="rtl"
       >
         {/* Modal Header */}
-        <div className="p-6 bg-gradient-to-r from-[#0F786E] via-[#10B981] to-[#0F786E] text-white relative border-b border-[#334155]">
+        <div className="p-6 bg-gradient-to-r from-[var(--brand-primary)] via-[var(--brand-primary-light)] to-[var(--brand-primary)] text-white relative border-b border-[#334155]">
           <button
             type="button"
             onClick={closeAuthModal}
-            className="absolute left-4 top-4 text-emerald-100 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
+            className="absolute left-4 top-4 text-white/80 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
             aria-label="بستن"
           >
             <X className="w-5 h-5" />
@@ -252,7 +252,7 @@ export const AuthModal: React.FC = () => {
               {currentView === 'reset' && 'تعیین رمز عبور جدید'}
             </h3>
 
-            <p className="text-xs text-emerald-100/90 mt-1 max-w-xs leading-relaxed">
+            <p className="text-xs text-white/85 mt-1 max-w-xs leading-relaxed">
               {currentView === 'login' && 'ورود با ایمیل و رمز عبور به سامانه رزرواسیون'}
               {currentView === 'register' && 'ثبت‌نام سریع همکاران — فقط با وارد کردن ایمیل'}
               {currentView === 'forgot' && 'ایمیل حساب خود را جهت دریافت کد تأیید وارد نمایید'}
@@ -262,7 +262,7 @@ export const AuthModal: React.FC = () => {
             {currentOrg && (
               <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-xs rounded-full border border-white/20 text-white text-[11px] font-semibold shadow-xs">
                 <span className="opacity-80">ورود به پورتال:</span>
-                <span className="font-bold underline decoration-emerald-300 underline-offset-2">{currentOrg.name}</span>
+                <span className="font-bold underline decoration-white/50 underline-offset-2">{currentOrg.name}</span>
               </div>
             )}
           </div>
@@ -294,7 +294,7 @@ export const AuthModal: React.FC = () => {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="name@company.ir"
-                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] transition-all text-left"
+                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[var(--brand-primary-light)] transition-all text-left"
                     dir="ltr"
                     required
                     autoFocus
@@ -313,7 +313,7 @@ export const AuthModal: React.FC = () => {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full text-xs pr-9 pl-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] transition-all text-left"
+                    className="w-full text-xs pr-9 pl-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[var(--brand-primary-light)] transition-all text-left"
                     dir="ltr"
                     required
                   />
@@ -332,7 +332,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 bg-[#0F786E] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 btn-brand text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span>در حال اعتبارسنجی...</span>
@@ -398,7 +398,7 @@ export const AuthModal: React.FC = () => {
                     setRegStep('email');
                     setErrorMessage(null);
                   }}
-                  className="text-xs font-bold text-[#0F786E] dark:text-[#5eead4] hover:underline flex items-center gap-1.5 cursor-pointer py-1"
+                  className="text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline flex items-center gap-1.5 cursor-pointer py-1"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>اکانت ندارم! ساخت اکانت</span>
@@ -428,10 +428,10 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => quickLoginAs('super_admin')}
-                    className="p-2 text-right rounded-lg border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
+                    className="p-2 text-right rounded-lg border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/50 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
                   >
                     <span>مدیر کل روم‌چی</span>
-                    <span className="text-[9px] bg-emerald-200 dark:bg-emerald-900/60 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-300">
+                    <span className="text-[9px] bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-1.5 py-0.5 rounded text-brand dark:text-[var(--brand-primary-on-dark)]">
                       Super Admin
                     </span>
                   </button>
@@ -439,10 +439,10 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => quickLoginAs('org_admin')}
-                    className="p-2 text-right rounded-lg border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
+                    className="p-2 text-right rounded-lg border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/50 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
                   >
                     <span>مدیر سازمان</span>
-                    <span className="text-[9px] bg-emerald-200 dark:bg-emerald-900/60 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-300">
+                    <span className="text-[9px] bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-1.5 py-0.5 rounded text-brand dark:text-[var(--brand-primary-on-dark)]">
                       Org Admin
                     </span>
                   </button>
@@ -450,10 +450,10 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => quickLoginAs('room_manager')}
-                    className="p-2 text-right rounded-lg border border-teal-200 dark:border-teal-800/50 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-900 dark:text-teal-200 text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
+                    className="p-2 text-right rounded-lg border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
                   >
                     <span>مدیر تشریفات</span>
-                    <span className="text-[9px] bg-teal-200 dark:bg-teal-900/60 px-1.5 py-0.5 rounded text-teal-800 dark:text-teal-300">
+                    <span className="text-[9px] bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-1.5 py-0.5 rounded text-brand dark:text-[var(--brand-primary-on-dark)]">
                       Manager
                     </span>
                   </button>
@@ -480,12 +480,12 @@ export const AuthModal: React.FC = () => {
             <div className="space-y-4">
               {regStep === 'email' ? (
                 <form onSubmit={handleRegSendOtp} className="space-y-4">
-                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs leading-relaxed">
+                  <div className="p-3 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 rounded-xl text-brand dark:text-[var(--brand-primary-on-dark)] text-xs leading-relaxed">
                     <div className="flex items-center gap-1.5 font-bold mb-1">
-                      <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <Sparkles className="w-4 h-4 text-brand dark:text-[var(--brand-primary-on-dark)]" />
                       <span>ثبت‌نام سریع فقط با ایمیل</span>
                     </div>
-                    <p className="text-[11px] text-emerald-700 dark:text-emerald-300/80">
+                    <p className="text-[11px] text-brand dark:text-[var(--brand-primary-on-dark)]/80">
                       تنها با وارد کردن آدرس ایمیل، کد تأیید یکبارمصرف برای شما ارسال شده و بلافاصله وارد داشبورد می‌شوید. (تکمیل نام و تلفن در هنگام اولین رزرو اتاق انجام خواهد شد).
                     </p>
                   </div>
@@ -501,7 +501,7 @@ export const AuthModal: React.FC = () => {
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
                         placeholder="your-name@company.ir"
-                        className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] transition-all text-left"
+                        className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[var(--brand-primary-light)] transition-all text-left"
                         dir="ltr"
                         required
                         autoFocus
@@ -512,7 +512,7 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-2.5 bg-[#0F786E] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full py-2.5 btn-brand text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <span>در حال ارسال کد تأیید...</span>
@@ -572,7 +572,7 @@ export const AuthModal: React.FC = () => {
                         setCurrentView('login');
                         setErrorMessage(null);
                       }}
-                      className="text-xs font-semibold text-[#0F786E] dark:text-[#5eead4] hover:underline flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
+                      className="text-xs font-semibold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
                     >
                       <ArrowRight className="w-3.5 h-3.5" />
                       <span>قبلاً ثبت‌نام کرده‌اید؟ ورود با ایمیل و رمز عبور</span>
@@ -589,7 +589,7 @@ export const AuthModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setRegStep('email')}
-                      className="text-[11px] text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer"
+                      className="text-[11px] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline cursor-pointer"
                     >
                       ویرایش ایمیل
                     </button>
@@ -597,16 +597,16 @@ export const AuthModal: React.FC = () => {
 
                   {/* Simulated Code helper for instant test */}
                   {regSimulatedCode && (
-                    <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
+                    <div className="p-3 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 rounded-xl text-brand dark:text-[var(--brand-primary-on-dark)] text-xs flex items-center justify-between">
                       <span>کد آزمایشی دریافتی (تست سریع):</span>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-black text-sm bg-emerald-200 dark:bg-emerald-900/60 px-2 py-0.5 rounded tracking-wider">
+                        <span className="font-mono font-black text-sm bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-2 py-0.5 rounded tracking-wider">
                           {regSimulatedCode}
                         </span>
                         <button
                           type="button"
                           onClick={() => setRegCode(regSimulatedCode)}
-                          className="text-[10px] bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-0.5 rounded font-bold cursor-pointer"
+                          className="text-[10px] bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-2 py-0.5 rounded font-bold cursor-pointer"
                         >
                           درج خودکار
                         </button>
@@ -624,7 +624,7 @@ export const AuthModal: React.FC = () => {
                       value={regCode}
                       onChange={(e) => setRegCode(e.target.value.replace(/\D/g, ''))}
                       placeholder="123456"
-                      className="w-full text-center text-lg font-mono font-bold tracking-widest py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] transition-all"
+                      className="w-full text-center text-lg font-mono font-bold tracking-widest py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[var(--brand-primary-light)] transition-all"
                       dir="ltr"
                       required
                       autoFocus
@@ -634,7 +634,7 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-2.5 bg-[#0F786E] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full py-2.5 btn-brand text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <span>در حال بررسی کد...</span>
@@ -651,7 +651,7 @@ export const AuthModal: React.FC = () => {
                       type="button"
                       disabled={regCooldown > 0 || isSubmitting}
                       onClick={handleRegSendOtp}
-                      className="text-[#0F786E] dark:text-[#5eead4] hover:underline disabled:opacity-50 cursor-pointer flex items-center gap-1"
+                      className="text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline disabled:opacity-50 cursor-pointer flex items-center gap-1"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>{regCooldown > 0 ? `ارسال مجدد (${regCooldown} ثانیه)` : 'ارسال مجدد کد'}</span>
@@ -699,7 +699,7 @@ export const AuthModal: React.FC = () => {
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
                     placeholder="employee@technova.ir"
-                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
+                    className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[var(--brand-primary-light)] text-left"
                     dir="ltr"
                     required
                     autoFocus
@@ -710,7 +710,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 bg-[#0F786E] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 btn-brand text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span>در حال ارسال کد بازیابی...</span>
@@ -751,23 +751,23 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setCurrentView('forgot')}
-                  className="text-[11px] text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer"
+                  className="text-[11px] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline cursor-pointer"
                 >
                   تغییر ایمیل
                 </button>
               </div>
 
               {resetSimulatedCode && (
-                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
+                <div className="p-3 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 rounded-xl text-brand dark:text-[var(--brand-primary-on-dark)] text-xs flex items-center justify-between">
                   <span>کد تأیید شبیه‌سازی‌شده (تست):</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-sm bg-emerald-200 dark:bg-emerald-900/60 px-2 py-0.5 rounded tracking-wider">
+                    <span className="font-mono font-black text-sm bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-2 py-0.5 rounded tracking-wider">
                       {resetSimulatedCode}
                     </span>
                     <button
                       type="button"
                       onClick={() => setResetCode(resetSimulatedCode)}
-                      className="text-[10px] bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-0.5 rounded font-bold cursor-pointer"
+                      className="text-[10px] bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-2 py-0.5 rounded font-bold cursor-pointer"
                     >
                       درج خودکار
                     </button>
@@ -785,7 +785,7 @@ export const AuthModal: React.FC = () => {
                   value={resetCode}
                   onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ''))}
                   placeholder="123456"
-                  className="w-full text-center text-lg font-mono font-bold tracking-widest py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981]"
+                  className="w-full text-center text-lg font-mono font-bold tracking-widest py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[var(--brand-primary-light)]"
                   dir="ltr"
                   required
                   autoFocus
@@ -803,7 +803,7 @@ export const AuthModal: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="رمز جدید دلخواه خود را وارد کنید"
-                    className="w-full text-xs pr-9 pl-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[#10B981] text-left"
+                    className="w-full text-xs pr-9 pl-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-[#0F172A] focus:ring-2 focus:ring-[var(--brand-primary-light)] text-left"
                     dir="ltr"
                     required
                   />
@@ -821,7 +821,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 bg-[#0F786E] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 btn-brand text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span>در حال ذخیره رمز جدید...</span>

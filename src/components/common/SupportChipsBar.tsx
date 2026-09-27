@@ -54,9 +54,9 @@ export const SupportChipsBar: React.FC = () => {
                 setActiveTab('support-ticket');
                 setOpen(false);
               }}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-full text-[10px] font-bold text-[#0F786E] dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-full text-[10px] font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.15)] whitespace-nowrap cursor-pointer"
             >
-              <span className="w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-500/15 flex items-center justify-center shrink-0">
+              <span className="w-7 h-7 rounded-full bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] flex items-center justify-center shrink-0">
                 <Ticket className="w-3.5 h-3.5" />
               </span>
               ثبت تیکت
@@ -70,7 +70,7 @@ export const SupportChipsBar: React.FC = () => {
           aria-label={open ? 'بستن پشتیبانی' : 'پشتیبانی'}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="w-11 h-11 rounded-full flex items-center justify-center text-white bg-[#0F786E] hover:bg-[#0D6B63] dark:bg-emerald-600 dark:hover:bg-emerald-500 border border-white/20 shadow-md shadow-emerald-900/20 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          className="w-11 h-11 rounded-full flex items-center justify-center text-white btn-brand dark:bg-[var(--brand-primary)] dark:hover:bg-[var(--brand-primary-light)] border border-white/20 shadow-md shadow-[rgb(var(--brand-primary-rgb)/0.2)] transition-transform hover:scale-105 active:scale-95 cursor-pointer"
         >
           {open ? <X className="w-5 h-5" /> : <Headphones className="w-5 h-5" />}
         </button>

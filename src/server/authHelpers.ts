@@ -1,6 +1,6 @@
 import type { Request } from "express";
 import { JwtService } from "@nestjs/jwt";
-import type { User } from "./types";
+import type { Booking, User } from "./types";
 
 export const jwtService = new JwtService({
   secret: process.env.JWT_SECRET || "rooomchi_jwt_super_secret_key_2026",
@@ -41,6 +41,17 @@ export function canManageTeams(role?: string): boolean {
     upper === "MANAGER" ||
     upper === "ROOM_MANAGER"
   );
+}
+
+/** True if the signed-in user created the booking (not merely an invitee). */
+export function isBookingOrganizer(
+  booking: Pick<Booking, "organizerId" | "organizerEmail">,
+  user: { userId: string; email?: string | null },
+): boolean {
+  if (booking.organizerId && booking.organizerId === user.userId) return true;
+  const orgEmail = booking.organizerEmail?.trim().toLowerCase();
+  const email = user.email?.trim().toLowerCase();
+  return !!orgEmail && !!email && orgEmail === email;
 }
 
 /** Roles that may list all organization bookings (calendar admin, analytics, etc.). */

@@ -419,6 +419,20 @@ export async function updateBookingStatus(id: string, status: Booking["status"])
   return mapBookingRow(rows[0], room?.name);
 }
 
+export async function getBookingById(id: string): Promise<Booking | null> {
+  const { rows } = await query(
+    `SELECT b.*, r.name AS room_name FROM bookings b
+     LEFT JOIN rooms r ON r.id = b.room_id
+     WHERE b.id = $1`,
+    [id],
+  );
+  if (!rows[0]) return null;
+  return mapBookingRow(
+    rows[0] as Record<string, unknown>,
+    rows[0].room_name ? String(rows[0].room_name) : undefined,
+  );
+}
+
 export async function cancelBooking(id: string): Promise<Booking | null> {
   return updateBookingStatus(id, "cancelled");
 }

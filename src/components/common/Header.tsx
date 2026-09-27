@@ -1,23 +1,17 @@
 import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
-import { getRoleMeta } from "../../constants/rbac";
 import {
   Sparkles,
   LogIn,
   Menu,
-  LogOut,
   Sun,
   Moon,
   Bell,
-  User,
-  UserCheck,
   Calendar,
   CheckCheck,
   X,
-  ChevronDown,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
-import { UserAvatar } from "./UserAvatar";
 import { toPersianDigits } from "../../utils/jalali";
 
 type HeaderProps = {
@@ -79,18 +73,12 @@ function getPageMeta(activeTab: ActiveTab): { title: string; subtitle: string } 
 
 export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
   const {
-    userRole,
     activeTab,
     setActiveTab,
-    openCompleteProfileModal,
-    isRegistrationComplete,
-    currentUser,
     isAuthenticated,
     openAuthModal,
-    logout,
     theme,
     toggleTheme,
-    setViewMode,
     notifications,
     unreadNotificationsCount,
     markNotificationAsRead,
@@ -98,11 +86,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
     clearAllNotifications,
   } = useApp();
 
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const page = getPageMeta(activeTab);
-  const currentRoleMeta = getRoleMeta(userRole);
   const isDark = theme === "dark";
 
   return (
@@ -113,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
         {/* راست هدر (RTL): خط سبز + عنوان */}
         <div className="flex min-w-0 flex-1 items-center justify-start gap-3">
           <div
-            className="w-1 self-stretch min-h-[2.75rem] rounded-full bg-[#0F786E] shrink-0"
+            className="w-1 self-stretch min-h-[2.75rem] rounded-full bg-[var(--brand-primary)] shrink-0"
             aria-hidden
           />
           <div className="min-w-0 py-0.5 text-right">
@@ -135,13 +121,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
           </button>
         </div>
 
-        {/* چپ هدر (RTL): تم | اعلان | پروفایل */}
+        {/* چپ هدر (RTL): تم | اعلان | ورود (مهمان) */}
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <button
             type="button"
             id="btn-theme-toggle"
             onClick={toggleTheme}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:text-[#0F786E] dark:hover:text-amber-300 hover:bg-slate-100/80 dark:hover:bg-white/5 cursor-pointer transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:text-[var(--brand-primary)] dark:hover:text-amber-300 hover:bg-slate-100/80 dark:hover:bg-white/5 cursor-pointer transition-colors"
             aria-label={isDark ? "تم روشن" : "تم تاریک"}
             title={isDark ? "تم روشن" : "تم تاریک"}
           >
@@ -182,7 +168,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                 <div className="fixed inset-x-3 top-[4.5rem] sm:absolute sm:inset-auto sm:left-0 sm:mt-2 w-auto sm:w-96 max-h-[80vh] dark-surface-card rounded-2xl shadow-xl z-50 border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
                   <div className="p-3 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/50">
                     <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                      <Bell className="w-4 h-4 text-[#0F786E]" />
+                      <Bell className="w-4 h-4 text-[var(--brand-primary)]" />
                       اعلان‌ها
                     </h4>
                     <div className="flex items-center gap-2">
@@ -190,7 +176,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                         <button
                           type="button"
                           onClick={markAllNotificationsAsRead}
-                          className="text-[11px] text-[#0F786E] font-medium cursor-pointer flex items-center gap-1"
+                          className="text-[11px] text-[var(--brand-primary)] font-medium cursor-pointer flex items-center gap-1"
                         >
                           <CheckCheck className="w-3.5 h-3.5" />
                           خواندن همه
@@ -221,10 +207,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
                             }
                           }}
                           className={`p-3 flex gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
-                            !n.isRead ? "bg-emerald-50/50 dark:bg-emerald-950/20" : ""
+                            !n.isRead ? "bg-brand-soft/50 dark:bg-[rgb(var(--brand-primary-rgb)/0.1)]" : ""
                           }`}
                         >
-                          <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-[#0F786E] shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] flex items-center justify-center text-[var(--brand-primary)] shrink-0">
                             {n.type === "meeting_booked" ? (
                               <Calendar className="w-4 h-4" />
                             ) : (
@@ -267,99 +253,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
             )}
           </div>
 
-          {isAuthenticated && currentUser ? (
-            <div className="relative">
-              <button
-                type="button"
-                id="btn-user-profile-menu"
-                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                className="flex items-center gap-1.5 sm:gap-2 pl-1 pr-0.5 rounded-full hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
-                aria-expanded={isUserDropdownOpen}
-              >
-                <UserAvatar
-                  user={currentUser}
-                  size="sm"
-                  shape="rounded"
-                  className="w-9 h-9 sm:w-10 sm:h-10 !rounded-xl"
-                />
-                <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 hidden sm:block" strokeWidth={2} />
-              </button>
-
-              {isUserDropdownOpen && (
-                <>
-                  <button
-                    type="button"
-                    className="fixed inset-0 z-20 cursor-default"
-                    onClick={() => setIsUserDropdownOpen(false)}
-                  />
-                  <div className="absolute left-0 mt-2 w-64 dark-surface-card rounded-2xl shadow-xl py-2 z-30 border border-slate-200 dark:border-white/10">
-                    <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700 flex gap-3">
-                      <UserAvatar user={currentUser} size="md" shape="circle" />
-                      <div className="min-w-0">
-                        <p className="text-sm font-bold truncate">{currentUser.name}</p>
-                        <p className="text-[11px] text-slate-500 truncate" dir="ltr">{currentUser.email}</p>
-                        <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${currentRoleMeta.badgeClass}`}>
-                          {currentRoleMeta.titleFa}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-1.5">
-                      {!isRegistrationComplete() && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsUserDropdownOpen(false);
-                            openCompleteProfileModal();
-                          }}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-amber-700 rounded-lg bg-amber-50 dark:bg-amber-950/30 cursor-pointer mb-1"
-                        >
-                          <UserCheck className="w-4 h-4" />
-                          تکمیل مشخصات
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUserDropdownOpen(false);
-                          setActiveTab("profile");
-                        }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
-                      >
-                        <User className="w-4 h-4 text-slate-400" />
-                        پروفایل من
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUserDropdownOpen(false);
-                          setViewMode("landing");
-                        }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#0F786E] rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/20 cursor-pointer"
-                      >
-                        <Sparkles className="w-4 h-4" />
-                        صفحه معرفی
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUserDropdownOpen(false);
-                          logout();
-                        }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        خروج
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          ) : (
+          {!isAuthenticated && (
             <button
               type="button"
               onClick={() => openAuthModal("login")}
-              className="flex items-center gap-1.5 h-10 px-4 rounded-full text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer"
+              className="flex items-center gap-1.5 h-10 px-4 rounded-full text-xs font-bold text-white btn-brand cursor-pointer"
             >
               <LogIn className="w-4 h-4" />
               ورود

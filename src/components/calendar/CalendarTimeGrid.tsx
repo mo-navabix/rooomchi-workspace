@@ -76,9 +76,9 @@ function bookingBlockStyle(
     return "border-r-[3px] bg-white/95 dark:bg-[#334155]/95 shadow-sm ring-1 ring-slate-200/80 dark:ring-[#334155]";
   }
   const palettes = [
-    "border-r-[3px] border-r-[#0F786E] bg-emerald-50/95 dark:bg-emerald-950/50 ring-1 ring-emerald-200/60 dark:ring-emerald-900/50",
-    "border-r-[3px] border-r-[#10B981] bg-emerald-50/95 dark:bg-emerald-950/50 ring-1 ring-emerald-200/60 dark:ring-emerald-900/50",
-    "border-r-[3px] border-r-[#10B981] bg-teal-50/95 dark:bg-teal-950/50 ring-1 ring-teal-200/60 dark:ring-teal-900/50",
+    "border-r-[3px] border-r-[var(--brand-primary)] bg-brand-soft/95 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] ring-1 ring-[rgb(var(--brand-primary-rgb)/0.25)] dark:ring-[rgb(var(--brand-primary-rgb)/0.3)]",
+    "border-r-[3px] border-r-[var(--brand-primary-light)] bg-brand-soft/95 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] ring-1 ring-[rgb(var(--brand-primary-rgb)/0.25)] dark:ring-[rgb(var(--brand-primary-rgb)/0.3)]",
+    "border-r-[3px] border-r-[var(--brand-primary-light)] bg-brand-soft/95 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] ring-1 ring-[rgb(var(--brand-primary-rgb)/0.25)] dark:ring-[rgb(var(--brand-primary-rgb)/0.3)]",
     "border-r-[3px] border-r-amber-500 bg-amber-50/95 dark:bg-amber-950/40 ring-1 ring-amber-200/60 dark:ring-amber-900/40",
   ];
   return palettes[paletteIndex % palettes.length];
@@ -115,7 +115,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
             key={d.isoDate}
             className={`p-2.5 sm:p-3.5 border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 ${
               d.isToday
-                ? "bg-emerald-50/60 dark:bg-emerald-950/40 text-[#0F786E] dark:text-emerald-300 font-black"
+                ? "bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-black"
                 : ""
             }`}
           >
@@ -123,7 +123,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
               <div className="flex items-center gap-1">
                 <span>{days.length === 1 ? d.name : d.short}</span>
                 {d.isToday && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F786E] inline-block animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] inline-block animate-pulse" />
                 )}
               </div>
               <span className="text-[10px] font-mono text-slate-400">
@@ -158,7 +158,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
               key={d.isoDate}
               className={`relative border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 ${
                 d.isToday
-                  ? "bg-emerald-50/25 dark:bg-emerald-950/15"
+                  ? "bg-brand-soft/25 dark:bg-[rgb(var(--brand-primary-rgb)/0.08)]"
                   : "bg-white dark:bg-[#1E293B]"
               }`}
               style={{ height: GRID_HEIGHT_PX }}
@@ -199,7 +199,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
                 const leftPercent = column * widthPercent;
 
                 const room = rooms.find((r) => r.id === bk.roomId);
-                const accentColor = room?.color ?? "#0F786E";
+                const accentColor = room?.color ?? "var(--brand-primary)";
                 const styleClass = bookingBlockStyle(bk, rooms, bkIdx);
                 const compact = heightPx < 52;
 

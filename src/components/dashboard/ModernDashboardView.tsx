@@ -70,7 +70,7 @@ export const ModernDashboardView: React.FC = () => {
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80',
       ],
-      color: 'border-l-4 border-l-emerald-500',
+      color: 'border-l-4 border-l-[var(--brand-primary)]',
     },
     {
       id: '2',
@@ -81,7 +81,7 @@ export const ModernDashboardView: React.FC = () => {
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80',
       ],
-      color: 'border-l-4 border-l-emerald-500',
+      color: 'border-l-4 border-l-[var(--brand-primary)]',
     },
     {
       id: '3',
@@ -93,7 +93,7 @@ export const ModernDashboardView: React.FC = () => {
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80',
       ],
-      color: 'border-l-4 border-l-emerald-500',
+      color: 'border-l-4 border-l-[var(--brand-primary)]',
     },
     {
       id: '4',
@@ -200,7 +200,7 @@ export const ModernDashboardView: React.FC = () => {
             </h3>
             <button
               onClick={() => setActiveTab('calendar')}
-              className="text-xs font-bold text-[#0F786E] dark:text-emerald-300 hover:underline cursor-pointer"
+              className="text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline cursor-pointer"
             >
               مشاهده همه
             </button>
@@ -262,9 +262,9 @@ export const ModernDashboardView: React.FC = () => {
             <div className="h-44 pt-4 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-[#334155]/60 pb-2">
               {weeklyUsage.map((w) => (
                 <div key={w.day} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-                  <div className="w-full max-w-[28px] bg-emerald-100 dark:bg-emerald-950/60 rounded-t-xl overflow-hidden relative flex items-end h-full">
+                  <div className="w-full max-w-[28px] bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] rounded-t-xl overflow-hidden relative flex items-end h-full">
                     <div
-                      className="w-full bg-[#10B981] rounded-t-xl transition-all duration-500"
+                      className="w-full bg-[var(--brand-primary-light)] rounded-t-xl transition-all duration-500"
                       style={{ height: w.height }}
                     />
                   </div>
@@ -286,30 +286,30 @@ export const ModernDashboardView: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                   <span className="text-slate-700 dark:text-slate-300">اتاق کنفرانس ۱</span>
-                  <span className="text-emerald-600 font-mono">۹۲%</span>
+                  <span className="text-brand font-mono">۹۲%</span>
                 </div>
                 <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#0F786E] rounded-full w-[92%]" />
+                  <div className="h-full bg-[var(--brand-primary)] rounded-full w-[92%]" />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                   <span className="text-slate-700 dark:text-slate-300">اتاق VIP</span>
-                  <span className="text-emerald-600 font-mono">۷۸%</span>
+                  <span className="text-brand font-mono">۷۸%</span>
                 </div>
                 <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#10B981] rounded-full w-[78%]" />
+                  <div className="h-full bg-[var(--brand-primary-light)] rounded-full w-[78%]" />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5 font-bold">
                   <span className="text-slate-700 dark:text-slate-300">اتاق جلسات ۲</span>
-                  <span className="text-emerald-600 font-mono">۶۵%</span>
+                  <span className="text-brand font-mono">۶۵%</span>
                 </div>
                 <div className="w-full h-2 bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#34D399] rounded-full w-[65%]" />
+                  <div className="h-full bg-[var(--brand-primary-lighter)] rounded-full w-[65%]" />
                 </div>
               </div>
             </div>

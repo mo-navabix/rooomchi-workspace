@@ -67,7 +67,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
                 : `${toPersianDigits(teams.length)} تیم ثبت‌شده در سازمان`}
             </p>
             <div className="flex flex-wrap items-center gap-2 mt-2">
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)]">
                 <Users className="w-3 h-3" />
                 {toPersianDigits(teams.length)} تیم
               </span>
@@ -84,7 +84,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
               type="button"
               id="btn-create-new-team"
               onClick={onCreateTeam}
-              className="portal-btn-primary w-full lg:w-auto inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs font-bold cursor-pointer shadow-sm shadow-[#0F786E]/15 dark:shadow-black/30 shrink-0"
+              className="portal-btn-primary w-full lg:w-auto inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs font-bold cursor-pointer shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.15)] dark:shadow-black/30 shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>ایجاد تیم جدید</span>
@@ -102,7 +102,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="جستجوی نام یا شرح تیم..."
-            className="w-full pr-10 pl-4 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 dark:text-white"
+            className="w-full pr-10 pl-4 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] dark:text-white"
           />
         </div>
       </div>
@@ -123,7 +123,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 px-4 bg-white dark:bg-[#1E293B] rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-          <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center">
             <Users className="w-7 h-7" />
           </div>
           <h3 className="text-base font-bold text-slate-800 dark:text-white mb-1">
@@ -139,7 +139,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
               type="button"
               id="btn-empty-create-team"
               onClick={onCreateTeam}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0F786E] hover:bg-[#0D6B63] text-white text-xs font-bold cursor-pointer transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl btn-brand text-white text-xs font-bold cursor-pointer transition-colors"
             >
               <Plus className="w-4 h-4" />
               ایجاد اولین تیم
@@ -156,26 +156,26 @@ export const TeamsList: React.FC<TeamsListProps> = ({
               <div
                 key={team.id}
                 id={`team-card-${team.id}`}
-                className="group relative bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-all hover:border-[#0F786E]/40 flex flex-col justify-between"
+                className="group relative bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-all hover:border-[rgb(var(--brand-primary-rgb)/0.40)] flex flex-col justify-between"
               >
                 <div>
                   {/* Card Header: Icon, Name & Menu */}
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/20 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center font-bold text-base border border-emerald-500/20 shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--brand-primary-light)]/10 to-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center font-bold text-base border border-[rgb(var(--brand-primary-rgb)/0.2)] shrink-0">
                         {team.name.slice(0, 2)}
                       </div>
                       <div>
                         <h3
                           onClick={() => onSelectTeam(team)}
-                          className="font-bold text-slate-800 dark:text-white text-sm hover:text-[#0F786E] dark:hover:text-[#5eead4] transition-colors cursor-pointer line-clamp-1"
+                          className="font-bold text-slate-800 dark:text-white text-sm hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-on-dark)] transition-colors cursor-pointer line-clamp-1"
                           title={team.name}
                         >
                           {team.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
                           <span className="inline-flex items-center gap-1">
-                            <Users className="w-3 h-3 text-[#0F786E]" />
+                            <Users className="w-3 h-3 text-[var(--brand-primary)]" />
                             {memberCount} عضو
                           </span>
                           {team.createdByName && (
@@ -270,7 +270,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
                         </div>
                       ))}
                       {memberCount > 4 && (
-                        <div className="w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border-2 border-white dark:border-[#1E293B] flex items-center justify-center text-[10px] font-bold text-[#0F786E] dark:text-[#5eead4]">
+                        <div className="w-7 h-7 rounded-full bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] border-2 border-white dark:border-[#1E293B] flex items-center justify-center text-[10px] font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]">
                           +{memberCount - 4}
                         </div>
                       )}
@@ -282,7 +282,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
                     <button
                       type="button"
                       onClick={() => onSelectTeam(team)}
-                      className="text-xs font-semibold text-[#0F786E] dark:text-[#5eead4] hover:underline cursor-pointer"
+                      className="text-xs font-semibold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline cursor-pointer"
                     >
                       جزئیات تیم ←
                     </button>
@@ -294,7 +294,7 @@ export const TeamsList: React.FC<TeamsListProps> = ({
                   <button
                     type="button"
                     onClick={() => onBookForTeam(team)}
-                    className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-[#0F786E] dark:text-[#5eead4] text-xs font-bold transition-colors cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-brand-soft hover:bg-[rgb(var(--brand-primary-rgb)/0.12)]/80 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] text-xs font-bold transition-colors cursor-pointer"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>رزرو جلسه با این تیم</span>

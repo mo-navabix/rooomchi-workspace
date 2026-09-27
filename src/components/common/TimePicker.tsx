@@ -310,7 +310,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
     <div className={`${compact ? 'inline-block' : 'flex flex-col gap-1.5 min-w-0'} ${className}`} id={id}>
       {label && !compact && (
         <div className="flex items-center gap-1.5 min-h-[20px] text-xs font-bold text-slate-600 dark:text-slate-400">
-          <Clock className="w-3.5 h-3.5 shrink-0 text-[#0F786E] dark:text-[#5eead4]" />
+          <Clock className="w-3.5 h-3.5 shrink-0 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
           <span className="truncate">{label}</span>
           {required && <span className="text-rose-500 shrink-0">*</span>}
         </div>
@@ -325,26 +325,26 @@ export const TimePicker: React.FC<TimePickerProps> = ({
           compact
             ? `inline-flex items-center justify-between gap-2.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
                 isOpen
-                  ? 'border-[#0F786E] ring-2 ring-[#0F786E]/30 bg-emerald-50/20'
-                  : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-[#0F786E]/60 text-slate-800 dark:text-slate-100'
+                  ? 'border-[var(--brand-primary)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.30)] bg-brand-soft/20'
+                  : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-[rgb(var(--brand-primary-rgb)/0.60)] text-slate-800 dark:text-slate-100'
               } ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`
             : `w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-sm font-bold bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 transition-all cursor-pointer shadow-xs ${
                 isOpen
-                  ? 'border-[#0F786E] ring-2 ring-[#0F786E]/30 bg-emerald-50/20'
-                  : 'border-slate-200 dark:border-[#334155] hover:border-[#0F786E]/60'
+                  ? 'border-[var(--brand-primary)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.30)] bg-brand-soft/20'
+                  : 'border-slate-200 dark:border-[#334155] hover:border-[rgb(var(--brand-primary-rgb)/0.60)]'
               } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`
         }
       >
         <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-slate-800 dark:text-slate-100">
           {formattedDisplay}
         </span>
-        <Clock className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} shrink-0 text-[#0F786E] dark:text-[#5eead4]`} />
+        <Clock className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} shrink-0 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]`} />
       </button>
 
       {!compact && (
         <div className="min-h-[18px] flex items-center justify-center">
           {durationText ? (
-            <p className="text-[10px] font-semibold text-[#0F786E] dark:text-[#5eead4] leading-tight">
+            <p className="text-[10px] font-semibold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] leading-tight">
               {durationText}
             </p>
           ) : null}
@@ -369,7 +369,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#334155]">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center">
                   <Clock className="w-4 h-4" />
                 </div>
                 <div>
@@ -455,7 +455,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
 
             {/* Live Preview & Duration if end time */}
             {tempDurationText && (
-              <div className="text-center text-xs font-bold text-[#0F786E] dark:text-[#5eead4] bg-emerald-50 dark:bg-emerald-950/40 py-1.5 px-3 rounded-xl border border-emerald-200/50">
+              <div className="text-center text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] py-1.5 px-3 rounded-xl border border-brand-soft/50">
                 مدت زمان جلسه: {tempDurationText}
               </div>
             )}
@@ -465,7 +465,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
               <button
                 type="button"
                 onClick={handleConfirm}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-[#0F786E] hover:bg-[#0D6B63] text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                className="flex-1 py-2.5 px-4 rounded-xl btn-brand text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
               >
                 <Check className="w-4 h-4 stroke-[2.5]" />
                 <span>تأیید ساعت ({currentFormatted})</span>

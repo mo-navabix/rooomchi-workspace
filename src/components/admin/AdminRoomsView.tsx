@@ -437,8 +437,8 @@ export const AdminRoomsView: React.FC = () => {
       <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs transition-colors space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-[#10B981]" />
+            <div className="text-xs font-semibold text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-[var(--brand-primary-light)]" />
               <span>پنل مدیریت منابع فیزیکی</span>
             </div>
             <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
@@ -452,7 +452,7 @@ export const AdminRoomsView: React.FC = () => {
           <button
             id="btn-add-room-admin"
             onClick={handleOpenAddModal}
-            className="w-full sm:w-auto px-4 py-2.5 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>افزودن اتاق جدید</span>
@@ -468,7 +468,7 @@ export const AdminRoomsView: React.FC = () => {
                 {totalCount} اتاق
               </div>
             </div>
-            <div className="w-8 h-8 rounded-lg bg-emerald-100/70 dark:bg-emerald-950/60 flex items-center justify-center text-[#10B981]">
+            <div className="w-8 h-8 rounded-lg bg-[rgb(var(--brand-primary-rgb)/0.12)]/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] flex items-center justify-center text-[var(--brand-primary-light)]">
               <DoorOpen className="w-4 h-4" />
             </div>
           </div>
@@ -476,11 +476,11 @@ export const AdminRoomsView: React.FC = () => {
           <div className="bg-slate-50 dark:bg-[#0F172A] p-3 rounded-xl border border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
             <div>
               <div className="text-[11px] text-slate-500 dark:text-slate-400">فعال و در دسترس</div>
-              <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
+              <div className="text-sm font-bold text-brand dark:text-[var(--brand-primary-on-dark)] mt-0.5">
                 {availableCount} اتاق
               </div>
             </div>
-            <div className="w-8 h-8 rounded-lg bg-emerald-100/70 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <div className="w-8 h-8 rounded-lg bg-[rgb(var(--brand-primary-rgb)/0.12)]/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] flex items-center justify-center text-brand dark:text-[var(--brand-primary-on-dark)]">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
@@ -521,7 +521,7 @@ export const AdminRoomsView: React.FC = () => {
             placeholder="جستجو بر اساس نام اتاق، کد یا نام ساختمان..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full text-xs pl-8 pr-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] transition-all"
+            className="w-full text-xs pl-8 pr-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] transition-all"
           />
           {searchQuery && (
             <button
@@ -540,7 +540,7 @@ export const AdminRoomsView: React.FC = () => {
             <select
               value={filterBuilding}
               onChange={(e) => setFilterBuilding(e.target.value)}
-              className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
+              className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer"
             >
               <option value="all">همه ساختمان‌ها</option>
               {buildingOptions.map((b) => (
@@ -557,7 +557,7 @@ export const AdminRoomsView: React.FC = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
+              className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer"
             >
               <option value="all">همه وضعیت‌ها</option>
               <option value="available">فعال و آماده</option>
@@ -571,7 +571,7 @@ export const AdminRoomsView: React.FC = () => {
             <select
               value={filterCapacity}
               onChange={(e) => setFilterCapacity(e.target.value)}
-              className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
+              className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer"
             >
               <option value="all">همه ظرفیت‌ها</option>
               <option value="small">تا 6 نفر</option>
@@ -614,7 +614,7 @@ export const AdminRoomsView: React.FC = () => {
                           setFilterStatus('all');
                           setFilterCapacity('all');
                         }}
-                        className="text-xs text-[#10B981] hover:underline font-semibold mt-1"
+                        className="text-xs text-[var(--brand-primary-light)] hover:underline font-semibold mt-1"
                       >
                         پاک کردن همه فیلترها
                       </button>
@@ -692,9 +692,9 @@ export const AdminRoomsView: React.FC = () => {
                                   key={amId}
                                   onClick={() => setViewAmenitiesRoom(room)}
                                   title={`${nameFa} (کلیک جهت مشاهده کامل)`}
-                                  className="w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-center hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-[#0F786E] dark:hover:text-[#34D399] hover:border-emerald-300 dark:hover:border-emerald-700/60 transition-all cursor-pointer shadow-2xs group shrink-0"
+                                  className="w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-center hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-lighter)] hover:border-brand-soft dark:hover:border-[rgb(var(--brand-primary-rgb)/0.35)] transition-all cursor-pointer shadow-2xs group shrink-0"
                                 >
-                                  <IconComponent className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-[#0F786E] dark:group-hover:text-[#34D399] transition-colors" />
+                                  <IconComponent className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-[var(--brand-primary)] dark:group-hover:text-[var(--brand-primary-lighter)] transition-colors" />
                                 </button>
                               );
                             })}
@@ -704,7 +704,7 @@ export const AdminRoomsView: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setViewAmenitiesRoom(room)}
-                                className="h-8 px-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#0F786E] dark:text-[#34D399] border border-emerald-200/80 dark:border-emerald-800/60 text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors flex items-center gap-1 cursor-pointer shrink-0 shadow-2xs"
+                                className="h-8 px-2.5 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] border border-brand-soft/80 dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/60 text-xs font-bold hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.22)] transition-colors flex items-center gap-1 cursor-pointer shrink-0 shadow-2xs"
                                 title="مشاهده همه تجهیزات این سالن"
                               >
                                 <span>+{room.amenities.length - 3}</span>
@@ -714,7 +714,7 @@ export const AdminRoomsView: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setViewAmenitiesRoom(room)}
-                                className="h-8 w-7 rounded-xl text-slate-400 hover:text-[#0F786E] dark:hover:text-[#34D399] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-[11px] font-medium flex items-center justify-center cursor-pointer shrink-0"
+                                className="h-8 w-7 rounded-xl text-slate-400 hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-lighter)] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-[11px] font-medium flex items-center justify-center cursor-pointer shrink-0"
                                 title="مشاهده جزئیات تجهیزات"
                               >
                                 <Info className="w-3.5 h-3.5" />
@@ -732,7 +732,7 @@ export const AdminRoomsView: React.FC = () => {
                             <span>تعمیرات</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100/90 dark:bg-emerald-950/50 px-2.5 py-1 rounded-xl border border-emerald-200/60 dark:border-emerald-900/40 whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-[rgb(var(--brand-primary-rgb)/0.12)]/90 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-2.5 py-1 rounded-xl border border-brand-soft/60 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)] whitespace-nowrap">
                             <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                             <span>فعال و آماده</span>
                           </span>
@@ -748,7 +748,7 @@ export const AdminRoomsView: React.FC = () => {
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-[#0F172A] px-2.5 py-1 rounded-xl border border-slate-200/60 dark:border-[#334155] whitespace-nowrap">
-                            <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <Sparkles className="w-3.5 h-3.5 text-[var(--brand-primary)] shrink-0" />
                             <span>رزرو آنی</span>
                           </span>
                         )}
@@ -761,7 +761,7 @@ export const AdminRoomsView: React.FC = () => {
                             onClick={() => handleToggleMaintenance(room)}
                             className={`p-2 rounded-xl border transition-colors cursor-pointer ${
                               room.status === 'maintenance'
-                                ? 'text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100'
+                                ? 'text-brand dark:text-[var(--brand-primary-on-dark)] border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)]'
                                 : 'text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/40 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100'
                             }`}
                             title={
@@ -775,7 +775,7 @@ export const AdminRoomsView: React.FC = () => {
 
                           <button
                             onClick={() => handleOpenEditModal(room)}
-                            className="p-2 text-[#10B981] dark:text-[#34D399] hover:bg-emerald-50 dark:hover:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 rounded-xl transition-colors cursor-pointer"
+                            className="p-2 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)] rounded-xl transition-colors cursor-pointer"
                             title="ویرایش مشخصات اتاق"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
@@ -803,9 +803,9 @@ export const AdminRoomsView: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
           <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#334155] w-full max-w-xl overflow-hidden transition-colors">
-            <div className="px-6 py-4 bg-[#0F786E] text-white flex items-center justify-between border-b border-[#334155]">
+            <div className="px-6 py-4 bg-[var(--brand-primary)] text-white flex items-center justify-between border-b border-[#334155]">
               <div className="flex items-center gap-2">
-                <DoorOpen className="w-4 h-4 text-emerald-300" />
+                <DoorOpen className="w-4 h-4 text-[var(--brand-primary-lighter)]" />
                 <h3 className="text-sm font-bold">
                   {editingRoom ? 'ویرایش مشخصات اتاق جلسات' : 'افزودن اتاق جلسه جدید'}
                 </h3>
@@ -829,7 +829,7 @@ export const AdminRoomsView: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="مثال: اتاق نوآوری کارون"
-                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                     required
                   />
                 </div>
@@ -843,7 +843,7 @@ export const AdminRoomsView: React.FC = () => {
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="RM-201"
-                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden font-mono"
+                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden font-mono"
                   />
                 </div>
 
@@ -857,7 +857,7 @@ export const AdminRoomsView: React.FC = () => {
                     max="100"
                     value={capacity}
                     onChange={(e) => setCapacity(Number(e.target.value))}
-                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                     required
                   />
                 </div>
@@ -870,7 +870,7 @@ export const AdminRoomsView: React.FC = () => {
                     type="number"
                     value={floor}
                     onChange={(e) => setFloor(Number(e.target.value))}
-                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                     required
                   />
                 </div>
@@ -884,7 +884,7 @@ export const AdminRoomsView: React.FC = () => {
                   <select
                     value={building}
                     onChange={(e) => setBuilding(e.target.value)}
-                    className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden cursor-pointer"
+                    className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden cursor-pointer"
                   >
                     {buildingOptions.map((b) => (
                       <option key={b} value={b}>
@@ -900,7 +900,7 @@ export const AdminRoomsView: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                    <ImageIcon className="w-3.5 h-3.5 text-[#10B981]" />
+                    <ImageIcon className="w-3.5 h-3.5 text-[var(--brand-primary-light)]" />
                     <span>تصویر سالن جلسه</span>
                   </label>
                   {/* Mode switcher tabs */}
@@ -910,7 +910,7 @@ export const AdminRoomsView: React.FC = () => {
                       onClick={() => setImageInputMode('upload')}
                       className={`px-2.5 py-1 rounded-md font-medium transition-all flex items-center gap-1 cursor-pointer ${
                         imageInputMode === 'upload'
-                          ? 'bg-white dark:bg-slate-800 text-[#0F786E] dark:text-[#34D399] shadow-2xs font-bold'
+                          ? 'bg-white dark:bg-slate-800 text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] shadow-2xs font-bold'
                           : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                       }`}
                     >
@@ -922,7 +922,7 @@ export const AdminRoomsView: React.FC = () => {
                       onClick={() => setImageInputMode('url')}
                       className={`px-2.5 py-1 rounded-md font-medium transition-all flex items-center gap-1 cursor-pointer ${
                         imageInputMode === 'url'
-                          ? 'bg-white dark:bg-slate-800 text-[#0F786E] dark:text-[#34D399] shadow-2xs font-bold'
+                          ? 'bg-white dark:bg-slate-800 text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] shadow-2xs font-bold'
                           : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                       }`}
                     >
@@ -947,7 +947,7 @@ export const AdminRoomsView: React.FC = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-primary)] shrink-0" />
                             <span className="truncate">تصویر آماده ذخیره است</span>
                           </div>
                           <p className="text-[11px] text-slate-400 mt-0.5">
@@ -988,20 +988,20 @@ export const AdminRoomsView: React.FC = () => {
                         onClick={() => fileInputRef.current?.click()}
                         className={`p-5 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center text-center cursor-pointer ${
                           isDragging
-                            ? 'border-[#10B981] bg-emerald-50/60 dark:bg-emerald-950/20'
-                            : 'border-slate-200 dark:border-[#334155] bg-slate-50/70 dark:bg-[#0F172A]/70 hover:border-[#10B981] hover:bg-emerald-50/30'
+                            ? 'border-[var(--brand-primary-light)] bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.1)]'
+                            : 'border-slate-200 dark:border-[#334155] bg-slate-50/70 dark:bg-[#0F172A]/70 hover:border-[var(--brand-primary-light)] hover:bg-brand-soft/30'
                         }`}
                       >
                         {imageUploadLoading ? (
                           <div className="flex flex-col items-center gap-2 py-2">
-                            <Loader2 className="w-7 h-7 text-[#10B981] animate-spin" />
+                            <Loader2 className="w-7 h-7 text-[var(--brand-primary-light)] animate-spin" />
                             <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                               در حال پردازش و بهینه‌سازی تصویر...
                             </span>
                           </div>
                         ) : (
                           <>
-                            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#34D399] flex items-center justify-center mb-2 shadow-2xs">
+                            <div className="w-10 h-10 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] flex items-center justify-center mb-2 shadow-2xs">
                               <UploadCloud className="w-5 h-5" />
                             </div>
                             <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
@@ -1037,7 +1037,7 @@ export const AdminRoomsView: React.FC = () => {
                       value={imageUrl}
                       onChange={(e) => setImageUrl(e.target.value)}
                       placeholder="https://images.unsplash.com/..."
-                      className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden font-mono text-left"
+                      className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden font-mono text-left"
                       dir="ltr"
                     />
                     {imageUrl && (
@@ -1078,13 +1078,13 @@ export const AdminRoomsView: React.FC = () => {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#10B981]" />
+                    <Sparkles className="w-3.5 h-3.5 text-[var(--brand-primary-light)]" />
                     <span>تجهیزات و امکانات اتاق ({selectedAmenities.length} مورد فعال)</span>
                   </label>
                   <button
                     type="button"
                     onClick={() => setIsAddingAmenity((prev) => !prev)}
-                    className="text-xs font-bold text-[#0F786E] dark:text-[#34D399] hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>افزودن امکانات جدید</span>
@@ -1093,10 +1093,10 @@ export const AdminRoomsView: React.FC = () => {
 
                 {/* Inline Form to Add New Custom Amenity */}
                 {isAddingAmenity && (
-                  <div className="p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-3 animate-in fade-in duration-150">
+                  <div className="p-3.5 rounded-xl border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/80 bg-brand-soft/50 dark:bg-[rgb(var(--brand-primary-rgb)/0.1)] space-y-3 animate-in fade-in duration-150">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <PlusCircle className="w-4 h-4 text-[#10B981]" />
+                        <PlusCircle className="w-4 h-4 text-[var(--brand-primary-light)]" />
                         <span>تعریف تجهیزات یا امکانات جدید</span>
                       </span>
                       <button
@@ -1118,7 +1118,7 @@ export const AdminRoomsView: React.FC = () => {
                           value={newAmenityName}
                           onChange={(e) => setNewAmenityName(e.target.value)}
                           placeholder="مثال: پرده برقی، دوربین PTZ، پرزنتر"
-                          className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden"
+                          className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                               e.preventDefault();
@@ -1140,7 +1140,7 @@ export const AdminRoomsView: React.FC = () => {
                                 e.target.value as 'av' | 'tech' | 'comfort' | 'facility'
                               )
                             }
-                            className="w-full text-xs appearance-none pr-3.5 pl-8 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[#10B981] focus:outline-hidden cursor-pointer"
+                            className="w-full text-xs appearance-none pr-3.5 pl-8 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden cursor-pointer"
                           >
                             <option value="av">صوتی و تصویری</option>
                             <option value="tech">فناوری و شبکه</option>
@@ -1168,7 +1168,7 @@ export const AdminRoomsView: React.FC = () => {
                               onClick={() => setNewAmenityIcon(item.id)}
                               className={`px-2 py-1 rounded-lg text-[11px] flex items-center gap-1 border transition-all cursor-pointer ${
                                 isSelected
-                                  ? 'bg-[#10B981] text-white border-[#10B981] font-bold shadow-2xs'
+                                  ? 'bg-[var(--brand-primary-light)] text-white border-[var(--brand-primary-light)] font-bold shadow-2xs'
                                   : 'bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300'
                               }`}
                             >
@@ -1191,7 +1191,7 @@ export const AdminRoomsView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleAddNewAmenity()}
-                        className="px-3 py-1.5 text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-lg shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
+                        className="px-3 py-1.5 text-xs font-bold text-white bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] rounded-lg shadow-2xs transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         <Check className="w-3.5 h-3.5" />
                         <span>ثبت و انتخاب این تجهیزات</span>
@@ -1213,20 +1213,20 @@ export const AdminRoomsView: React.FC = () => {
                         onClick={() => handleToggleAmenity(amenity.id)}
                         className={`p-2.5 rounded-xl border text-right text-xs flex items-center justify-between transition-all cursor-pointer ${
                           isChecked
-                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-[#10B981] text-[#0F786E] dark:text-[#34D399] font-bold shadow-2xs'
+                            ? 'bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border-[var(--brand-primary-light)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] font-bold shadow-2xs'
                             : 'bg-white dark:bg-[#0F172A] border-slate-200 dark:border-[#334155] text-slate-600 dark:text-slate-300 hover:border-slate-300'
                         }`}
                       >
                         <div className="flex items-center gap-2 truncate">
                           <IconComp
                             className={`w-3.5 h-3.5 shrink-0 ${
-                              isChecked ? 'text-[#10B981]' : 'text-slate-400'
+                              isChecked ? 'text-[var(--brand-primary-light)]' : 'text-slate-400'
                             }`}
                           />
                           <span className="truncate">{amenity.nameFa}</span>
                         </div>
                         {isChecked && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] dark:text-[#34D399] shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] shrink-0" />
                         )}
                       </button>
                     );
@@ -1240,7 +1240,7 @@ export const AdminRoomsView: React.FC = () => {
                     type="checkbox"
                     checked={requiresApproval}
                     onChange={(e) => setRequiresApproval(e.target.checked)}
-                    className="w-4 h-4 text-[#10B981] rounded focus:ring-[#10B981]"
+                    className="w-4 h-4 text-[var(--brand-primary-light)] rounded focus:ring-[var(--brand-primary-light)]"
                   />
                   <div className="text-xs">
                     <span className="font-semibold text-slate-800 dark:text-slate-200">
@@ -1264,7 +1264,7 @@ export const AdminRoomsView: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2.5 text-xs font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-xl shadow-xs transition-colors cursor-pointer"
+                  className="px-5 py-2.5 text-xs font-bold text-white bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] rounded-xl shadow-xs transition-colors cursor-pointer"
                 >
                   {isSubmitting ? 'در حال ثبت...' : editingRoom ? 'ذخیره تغییرات' : 'افزودن اتاق'}
                 </button>
@@ -1325,10 +1325,10 @@ export const AdminRoomsView: React.FC = () => {
             <div className="p-5 overflow-y-auto space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-[#10B981]" />
+                  <Sparkles className="w-4 h-4 text-[var(--brand-primary-light)]" />
                   <span>لیست تجهیزات فعال در این سالن ({viewAmenitiesRoom.amenities.length} مورد)</span>
                 </span>
-                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
+                <span className="text-[11px] text-brand dark:text-[var(--brand-primary-on-dark)] font-medium bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-2 py-0.5 rounded-md border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]">
                   آماده استفاده
                 </span>
               </div>
@@ -1353,10 +1353,10 @@ export const AdminRoomsView: React.FC = () => {
                     return (
                       <div
                         key={amId}
-                        className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-800/80 transition-colors group"
+                        className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/80 dark:border-slate-800 hover:border-brand-soft dark:hover:border-[rgb(var(--brand-primary-rgb)/0.35)] transition-colors group"
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#0F786E] dark:text-[#34D399] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                          <div className="w-9 h-9 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                             <IconComp className="w-4 h-4" />
                           </div>
                           <div className="min-w-0">
@@ -1369,7 +1369,7 @@ export const AdminRoomsView: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="w-5 h-5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <div className="w-5 h-5 rounded-full bg-[rgb(var(--brand-primary-rgb)/0.1)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0">
                           <Check className="w-3 h-3" />
                         </div>
                       </div>
@@ -1388,7 +1388,7 @@ export const AdminRoomsView: React.FC = () => {
                   setViewAmenitiesRoom(null);
                   handleOpenEditModal(targetRoom);
                 }}
-                className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-[#0F786E] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                className="px-4 py-2 bg-brand-soft hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)] rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 <span>ویرایش تجهیزات این اتاق</span>

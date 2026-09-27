@@ -49,10 +49,10 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       aria-checked={checked}
       disabled={disabled}
       onClick={onChange}
-      className={`group relative inline-flex items-center shrink-0 cursor-pointer rounded-full border-0 p-0.5 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 ${
+      className={`group relative inline-flex items-center shrink-0 cursor-pointer rounded-full border-0 p-0.5 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] ${
         isSm ? "h-5 w-9" : "h-6 w-11"
       } ${
-        checked ? "bg-[#0F786E]" : "bg-slate-300 dark:bg-slate-700"
+        checked ? "bg-[var(--brand-primary)]" : "bg-slate-300 dark:bg-slate-700"
       } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <span className="sr-only">{label || "تغییر وضعیت"}</span>
@@ -229,7 +229,7 @@ export const AccessControlView: React.FC = () => {
       {/* Top Banner / Navigation Shortcut */}
       <div className="dark-surface-card rounded-2xl p-5 border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-[#0F786E]/10 dark:bg-[#5eead4]/10 text-[#0F786E] dark:text-[#5eead4] flex items-center justify-center shrink-0 border border-[#0F786E]/20">
+          <div className="w-12 h-12 rounded-2xl bg-[rgb(var(--brand-primary-rgb)/0.10)] dark:bg-[rgb(var(--brand-primary-rgb)/0.10)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0 border border-[rgb(var(--brand-primary-rgb)/0.20)]">
             <KeyRound className="w-6 h-6" />
           </div>
           <div>
@@ -237,7 +237,7 @@ export const AccessControlView: React.FC = () => {
               <h2 className="text-base font-bold text-slate-900 dark:text-white">
                 کنترل دسترسی‌ها و امنیت احراز هویت
               </h2>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft/60">
                 سیاست‌های فعال
               </span>
             </div>
@@ -253,7 +253,7 @@ export const AccessControlView: React.FC = () => {
             onClick={() => setActiveTab("admin-rbac")}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
           >
-            <Users className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
+            <Users className="w-3.5 h-3.5 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
             <span>مدیریت نقش‌های کاربران</span>
           </button>
 
@@ -306,7 +306,7 @@ export const AccessControlView: React.FC = () => {
             <span
               className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                 accessControl.googleAuthEnabled
-                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/60"
+                  ? "bg-brand-soft text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)] border border-brand-soft/60"
                   : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/60"
               }`}
             >
@@ -319,7 +319,7 @@ export const AccessControlView: React.FC = () => {
             <div className="flex items-start justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/70 dark:border-[#334155]">
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <LogIn className="w-3.5 h-3.5 text-[#0F786E] dark:text-[#5eead4]" />
+                  <LogIn className="w-3.5 h-3.5 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                     امکان ورود و ثبت‌نام با حساب گوگل
                   </span>
@@ -404,11 +404,11 @@ export const AccessControlView: React.FC = () => {
                   onChange={(e) => setNewDomainInput(e.target.value)}
                   placeholder="مثال: company.ir"
                   dir="ltr"
-                  className="flex-1 px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0F786E]"
+                  className="flex-1 px-2.5 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold text-white btn-brand transition-colors cursor-pointer"
                 >
                   افزودن دامنه
                 </button>
@@ -421,7 +421,7 @@ export const AccessControlView: React.FC = () => {
         <div className="dark-surface-card rounded-2xl p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-[#0F786E] dark:text-[#5eead4]" />
+              <Shield className="w-5 h-5 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
               <div>
                 <h3 className="text-xs font-bold text-slate-900 dark:text-white">
                   روش‌های احراز هویت و عضویت
@@ -484,7 +484,7 @@ export const AccessControlView: React.FC = () => {
             <div className="flex items-start justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200/70 dark:border-[#334155]">
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-brand dark:text-[var(--brand-primary-on-dark)]" />
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                     الزام ورود دومرحله‌ای (2FA) برای مدیران
                   </span>
@@ -539,7 +539,7 @@ export const AccessControlView: React.FC = () => {
                   onClick={() => handleTimeoutChange(opt.val)}
                   className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer text-center border ${
                     accessControl.sessionTimeoutMinutes === opt.val
-                      ? "bg-[#0F786E] text-white border-[#0F786E] shadow-xs"
+                      ? "bg-[var(--brand-primary)] text-white border-[var(--brand-primary)] shadow-xs"
                       : "bg-slate-50 dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-[#334155] hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                 >
@@ -650,7 +650,7 @@ export const AccessControlView: React.FC = () => {
       <div className="dark-surface-card rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <Laptop className="w-5 h-5 text-[#0F786E] dark:text-[#5eead4] shrink-0" />
+            <Laptop className="w-5 h-5 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] shrink-0" />
             <div>
               <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
                 لاگ زنده وقایع احراز هویت و دسترسی‌ها (Audit Trail)
@@ -686,7 +686,7 @@ export const AccessControlView: React.FC = () => {
 
                 <div className="shrink-0">
                   {log.action === "login" ? (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1 text-[11px] bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200/50">
+                    <span className="text-brand dark:text-[var(--brand-primary-on-dark)] font-bold flex items-center gap-1 text-[11px] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-2.5 py-0.5 rounded-full border border-brand-soft/50">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>ورود موفق</span>
                     </span>
@@ -785,7 +785,7 @@ export const AccessControlView: React.FC = () => {
 
                   <td className="py-2.5">
                     {log.action === "login" ? (
-                      <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                      <span className="text-brand dark:text-[var(--brand-primary-on-dark)] font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         ورود موفق
                       </span>

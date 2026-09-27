@@ -24,13 +24,11 @@ import {
   Sun,
   Moon,
   LogOut,
-  Sparkles,
   BellRing,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 
 const SIDEBAR_COLLAPSED_KEY = "rooomchi-portal-sidebar-collapsed";
-const SIDEBAR_STYLE_KEY = "rooomchi-portal-sidebar-style"; // "modern-card" | "classic"
 
 const MAIN_NAV_TABS: ActiveTab[] = [
   "dashboard",
@@ -86,15 +84,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     }
   });
 
-  // Sidebar visual style
-  const [sidebarStyle, setSidebarStyle] = useState<"modern-card" | "classic">(() => {
-    try {
-      return (localStorage.getItem(SIDEBAR_STYLE_KEY) as "modern-card" | "classic") || "modern-card";
-    } catch {
-      return "modern-card";
-    }
-  });
-
   const roleMeta = getRoleMeta(userRole);
   const normalizedRole = normalizeUserRole(userRole);
   const isEmployee = normalizedRole === "employee";
@@ -127,14 +116,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       /* ignore */
     }
   }, [collapsed]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(SIDEBAR_STYLE_KEY, sidebarStyle);
-    } catch {
-      /* ignore */
-    }
-  }, [sidebarStyle]);
 
   const displayName = currentUser?.name || "کاربر روم‌چی";
   const displayEmail = currentUser?.email || "user@rooomchi.ir";
@@ -256,7 +237,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       );
   }, [searchQuery, isEmployee]);
 
-  const isModern = sidebarStyle === "modern-card";
   const shellWidth = collapsed ? "w-[76px]" : "w-[275px]";
 
   return (
@@ -274,18 +254,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       {/* Floating Card Sidebar Container */}
       <aside
         id="portal-sidebar"
-        className={`fixed z-50 shrink-0 select-none transition-all duration-300 ease-out ${
-          isModern
-            ? `top-2.5 bottom-2.5 right-2.5 sm:top-3.5 sm:bottom-3.5 sm:right-3.5 lg:sticky lg:h-[calc(100vh-1.75rem)] lg:max-h-[calc(100vh-1.75rem)] rounded-[26px] bg-white/95 dark:bg-[#111C2E]/95 border border-slate-200/90 dark:border-white/10 shadow-xl shadow-slate-200/60 dark:shadow-black/50 backdrop-blur-md flex flex-col justify-between ${shellWidth} ${
-                mobileOpen
-                  ? "translate-x-0"
-                  : "translate-x-[calc(100%+2rem)] lg:translate-x-0"
-              }`
-            : `top-0 bottom-0 right-0 lg:sticky lg:top-0 lg:h-screen lg:max-h-screen bg-white dark:bg-[#111C2E] border-s border-slate-200 dark:border-white/10 shadow-sm flex flex-col justify-between ${shellWidth} ${
-                mobileOpen
-                  ? "translate-x-0"
-                  : "translate-x-full lg:translate-x-0"
-              }`
+        className={`fixed z-50 shrink-0 select-none transition-all duration-300 ease-out top-0 bottom-0 right-0 lg:sticky lg:top-0 lg:h-screen lg:max-h-screen bg-white dark:bg-[#111C2E] border-s border-slate-200 dark:border-white/10 shadow-sm flex flex-col justify-between ${shellWidth} ${
+          mobileOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
         } ${mobileOpen ? "flex" : "hidden lg:flex"}`}
       >
         {/* TOP SECTION */}
@@ -361,7 +331,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                     onClick={handleSwitchToPersonal}
                     className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       mode === "personal"
-                        ? "bg-[#0F786E] text-white shadow-sm shadow-[#0F786E]/30"
+                        ? "bg-[var(--brand-primary)] text-white shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.3)]"
                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
@@ -372,7 +342,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                     onClick={handleSwitchToBusiness}
                     className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       mode === "business"
-                        ? "bg-[#0F786E] text-white shadow-sm shadow-[#0F786E]/30"
+                        ? "bg-[var(--brand-primary)] text-white shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.3)]"
                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
@@ -395,7 +365,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                   className="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full p-0.5 cursor-pointer transition-colors relative"
                 >
                   <span
-                    className={`block w-4 h-4 rounded-full bg-[#0F786E] shadow-sm transition-transform duration-200 ${
+                    className={`block w-4 h-4 rounded-full bg-[var(--brand-primary)] shadow-sm transition-transform duration-200 ${
                       mode === "business" ? "-translate-x-5" : "translate-x-0"
                     }`}
                   />
@@ -421,20 +391,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                     collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
                   } ${
                     isActive
-                      ? "bg-[#0F786E]/10 dark:bg-[#0F786E]/20 text-[#0F786E] dark:text-[#5eead4] font-bold shadow-2xs"
+                      ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-bold shadow-2xs"
                       : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
                   {isActive && (
                     <span
-                      className="absolute right-1 top-2 bottom-2 w-1 rounded-full bg-[#0F786E] dark:bg-[#5eead4]"
+                      className="absolute right-1 top-2 bottom-2 w-1 rounded-full bg-[var(--brand-primary)] dark:bg-[var(--brand-primary-on-dark)]"
                       aria-hidden
                     />
                   )}
                   <Icon
                     className={`w-[18px] h-[18px] shrink-0 transition-colors ${
                       isActive
-                        ? "text-[#0F786E] dark:text-[#5eead4]"
+                        ? "text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]"
                         : "text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200"
                     }`}
                   />
@@ -448,7 +418,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         </div>
 
         {/* BOTTOM USER PROFILE CARD */}
-        <div className="p-3 shrink-0 relative">
+        <div
+          className={`shrink-0 relative ${collapsed ? "px-2 pt-3 pb-5 sm:pb-6" : "p-3"}`}
+        >
           {/* User Options Popover Menu */}
           {userMenuOpen && (
             <>
@@ -460,7 +432,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               <div
                 className={`absolute z-50 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-2 animate-in fade-in duration-150 space-y-1 ${
                   collapsed
-                    ? "right-[calc(100%+0.6rem)] bottom-0 w-64 min-w-[16rem] zoom-in-95"
+                    ? "right-[calc(100%+0.75rem)] bottom-2 w-64 min-w-[16rem] zoom-in-95"
                     : "bottom-16 right-3 left-3 slide-in-from-bottom-2"
                 }`}
               >
@@ -473,27 +445,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                       {displayEmail}
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#0F786E]/10 text-[#0F786E] dark:text-[#5eead4] shrink-0 whitespace-nowrap">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[rgb(var(--brand-primary-rgb)/0.1)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] shrink-0 whitespace-nowrap">
                     {displayRole}
                   </span>
                 </div>
-
-                {/* Sidebar Style Switcher */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setSidebarStyle((s) =>
-                      s === "modern-card" ? "classic" : "modern-card"
-                    )
-                  }
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    <span>استایل منو: {isModern ? "کارت معلق" : "کلاسیک"}</span>
-                  </div>
-                  <span className="text-[10px] text-slate-400">تغییر</span>
-                </button>
 
                 {/* Theme Toggle */}
                 <button
@@ -505,7 +460,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                     {theme === "dark" ? (
                       <Sun className="w-3.5 h-3.5 text-amber-400" />
                     ) : (
-                      <Moon className="w-3.5 h-3.5 text-teal-600" />
+                      <Moon className="w-3.5 h-3.5 text-brand" />
                     )}
                     <span>حالت نمایش: {theme === "dark" ? "تاریک" : "روشن"}</span>
                   </div>
@@ -520,7 +475,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                   }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
-                  <User className="w-3.5 h-3.5 text-teal-600" />
+                  <User className="w-3.5 h-3.5 text-brand" />
                   <span>پروفایل کاربری من</span>
                 </button>
 
@@ -550,7 +505,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="relative shrink-0">
                 <UserAvatar user={currentUser} name={displayName} size="sm" />
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-[#111C2E] rounded-full" />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[var(--brand-primary)] border-2 border-white dark:border-[#111C2E] rounded-full" />
               </div>
 
               {!collapsed && (
@@ -614,7 +569,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                     onClick={() => goTo(item.id)}
                     className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-right transition-colors cursor-pointer group"
                   >
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#0F786E] dark:group-hover:text-[#5eead4]">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-[var(--brand-primary)] dark:group-hover:text-[var(--brand-primary-on-dark)]">
                       {item.label}
                     </span>
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500">

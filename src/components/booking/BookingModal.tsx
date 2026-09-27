@@ -248,14 +248,14 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   };
 
   const selectClass =
-    'w-full text-sm pr-3 pl-8 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#10B981]/40 bg-white dark:bg-[#0F172A] text-slate-800 dark:text-slate-200 cursor-pointer';
+    'w-full text-sm pr-3 pl-8 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] bg-white dark:bg-[#0F172A] text-slate-800 dark:text-slate-200 cursor-pointer';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
       <div className="relative w-full max-w-md bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#334155] overflow-visible">
         <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100 dark:border-[#334155]">
           <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[#0F786E]" />
+            <Calendar className="w-5 h-5 text-[var(--brand-primary)]" />
             <h2 className="text-base font-bold text-slate-900 dark:text-white">رزرو جلسه</h2>
           </div>
           <button
@@ -296,7 +296,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
               placeholder="مثلاً: جلسه تیم"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full text-sm px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#10B981]/40"
+              className="w-full text-sm px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)]"
               autoFocus
               maxLength={80}
             />
@@ -403,7 +403,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
               type="submit"
               id="btn-submit-booking-form"
               disabled={isSubmitting || !!conflictMessage || !selectedRoomId}
-              className="flex-1 py-2.5 text-sm font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="flex-1 py-2.5 text-sm font-bold text-white bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting ? 'در حال ثبت…' : 'ثبت رزرو'}
             </button>

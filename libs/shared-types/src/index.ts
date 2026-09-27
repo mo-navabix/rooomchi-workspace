@@ -97,6 +97,8 @@ export interface Booking {
   description?: string;
   organizerName: string;
   organizerEmail: string;
+  /** User id of who created the booking; attendees must not cancel via self-service */
+  organizerId?: string | null;
   department: string;
   date: string; // YYYY-MM-DD
   startTime: string; // HH:mm

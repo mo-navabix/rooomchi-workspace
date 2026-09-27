@@ -89,7 +89,7 @@ export const SupportTicketView: React.FC = () => {
         <button
           type="button"
           onClick={() => openAuthModal('login')}
-          className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] cursor-pointer"
+          className="px-5 py-2.5 rounded-xl text-sm font-bold text-white btn-brand cursor-pointer"
         >
           ورود به سیستم
         </button>
@@ -106,7 +106,7 @@ export const SupportTicketView: React.FC = () => {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="مثلاً: خطا در رزرو اتاق جلسه"
-            className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40"
+            className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)]"
             maxLength={120}
           />
         </label>
@@ -118,7 +118,7 @@ export const SupportTicketView: React.FC = () => {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as TicketCategory)}
-                className="w-full appearance-none pr-3.5 pl-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all"
+                className="w-full appearance-none pr-3.5 pl-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] transition-all"
               >
                 {(Object.keys(categoryLabels) as TicketCategory[]).map((key) => (
                   <option key={key} value={key}>{categoryLabels[key]}</option>
@@ -133,7 +133,7 @@ export const SupportTicketView: React.FC = () => {
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                className="w-full appearance-none pr-3.5 pl-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all"
+                className="w-full appearance-none pr-3.5 pl-10 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-slate-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] transition-all"
               >
                 {(Object.keys(priorityLabels) as TicketPriority[]).map((key) => (
                   <option key={key} value={key}>{priorityLabels[key]}</option>
@@ -151,7 +151,7 @@ export const SupportTicketView: React.FC = () => {
             onChange={(e) => setDescription(e.target.value)}
             rows={5}
             placeholder="جزئیات را بنویسید تا سریع‌تر راهنمایی شوید..."
-            className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] resize-y min-h-[120px] focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40"
+            className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] resize-y min-h-[120px] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)]"
           />
         </label>
 
@@ -162,7 +162,7 @@ export const SupportTicketView: React.FC = () => {
             onChange={(e) => setContactPhone(e.target.value)}
             dir="ltr"
             placeholder="09xxxxxxxxx"
-            className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40"
+            className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)]"
           />
         </label>
 
@@ -170,7 +170,7 @@ export const SupportTicketView: React.FC = () => {
           <button
             type="submit"
             disabled={submitting}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#10B981] hover:bg-[#0D6B63] disabled:opacity-60 cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] disabled:opacity-60 cursor-pointer"
           >
             <Send className="w-4 h-4" />
             {submitting ? 'در حال ارسال…' : 'ارسال تیکت'}
@@ -180,7 +180,7 @@ export const SupportTicketView: React.FC = () => {
 
       <section className="space-y-3">
         <h2 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-          <Inbox className="w-4 h-4 text-[#0F786E]" />
+          <Inbox className="w-4 h-4 text-[var(--brand-primary)]" />
           تیکت‌های من
         </h2>
         {myTickets.length === 0 ? (
@@ -203,7 +203,7 @@ export const SupportTicketView: React.FC = () => {
                           ? 'bg-slate-100 text-slate-600 dark:bg-[#334155] dark:text-slate-300'
                           : t.status === 'in_progress'
                             ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300'
-                            : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                            : 'bg-brand-soft text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)]'
                       }`}
                     >
                       {statusLabels[t.status]}
@@ -216,7 +216,7 @@ export const SupportTicketView: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px] text-slate-400 shrink-0">
                   {t.status === 'resolved' ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                   ) : (
                     <Clock className="w-3.5 h-3.5" />
                   )}

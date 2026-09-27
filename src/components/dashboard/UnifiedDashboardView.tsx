@@ -29,7 +29,7 @@ import {
 import { UnifiedDashboardSkeleton } from "../common/Skeletons";
 
 const MEETING_ICON_STYLES = [
-  "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400",
+  "bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)]",
   "bg-sky-100 text-sky-600 dark:bg-sky-950/50 dark:text-sky-400",
   "bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400",
   "bg-violet-100 text-violet-600 dark:bg-violet-950/50 dark:text-violet-400",
@@ -246,7 +246,7 @@ export const UnifiedDashboardView: React.FC = () => {
           onClick={() =>
             isRegistrationComplete() ? openBookingModal() : openCompleteProfileModal()
           }
-          className="portal-btn-primary flex items-center justify-center gap-2 h-11 px-5 rounded-xl text-sm font-bold cursor-pointer shadow-sm shadow-[#0F786E]/15 dark:shadow-black/30 shrink-0 w-full sm:w-auto"
+          className="portal-btn-primary flex items-center justify-center gap-2 h-11 px-5 rounded-xl text-sm font-bold cursor-pointer shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.15)] dark:shadow-black/30 shrink-0 w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" />
           <span>رزرو اتاق جلسه جدید</span>
@@ -262,7 +262,7 @@ export const UnifiedDashboardView: React.FC = () => {
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
                 {toPersianDigits(utilization)}٪
               </p>
-              <span className="inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+              <span className="inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)]">
                 فعالیت بهینه
               </span>
             </div>
@@ -283,7 +283,7 @@ export const UnifiedDashboardView: React.FC = () => {
                 جلسات مرتبط با حساب شما در این ماه
               </p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600">
+            <div className="w-10 h-10 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] flex items-center justify-center text-brand">
               <CalendarDays className="w-5 h-5" />
             </div>
           </div>
@@ -326,14 +326,15 @@ export const UnifiedDashboardView: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
         <div className="xl:col-span-7 space-y-4">
           <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+            <div className="flex items-center justify-between gap-3 mb-4 min-h-8">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white leading-8 m-0">
                 فعالیت جلسات
               </h2>
               <select
                 value={chartRange}
                 onChange={(e) => setChartRange(e.target.value as "week" | "month")}
-                className="text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 px-2 py-1 text-slate-600 dark:text-slate-300"
+                className="portal-select-compact"
+                aria-label="بازه نمایش نمودار"
               >
                 <option value="week">هفتگی</option>
                 <option value="month">ماهانه</option>
@@ -341,11 +342,11 @@ export const UnifiedDashboardView: React.FC = () => {
             </div>
             <div className="flex items-center gap-4 text-[10px] text-slate-500 mb-3">
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-sm bg-[#0F786E]" />
+                <span className="w-2.5 h-2.5 rounded-sm bg-[var(--brand-primary)]" />
                 برگزار شده
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-sm bg-emerald-200 dark:bg-emerald-800" />
+                <span className="w-2.5 h-2.5 rounded-sm bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.4)]" />
                 برنامه‌ریزی شده
               </span>
             </div>
@@ -364,14 +365,14 @@ export const UnifiedDashboardView: React.FC = () => {
                     className="flex-1 flex flex-col items-center gap-2 h-full justify-end min-w-0"
                   >
                     <div
-                      className="w-full max-w-[32px] h-full flex flex-col justify-end rounded-t-lg overflow-hidden bg-emerald-100/80 dark:bg-emerald-950/30"
+                      className="w-full max-w-[32px] h-full flex flex-col justify-end rounded-t-lg overflow-hidden bg-[rgb(var(--brand-primary-rgb)/0.12)]/80 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)]"
                     >
                       <div
-                        className="w-full bg-emerald-200/90 dark:bg-emerald-900/50"
+                        className="w-full bg-[rgb(var(--brand-primary-rgb)/0.35)] dark:bg-[rgb(var(--brand-primary-rgb)/0.18)]"
                         style={{ height: `${Math.max(0, planned - done)}%` }}
                       />
                       <div
-                        className="w-full bg-[#0F786E]"
+                        className="w-full bg-[var(--brand-primary)]"
                         style={{ height: `${done}%` }}
                       />
                     </div>
@@ -405,7 +406,7 @@ export const UnifiedDashboardView: React.FC = () => {
                   </div>
                   <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-l from-[#0F786E] to-emerald-400"
+                      className="h-full rounded-full bg-gradient-to-l from-[var(--brand-primary)] to-[var(--brand-primary-lighter)]"
                       style={{ width: `${g.pct}%` }}
                     />
                   </div>
@@ -423,7 +424,7 @@ export const UnifiedDashboardView: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab("calendar")}
-              className="text-xs font-bold text-[#0F786E] dark:text-emerald-400 cursor-pointer"
+              className="text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] cursor-pointer"
             >
               مشاهده همه
             </button>
@@ -490,7 +491,7 @@ export const UnifiedDashboardView: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab("teams")}
-              className="text-xs font-bold text-[#0F786E] cursor-pointer"
+              className="text-xs font-bold text-[var(--brand-primary)] cursor-pointer"
             >
               مدیریت
             </button>
@@ -507,7 +508,7 @@ export const UnifiedDashboardView: React.FC = () => {
                   key={t.id}
                   className="min-w-[100px] flex-1 rounded-xl border border-slate-200 dark:border-slate-600 p-3 bg-slate-50/50 dark:bg-slate-800/30"
                 >
-                  <Icon className="w-5 h-5 text-[#0F786E] mb-2" />
+                  <Icon className="w-5 h-5 text-[var(--brand-primary)] mb-2" />
                   <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
                     {t.name}
                   </p>
@@ -573,7 +574,7 @@ export const UnifiedDashboardView: React.FC = () => {
                 <span
                   className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
                     n.tone === "emerald"
-                      ? "bg-emerald-500"
+                      ? "bg-[var(--brand-primary)]"
                       : n.tone === "sky"
                         ? "bg-sky-500"
                         : "bg-amber-500"

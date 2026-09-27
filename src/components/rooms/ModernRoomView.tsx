@@ -54,7 +54,7 @@ export const ModernRoomView: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('admin-rooms')}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F786E] dark:bg-[#0F786E] hover:bg-slate-800 transition-colors shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[var(--brand-primary)] dark:bg-[var(--brand-primary)] hover:bg-slate-800 transition-colors shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>افزودن اتاق</span>
@@ -113,7 +113,7 @@ export const ModernRoomView: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
                 {/* Green badge: آزاد */}
-                <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500 text-white shadow-2xs">
+                <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[var(--brand-primary)] text-white shadow-2xs">
                   آزاد
                 </span>
               </div>
@@ -144,7 +144,7 @@ export const ModernRoomView: React.FC = () => {
             <div className="p-4 pt-0 flex items-center justify-between border-t border-slate-100 dark:border-[#334155]/60 mt-2">
               <button
                 onClick={() => openBookingModal()}
-                className="text-xs font-bold text-[#0F786E] dark:text-emerald-300 hover:underline cursor-pointer"
+                className="text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline cursor-pointer"
               >
                 رزرو اتاق
               </button>

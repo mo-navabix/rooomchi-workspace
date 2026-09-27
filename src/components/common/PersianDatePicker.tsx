@@ -229,7 +229,7 @@ export const PersianDatePicker: React.FC<PersianDatePickerProps> = ({
             onClick={() => setViewMode(viewMode === 'months' ? 'days' : 'months')}
             className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'months'
-                ? 'bg-[#10B981] text-white shadow-xs'
+                ? 'bg-[var(--brand-primary-light)] text-white shadow-xs'
                 : 'text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-[#334155]'
             }`}
           >
@@ -240,8 +240,8 @@ export const PersianDatePicker: React.FC<PersianDatePickerProps> = ({
             onClick={() => setViewMode(viewMode === 'years' ? 'days' : 'years')}
             className={`px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'years'
-                ? 'bg-[#10B981] text-white shadow-xs'
-                : 'text-[#10B981] dark:text-[#34D399] hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                ? 'bg-[var(--brand-primary-light)] text-white shadow-xs'
+                : 'text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.15)]'
             }`}
           >
             {toPersianDigits(viewYear)}
@@ -274,8 +274,8 @@ export const PersianDatePicker: React.FC<PersianDatePickerProps> = ({
                 }}
                 className={`py-2 px-1 text-xs rounded-xl font-bold transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#10B981] text-white shadow-xs'
-                    : 'bg-slate-50 dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-[#10B981]/20 hover:text-[#10B981]'
+                    ? 'bg-[var(--brand-primary-light)] text-white shadow-xs'
+                    : 'bg-slate-50 dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.20)] hover:text-[var(--brand-primary-light)]'
                 }`}
               >
                 {name}
@@ -300,8 +300,8 @@ export const PersianDatePicker: React.FC<PersianDatePickerProps> = ({
                 }}
                 className={`py-2 px-1 text-xs rounded-xl font-bold transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#10B981] text-white shadow-xs'
-                    : 'bg-slate-50 dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-[#10B981]/20 hover:text-[#10B981]'
+                    ? 'bg-[var(--brand-primary-light)] text-white shadow-xs'
+                    : 'bg-slate-50 dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.20)] hover:text-[var(--brand-primary-light)]'
                 }`}
               >
                 {toPersianDigits(yr)}
@@ -359,9 +359,9 @@ export const PersianDatePicker: React.FC<PersianDatePickerProps> = ({
                   onClick={() => handleSelectDay(day)}
                   className={`h-9 w-9 mx-auto rounded-xl text-xs font-bold flex items-center justify-center transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#10B981] text-white font-black shadow-xs scale-105'
+                      ? 'bg-[var(--brand-primary-light)] text-white font-black shadow-xs scale-105'
                       : isToday
-                        ? 'border-2 border-[#10B981] text-[#10B981] dark:text-[#34D399] font-bold bg-emerald-50/60 dark:bg-emerald-950/40'
+                        ? 'border-2 border-[var(--brand-primary-light)] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] font-bold bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)]'
                         : isFriday
                           ? 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30'
                           : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#334155]'
@@ -380,7 +380,7 @@ export const PersianDatePicker: React.FC<PersianDatePickerProps> = ({
         <button
           type="button"
           onClick={handleSelectToday}
-          className="text-[#10B981] dark:text-[#34D399] font-bold hover:underline flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors"
+          className="text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] font-bold hover:underline flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded-lg hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] transition-colors"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>امروز ({toPersianDigits(todayJalali.day)} {PERSIAN_MONTH_NAMES[todayJalali.month - 1]})</span>
@@ -416,15 +416,15 @@ export const PersianDatePicker: React.FC<PersianDatePickerProps> = ({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={`w-full text-right flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border text-xs transition-all ${
           isOpen
-            ? 'border-[#10B981] ring-2 ring-[#10B981]/20 bg-white dark:bg-[#0F172A]'
+            ? 'border-[var(--brand-primary-light)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.20)] bg-white dark:bg-[#0F172A]'
             : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-slate-300 dark:hover:border-slate-600'
         } ${disabled ? 'opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-800' : 'cursor-pointer'}`}
       >
         <div className="flex items-center gap-2 truncate min-w-0">
-          <CalendarIcon className="w-4 h-4 text-[#10B981] dark:text-[#34D399] shrink-0" />
+          <CalendarIcon className="w-4 h-4 text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] shrink-0" />
           {value ? (
             <div className="flex items-baseline gap-1.5 truncate text-slate-900 dark:text-slate-100 font-medium min-w-0">
-              <span className="font-bold text-[#10B981] dark:text-[#34D399] shrink-0 text-sm">
+              <span className="font-bold text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] shrink-0 text-sm">
                 {toPersianDigits(formattedDisplay)}
               </span>
               <span className="text-xs text-slate-500 dark:text-slate-400 truncate hidden sm:inline">

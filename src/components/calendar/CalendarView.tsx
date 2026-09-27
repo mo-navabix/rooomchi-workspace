@@ -232,7 +232,7 @@ export const CalendarView: React.FC = () => {
               <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 text-center sm:text-right leading-relaxed">
                 {formatToJalali(startDay.isoDate)} الی {formatToJalali(endDay.isoDate)}
                 {currentWeekOffset === 0 && (
-                  <span className="mr-1.5 text-[11px] font-normal text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">
+                  <span className="mr-1.5 text-[11px] font-normal text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-2 py-0.5 rounded-md">
                     (هفته جاری)
                   </span>
                 )}
@@ -255,7 +255,7 @@ export const CalendarView: React.FC = () => {
             <select
               value={selectedRoomId}
               onChange={(e) => setSelectedRoomId(e.target.value)}
-              className="w-full min-w-0 appearance-none text-xs font-semibold bg-slate-50 dark:bg-[#334155] border border-slate-200 dark:border-[#334155] rounded-xl pr-10 pl-9 py-2.5 text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#0F786E] cursor-pointer transition-all shadow-2xs"
+              className="w-full min-w-0 appearance-none text-xs font-semibold bg-slate-50 dark:bg-[#334155] border border-slate-200 dark:border-[#334155] rounded-xl pr-10 pl-9 py-2.5 text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary)] cursor-pointer transition-all shadow-2xs"
             >
               <option value="all">همه اتاق‌ها و سالن‌ها ({rooms.length})</option>
               {rooms.map((r) => (
@@ -288,7 +288,7 @@ export const CalendarView: React.FC = () => {
 
       <div className="bg-white dark:bg-[#1E293B] border border-slate-200/80 dark:border-[#334155] rounded-2xl portal-card-pad flex items-center justify-between text-xs">
         <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-          <Clock className="w-4 h-4 text-emerald-600 shrink-0" />
+          <Clock className="w-4 h-4 text-brand shrink-0" />
           <span>
             {showDayView ? (
               <>

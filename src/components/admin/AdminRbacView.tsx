@@ -171,8 +171,8 @@ export const AdminRbacView: React.FC = () => {
       {/* Header */}
       <div className="bg-white dark:bg-[#1E293B] portal-card-pad rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col gap-4 transition-colors">
         <div>
-          <div className="text-xs font-semibold text-[#10B981] dark:text-[#34D399] flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+          <div className="text-xs font-semibold text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-[var(--brand-primary-light)]" />
             <span>مدیریت دسترسی‌های مبتنی بر نقش (RBAC)</span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -206,7 +206,7 @@ export const AdminRbacView: React.FC = () => {
               setNewDept(currentOrg?.departments[0] || '');
               setIsAddModalOpen(true);
             }}
-            className="w-full sm:w-auto justify-center px-4 py-2 bg-[#10B981] hover:bg-[#0D6B63] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-[var(--brand-primary-light)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
             <span>افزودن پرسنل</span>
@@ -267,7 +267,7 @@ export const AdminRbacView: React.FC = () => {
                 <select
                   value={filterRole}
                   onChange={(e) => setFilterRole(e.target.value)}
-                  className="w-full text-xs pr-3.5 pl-9 py-2 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer"
+                  className="w-full text-xs pr-3.5 pl-9 py-2 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer"
                 >
                   <option value="all">همه نقش‌ها</option>
                   <option value="super_admin">مدیر کل روم‌چی</option>
@@ -358,7 +358,7 @@ export const AdminRbacView: React.FC = () => {
                                 onChange={(e) =>
                                   handleRoleChange(user.id, e.target.value as UserRole, user.name)
                                 }
-                                className="w-full text-xs pr-3 pl-8 py-2 appearance-none rounded-xl border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0F172A] font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#10B981] cursor-pointer hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors"
+                                className="w-full text-xs pr-3 pl-8 py-2 appearance-none rounded-xl border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0F172A] font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors"
                               >
                                 <option value="employee">کارمند عادی (Employee)</option>
                                 <option value="room_manager">مدیر تشریفات (Room Manager)</option>
@@ -371,12 +371,12 @@ export const AdminRbacView: React.FC = () => {
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap">
                           {isPermanent ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100/90 dark:bg-emerald-950/50 px-3 py-1 rounded-xl border border-emerald-200/50 dark:border-emerald-900/40">
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-[rgb(var(--brand-primary-rgb)/0.12)]/90 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-3 py-1 rounded-xl border border-brand-soft/50 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)]">
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               <span>فعال دائمی</span>
                             </span>
                           ) : user.status === 'active' ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100/90 dark:bg-emerald-950/50 px-3 py-1 rounded-xl border border-emerald-200/50 dark:border-emerald-900/40">
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-[rgb(var(--brand-primary-rgb)/0.12)]/90 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-3 py-1 rounded-xl border border-brand-soft/50 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)]">
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               <span>فعال</span>
                             </span>
@@ -400,7 +400,7 @@ export const AdminRbacView: React.FC = () => {
                                 className={`px-2 py-1 rounded-lg text-xs font-semibold transition-colors ${
                                   user.status === 'active'
                                     ? 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40'
-                                    : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40'
+                                    : 'text-brand dark:text-[var(--brand-primary-on-dark)] hover:bg-brand-soft dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)]'
                                 }`}
                                 title={user.status === 'active' ? 'تعلیق حساب' : 'فعال‌سازی حساب'}
                               >
@@ -448,13 +448,13 @@ export const AdminRbacView: React.FC = () => {
                 <tr>
                   <th className="px-5 py-3.5">عنوان مجوز و شرح</th>
                   <th className="px-5 py-3.5 text-center">دسته</th>
-                  <th className="px-4 py-3.5 text-center text-emerald-800 dark:text-emerald-300 bg-emerald-50/70 dark:bg-emerald-950/30">
+                  <th className="px-4 py-3.5 text-center text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)]">
                     مدیر کل روم‌چی
                   </th>
-                  <th className="px-4 py-3.5 text-center text-emerald-800 dark:text-emerald-300 bg-emerald-50/70 dark:bg-emerald-950/30">
+                  <th className="px-4 py-3.5 text-center text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)]">
                     مدیر سازمان
                   </th>
-                  <th className="px-4 py-3.5 text-center text-teal-800 dark:text-teal-300 bg-teal-50/70 dark:bg-teal-950/30">
+                  <th className="px-4 py-3.5 text-center text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft/70 dark:bg-[rgb(var(--brand-primary-rgb)/0.1)]">
                     مدیر تشریفات
                   </th>
                   <th className="px-4 py-3.5 text-center text-slate-800 dark:text-slate-300 bg-slate-100/70 dark:bg-slate-800/40">
@@ -480,7 +480,7 @@ export const AdminRbacView: React.FC = () => {
                       return (
                         <td key={r} className="px-4 py-3.5 text-center">
                           {granted ? (
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-[#10B981]">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-light)]">
                               <Check className="w-3.5 h-3.5 stroke-[3]" />
                             </span>
                           ) : (
@@ -503,7 +503,7 @@ export const AdminRbacView: React.FC = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
           <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#334155] w-full max-w-md overflow-hidden transition-colors">
-            <div className="px-6 py-4 bg-[#0F786E] text-white flex items-center justify-between border-b border-[#334155]">
+            <div className="px-6 py-4 bg-[var(--brand-primary)] text-white flex items-center justify-between border-b border-[#334155]">
               <h3 className="text-sm font-bold">افزودن پرسنل جدید به {currentOrg?.name}</h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
@@ -523,7 +523,7 @@ export const AdminRbacView: React.FC = () => {
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="مثال: نیلوفر افشار"
-                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
                   required
                 />
               </div>
@@ -537,7 +537,7 @@ export const AdminRbacView: React.FC = () => {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="n.afshar@company.ir"
-                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white text-left transition-all shadow-xs"
+                  className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white text-left transition-all shadow-xs"
                   dir="ltr"
                   required
                 />
@@ -552,7 +552,7 @@ export const AdminRbacView: React.FC = () => {
                     <select
                       value={newRole}
                       onChange={(e) => setNewRole(e.target.value as UserRole)}
-                      className="w-full appearance-none pr-3.5 pl-9 py-2.5 text-xs font-semibold border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all cursor-pointer shadow-xs"
+                      className="w-full appearance-none pr-3.5 pl-9 py-2.5 text-xs font-semibold border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] transition-all cursor-pointer shadow-xs"
                     >
                       <option value="employee">کارمند عادی</option>
                       <option value="room_manager">مدیر تشریفات</option>
@@ -571,7 +571,7 @@ export const AdminRbacView: React.FC = () => {
                     <select
                       value={newDept}
                       onChange={(e) => setNewDept(e.target.value)}
-                      className="w-full appearance-none pr-3.5 pl-9 py-2.5 text-xs font-semibold border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] transition-all cursor-pointer shadow-xs"
+                      className="w-full appearance-none pr-3.5 pl-9 py-2.5 text-xs font-semibold border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] transition-all cursor-pointer shadow-xs"
                     >
                       {(currentOrg?.departments ?? []).map((d) => (
                         <option key={d} value={d}>
@@ -594,7 +594,7 @@ export const AdminRbacView: React.FC = () => {
                     value={newJobTitle}
                     onChange={(e) => setNewJobTitle(e.target.value)}
                     placeholder="مثال: مدیر مارکتینگ"
-                    className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
+                    className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
                   />
                 </div>
 
@@ -607,7 +607,7 @@ export const AdminRbacView: React.FC = () => {
                     value={newPhone}
                     onChange={(e) => setNewPhone(e.target.value)}
                     placeholder="0912..."
-                    className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-[#0F786E]/40 focus:border-[#0F786E] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
+                    className="w-full text-xs px-3.5 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
                     dir="ltr"
                   />
                 </div>
@@ -624,7 +624,7 @@ export const AdminRbacView: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2.5 text-xs font-bold text-white bg-[#0F786E] hover:bg-[#0D6B63] rounded-xl shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2.5 text-xs font-bold text-white btn-brand rounded-xl shadow-xs transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting ? 'در حال ثبت...' : 'ایجاد حساب کاربری'}
                 </button>

@@ -23,6 +23,7 @@ export interface Booking {
   description?: string;
   organizerName: string;
   organizerEmail: string;
+  organizerId?: string | null;
   department: string;
   date: string;
   startTime: string;
