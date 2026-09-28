@@ -7,13 +7,17 @@ import type { LdapConfiguration, OrganizationAuthSettings } from "../types";
 import { provisionUser } from "../identity.store";
 import { listLdapGroupRoleMappings } from "../auth-settings.store";
 import { toApiRole } from "../../persistence/mappers";
+import { decryptSecret } from "../../security/secret-crypto";
 
 function resolveLdapConfig(settings: OrganizationAuthSettings): LdapConfiguration {
   const c = settings.ldapConfiguration;
+  const bindPassword = c.bindPassword
+    ? decryptSecret(c.bindPassword)
+    : process.env.LDAP_BIND_PASSWORD;
   return {
     url: c.url || process.env.LDAP_URL,
     bindDn: c.bindDn || process.env.LDAP_BIND_DN,
-    bindPassword: c.bindPassword || process.env.LDAP_BIND_PASSWORD,
+    bindPassword,
     baseDn: c.baseDn || process.env.LDAP_BASE_DN,
     userFilter:
       c.userFilter ||
@@ -160,6 +164,82 @@ export async function ldapLogin(params: {
     }
     if (err instanceof Error && "statusCode" in err) throw err;
     throw Object.assign(new Error("احراز هویت LDAP ناموفق بود"), { statusCode: 401 });
+  } finally {
+    await client.unbind().catch(() => undefined);
+  }
+}
+
+export async function testLdapUserLookup(
+  config: LdapConfiguration,
+  username: string,
+): Promise<{ ok: boolean; message: string; preview?: { email?: string; name?: string } }> {
+  const cfg = {
+    url: config.url,
+    bindDn: config.bindDn,
+    bindPassword: config.bindPassword ? decryptSecret(config.bindPassword) : config.bindPassword,
+    baseDn: config.baseDn,
+    userFilter: config.userFilter,
+    useTls: config.useTls,
+  };
+  if (!cfg.url || !cfg.baseDn || !username.trim()) {
+    return { ok: false, message: "URL، Base DN و نام کاربر الزامی است." };
+  }
+  const client = new Client({
+    url: cfg.url,
+    tlsOptions: cfg.useTls ? { rejectUnauthorized: false } : undefined,
+  });
+  const safeUser = escapeLdapFilter(username.trim());
+  const filter = (cfg.userFilter || "(mail={username})").replace(/\{username\}/g, safeUser);
+  try {
+    if (cfg.bindDn && cfg.bindPassword) await client.bind(cfg.bindDn, cfg.bindPassword);
+    const { searchEntries } = await client.search(cfg.baseDn, {
+      scope: "sub",
+      filter,
+      sizeLimit: 1,
+      attributes: ["mail", "displayName", "cn"],
+    });
+    if (!searchEntries.length) return { ok: false, message: "کاربری با این مشخصات یافت نشد." };
+    const e = searchEntries[0];
+    const mail = e.mail ? String(Array.isArray(e.mail) ? e.mail[0] : e.mail) : undefined;
+    const name = e.displayName
+      ? String(Array.isArray(e.displayName) ? e.displayName[0] : e.displayName)
+      : e.cn
+        ? String(Array.isArray(e.cn) ? e.cn[0] : e.cn)
+        : undefined;
+    return { ok: true, message: "کاربر در LDAP پیدا شد.", preview: { email: mail, name } };
+  } catch (err: unknown) {
+    return { ok: false, message: err instanceof Error ? err.message : "خطا در جستجو" };
+  } finally {
+    await client.unbind().catch(() => undefined);
+  }
+}
+
+export async function testLdapConnection(
+  config: LdapConfiguration,
+): Promise<{ ok: boolean; message: string }> {
+  const cfg = {
+    url: config.url,
+    bindDn: config.bindDn,
+    bindPassword: config.bindPassword ? decryptSecret(config.bindPassword) : config.bindPassword,
+    baseDn: config.baseDn,
+    useTls: config.useTls,
+  };
+  if (!cfg.url || !cfg.baseDn) {
+    return { ok: false, message: "آدرس سرور LDAP و Base DN الزامی است." };
+  }
+  const client = new Client({
+    url: cfg.url,
+    tlsOptions: cfg.useTls ? { rejectUnauthorized: false } : undefined,
+  });
+  try {
+    if (cfg.bindDn && cfg.bindPassword) {
+      await client.bind(cfg.bindDn, cfg.bindPassword);
+    }
+    await client.search(cfg.baseDn, { scope: "base", filter: "(objectClass=*)", sizeLimit: 1 });
+    return { ok: true, message: "اتصال LDAP با موفقیت برقرار شد." };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "خطای اتصال LDAP";
+    return { ok: false, message };
   } finally {
     await client.unbind().catch(() => undefined);
   }

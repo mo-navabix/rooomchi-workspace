@@ -120,7 +120,15 @@ export const UnifiedDashboardView: React.FC = () => {
     isRegistrationComplete,
     openCompleteProfileModal,
     openBookingModal,
+    can,
+    userRole,
   } = useApp();
+
+  const canManageTeams =
+    can("MANAGE_TEAMS") ||
+    userRole === "super_admin" ||
+    userRole === "org_admin" ||
+    userRole === "room_manager";
   const [stats, setStats] = useState<Stats | null>(null);
   const [, setRooms] = useState<Room[]>([]);
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
@@ -488,13 +496,15 @@ export const UnifiedDashboardView: React.FC = () => {
         <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-slate-900 dark:text-white">تیم‌های من</h2>
-            <button
-              type="button"
-              onClick={() => setActiveTab("teams")}
-              className="text-xs font-bold text-[var(--brand-primary)] cursor-pointer"
-            >
-              مدیریت
-            </button>
+            {canManageTeams && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("teams")}
+                className="text-xs font-bold text-[var(--brand-primary)] cursor-pointer"
+              >
+                مدیریت
+              </button>
+            )}
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {teamCards.map((t, idx) => {
@@ -518,14 +528,16 @@ export const UnifiedDashboardView: React.FC = () => {
                 </div>
               );
             })}
-            <button
-              type="button"
-              onClick={() => setActiveTab("teams")}
-              className="min-w-[72px] rounded-xl border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center text-slate-400 cursor-pointer"
-            >
-              <Plus className="w-5 h-5" />
-              <span className="text-[10px] font-bold mt-1">تیم</span>
-            </button>
+            {canManageTeams && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("teams")}
+                className="min-w-[72px] rounded-xl border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center text-slate-400 cursor-pointer"
+              >
+                <Plus className="w-5 h-5" />
+                <span className="text-[10px] font-bold mt-1">تیم</span>
+              </button>
+            )}
           </div>
         </div>
 

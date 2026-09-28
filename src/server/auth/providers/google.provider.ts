@@ -7,12 +7,15 @@ import { issueSessionForUser } from "../session.service";
 import type { GoogleConfiguration, OrganizationAuthSettings } from "../types";
 import { findIdentity, provisionUser } from "../identity.store";
 import * as store from "../../persistence/store";
+import { decryptSecret } from "../../security/secret-crypto";
 
 function resolveGoogleConfig(settings: OrganizationAuthSettings): GoogleConfiguration {
   const c = settings.googleConfiguration;
   return {
     clientId: c.clientId || process.env.GOOGLE_CLIENT_ID,
-    clientSecret: c.clientSecret || process.env.GOOGLE_CLIENT_SECRET,
+    clientSecret: c.clientSecret
+      ? decryptSecret(c.clientSecret)
+      : process.env.GOOGLE_CLIENT_SECRET,
     redirectUri: c.redirectUri || process.env.GOOGLE_REDIRECT_URI,
     allowedDomains: c.allowedDomains?.length ? c.allowedDomains : ["*"],
     autoProvision: c.autoProvision !== false,

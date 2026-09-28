@@ -18,8 +18,13 @@ import {
   User,
   Ticket,
   Users,
-  KeyRound,
   Search,
+  Building2,
+  KeyRound,
+  Plug,
+  Server,
+  History,
+  ChevronDown,
   MoreHorizontal,
   Sun,
   Moon,
@@ -27,6 +32,11 @@ import {
   BellRing,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
+import {
+  ADMIN_SETTINGS_NAV,
+  ADMIN_SETTINGS_TABS,
+  isAdminSettingsTab,
+} from "../../features/enterprise-admin/adminSettingsTabs";
 
 const SIDEBAR_COLLAPSED_KEY = "rooomchi-portal-sidebar-collapsed";
 
@@ -43,12 +53,11 @@ const MAIN_NAV_TABS: ActiveTab[] = [
 const ADMIN_NAV_TABS: ActiveTab[] = [
   "admin-bookings",
   "admin-rooms",
-  "access-control",
   "admin-rbac",
   "analytics",
   "admin-notifications",
   "admin-support-tickets",
-  "admin-settings",
+  ...ADMIN_SETTINGS_TABS,
 ];
 
 type SidebarProps = {
@@ -96,6 +105,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   // Quick Search Dialog
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [orgSettingsExpanded, setOrgSettingsExpanded] = useState(() =>
+    isAdminSettingsTab(activeTab),
+  );
 
   useEffect(() => {
     if (isEmployee) {
@@ -108,6 +120,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       setMode("personal");
     }
   }, [activeTab, isEmployee]);
+
+  useEffect(() => {
+    if (isAdminSettingsTab(activeTab)) {
+      setOrgSettingsExpanded(true);
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     try {
@@ -150,12 +168,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         permissionCheck: can("MANAGE_ROOMS"),
       },
       {
-        id: "access-control",
-        label: "کنترل دسترسی‌ها و امنیت",
-        icon: KeyRound,
-        permissionCheck: can("MANAGE_USERS_ROLES"),
-      },
-      {
         id: "admin-rbac",
         label: "کاربران و سطوح دسترسی",
         icon: ShieldCheck,
@@ -178,17 +190,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         icon: Ticket,
         permissionCheck: can("MANAGE_ORG_SETTINGS"),
       },
-      {
-        id: "admin-settings",
-        label: "تنظیمات سازمان",
-        icon: Sliders,
-        permissionCheck: can("MANAGE_ORG_SETTINGS"),
-      },
     ];
     return items.filter((i) => i.permissionCheck === undefined || i.permissionCheck);
   }, [can]);
 
-  const showBusinessMode = !isEmployee && businessNavItems.length > 0;
+  const orgSettingsSubItems = useMemo(() => {
+    const icons: Record<
+      ActiveTab,
+      React.ComponentType<{ className?: string }>
+    > = {
+      "admin-settings-org": Building2,
+      "admin-settings-auth": KeyRound,
+      "admin-settings-integrations": Plug,
+      "admin-settings-system": Server,
+      "admin-settings-audit": History,
+    };
+    return ADMIN_SETTINGS_NAV.filter((item) =>
+      can(item.permission as Parameters<typeof can>[0]),
+    ).map((item) => ({
+      id: item.tab,
+      label: item.label,
+      icon: icons[item.tab],
+    }));
+  }, [can]);
+
+  const showBusinessMode =
+    !isEmployee &&
+    (businessNavItems.length > 0 || orgSettingsSubItems.length > 0);
+  const orgSettingsGroupActive = isAdminSettingsTab(activeTab);
   const activeMainItems =
     isEmployee || mode === "personal" ? personalNavItems : businessNavItems;
 
@@ -223,11 +252,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       { id: "support-ticket" as ActiveTab, label: "ثبت و پیگیری تیکت پشتیبانی", category: "پشتیبانی", forEmployee: true },
       { id: "admin-bookings" as ActiveTab, label: "نظارت و تأیید رزروها", category: "مدیریت", forEmployee: false },
       { id: "admin-rooms" as ActiveTab, label: "مدیریت اتاق‌ها و تجهیزات", category: "مدیریت", forEmployee: false },
-      { id: "access-control" as ActiveTab, label: "کنترل دسترسی‌ها و ورود با گوگل", category: "امنیت", forEmployee: false },
       { id: "admin-rbac" as ActiveTab, label: "مدیریت کاربران و نقش‌ها", category: "امنیت", forEmployee: false },
+      ...orgSettingsSubItems.map((item) => ({
+        id: item.id,
+        label: item.label,
+        category: "تنظیمات سازمان",
+        forEmployee: false as const,
+      })),
       { id: "analytics" as ActiveTab, label: "گزارش‌ها و آمار بهره‌وری", category: "تحلیل", forEmployee: false },
       { id: "admin-support-tickets" as ActiveTab, label: "مدیریت تیکت‌های پرسنل", category: "پشتیبانی", forEmployee: false },
-      { id: "admin-settings" as ActiveTab, label: "تنظیمات سازمان و زمان‌بندی", category: "تنظیمات", forEmployee: false },
       { id: "profile" as ActiveTab, label: "پروفایل من و امنیت حساب", category: "حساب", forEmployee: true },
     ];
     return items
@@ -235,7 +268,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
       .filter((item) =>
         item.label.toLowerCase().includes(searchQuery.toLowerCase().trim())
       );
-  }, [searchQuery, isEmployee]);
+  }, [searchQuery, isEmployee, orgSettingsSubItems]);
 
   const shellWidth = collapsed ? "w-[76px]" : "w-[275px]";
 
@@ -414,6 +447,86 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                 </button>
               );
             })}
+
+            {mode === "business" && orgSettingsSubItems.length > 0 && (
+              <div className="pt-2 mt-1 border-t border-slate-100 dark:border-white/5">
+                {!collapsed ? (
+                  <button
+                    type="button"
+                    onClick={() => setOrgSettingsExpanded((v) => !v)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                      orgSettingsGroupActive
+                        ? "text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]"
+                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    <Sliders className="w-[18px] h-[18px] shrink-0" />
+                    <span className="flex-1 text-right truncate">
+                      مدیریت و تنظیمات سازمان
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 shrink-0 transition-transform ${
+                        orgSettingsExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    title="مدیریت و تنظیمات سازمان"
+                    onClick={() =>
+                      goTo(
+                        orgSettingsSubItems[0]?.id || "admin-settings-org",
+                      )
+                    }
+                    className={`w-full flex justify-center px-2 py-2.5 rounded-xl cursor-pointer ${
+                      orgSettingsGroupActive
+                        ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] text-[var(--brand-primary)]"
+                        : "text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    <Sliders className="w-[18px] h-[18px]" />
+                  </button>
+                )}
+
+                {(orgSettingsExpanded || collapsed) &&
+                  orgSettingsSubItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = activeTab === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        id={`sidebar-nav-${item.id}`}
+                        title={collapsed ? item.label : undefined}
+                        onClick={() => goTo(item.id)}
+                        className={`group relative w-full flex items-center gap-3 rounded-xl text-[12px] font-semibold transition-all cursor-pointer ${
+                          collapsed
+                            ? "justify-center px-2 py-2 mt-0.5"
+                            : "pr-6 pl-3 py-2 mt-0.5"
+                        } ${
+                          isActive
+                            ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-bold"
+                            : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-800 dark:hover:text-white"
+                        }`}
+                      >
+                        {isActive && !collapsed && (
+                          <span
+                            className="absolute right-2 top-2 bottom-2 w-0.5 rounded-full bg-[var(--brand-primary)]"
+                            aria-hidden
+                          />
+                        )}
+                        <Icon className="w-4 h-4 shrink-0" />
+                        {!collapsed && (
+                          <span className="flex-1 text-right truncate">
+                            {item.label}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+              </div>
+            )}
           </nav>
         </div>
 

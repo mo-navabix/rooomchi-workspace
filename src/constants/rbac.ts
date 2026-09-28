@@ -29,6 +29,9 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
       'MANAGE_CATERING',
       'MANAGE_ORG_SETTINGS',
       'MANAGE_TEAMS',
+      'MANAGE_AUTHENTICATION_SETTINGS',
+      'MANAGE_INTEGRATIONS',
+      'MANAGE_SYSTEM_SETTINGS',
     ],
   },
   org_admin: {
@@ -48,6 +51,9 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
       'MANAGE_CATERING',
       'MANAGE_ORG_SETTINGS',
       'MANAGE_TEAMS',
+      'MANAGE_AUTHENTICATION_SETTINGS',
+      'MANAGE_INTEGRATIONS',
+      'MANAGE_SYSTEM_SETTINGS',
     ],
   },
   room_manager: {
@@ -144,6 +150,24 @@ export const PERMISSION_LIST: PermissionMeta[] = [
     titleFa: 'مدیریت تیم‌ها و گروه‌ها',
     description: 'ایجاد، ویرایش، حذف تیم‌ها و تعریف لیست اعضای ثابت برای تسریع رزرو جلسات',
     category: 'کاربران و امنیت',
+  },
+  {
+    key: 'MANAGE_AUTHENTICATION_SETTINGS',
+    titleFa: 'مدیریت احراز هویت سازمان',
+    description: 'فعال‌سازی Local، LDAP و Google OAuth و سیاست رمز عبور',
+    category: 'کاربران و امنیت',
+  },
+  {
+    key: 'MANAGE_INTEGRATIONS',
+    titleFa: 'مدیریت یکپارچه‌سازی‌ها',
+    description: 'پیکربندی SMTP، ذخیره‌سازی فایل و سرویس‌های خارجی',
+    category: 'سازمان',
+  },
+  {
+    key: 'MANAGE_SYSTEM_SETTINGS',
+    titleFa: 'تنظیمات سامانه',
+    description: 'URL اپلیکیشن، نگهداری، محدودیت نشست و آپلود',
+    category: 'سازمان',
   },
 ];
 

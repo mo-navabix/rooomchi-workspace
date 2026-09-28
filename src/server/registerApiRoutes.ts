@@ -2,6 +2,7 @@ import type { Express, Request, Response } from "express";
 import { checkDbStatus } from "../services/dbService";
 import {
   extractJwtUser,
+  resolveRequestOrgId,
   isBookingOrganizer,
   isProtectedAdmin,
   canManageTeams,
@@ -10,6 +11,8 @@ import { asyncRoute, stripPassword } from "./http";
 import type { Booking, Organization, Room, TeamRecord, User } from "./types";
 import * as store from "./persistence/store";
 import { registerAuthRoutes } from "./auth/auth.routes";
+import { registerSetupRoutes } from "./installation/setup.routes";
+import { registerAdminRoutes } from "./admin/admin.routes";
 import { normalizePasswordForStorage } from "./auth/password.service";
 
 async function populateTeamResponse(team: TeamRecord) {
@@ -44,6 +47,9 @@ export function registerApiRoutes(app: Express): void {
   app.get("/api/db/status", asyncRoute(async (_req, res) => {
     res.json(await checkDbStatus());
   }));
+
+  registerSetupRoutes(app);
+  registerAdminRoutes(app);
 
   app.get("/api/organizations", asyncRoute(async (_req, res) => {
     res.json(await store.listOrganizations());
@@ -234,8 +240,9 @@ export function registerApiRoutes(app: Express): void {
   }));
 
   app.get("/api/bookings", asyncRoute(async (req, res) => {
-    const { orgId, roomId, date, department, status, scope } = req.query;
+    const { roomId, date, department, status, scope } = req.query;
     const jwtUser = extractJwtUser(req);
+    const orgId = resolveRequestOrgId(jwtUser, req.query.orgId);
     const scopeAll = scope === "all" || scope === "org";
 
     let forUser: { id?: string; email?: string } | undefined;
@@ -251,7 +258,7 @@ export function registerApiRoutes(app: Express): void {
     }
 
     const bookings = await store.listBookings({
-      orgId: orgId ? String(orgId) : undefined,
+      orgId,
       roomId: roomId ? String(roomId) : undefined,
       date: date ? String(date) : undefined,
       department: department ? String(department) : undefined,
@@ -379,12 +386,17 @@ export function registerApiRoutes(app: Express): void {
   }));
 
   app.get("/api/stats", asyncRoute(async (req, res) => {
-    const { orgId, scope } = req.query;
+    const { scope, range } = req.query;
     const jwtUser = extractJwtUser(req);
+    const orgId = resolveRequestOrgId(jwtUser, req.query.orgId);
     const scopeAll = scope === "all" || scope === "org";
+    const rangeParam =
+      range === "week" || range === "month" || range === "quarter"
+        ? (range as "week" | "month" | "quarter")
+        : undefined;
 
     if (!jwtUser) {
-      return res.json(await store.getStatsData({ orgId: orgId ? String(orgId) : undefined }));
+      return res.json(await store.getStatsData({ orgId, range: rangeParam }));
     }
 
     let forUser: { id?: string; email?: string } | undefined;
@@ -398,8 +410,9 @@ export function registerApiRoutes(app: Express): void {
 
     res.json(
       await store.getStatsData({
-        orgId: orgId ? String(orgId) : undefined,
+        orgId,
         forUser,
+        range: rangeParam,
       }),
     );
   }));

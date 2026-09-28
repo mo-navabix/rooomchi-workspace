@@ -3,11 +3,19 @@ import path from "path";
 import { query } from "./db";
 
 /** Split SQL file into executable statements (skips empty lines and line comments). */
+function stripLeadingComments(sql: string): string {
+  return sql
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("--"))
+    .join("\n")
+    .trim();
+}
+
 function splitSqlStatements(sql: string): string[] {
   return sql
     .split(";")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0 && !s.startsWith("--"));
+    .map((s) => stripLeadingComments(s.trim()))
+    .filter((s) => s.length > 0);
 }
 
 export async function runSqlFile(relativePath: string): Promise<number> {

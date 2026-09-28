@@ -77,6 +77,7 @@ export function triggerBookingNotifications(
         startTime: booking.startTime,
         endTime: booking.endTime,
         organizerName: booking.organizerName,
+        userEmail: booking.organizerEmail,
         type: event === 'booking_cancelled' ? 'meeting_cancelled' : 'meeting_booked',
       });
     }

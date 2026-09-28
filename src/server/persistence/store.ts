@@ -59,8 +59,17 @@ export async function ensureBaseSchema(): Promise<void> {
 
 export async function ensureServerSchema(): Promise<void> {
   const extensionsPath = path.join(process.cwd(), "schema", "02-server-extensions.sql");
-  if (!fs.existsSync(extensionsPath)) return;
-  await runSqlFile("schema/02-server-extensions.sql");
+  if (fs.existsSync(extensionsPath)) {
+    await runSqlFile("schema/02-server-extensions.sql");
+  }
+  const installPath = path.join(process.cwd(), "schema", "03-installation-setup.sql");
+  if (fs.existsSync(installPath)) {
+    await runSqlFile("schema/03-installation-setup.sql");
+  }
+  const adminPath = path.join(process.cwd(), "schema", "04-admin-settings.sql");
+  if (fs.existsSync(adminPath)) {
+    await runSqlFile("schema/04-admin-settings.sql");
+  }
 }
 
 // --- Organizations ---
@@ -186,22 +195,24 @@ export async function patchOrganization(id: string, patch: Partial<Organization>
   await query(
     `UPDATE organizations SET
       name = COALESCE($2, name),
-      domain = COALESCE($3, domain),
-      status = COALESCE($4, status),
-      slug = COALESCE($5, slug),
-      logo = COALESCE($6, logo),
-      primary_color = COALESCE($7, primary_color),
-      plan = COALESCE($8, plan),
-      contact_email = COALESCE($9, contact_email),
-      buildings = COALESCE($10::jsonb, buildings),
-      departments = COALESCE($11::jsonb, departments),
-      work_hours = COALESCE($12::jsonb, work_hours),
-      settings = COALESCE($13::jsonb, settings),
-      updated_at = $14
+      code = COALESCE($3, code),
+      domain = COALESCE($4, domain),
+      status = COALESCE($5, status),
+      slug = COALESCE($6, slug),
+      logo = COALESCE($7, logo),
+      primary_color = COALESCE($8, primary_color),
+      plan = COALESCE($9, plan),
+      contact_email = COALESCE($10, contact_email),
+      buildings = COALESCE($11::jsonb, buildings),
+      departments = COALESCE($12::jsonb, departments),
+      work_hours = COALESCE($13::jsonb, work_hours),
+      settings = COALESCE($14::jsonb, settings),
+      updated_at = $15
     WHERE id = $1`,
     [
       id,
       merged.name,
+      merged.code,
       merged.domain,
       merged.status,
       merged.slug,
@@ -817,6 +828,46 @@ function isoDateParts(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
+type StatsRange = "week" | "month" | "quarter";
+
+function filterBookingsForRange(bookings: Booking[], range: StatsRange): Booking[] {
+  const end = new Date();
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  if (range === "week") {
+    start.setDate(start.getDate() - 6);
+  } else if (range === "month") {
+    start.setDate(1);
+  } else {
+    start.setDate(start.getDate() - 89);
+  }
+  const startIso = isoDateParts(start);
+  const endIso = isoDateParts(end);
+  return bookings.filter((b) => b.date >= startIso && b.date <= endIso);
+}
+
+function buildQuarterlyUsageBuckets(
+  bookings: Booking[],
+  todayStr: string,
+  currentHourStr: string,
+) {
+  const buckets: { day: string; date: string; match: (b: Booking) => boolean }[] = [];
+  for (let w = 12; w >= 0; w--) {
+    const start = new Date();
+    start.setDate(start.getDate() - w * 7);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    const startIso = isoDateParts(start);
+    const endIso = isoDateParts(end);
+    buckets.push({
+      day: `هفته ${13 - w}`,
+      date: startIso,
+      match: (b) => b.date >= startIso && b.date <= endIso,
+    });
+  }
+  return buildUsageBuckets(bookings, buckets, todayStr, currentHourStr);
+}
+
 function buildUsageBuckets(
   bookings: Booking[],
   buckets: { day: string; date: string; match: (b: Booking) => boolean }[],
@@ -865,6 +916,7 @@ function buildMonthlyGoals(monthBookings: Booking[]) {
 export async function getStatsData(options?: {
   orgId?: string;
   forUser?: { id?: string; email?: string };
+  range?: StatsRange;
 }) {
   const orgId = options?.orgId;
   const rooms = await listRooms(orgId ? { orgId } : {});
@@ -873,6 +925,16 @@ export async function getStatsData(options?: {
     forUser: options?.forUser,
   });
   const orgBookings = bookings.filter((b) => b.status !== "cancelled");
+  const analyticsBookings = options?.range
+    ? filterBookingsForRange(orgBookings, options.range)
+    : orgBookings;
+  const orgUsers = orgId ? await listUsers({ orgId }) : [];
+  const deptByUserId = new Map(orgUsers.map((u) => [u.id, u.department || "عمومی"]));
+  const deptByEmail = new Map(
+    orgUsers
+      .filter((u) => u.email)
+      .map((u) => [u.email.trim().toLowerCase(), u.department || "عمومی"]),
+  );
   const todayStr = formatGregorianIsoLocal();
   const todayBookings = orgBookings.filter((b) => b.date === todayStr);
   const now = new Date();
@@ -882,16 +944,24 @@ export async function getStatsData(options?: {
   );
   const pendingApprovals = orgBookings.filter((b) => b.status === "pending_approval").length;
   const roomBookingCounts: Record<string, number> = {};
-  orgBookings.forEach((b) => {
-    roomBookingCounts[b.roomName] = (roomBookingCounts[b.roomName] || 0) + 1;
+  analyticsBookings.forEach((b) => {
+    const roomName = b.roomName?.trim() || "اتاق نامشخص";
+    roomBookingCounts[roomName] = (roomBookingCounts[roomName] || 0) + 1;
   });
   const popularRooms = Object.entries(roomBookingCounts)
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
-    .slice(0, 4);
+    .slice(0, 6);
   const departmentCounts: Record<string, number> = {};
-  orgBookings.forEach((b) => {
-    departmentCounts[b.department] = (departmentCounts[b.department] || 0) + 1;
+  analyticsBookings.forEach((b) => {
+    let dept = (b.department || "").trim() || "عمومی";
+    if (dept === "عمومی" && b.organizerId) {
+      dept = deptByUserId.get(b.organizerId) || dept;
+    }
+    if (dept === "عمومی" && b.organizerEmail?.trim()) {
+      dept = deptByEmail.get(b.organizerEmail.trim().toLowerCase()) || dept;
+    }
+    departmentCounts[dept] = (departmentCounts[dept] || 0) + 1;
   });
   const dayNames = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"];
 
@@ -905,7 +975,12 @@ export async function getStatsData(options?: {
       match: (b: Booking) => b.date === iso,
     };
   });
-  const weeklyUsage = buildUsageBuckets(orgBookings, weeklyBuckets, todayStr, currentHourStr);
+  const weeklyUsage = buildUsageBuckets(
+    options?.range === "week" ? analyticsBookings : orgBookings,
+    weeklyBuckets,
+    todayStr,
+    currentHourStr,
+  );
 
   const year = now.getFullYear();
   const month = now.getMonth();
@@ -924,12 +999,21 @@ export async function getStatsData(options?: {
       match: (b) => b.date >= startIso && b.date <= endIso,
     });
   }
-  const monthlyUsage = buildUsageBuckets(orgBookings, monthlyBuckets, todayStr, currentHourStr);
+  const monthlyUsage = buildUsageBuckets(
+    options?.range === "month" ? analyticsBookings : orgBookings,
+    monthlyBuckets,
+    todayStr,
+    currentHourStr,
+  );
+  const quarterlyUsage =
+    options?.range === "quarter"
+      ? buildQuarterlyUsageBuckets(analyticsBookings, todayStr, currentHourStr)
+      : undefined;
   const monthlyGoals = buildMonthlyGoals(monthBookings);
 
   let totalMinutes = 0;
   let countedBookings = 0;
-  orgBookings.forEach((b) => {
+  analyticsBookings.forEach((b) => {
     const [sh, sm] = b.startTime.split(":").map(Number);
     const [eh, em] = b.endTime.split(":").map(Number);
     if (!isNaN(sh) && !isNaN(eh)) {
@@ -944,15 +1028,22 @@ export async function getStatsData(options?: {
     countedBookings > 0 ? Math.round(totalMinutes / countedBookings) : 0;
 
   const personalScope = Boolean(options?.forUser);
-  const capacitySlots = Math.max(1, rooms.length * 8);
-  const utilizationRate = personalScope
-    ? Math.min(100, Math.round((monthBookings.length / 16) * 100))
-    : Math.min(
-        95,
-        Math.max(45, Math.round((todayBookings.length / capacitySlots) * 100 + 40)),
-      );
+  const daysInMonth = lastDay;
+  const capacitySlots = Math.max(1, rooms.length * daysInMonth);
+  const utilizationDenominator = personalScope
+    ? Math.max(1, 16)
+    : capacitySlots;
+  const utilizationNumerator = personalScope ? analyticsBookings.length : monthBookings.length;
+  const utilizationRate = Math.min(
+    100,
+    Math.round((utilizationNumerator / utilizationDenominator) * 100),
+  );
 
-  const topRoomObj = popularRooms[0] || { name: rooms[0]?.name || "اتاق جلسات", count: 0 };
+  const topRoomObj = popularRooms[0] || { name: rooms[0]?.name || "—", count: 0 };
+  const topRoomShare =
+    analyticsBookings.length > 0
+      ? Math.round((topRoomObj.count / analyticsBookings.length) * 100)
+      : 0;
   return {
     totalRooms: rooms.length,
     availableRoomsNow: Math.max(0, rooms.length - activeNow.length),
@@ -966,14 +1057,13 @@ export async function getStatsData(options?: {
     utilizationRate,
     weeklyUsage,
     monthlyUsage,
+    quarterlyUsage,
     monthlyGoals,
     avgMeetingDurationMinutes,
+    periodBookingsCount: options?.range ? analyticsBookings.length : undefined,
     topRoom: {
       name: topRoomObj.name,
-      occupancyRate: Math.min(
-        95,
-        Math.round((topRoomObj.count / Math.max(1, orgBookings.length)) * 100 + (personalScope ? 0 : 50)),
-      ),
+      occupancyRate: topRoomShare,
       bookingsCount: topRoomObj.count,
     },
   };

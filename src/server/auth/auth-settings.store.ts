@@ -6,6 +6,7 @@ import type {
   LdapConfiguration,
   OrganizationAuthSettings,
 } from "./types";
+import { decryptSecret, encryptSecret } from "../security/secret-crypto";
 
 function parseJson<T extends Record<string, unknown>>(value: unknown, fallback: T): T {
   if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -36,12 +37,20 @@ function mapRow(row: Record<string, unknown>): OrganizationAuthSettings {
       row.google_enabled === true ||
       row.google_enabled === "t" ||
       googleFromLegacy,
-    ldapConfiguration: parseJson<LdapConfiguration>(row.ldap_configuration, {}),
-    googleConfiguration: parseJson<GoogleConfiguration>(row.google_configuration, {
-      clientId: row.client_id ? String(row.client_id) : undefined,
-      clientSecret: row.client_secret ? String(row.client_secret) : undefined,
-      redirectUri: row.issuer_url ? String(row.issuer_url) : undefined,
-    }),
+    ldapConfiguration: (() => {
+      const l = parseJson<LdapConfiguration>(row.ldap_configuration, {});
+      if (l.bindPassword) l.bindPassword = decryptSecret(l.bindPassword);
+      return l;
+    })(),
+    googleConfiguration: (() => {
+      const g = parseJson<GoogleConfiguration>(row.google_configuration, {
+        clientId: row.client_id ? String(row.client_id) : undefined,
+        clientSecret: row.client_secret ? String(row.client_secret) : undefined,
+        redirectUri: row.issuer_url ? String(row.issuer_url) : undefined,
+      });
+      if (g.clientSecret) g.clientSecret = decryptSecret(g.clientSecret);
+      return g;
+    })(),
     authPolicies: parseJson<AuthPolicies>(row.auth_policies, {
       selfRegistrationEnabled: true,
       emailVerificationRequired: false,
@@ -81,12 +90,27 @@ export async function upsertOrganizationAuthSettings(
   patch: Partial<OrganizationAuthSettings>,
 ): Promise<OrganizationAuthSettings> {
   const current = await getOrganizationAuthSettings(organizationId);
+  const mergedLdap: LdapConfiguration = {
+    ...current.ldapConfiguration,
+    ...patch.ldapConfiguration,
+  };
+  if (mergedLdap.bindPassword?.trim()) {
+    mergedLdap.bindPassword = encryptSecret(mergedLdap.bindPassword);
+  }
+  const mergedGoogle: GoogleConfiguration = {
+    ...current.googleConfiguration,
+    ...patch.googleConfiguration,
+  };
+  if (mergedGoogle.clientSecret?.trim()) {
+    mergedGoogle.clientSecret = encryptSecret(mergedGoogle.clientSecret);
+  }
+
   const merged: OrganizationAuthSettings = {
     ...current,
     ...patch,
     organizationId,
-    ldapConfiguration: { ...current.ldapConfiguration, ...patch.ldapConfiguration },
-    googleConfiguration: { ...current.googleConfiguration, ...patch.googleConfiguration },
+    ldapConfiguration: mergedLdap,
+    googleConfiguration: mergedGoogle,
     authPolicies: { ...current.authPolicies, ...patch.authPolicies },
   };
 

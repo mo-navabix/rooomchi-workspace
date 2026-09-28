@@ -10,7 +10,10 @@ export type Permission =
   | 'VIEW_ANALYTICS'
   | 'MANAGE_CATERING'
   | 'MANAGE_ORG_SETTINGS'
-  | 'MANAGE_TEAMS';
+  | 'MANAGE_TEAMS'
+  | 'MANAGE_AUTHENTICATION_SETTINGS'
+  | 'MANAGE_INTEGRATIONS'
+  | 'MANAGE_SYSTEM_SETTINGS';
 
 export interface User {
   id: string;
@@ -40,9 +43,12 @@ export type ActiveTab =
   | 'admin-rooms'
   | 'admin-bookings'
   | 'admin-rbac'
-  | 'access-control'
   | 'analytics'
-  | 'admin-settings'
+  | 'admin-settings-org'
+  | 'admin-settings-auth'
+  | 'admin-settings-integrations'
+  | 'admin-settings-system'
+  | 'admin-settings-audit'
   | 'admin-support-tickets'
   | 'admin-notifications'
   | 'teams'
@@ -159,8 +165,17 @@ export interface Stats {
     percentage: number;
     completedPercentage?: number;
   }[];
+  quarterlyUsage?: {
+    day: string;
+    date: string;
+    count: number;
+    completedCount?: number;
+    percentage: number;
+    completedPercentage?: number;
+  }[];
   monthlyGoals?: { label: string; pct: number; count: number; target: number }[];
   thisMonthBookingsCount?: number;
+  periodBookingsCount?: number;
   avgMeetingDurationMinutes?: number;
   topRoom?: { name: string; occupancyRate: number; bookingsCount: number };
   monthlyTrend?: { label: string; count: number }[];

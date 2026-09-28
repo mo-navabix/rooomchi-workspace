@@ -616,9 +616,12 @@ export const AppLoadingSkeleton: React.FC<{ tab: string }> = ({ tab }) => {
     case 'admin-bookings':
       return <AdminBookingsSkeleton />;
     case 'admin-rbac':
-    case 'access-control':
       return <AdminRbacSkeleton />;
-    case 'admin-settings':
+    case 'admin-settings-org':
+    case 'admin-settings-auth':
+    case 'admin-settings-integrations':
+    case 'admin-settings-system':
+    case 'admin-settings-audit':
       return <AdminSettingsSkeleton />;
     case 'admin-support-tickets':
       return <AdminBookingsSkeleton />;

@@ -39,13 +39,25 @@ const PAGE_META: Partial<
     subtitle: "تأیید و پیگیری درخواست‌ها",
   },
   "admin-rbac": { title: "کاربران", subtitle: "نقش‌ها و دسترسی پرسنل" },
-  "access-control": {
-    title: "کنترل دسترسی‌ها",
-    subtitle: "مدیریت مجوزها و روش‌های ورود",
-  },
-  "admin-settings": {
+  "admin-settings-org": {
     title: "تنظیمات سازمان",
-    subtitle: "پیکربندی سیاست‌ها و برندینگ",
+    subtitle: "نام، برند، دامنه و تقویم",
+  },
+  "admin-settings-auth": {
+    title: "احراز هویت",
+    subtitle: "Local، LDAP و Google OAuth",
+  },
+  "admin-settings-integrations": {
+    title: "یکپارچه‌سازی",
+    subtitle: "SMTP و ذخیره‌سازی فایل",
+  },
+  "admin-settings-system": {
+    title: "تنظیمات سامانه",
+    subtitle: "URL، نشست و نگهداری",
+  },
+  "admin-settings-audit": {
+    title: "ممیزی تنظیمات",
+    subtitle: "تاریخچه تغییرات پیکربندی",
   },
   "admin-notifications": {
     title: "مدیریت اعلان‌ها",

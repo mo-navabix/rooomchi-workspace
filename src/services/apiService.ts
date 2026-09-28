@@ -34,7 +34,64 @@ function getAuthHeaders(contentJson = false): HeadersInit {
   return headers;
 }
 
+export type SetupStatusResponse = {
+  initialized: boolean;
+  organizationCreated: boolean;
+  adminCreated: boolean;
+  completedAt: string | null;
+};
+
 export class ApiService {
+  static async getSetupStatus(): Promise<SetupStatusResponse> {
+    const res = await fetch(`${API_BASE}/setup/status`);
+    if (!res.ok) throw new Error('خطا در بررسی وضعیت نصب');
+    return res.json();
+  }
+
+  static async completeSetup(payload: Record<string, unknown>): Promise<{
+    organization: Organization;
+    accessToken: string;
+    token: string;
+    user: User;
+    message: string;
+  }> {
+    const res = await fetch(`${API_BASE}/setup/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.message || body.error || 'خطا در تکمیل نصب');
+    return body;
+  }
+
+  static async testSetupLdap(ldap: Record<string, unknown>) {
+    const res = await fetch(`${API_BASE}/setup/test-ldap`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ldap }),
+    });
+    return res.json() as Promise<{ ok: boolean; message: string }>;
+  }
+
+  static async testSetupGoogle(google: Record<string, unknown>) {
+    const res = await fetch(`${API_BASE}/setup/test-google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ google }),
+    });
+    return res.json() as Promise<{ ok: boolean; message: string }>;
+  }
+
+  static async testSetupSmtp(smtp: Record<string, unknown>) {
+    const res = await fetch(`${API_BASE}/setup/test-smtp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ smtp }),
+    });
+    return res.json() as Promise<{ ok: boolean; message: string }>;
+  }
+
   // Organizations
   static async getOrganizations(): Promise<Organization[]> {
     const res = await fetch(`${API_BASE}/organizations`);
@@ -89,7 +146,7 @@ export class ApiService {
   static async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
     const res = await fetch(`${API_BASE}/organizations/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...getAuthHeaders(true), 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
     });
     if (!res.ok) throw new Error('خطا در بروزرسانی تنظیمات سازمان');
@@ -218,11 +275,12 @@ export class ApiService {
   // Analytics
   static async getStats(
     orgId?: string,
-    options?: { scope?: 'all' | 'mine' },
+    options?: { scope?: 'all' | 'mine'; range?: 'week' | 'month' | 'quarter' },
   ): Promise<Stats> {
     const params = new URLSearchParams();
     if (orgId) params.set('orgId', orgId);
     if (options?.scope === 'all') params.set('scope', 'all');
+    if (options?.range) params.set('range', options.range);
     const qs = params.toString();
     const res = await fetch(`${API_BASE}/stats${qs ? `?${qs}` : ''}`, {
       headers: getAuthHeaders(),
@@ -616,5 +674,99 @@ export class ApiService {
       throw new Error(err.error || err.message || 'خطا در حذف کاربر از تیم');
     }
     return res.json();
+  }
+
+  // --- Enterprise admin settings ---
+  private static adminFetch(path: string, init?: RequestInit) {
+    return fetch(`${API_BASE}/admin/${path}`, {
+      ...init,
+      headers: { ...getAuthHeaders(true), ...(init?.headers as Record<string, string>) },
+    });
+  }
+
+  static async getAdminOrganization() {
+    const res = await ApiService.adminFetch('organization');
+    if (!res.ok) throw new Error('خطا در بارگذاری تنظیمات سازمان');
+    return res.json();
+  }
+
+  static async putAdminOrganization(payload: Record<string, unknown>) {
+    const res = await ApiService.adminFetch('organization', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در ذخیره سازمان');
+    }
+    return res.json();
+  }
+
+  static async getAdminAuthSettings() {
+    const res = await ApiService.adminFetch('auth-settings');
+    if (!res.ok) throw new Error('خطا در بارگذاری احراز هویت');
+    return res.json();
+  }
+
+  static async putAdminAuthSettings(payload: Record<string, unknown>) {
+    const res = await ApiService.adminFetch('auth-settings', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در ذخیره احراز هویت');
+    }
+    return res.json();
+  }
+
+  static async getAdminIntegrations() {
+    const res = await ApiService.adminFetch('integrations');
+    if (!res.ok) throw new Error('خطا در بارگذاری یکپارچه‌سازی‌ها');
+    return res.json();
+  }
+
+  static async putAdminIntegrations(payload: Record<string, unknown>) {
+    const res = await ApiService.adminFetch('integrations', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در ذخیره یکپارچه‌سازی');
+    }
+    return res.json();
+  }
+
+  static async getAdminSystemSettings() {
+    const res = await ApiService.adminFetch('system-settings');
+    if (!res.ok) throw new Error('خطا در بارگذاری تنظیمات سامانه');
+    return res.json();
+  }
+
+  static async putAdminSystemSettings(payload: Record<string, unknown>) {
+    const res = await ApiService.adminFetch('system-settings', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در ذخیره تنظیمات سامانه');
+    }
+    return res.json();
+  }
+
+  static async getAdminConfigAudit() {
+    const res = await ApiService.adminFetch('config-audit');
+    if (!res.ok) throw new Error('خطا در بارگذاری گزارش ممیزی');
+    return res.json();
+  }
+
+  static async postAdminTest(path: string, body: Record<string, unknown>) {
+    const res = await ApiService.adminFetch(path, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    return res.json() as Promise<{ ok: boolean; message: string }>;
   }
 }

@@ -24,10 +24,17 @@ import {
   clearOrgBrandThemeOverrides,
 } from "../utils/orgBrandTheme";
 import {
+  dropLegacySharedNotifications,
+  loadNotificationsForUser,
+  saveNotificationsForUser,
+} from "../utils/userNotificationsStorage";
+import {
   navigateToAppHome,
   navigateToLandingPath,
   navigateToLoginPath,
+  navigateToSetupPath,
   readLoginRoute,
+  readSetupRoute,
 } from "../utils/appNavigation";
 
 interface ToastInfo {
@@ -38,7 +45,7 @@ interface ToastInfo {
 
 export type AuthModalView = "login" | "register" | "otp" | "forgot" | "reset";
 export type AppTheme = "light" | "dark";
-export type ViewMode = "landing" | "login" | "app";
+export type ViewMode = "landing" | "login" | "app" | "setup";
 
 interface AppContextType {
   // Theme & View Mode
@@ -48,6 +55,8 @@ interface AppContextType {
   setViewMode: (mode: ViewMode) => void;
   goToLogin: (options?: { org?: string; authView?: AuthModalView }) => void;
   goToLanding: () => void;
+  installationInitialized: boolean | null;
+  finishSetupAndSignIn: (user: User, token: string) => Promise<void>;
 
   // Tenancy & Data
   organizations: Organization[];
@@ -226,6 +235,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const [installationInitialized, setInstallationInitialized] = useState<boolean | null>(null);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [currentOrg, setCurrentOrg] = useState<Organization | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
@@ -353,7 +363,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   }, [currentOrg, currentUser, showToast]);
 
   useEffect(() => {
-    refreshOrganizations();
+    ApiService.getSetupStatus()
+      .then((status) => {
+        setInstallationInitialized(status.initialized);
+        if (!status.initialized) {
+          setViewMode("setup");
+          navigateToSetupPath(true);
+          setIsLoading(false);
+          return;
+        }
+        if (readSetupRoute()) {
+          navigateToAppHome(true);
+        }
+        refreshOrganizations();
+      })
+      .catch(() => {
+        setInstallationInitialized(true);
+        refreshOrganizations();
+      });
   }, []);
 
   /** Org theme applies only inside the portal; landing keeps Rooomchi CSS defaults. */
@@ -423,7 +450,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     if (typeof window === "undefined") return;
     const onPopState = () => {
       const route = readLoginRoute();
-      if (route.onLoginPage) setViewMode("login");
+      if (installationInitialized === false) {
+        setViewMode("setup");
+        return;
+      }
+      if (readSetupRoute()) setViewMode("setup");
+      else if (route.onLoginPage) setViewMode("login");
       else if (window.location.pathname === "/" || window.location.pathname === "") {
         setViewMode("landing");
       }
@@ -453,6 +485,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       console.error("Failed to clear localStorage", e);
     }
   };
+
+  const finishSetupAndSignIn = useCallback(
+    async (user: User, token: string) => {
+      saveUserSession(user, token);
+      setInstallationInitialized(true);
+      setViewMode("app");
+      navigateToAppHome(true);
+      const orgs = await ApiService.getOrganizations();
+      setOrganizations(orgs);
+      const orgId = user.orgId;
+      if (orgId) {
+        const match = orgs.find((o) => o.id === orgId);
+        if (match) setCurrentOrg(match);
+      }
+    },
+    [],
+  );
 
   const switchOrg = (orgId: string) => {
     const found = organizations.find((o) => o.id === orgId);
@@ -745,99 +794,85 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   // ==========================================
-  // Notifications System (Header Bell)
+  // Notifications System (Header Bell) — per user
   // ==========================================
-  const LOCAL_STORAGE_NOTIFICATIONS_KEY = "roomchi_notifications_v1";
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
-  const [notifications, setNotifications] = useState<AppNotification[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_NOTIFICATIONS_KEY);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch {
-      /* ignore */
+  useEffect(() => {
+    dropLegacySharedNotifications();
+    if (!currentUser?.id) {
+      setNotifications([]);
+      return;
     }
-    return [
-      {
-        id: "notif-welcome",
-        title: "به سامانه روم‌چی خوش آمدید",
-        message: "سامانه مدیریت و رزرو هوشمند اتاق‌های جلسات آماده بهره‌برداری است.",
-        type: "system",
-        isRead: false,
-        createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-      },
-    ];
-  });
+    setNotifications(
+      loadNotificationsForUser(currentUser.id, currentUser.orgId || currentOrg?.id),
+    );
+  }, [currentUser?.id, currentUser?.orgId, currentOrg?.id]);
 
   const unreadNotificationsCount = useMemo(() => {
     return notifications.filter((n) => !n.isRead).length;
   }, [notifications]);
 
+  const persistNotifications = useCallback(
+    (userId: string, items: AppNotification[]) => {
+      saveNotificationsForUser(userId, items);
+    },
+    [],
+  );
+
   const addNotification = useCallback(
     (item: Omit<AppNotification, "id" | "createdAt" | "isRead">) => {
+      if (!currentUser?.id) return;
+      const userId = currentUser.id;
       const newNotif: AppNotification = {
         ...item,
+        userId,
+        orgId: item.orgId || currentUser.orgId || currentOrg?.id,
+        userEmail: item.userEmail || currentUser.email,
         id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
         isRead: false,
         createdAt: new Date().toISOString(),
       };
       setNotifications((prev) => {
         const updated = [newNotif, ...prev];
-        try {
-          localStorage.setItem(
-            LOCAL_STORAGE_NOTIFICATIONS_KEY,
-            JSON.stringify(updated),
-          );
-        } catch {
-          /* ignore */
-        }
+        persistNotifications(userId, updated);
         return updated;
       });
     },
-    [],
+    [currentUser?.id, currentUser?.email, currentUser?.orgId, currentOrg?.id, persistNotifications],
   );
 
-  const markNotificationAsRead = useCallback((id: string) => {
-    setNotifications((prev) => {
-      const updated = prev.map((n) =>
-        n.id === id ? { ...n, isRead: true } : n,
-      );
-      try {
-        localStorage.setItem(
-          LOCAL_STORAGE_NOTIFICATIONS_KEY,
-          JSON.stringify(updated),
+  const markNotificationAsRead = useCallback(
+    (id: string) => {
+      if (!currentUser?.id) return;
+      const userId = currentUser.id;
+      setNotifications((prev) => {
+        const updated = prev.map((n) =>
+          n.id === id ? { ...n, isRead: true } : n,
         );
-      } catch {
-        /* ignore */
-      }
-      return updated;
-    });
-  }, []);
+        persistNotifications(userId, updated);
+        return updated;
+      });
+    },
+    [currentUser?.id, persistNotifications],
+  );
 
   const markAllNotificationsAsRead = useCallback(() => {
+    if (!currentUser?.id) return;
+    const userId = currentUser.id;
     setNotifications((prev) => {
       const updated = prev.map((n) => ({ ...n, isRead: true }));
-      try {
-        localStorage.setItem(
-          LOCAL_STORAGE_NOTIFICATIONS_KEY,
-          JSON.stringify(updated),
-        );
-      } catch {
-        /* ignore */
-      }
+      persistNotifications(userId, updated);
       return updated;
     });
-  }, []);
+  }, [currentUser?.id, persistNotifications]);
 
   const clearAllNotifications = useCallback(() => {
+    if (!currentUser?.id) return;
+    const userId = currentUser.id;
     setNotifications([]);
-    try {
-      localStorage.removeItem(LOCAL_STORAGE_NOTIFICATIONS_KEY);
-    } catch {
-      /* ignore */
-    }
-  }, []);
+    persistNotifications(userId, []);
+  }, [currentUser?.id, persistNotifications]);
 
   // ==========================================
   // Google Login & Profile Sync
@@ -881,6 +916,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         setViewMode,
         goToLogin,
         goToLanding,
+        installationInitialized,
+        finishSetupAndSignIn,
 
         organizations,
         currentOrg,

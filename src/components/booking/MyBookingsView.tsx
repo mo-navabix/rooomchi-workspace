@@ -27,7 +27,7 @@ export const MyBookingsView: React.FC = () => {
   const { currentOrg, currentUser, showToast } = useApp();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [filterTab, setFilterTab] = useState<'all' | 'upcoming' | 'pending' | 'cancelled'>('all');
+  const [filterTab, setFilterTab] = useState<'all' | 'upcoming' | 'pending' | 'cancelled'>('upcoming');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const todayStr = formatGregorianIsoLocal();
@@ -147,6 +147,16 @@ export const MyBookingsView: React.FC = () => {
 
           <div className="portal-tabs-scroll bg-slate-100 dark:bg-[#0F172A] p-1 rounded-xl text-xs font-semibold border border-transparent dark:border-[#334155] shrink-0 max-w-full">
             <button
+              onClick={() => setFilterTab('upcoming')}
+              className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
+                filterTab === 'upcoming'
+                  ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              پیش‌رو ({upcomingCount})
+            </button>
+            <button
               onClick={() => setFilterTab('all')}
               className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
                 filterTab === 'all'
@@ -155,16 +165,6 @@ export const MyBookingsView: React.FC = () => {
               }`}
             >
               همه ({bookings.length})
-            </button>
-            <button
-              onClick={() => setFilterTab('upcoming')}
-              className={`shrink-0 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
-                filterTab === 'upcoming'
-                  ? 'bg-white dark:bg-[#334155] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              پیش‌رو
             </button>
             <button
               onClick={() => setFilterTab('pending')}

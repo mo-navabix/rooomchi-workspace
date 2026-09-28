@@ -1,6 +1,7 @@
 import { query } from "./db";
 import { runSqlFile } from "./sql-runner";
 import { ensureBaseSchema, ensureServerSchema, insertUser, usersTableExists } from "./store";
+import { isInstallationInitialized } from "../installation/installation.store";
 import type { User } from "../types";
 import { hashPassword } from "../auth/password.service";
 
@@ -214,6 +215,14 @@ export async function seedDevUsers(options?: { force?: boolean }): Promise<void>
 
 /** Ensures demo accounts from the legacy in-memory server exist in PostgreSQL. */
 export async function seedDevDataIfNeeded(): Promise<void> {
+  try {
+    if (!(await isInstallationInitialized())) {
+      console.log("ℹ️  Fresh installation — skipping demo seed until setup wizard completes.");
+      return;
+    }
+  } catch {
+    /* installation_status table may not exist yet */
+  }
   await seedDevUsers();
   await ensureDemoLoginPasswords();
 }

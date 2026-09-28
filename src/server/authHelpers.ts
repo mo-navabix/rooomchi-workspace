@@ -14,17 +14,33 @@ export const jwtService = new JwtService({
   secret: resolveJwtSecret(),
 });
 
-export function extractJwtUser(
-  req: Request,
-): { userId: string; organizationId: string; role: string } | null {
+export type JwtPayload = { userId: string; organizationId: string; role: string };
+
+export function extractJwtUser(req: Request): JwtPayload | null {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
   const token = authHeader.slice(7).trim();
   try {
-    return jwtService.verify(token) as { userId: string; organizationId: string; role: string };
+    return jwtService.verify(token) as JwtPayload;
   } catch {
     return null;
   }
+}
+
+/** Resolve tenant org for API reads; non–super-admins are always scoped to their JWT org. */
+export function resolveRequestOrgId(
+  jwtUser: JwtPayload | null,
+  queryOrgId: unknown,
+): string | undefined {
+  const requested = queryOrgId != null && String(queryOrgId).trim()
+    ? String(queryOrgId).trim()
+    : undefined;
+  if (!jwtUser) return requested;
+  const role = (jwtUser.role || "").toUpperCase();
+  if (role === "SUPER_ADMIN") {
+    return requested || jwtUser.organizationId || undefined;
+  }
+  return jwtUser.organizationId || requested;
 }
 
 export function isProtectedAdmin(

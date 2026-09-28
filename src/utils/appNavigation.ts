@@ -1,8 +1,21 @@
 export const LOGIN_PATH = "/login";
+export const SETUP_PATH = "/setup";
 
 export function buildLoginUrl(orgSlugOrId?: string | null): string {
   if (!orgSlugOrId?.trim()) return LOGIN_PATH;
   return `${LOGIN_PATH}?org=${encodeURIComponent(orgSlugOrId.trim())}`;
+}
+
+export function readSetupRoute(): boolean {
+  if (typeof window === "undefined") return false;
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  return path === SETUP_PATH;
+}
+
+export function navigateToSetupPath(replace = false): void {
+  if (typeof window === "undefined") return;
+  if (replace) window.history.replaceState({}, "", SETUP_PATH);
+  else window.history.pushState({}, "", SETUP_PATH);
 }
 
 export function readLoginRoute(): {

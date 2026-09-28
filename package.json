@@ -20,6 +20,7 @@
     "db:sync": "tsx scripts/db-cli.ts sync",
     "db:schema": "tsx scripts/db-cli.ts schema",
     "db:status": "tsx scripts/db-cli.ts status",
+    "setup:reset": "tsx scripts/reset-installation-cli.ts",
     "migrate": "tsx scripts/migrate-cli.ts",
     "seed": "tsx scripts/seed-cli.ts",
     "build:client": "vite build",

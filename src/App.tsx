@@ -12,8 +12,11 @@ import { MyBookingsView } from "./components/booking/MyBookingsView";
 import { AdminRoomsView } from "./components/admin/AdminRoomsView";
 import { AdminBookingsView } from "./components/admin/AdminBookingsView";
 import { AdminRbacView } from "./components/admin/AdminRbacView";
-import { AccessControlView } from "./components/admin/AccessControlView";
 import { AdminSettingsView } from "./components/admin/AdminSettingsView";
+import {
+  isAdminSettingsTab,
+  sectionFromAdminSettingsTab,
+} from "./features/enterprise-admin/adminSettingsTabs";
 import { AdminNotificationsView } from "./components/admin/AdminNotificationsView";
 import { AdminSupportTicketsView } from "./components/admin/AdminSupportTicketsView";
 import { TeamsView } from "./features/teams/TeamsView";
@@ -23,6 +26,7 @@ import { BookingModal } from "./components/booking/BookingModal";
 import { OrgProvisioningModal } from "./components/onboarding/OrgProvisioningModal";
 import { AuthModal } from "./components/auth/AuthModal";
 import { OrgLoginPage } from "./components/auth/OrgLoginPage";
+import { SetupWizardView } from "./components/setup/SetupWizardView";
 import { CompleteProfileModal } from "./components/auth/CompleteProfileModal";
 import { AppLoadingSkeleton } from "./components/common/Skeletons";
 import { PortalFooter } from "./components/common/PortalFooter";
@@ -35,7 +39,9 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="portal-shell min-h-screen flex flex-col font-sans transition-colors overflow-x-clip w-full max-w-full">
-      {viewMode === "landing" ? (
+      {viewMode === "setup" ? (
+        <SetupWizardView />
+      ) : viewMode === "landing" ? (
         <LandingView />
       ) : viewMode === "login" ? (
         <OrgLoginPage />
@@ -66,8 +72,11 @@ const MainContent: React.FC = () => {
                     {activeTab === "admin-rooms" && <AdminRoomsView />}
                     {activeTab === "admin-bookings" && <AdminBookingsView />}
                     {activeTab === "admin-rbac" && <AdminRbacView />}
-                    {activeTab === "access-control" && <AccessControlView />}
-                    {activeTab === "admin-settings" && <AdminSettingsView />}
+                    {isAdminSettingsTab(activeTab) && (
+                      <AdminSettingsView
+                        section={sectionFromAdminSettingsTab(activeTab)}
+                      />
+                    )}
                     {activeTab === "admin-notifications" && (
                       <AdminNotificationsView />
                     )}
