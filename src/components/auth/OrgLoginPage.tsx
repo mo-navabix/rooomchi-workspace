@@ -150,7 +150,12 @@ export const OrgLoginPage: React.FC = () => {
             <div className="relative z-10 space-y-6">
               {currentOrg ? (
                 <div className="flex items-center gap-3">
-                  <OrgLogoBadge logo={currentOrg.logo} name={currentOrg.name} size="lg" />
+                  <OrgLogoBadge
+                    logo={currentOrg.logo}
+                    logoDark={currentOrg.settings?.logoDark}
+                    name={currentOrg.name}
+                    size="lg"
+                  />
                   <div>
                     <p className="text-xs text-white/75 font-medium">ورود پرسنل</p>
                     <h2 className="text-lg font-bold">{currentOrg.name}</h2>
@@ -210,7 +215,12 @@ export const OrgLoginPage: React.FC = () => {
             <div className="lg:hidden mb-6 flex items-center gap-3">
               {currentOrg ? (
                 <>
-                  <OrgLogoBadge logo={currentOrg.logo} name={currentOrg.name} size="md" />
+                  <OrgLogoBadge
+                    logo={currentOrg.logo}
+                    logoDark={currentOrg.settings?.logoDark}
+                    name={currentOrg.name}
+                    size="md"
+                  />
                   <div>
                     <p className="text-[11px] text-slate-500">سازمان</p>
                     <p className="text-sm font-bold">{currentOrg.name}</p>

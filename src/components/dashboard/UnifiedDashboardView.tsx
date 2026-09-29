@@ -122,6 +122,7 @@ export const UnifiedDashboardView: React.FC = () => {
     openBookingModal,
     can,
     userRole,
+    notifications: appNotifications,
   } = useApp();
 
   const canManageTeams =
@@ -197,23 +198,43 @@ export const UnifiedDashboardView: React.FC = () => {
     });
   }, [todayBookings, orgUsers, usersByEmail]);
 
-  const notifications = [
-    { text: "جلسه جدید ایجاد شد", time: "۱۰ دقیقه پیش", tone: "emerald" },
-    { text: "علی کریمی به تیم اضافه شد", time: "۱ ساعت پیش", tone: "sky" },
-    { text: "یادآوری جلسه فردا", time: "۳ ساعت پیش", tone: "amber" },
-  ];
+  const teamCards = teams.slice(0, 3);
 
-  const teamCards = teams.length > 0 ? teams.slice(0, 3) : [
-    { id: "t1", name: "مارکتینگ", memberCount: 8 },
-    { id: "t2", name: "طراحی", memberCount: 6 },
-    { id: "t3", name: "محصول", memberCount: 5 },
-  ];
+  const memberCount = useMemo(() => {
+    const ids = new Set<string>();
+    for (const t of teams) {
+      for (const m of t.members ?? []) ids.add(m.userId);
+    }
+    return ids.size;
+  }, [teams]);
+
+  const formatNotifTime = (iso: string) => {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return "اکنون";
+    if (mins < 60) return `${toPersianDigits(mins)} دقیقه پیش`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${toPersianDigits(hours)} ساعت پیش`;
+    const days = Math.floor(hours / 24);
+    return `${toPersianDigits(days)} روز پیش`;
+  };
+
+  const dashboardNotifications = appNotifications.slice(0, 5).map((n) => ({
+    id: n.id,
+    text: n.title,
+    time: formatNotifTime(n.createdAt),
+    tone:
+      n.type === "meeting_booked"
+        ? "emerald"
+        : n.type === "meeting_reminder"
+          ? "amber"
+          : "sky",
+  }));
 
   const utilization = stats?.utilizationRate ?? 0;
   const todayCount = todayBookings.length || stats?.todayBookingsCount || 0;
   const monthlyBookings = stats?.thisMonthBookingsCount ?? 0;
-  const teamCount = teams.length || 5;
-  const memberCount = orgUsers.length > 0 ? orgUsers.length * 6 : 32;
+  const teamCount = teams.length;
 
   if (isLoading) {
     return <UnifiedDashboardSkeleton />;
@@ -507,6 +528,11 @@ export const UnifiedDashboardView: React.FC = () => {
             )}
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1">
+            {teamCards.length === 0 && (
+              <p className="text-xs text-slate-500 py-4 w-full text-center">
+                هنوز تیمی ثبت نشده است.
+              </p>
+            )}
             {teamCards.map((t, idx) => {
               const Icon = TEAM_ICONS[idx % TEAM_ICONS.length];
               const count =
@@ -546,14 +572,7 @@ export const UnifiedDashboardView: React.FC = () => {
             اعضای فعال
           </h2>
           <ul className="divide-y divide-slate-200/90 dark:divide-slate-700/60">
-            {(orgUsers.length > 0
-              ? orgUsers
-              : [
-                  { id: "1", name: "سارا حسینی", jobTitle: "طراح محصول" },
-                  { id: "2", name: "امیر کریمی", jobTitle: "توسعه‌دهنده" },
-                  { id: "3", name: "مریم احمدی", jobTitle: "مارکتینگ" },
-                ]
-            ).slice(0, 4).map((u) => (
+            {(orgUsers.length > 0 ? orgUsers : []).slice(0, 4).map((u) => (
               <li key={u.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                 <UserAvatar
                   user={u as User}
@@ -572,6 +591,9 @@ export const UnifiedDashboardView: React.FC = () => {
                 </div>
               </li>
             ))}
+            {orgUsers.length === 0 && (
+              <li className="py-6 text-center text-xs text-slate-500">عضو فعالی ثبت نشده است.</li>
+            )}
           </ul>
         </div>
 
@@ -581,8 +603,11 @@ export const UnifiedDashboardView: React.FC = () => {
             <h2 className="text-sm font-bold text-slate-900 dark:text-white">اعلان‌ها</h2>
           </div>
           <ul className="divide-y divide-slate-200/90 dark:divide-slate-700/60">
-            {notifications.map((n, i) => (
-              <li key={i} className="flex gap-3 py-3.5 first:pt-0 last:pb-0">
+            {dashboardNotifications.length === 0 && (
+              <li className="py-6 text-center text-xs text-slate-500">اعلانی نیست</li>
+            )}
+            {dashboardNotifications.map((n) => (
+              <li key={n.id} className="flex gap-3 py-3.5 first:pt-0 last:pb-0">
                 <span
                   className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
                     n.tone === "emerald"

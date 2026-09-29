@@ -135,8 +135,19 @@ export interface Organization {
     autoApprove: boolean;
     maxBookingHours: number;
     allowWeekend: boolean;
+    language?: 'fa' | 'en';
+    dateFormat?: 'jalali' | 'gregorian';
+    timezone?: string;
+    country?: string;
+    /** Per-building list of floor numbers used in room forms and filters */
+    buildingFloors?: Record<string, number[]>;
+    /** Optional logo for dark UI; falls back to `logo` on organization */
+    logoDark?: string;
   };
 }
+
+export type OrgLanguage = 'fa' | 'en';
+export type OrgCalendar = 'jalali' | 'gregorian';
 
 export interface Stats {
   totalRooms: number;

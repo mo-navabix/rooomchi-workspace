@@ -148,6 +148,7 @@ export const ProfileView: React.FC = () => {
             <OrgLogoBadge
               size="sm"
               logo={currentOrg.logo}
+              logoDark={currentOrg.settings?.logoDark}
               name={currentOrg.name}
             />
             <div className="text-right">

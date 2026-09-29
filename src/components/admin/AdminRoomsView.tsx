@@ -45,6 +45,11 @@ import {
   Loader2,
 } from 'lucide-react';
 import { AdminRoomsSkeleton } from '../common/Skeletons';
+import { CampusStructurePanel } from './CampusStructurePanel';
+import {
+  resolveBuildingFloors,
+  type BuildingFloorsMap,
+} from '../../utils/buildingFloors';
 
 // Map icon string to Lucide component
 const getAmenityIcon = (iconName?: string) => {
@@ -122,7 +127,7 @@ const getAmenityShortName = (id: string, fullName: string) => {
 };
 
 export const AdminRoomsView: React.FC = () => {
-  const { currentOrg, showToast } = useApp();
+  const { currentOrg, showToast, updateCurrentOrgData } = useApp();
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -165,6 +170,10 @@ export const AdminRoomsView: React.FC = () => {
   // Modal to view detailed amenities for a room
   const [viewAmenitiesRoom, setViewAmenitiesRoom] = useState<Room | null>(null);
 
+  const [campusBuildings, setCampusBuildings] = useState<string[]>([]);
+  const [campusFloors, setCampusFloors] = useState<BuildingFloorsMap>({});
+  const [campusSaving, setCampusSaving] = useState(false);
+
   const fetchRooms = async () => {
     if (!currentOrg) return;
     try {
@@ -183,13 +192,54 @@ export const AdminRoomsView: React.FC = () => {
     fetchRooms();
   }, [currentOrg]);
 
+  useEffect(() => {
+    if (!currentOrg) return;
+    const buildings =
+      currentOrg.buildings?.length ? [...currentOrg.buildings] : ['ساختمان مرکزی'];
+    setCampusBuildings(buildings);
+    setCampusFloors(resolveBuildingFloors(buildings, currentOrg.settings, rooms));
+  }, [currentOrg]);
+
+  const saveCampusStructure = async () => {
+    if (!currentOrg) return;
+    if (!campusBuildings.length) {
+      showToast('حداقل یک ساختمان تعریف کنید', 'error');
+      return;
+    }
+    setCampusSaving(true);
+    try {
+      const updated = await ApiService.updateOrganization(currentOrg.id, {
+        buildings: campusBuildings,
+        settings: {
+          ...currentOrg.settings,
+          buildingFloors: campusFloors,
+        },
+      });
+      updateCurrentOrgData({
+        buildings: updated.buildings ?? campusBuildings,
+        settings: updated.settings ?? {
+          ...currentOrg.settings,
+          buildingFloors: campusFloors,
+        },
+      });
+      showToast('ساختمان‌ها و طبقات ذخیره شد', 'success');
+    } catch (e) {
+      console.error(e);
+      showToast('خطا در ذخیره ساختمان و طبقات', 'error');
+    } finally {
+      setCampusSaving(false);
+    }
+  };
+
   const handleOpenAddModal = () => {
     setEditingRoom(null);
     setName('');
     setCode(`RM-${Math.floor(100 + Math.random() * 900)}`);
     setCapacity(10);
     setFloor(1);
-    setBuilding(currentOrg?.buildings?.[0] || 'ساختمان مرکزی');
+    const defaultBuilding = campusBuildings[0] || currentOrg?.buildings?.[0] || 'ساختمان مرکزی';
+    setBuilding(defaultBuilding);
+    setFloor((campusFloors[defaultBuilding] ?? [1])[0]);
     setSelectedAmenities(['projector', 'whiteboard', 'wifi']);
     setRequiresApproval(false);
     setImageUrl(
@@ -415,11 +465,16 @@ export const AdminRoomsView: React.FC = () => {
 
   // Unique buildings list
   const buildingOptions = useMemo(() => {
-    const list = new Set<string>();
-    currentOrg?.buildings?.forEach((b) => list.add(b));
+    const list = new Set<string>(campusBuildings);
     rooms.forEach((r) => list.add(r.building));
     return Array.from(list);
-  }, [currentOrg, rooms]);
+  }, [campusBuildings, rooms]);
+
+  const floorOptionsForBuilding = useMemo(() => {
+    const fromCampus = campusFloors[building];
+    if (fromCampus?.length) return fromCampus;
+    return resolveBuildingFloors([building], currentOrg?.settings, rooms)[building] ?? [1];
+  }, [building, campusFloors, currentOrg?.settings, rooms]);
 
   // Stats
   const totalCount = rooms.length;
@@ -510,6 +565,19 @@ export const AdminRoomsView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <CampusStructurePanel
+        buildings={campusBuildings}
+        buildingFloors={campusFloors}
+        rooms={rooms}
+        saving={campusSaving}
+        onChange={(b, f) => {
+          setCampusBuildings(b);
+          setCampusFloors(f);
+        }}
+        onSave={saveCampusStructure}
+        onNotify={(message, type) => showToast(message, type)}
+      />
 
       {/* Filter and Search Bar */}
       <div className="bg-white dark:bg-[#1E293B] p-4 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 transition-colors">
@@ -864,35 +932,48 @@ export const AdminRoomsView: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ساختمان
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={building}
+                      onChange={(e) => {
+                        const b = e.target.value;
+                        setBuilding(b);
+                        const floors = campusFloors[b] ?? resolveBuildingFloors([b], currentOrg?.settings, rooms)[b] ?? [1];
+                        if (!floors.includes(floor)) setFloor(floors[0]);
+                      }}
+                      className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden cursor-pointer"
+                    >
+                      {buildingOptions.map((b) => (
+                        <option key={b} value={b}>
+                          {b}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     طبقه
                   </label>
-                  <input
-                    type="number"
-                    value={floor}
-                    onChange={(e) => setFloor(Number(e.target.value))}
-                    className="w-full text-xs px-3 py-2.5 border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  ساختمان
-                </label>
-                <div className="relative">
-                  <select
-                    value={building}
-                    onChange={(e) => setBuilding(e.target.value)}
-                    className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden cursor-pointer"
-                  >
-                    {buildingOptions.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <div className="relative">
+                    <select
+                      value={floor}
+                      onChange={(e) => setFloor(Number(e.target.value))}
+                      className="w-full text-xs pr-3 pl-8 py-2.5 appearance-none border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:ring-2 focus:ring-[var(--brand-primary-light)] focus:outline-hidden cursor-pointer"
+                      required
+                    >
+                      {floorOptionsForBuilding.map((f) => (
+                        <option key={f} value={f}>
+                          طبقه {f}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
                 </div>
               </div>
 

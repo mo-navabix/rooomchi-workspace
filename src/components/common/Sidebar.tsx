@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useApp } from "../../context/AppContext";
 import { getRoleMeta, normalizeUserRole } from "../../constants/rbac";
 import { UserAvatar } from "./UserAvatar";
-import { Logo } from "./Logo";
+import { OrgPortalBrand } from "./OrgPortalBrand";
 import {
   LayoutDashboard,
   Calendar,
@@ -82,6 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     theme,
     toggleTheme,
     logout,
+    currentOrg,
   } = useApp();
 
   // Collapsed state
@@ -304,13 +305,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               type="button"
               onClick={() => goTo("dashboard")}
               className="flex items-center cursor-pointer text-right group p-1 rounded-xl hover:opacity-95 transition-opacity"
-              title="سامانه روم‌چی"
+              title={currentOrg?.name || "سامانه روم‌چی"}
             >
-              {collapsed ? (
-                <Logo variant="mark" size="sm" />
-              ) : (
-                <Logo variant="horizontal" size="sm" />
-              )}
+              <OrgPortalBrand collapsed={collapsed} />
             </button>
 
             {/* Quick Action Icons: Search & Collapse + Mobile Close */}

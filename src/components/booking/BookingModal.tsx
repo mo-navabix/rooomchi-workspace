@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Room, Booking } from '../../types';
-import { PersianDatePicker } from '../common/PersianDatePicker';
+import { OrgDatePicker } from '../common/OrgDatePicker';
 import { TimePicker } from '../common/TimePicker';
-import { formatGregorianIsoLocal, toPersianDigits } from '../../utils/jalali';
+import { formatGregorianIsoLocal } from '../../utils/jalali';
 import { X, Calendar, AlertTriangle, ChevronDown, UserPlus } from 'lucide-react';
 import { ParticipantSelector } from './ParticipantSelector';
 import { triggerBookingNotifications } from '../../utils/notificationDispatcher';
@@ -24,6 +24,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     isRegistrationComplete,
     showToast,
     addNotification,
+    orgLocale,
   } = useApp();
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
@@ -131,7 +132,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
 
     if (conflict) {
       setConflictMessage(
-        `این اتاق از ${toPersianDigits(conflict.startTime)} تا ${toPersianDigits(conflict.endTime)} رزرو است.`
+        `این اتاق از ${orgLocale.formatDigits(conflict.startTime)} تا ${orgLocale.formatDigits(conflict.endTime)} رزرو است.`
       );
     } else {
       setConflictMessage(null);
@@ -334,9 +335,9 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
             )}
           </label>
 
-          <PersianDatePicker
+          <OrgDatePicker
             id="input-booking-date"
-            label="تاریخ"
+            label={orgLocale.language === 'en' ? 'Date' : 'تاریخ'}
             value={date}
             onChange={setDate}
             required

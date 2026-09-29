@@ -1,5 +1,5 @@
 import { normalizeUserRole, normalizeUserStatus } from '../constants/rbac';
-import { Booking, Organization, Room, Stats, User, UserRole, Team } from '../types';
+import { AppNotification, Booking, Organization, Room, Stats, User, UserRole, Team } from '../types';
 
 const API_BASE = '/api';
 
@@ -768,5 +768,44 @@ export class ApiService {
       body: JSON.stringify(body),
     });
     return res.json() as Promise<{ ok: boolean; message: string }>;
+  }
+
+  static async getNotifications(): Promise<AppNotification[]> {
+    const res = await fetch(`${API_BASE}/notifications`, { headers: getAuthHeaders() });
+    if (!res.ok) return [];
+    return res.json();
+  }
+
+  static async createNotification(
+    item: Omit<AppNotification, 'id' | 'createdAt' | 'isRead' | 'userId'>,
+  ): Promise<AppNotification | null> {
+    const res = await fetch(`${API_BASE}/notifications`, {
+      method: 'POST',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(item),
+    });
+    if (!res.ok) return null;
+    return res.json();
+  }
+
+  static async markNotificationRead(id: string): Promise<void> {
+    await fetch(`${API_BASE}/notifications/${id}/read`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+    });
+  }
+
+  static async markAllNotificationsRead(): Promise<void> {
+    await fetch(`${API_BASE}/notifications/read-all`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+    });
+  }
+
+  static async clearNotifications(): Promise<void> {
+    await fetch(`${API_BASE}/notifications`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
   }
 }

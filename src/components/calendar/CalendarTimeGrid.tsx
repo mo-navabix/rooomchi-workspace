@@ -115,7 +115,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
             key={d.isoDate}
             className={`p-2.5 sm:p-3.5 border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 ${
               d.isToday
-                ? "bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-black"
+                ? "bg-[rgb(var(--brand-primary-rgb)/0.14)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-black ring-1 ring-inset ring-[rgb(var(--brand-primary-rgb)/0.22)] dark:ring-[rgb(var(--brand-primary-rgb)/0.28)]"
                 : ""
             }`}
           >
@@ -126,7 +126,13 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] inline-block animate-pulse" />
                 )}
               </div>
-              <span className="text-[10px] font-mono text-slate-400">
+              <span
+                className={`text-[10px] font-mono ${
+                  d.isToday
+                    ? "text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-bold"
+                    : "text-slate-400 dark:text-slate-500"
+                }`}
+              >
                 {formatToJalali(d.isoDate).split("/")[2]}
               </span>
             </div>
@@ -158,7 +164,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
               key={d.isoDate}
               className={`relative border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 ${
                 d.isToday
-                  ? "bg-brand-soft/25 dark:bg-[rgb(var(--brand-primary-rgb)/0.08)]"
+                  ? "bg-[rgb(var(--brand-primary-rgb)/0.07)] dark:bg-[rgb(var(--brand-primary-rgb)/0.08)] shadow-[inset_0_0_0_1px_rgb(var(--brand-primary-rgb)/0.12)] dark:shadow-[inset_0_0_0_1px_rgb(var(--brand-primary-rgb)/0.18)]"
                   : "bg-white dark:bg-[#1E293B]"
               }`}
               style={{ height: GRID_HEIGHT_PX }}

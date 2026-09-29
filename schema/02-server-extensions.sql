@@ -1,5 +1,8 @@
 -- Extra columns & tables for Express API (safe to re-run on existing DBs)
 
+-- Logos may be data URLs / SVG (was VARCHAR(32) for emoji only)
+ALTER TABLE organizations ALTER COLUMN logo TYPE TEXT;
+
 ALTER TABLE users
   ADD COLUMN IF NOT EXISTS is_profile_complete BOOLEAN DEFAULT true,
   ADD COLUMN IF NOT EXISTS is_permanent_admin BOOLEAN DEFAULT false;

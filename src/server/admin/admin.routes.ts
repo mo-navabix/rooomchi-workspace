@@ -71,8 +71,8 @@ function orgAdminPayload(org: Awaited<ReturnType<typeof store.getOrganizationByI
     slug: org.slug,
     country: settings.country ?? "IR",
     timezone: settings.timezone ?? "Asia/Tehran",
-    language: settings.language ?? "fa",
     dateFormat: settings.dateFormat ?? "jalali",
+    logoDark: settings.logoDark ?? "",
     workHours: org.workHours,
     bookingSettings: org.settings,
   };
@@ -98,8 +98,8 @@ export function registerAdminRoutes(app: Express): void {
       ...(beforeOrg.settings || {}),
       country: body.country,
       timezone: body.timezone,
-      language: body.language,
       dateFormat: body.dateFormat,
+      logoDark: body.logoDark,
       autoApprove: (body.bookingSettings as Record<string, unknown>)?.autoApprove ?? beforeOrg.settings?.autoApprove,
       maxBookingHours:
         (body.bookingSettings as Record<string, unknown>)?.maxBookingHours ??
@@ -109,16 +109,29 @@ export function registerAdminRoutes(app: Express): void {
         beforeOrg.settings?.allowWeekend,
     };
 
-    const updated = await store.patchOrganization(caller.organizationId, {
-      name: body.name as string,
-      code: body.code as string,
-      domain: body.domain as string,
-      contactEmail: body.contactEmail as string,
-      logo: body.logo as string,
-      primaryColor: body.primaryColor as string,
-      workHours: body.workHours as Organization["workHours"],
-      settings: settings as unknown as Organization["settings"],
-    });
+    let updated: Awaited<ReturnType<typeof store.getOrganizationById>>;
+    try {
+      updated = await store.patchOrganization(caller.organizationId, {
+        name: body.name as string,
+        code: body.code as string,
+        domain: body.domain as string,
+        contactEmail: body.contactEmail as string,
+        logo: body.logo as string,
+        primaryColor: body.primaryColor as string,
+        workHours: body.workHours as Organization["workHours"],
+        settings: settings as unknown as Organization["settings"],
+      });
+    } catch (err: unknown) {
+      const pg = err as { code?: string };
+      if (pg.code === "22001") {
+        return res.status(400).json({
+          error:
+            "لوگو برای ستون فعلی دیتابیس بیش از حد طولانی است. سرور را ری‌استارت کنید یا در ترمینال پروژه بزنید: npm run db:fix-logo",
+        });
+      }
+      throw err;
+    }
+    if (!updated) return res.status(404).json({ error: "سازمان یافت نشد" });
 
     await writeConfigAudit({
       req,

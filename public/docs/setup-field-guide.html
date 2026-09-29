@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>راهنمای فیلدهای راه‌اندازی اولیه روم‌چی</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      line-height: 1.75;
+      color: #0f172a;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+      font-size: 13px;
+    }
+    h1 { font-size: 1.35rem; margin: 0 0 0.5rem; color: #0f786e; }
+    h2 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.35rem; }
+    h3 { font-size: 0.95rem; margin: 1rem 0 0.35rem; color: #334155; }
+    p, li { margin: 0.35rem 0; }
+    ul { padding-right: 1.25rem; }
+    table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; font-size: 12px; }
+    th, td { border: 1px solid #e2e8f0; padding: 0.45rem 0.6rem; text-align: right; vertical-align: top; }
+    th { background: #f1f5f9; font-weight: 700; width: 28%; }
+    .meta { color: #64748b; font-size: 12px; margin-bottom: 1.5rem; }
+    .note { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.65rem 0.85rem; border-radius: 8px; margin: 1rem 0; font-size: 12px; }
+    @media print {
+      body { padding: 1rem; font-size: 11px; }
+      h2 { page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>راهنمای فیلدهای ویزارد راه‌اندازی اولیه (Setup)</h1>
+  <p class="meta">سامانه روم‌چی — نسخه راهنما برای نصب self-hosted · مسیر: <code dir="ltr">/setup</code></p>
+
+  <p>
+    این سند توضیح می‌دهد هر فیلد در مراحل راه‌اندازی اولیه برای چه استفاده می‌شود.
+    پس از اتمام ویزارد، بسیاری از این تنظیمات از بخش «مدیریت و تنظیمات سازمان» هم قابل تغییر است.
+  </p>
+
+  <div class="note">
+    <strong>نکته:</strong> مراحل SMTP و ذخیره‌سازی اختیاری‌اند؛ می‌توانید خالی بگذارید و بعداً تکمیل کنید.
+    مرحلهٔ احراز هویت را مطابق سیاست IT سازمان انتخاب کنید.
+  </div>
+
+  <h2>مرحله ۱ — پیکربندی سازمان</h2>
+  <table>
+    <tr><th>نام سازمان</th><td>نام رسمی شرکت یا واحد که در پورتال و گزارش‌ها نمایش داده می‌شود. <strong>الزامی.</strong></td></tr>
+    <tr><th>کد سازمان</th><td>شناسه کوتاه یکتا (مثلاً DEMIS). برای تفکیک tenant، لینک ورود و یکپارچه‌سازی‌ها استفاده می‌شود. <strong>الزامی.</strong></td></tr>
+    <tr><th>دامنه شرکت</th><td>دامنه ایمیل سازمان (مثلاً company.com)؛ برای اعتبارسنجی دامنه Google و تنظیمات SSO. <strong>الزامی.</strong></td></tr>
+    <tr><th>ایمیل شرکت</th><td>ایمیل تماس رسمی سازمان (پشتیبانی، اعلان‌های سیستمی). <strong>الزامی.</strong></td></tr>
+    <tr><th>منطقه زمانی</th><td>منطقه IANA (مثلاً Asia/Tehran) برای زمان جلسات، رزرو و گزارش‌ها.</td></tr>
+    <tr><th>کشور</th><td>کشور محل استقرار؛ در تنظیمات محلی و گزارش‌ها استفاده می‌شود.</td></tr>
+  </table>
+
+  <h2>مرحله ۲ — مدیر اول سیستم</h2>
+  <p>اولین کاربر با دسترسی کامل (Super Admin سازمان) ساخته می‌شود.</p>
+  <table>
+    <tr><th>نام کامل</th><td>نام نمایشی مدیر در پورتال. <strong>الزامی.</strong></td></tr>
+    <tr><th>ایمیل</th><td>ایمیل ورود و دریافت اعلان‌ها. <strong>الزامی.</strong></td></tr>
+    <tr><th>نام کاربری</th><td>شناسه ورود (در کنار ایمیل). <strong>الزامی.</strong></td></tr>
+    <tr><th>رمز عبور</th><td>حداقل ۸ کاراکتر؛ پس از نصب قابل تغییر از پروفایل. <strong>الزامی.</strong></td></tr>
+    <tr><th>تأیید رمز عبور</th><td>باید با رمز عبور یکسان باشد. <strong>الزامی.</strong></td></tr>
+  </table>
+
+  <h2>مرحله ۳ — احراز هویت</h2>
+  <h3>گزینه‌های کلی</h3>
+  <table>
+    <tr><th>ورود محلی</th><td>ورود با ایمیل/نام کاربری و رمز ذخیره‌شده در روم‌چی. معمولاً برای شروع فعال است.</td></tr>
+    <tr><th>ثبت‌نام خودکار پرسنل</th><td>اگر فعال باشد، کاربران جدید می‌توانند خود ثبت‌نام کنند؛ در غیر این صورت فقط دعوت/ایجاد توسط ادمین.</td></tr>
+    <tr><th>LDAP / AD</th><td>ورود از Active Directory یا LDAP سازمان؛ فیلدهای اتصال در صورت فعال‌سازی الزامی‌اند.</td></tr>
+    <tr><th>Google OAuth</th><td>ورود با Google Workspace؛ نیاز به Client ID و Secret از کنسول Google.</td></tr>
+  </table>
+  <h3>فیلدهای LDAP (در صورت فعال‌سازی)</h3>
+  <table>
+    <tr><th>LDAP URL</th><td>آدرس سرور، مثلاً <code dir="ltr">ldap://dc.company.local:389</code></td></tr>
+    <tr><th>Bind DN</th><td>کاربر سرویس برای جستجو در دایرکتوری</td></tr>
+    <tr><th>Bind Password</th><td>رمز حساب Bind</td></tr>
+    <tr><th>Base DN</th><td>ریشه جستجوی کاربران، مثلاً <code dir="ltr">DC=company,DC=local</code></td></tr>
+    <tr><th>User filter</th><td>الگوی جستجو؛ <code dir="ltr">{username}</code> با ورودی کاربر جایگزین می‌شود</td></tr>
+  </table>
+  <h3>فیلدهای Google OAuth</h3>
+  <table>
+    <tr><th>Client ID</th><td>شناسه OAuth از Google Cloud Console</td></tr>
+    <tr><th>Client Secret</th><td>رمز محرمانه OAuth</td></tr>
+    <tr><th>Redirect URL</th><td>آدرس بازگشت؛ معمولاً <code dir="ltr">https://دامنه-شما/api/auth/google/callback</code></td></tr>
+  </table>
+
+  <h2>مرحله ۴ — SMTP (اختیاری)</h2>
+  <p>برای ارسال ایمیل دعوت، اعلان رزرو و یادآوری. اگر Host خالی باشد، این مرحله رد می‌شود.</p>
+  <table>
+    <tr><th>Host</th><td>آدرس سرور SMTP</td></tr>
+    <tr><th>Port</th><td>پورت (معمولاً 587 TLS یا 465 SSL)</td></tr>
+    <tr><th>Username / Password</th><td>اعتبار SMTP</td></tr>
+    <tr><th>From Email</th><td>آدرس فرستنده در ایمیل‌های خروجی</td></tr>
+    <tr><th>From Name</th><td>نام نمایشی فرستنده</td></tr>
+  </table>
+
+  <h2>مرحله ۵ — ذخیره‌سازی فایل</h2>
+  <table>
+    <tr><th>مسیر آپلود (Local)</th><td>پوشه روی سرور برای لوگو و فایل‌های آپلودی (پیش‌فرض <code dir="ltr">./uploads</code>). در نسخه‌های بعد S3/MinIO پشتیبانی می‌شود.</td></tr>
+  </table>
+
+  <h2>مرحله ۶ — بازبینی و اتمام</h2>
+  <p>خلاصه تنظیمات را بررسی کنید. با «Complete Installation» سازمان، ادمین و تنظیمات در دیتابیس ثبت و ویزارد بسته می‌شود؛ ورود با حساب مدیر ایجادشده فعال است.</p>
+
+  <h2>پس از نصب</h2>
+  <ul>
+    <li>لوگو، رنگ برند، تقویم و ساختمان‌ها: تنظیمات سازمان در پنل ادمین</li>
+    <li>اتاق‌ها و ساختمان: مدیریت اتاق‌ها</li>
+    <li>کاربران و نقش‌ها: کاربران و سطوح دسترسی</li>
+  </ul>
+
+  <p class="meta" style="margin-top: 2rem;">© روم‌چی — راهنمای فنی نصب</p>
+</body>
+</html>

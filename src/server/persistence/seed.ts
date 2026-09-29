@@ -229,7 +229,7 @@ export async function seedDevDataIfNeeded(): Promise<void> {
 
 export async function syncDatabase(options: SyncDatabaseOptions = {}): Promise<void> {
   const schema = options.schema !== false;
-  const reference = options.reference !== false;
+  const reference = options.reference === true;
   const demoUsers = options.demoUsers !== false;
 
   if (schema) {

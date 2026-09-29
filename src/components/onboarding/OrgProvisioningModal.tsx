@@ -108,24 +108,7 @@ export const OrgProvisioningModal: React.FC = () => {
       amenities: string[];
       requiresApproval: boolean;
     }>
-  >([
-    {
-      name: 'اتاق جلسات اصلی',
-      code: 'M-101',
-      capacity: 10,
-      floor: 1,
-      amenities: ['projector', 'whiteboard', 'videoconf', 'wifi'],
-      requiresApproval: false,
-    },
-    {
-      name: 'اتاق کنفرانس هیئت مدیره',
-      code: 'VIP-201',
-      capacity: 20,
-      floor: 2,
-      amenities: ['projector', 'smart_tv', 'whiteboard', 'videoconf', 'catering', 'mic_system'],
-      requiresApproval: true,
-    },
-  ]);
+  >([]);
 
   if (!isProvisioningModalOpen) return null;
 
@@ -169,7 +152,6 @@ export const OrgProvisioningModal: React.FC = () => {
   };
 
   const handleRemoveCustomRoom = (index: number) => {
-    if (initialRooms.length <= 1) return;
     setInitialRooms(initialRooms.filter((_, i) => i !== index));
   };
 
@@ -707,11 +689,16 @@ export const OrgProvisioningModal: React.FC = () => {
                   className="px-3 py-1.5 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.22)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>افزودن اتاق دیگر</span>
+                  <span>{initialRooms.length === 0 ? 'افزودن اتاق' : 'افزودن اتاق دیگر'}</span>
                 </button>
               </div>
 
               <div className="space-y-3">
+                {initialRooms.length === 0 && (
+                  <p className="text-center text-xs text-slate-500 py-6 border border-dashed border-slate-200 dark:border-slate-600 rounded-xl">
+                    هنوز اتاقی تعریف نشده. می‌توانید بعداً از «مدیریت اتاق‌ها» هم اضافه کنید.
+                  </p>
+                )}
                 {initialRooms.map((room, idx) => (
                   <div
                     key={idx}
@@ -724,7 +711,7 @@ export const OrgProvisioningModal: React.FC = () => {
                         </span>
                         <span>{room.name || `اتاق ${idx + 1}`}</span>
                       </div>
-                      {initialRooms.length > 1 && (
+                      {initialRooms.length > 0 && (
                         <button
                           type="button"
                           onClick={() => handleRemoveCustomRoom(idx)}

@@ -12,80 +12,16 @@ import {
   X,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
-import { toPersianDigits } from "../../utils/jalali";
+import { getPortalPageMeta } from "../../i18n/portalUi";
 
 type HeaderProps = {
   onOpenSidebar: () => void;
 };
 
-const PAGE_META: Partial<
-  Record<ActiveTab, { title: string; subtitle: string }>
-> = {
-  dashboard: {
-    title: "داشبورد",
-    subtitle: "نمایی از وضعیت جلسات و فعالیت‌های شما",
-  },
-  calendar: { title: "تقویم جلسات", subtitle: "برنامه زمانی اتاق‌ها و جلسات" },
-  rooms: { title: "اتاق‌ها", subtitle: "جستجو و رزرو سالن‌های جلسه" },
-  "my-bookings": { title: "جلسات من", subtitle: "رزروها و جلسات شما" },
-  teams: { title: "تیم‌ها", subtitle: "مدیریت تیم‌ها و اعضا" },
-  analytics: { title: "گزارش‌ها و آمار", subtitle: "تحلیل بهره‌وری و استفاده از فضا" },
-  "admin-rooms": {
-    title: "مدیریت اتاق‌ها",
-    subtitle: "تعریف و ویرایش اتاق‌های سازمان",
-  },
-  "admin-bookings": {
-    title: "نظارت رزروها",
-    subtitle: "تأیید و پیگیری درخواست‌ها",
-  },
-  "admin-rbac": { title: "کاربران", subtitle: "نقش‌ها و دسترسی پرسنل" },
-  "admin-settings-org": {
-    title: "تنظیمات سازمان",
-    subtitle: "نام، برند، دامنه و تقویم",
-  },
-  "admin-settings-auth": {
-    title: "احراز هویت",
-    subtitle: "Local، LDAP و Google OAuth",
-  },
-  "admin-settings-integrations": {
-    title: "یکپارچه‌سازی",
-    subtitle: "SMTP و ذخیره‌سازی فایل",
-  },
-  "admin-settings-system": {
-    title: "تنظیمات سامانه",
-    subtitle: "URL، نشست و نگهداری",
-  },
-  "admin-settings-audit": {
-    title: "ممیزی تنظیمات",
-    subtitle: "تاریخچه تغییرات پیکربندی",
-  },
-  "admin-notifications": {
-    title: "مدیریت اعلان‌ها",
-    subtitle: "پیکربندی SMS، تلگرام و اعلان داخلی",
-  },
-  "admin-support-tickets": {
-    title: "تیکت‌های پشتیبانی",
-    subtitle: "بررسی و پاسخ به درخواست‌های پرسنل",
-  },
-  profile: { title: "پروفایل من", subtitle: "اطلاعات شخصی و حساب کاربری" },
-  "support-ticket": {
-    title: "پشتیبانی",
-    subtitle: "ثبت درخواست؛ پاسخ تیم در ساعات اداری",
-  },
-};
-
-function getPageMeta(activeTab: ActiveTab): { title: string; subtitle: string } {
-  return (
-    PAGE_META[activeTab] ?? {
-      title: "روم‌چی",
-      subtitle: "سامانه رزرو اتاق جلسات",
-    }
-  );
-}
-
 export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
   const {
     activeTab,
+    orgLocale,
     setActiveTab,
     isAuthenticated,
     goToLogin,
@@ -100,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
 
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  const page = getPageMeta(activeTab);
+  const page = getPortalPageMeta(activeTab, 'fa');
   const isDark = theme === "dark";
 
   return (
@@ -163,8 +99,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
               {unreadNotificationsCount > 0 && (
                 <span className="absolute top-1 left-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center leading-none">
                   {unreadNotificationsCount > 9
-                    ? `${toPersianDigits(9)}+`
-                    : toPersianDigits(unreadNotificationsCount)}
+                    ? `${orgLocale.formatDigits(9)}+`
+                    : orgLocale.formatDigits(unreadNotificationsCount)}
                 </span>
               )}
             </button>

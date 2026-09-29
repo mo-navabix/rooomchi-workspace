@@ -62,8 +62,11 @@ export function registerSetupRoutes(app: Express): void {
     if (!payload?.organization?.name || !payload?.admin?.email || !payload?.admin?.password) {
       return res.status(400).json({ error: "اطلاعات سازمان و مدیر الزامی است" });
     }
-    const confirmPassword = req.body?.admin?.confirmPassword as string | undefined;
-    if (confirmPassword && payload.admin.password !== confirmPassword) {
+    const confirmPassword = String(req.body?.admin?.confirmPassword ?? "");
+    if (!confirmPassword) {
+      return res.status(400).json({ error: "تأیید رمز عبور الزامی است" });
+    }
+    if (payload.admin.password !== confirmPassword) {
       return res.status(400).json({ error: "رمز عبور و تأیید آن یکسان نیست" });
     }
     if (payload.admin.password.length < 8) {

@@ -101,3 +101,5 @@ export interface TeamMemberRecord {
 }
 
 export type VerificationPurpose = "login_otp" | "password_reset";
+
+export type { AppNotification } from "../../libs/shared-types/src/index";

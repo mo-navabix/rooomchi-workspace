@@ -29,6 +29,14 @@ import {
   saveNotificationsForUser,
 } from "../utils/userNotificationsStorage";
 import {
+  formatOrgDate,
+  formatOrgDateLong,
+  formatOrgDigits,
+  getOrgLocalePreferences,
+  type OrgLocalePreferences,
+} from "../utils/orgLocale";
+import { tPortal } from "../i18n/portalUi";
+import {
   navigateToAppHome,
   navigateToLandingPath,
   navigateToLoginPath,
@@ -61,6 +69,12 @@ interface AppContextType {
   // Tenancy & Data
   organizations: Organization[];
   currentOrg: Organization | null;
+  orgLocale: OrgLocalePreferences & {
+    formatDate: (iso?: string | null) => string;
+    formatDateLong: (iso?: string | null) => string;
+    formatDigits: (n: number | string | null | undefined) => string;
+    t: (key: string) => string;
+  };
   activeTab: ActiveTab;
   isLoading: boolean;
   toast: ToastInfo | null;
@@ -391,6 +405,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       applyOrgBrandTheme(currentOrg?.primaryColor);
     }
   }, [viewMode, currentOrg?.id, currentOrg?.primaryColor, theme]);
+
+  const orgLocalePrefs = useMemo(
+    () => getOrgLocalePreferences(currentOrg),
+    [currentOrg],
+  );
+
+  const orgLocale = useMemo(
+    () => ({
+      ...orgLocalePrefs,
+      formatDate: (iso?: string | null) => formatOrgDate(iso, orgLocalePrefs),
+      formatDateLong: (iso?: string | null) => formatOrgDateLong(iso, orgLocalePrefs),
+      formatDigits: (n: number | string | null | undefined) =>
+        formatOrgDigits(n, orgLocalePrefs.language),
+      t: (key: string) => tPortal(orgLocalePrefs.language, key),
+    }),
+    [orgLocalePrefs],
+  );
+
+  useEffect(() => {
+    if (viewMode === "landing" || viewMode === "setup") return;
+    document.documentElement.lang = "fa";
+    document.documentElement.dir = "rtl";
+  }, [viewMode]);
 
   // Deep-link: /login?org=... or legacy ?auth=login&org=...
   useEffect(() => {
@@ -804,9 +841,27 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       setNotifications([]);
       return;
     }
-    setNotifications(
-      loadNotificationsForUser(currentUser.id, currentUser.orgId || currentOrg?.id),
-    );
+    const userId = currentUser.id;
+    let cancelled = false;
+    (async () => {
+      try {
+        const fromApi = await ApiService.getNotifications();
+        if (cancelled) return;
+        if (fromApi.length > 0) {
+          setNotifications(fromApi);
+          saveNotificationsForUser(userId, fromApi);
+          return;
+        }
+      } catch {
+        /* offline / table missing */
+      }
+      if (!cancelled) {
+        setNotifications(loadNotificationsForUser(userId, currentUser.orgId || currentOrg?.id));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [currentUser?.id, currentUser?.orgId, currentOrg?.id]);
 
   const unreadNotificationsCount = useMemo(() => {
@@ -824,20 +879,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     (item: Omit<AppNotification, "id" | "createdAt" | "isRead">) => {
       if (!currentUser?.id) return;
       const userId = currentUser.id;
-      const newNotif: AppNotification = {
+      const payload = {
         ...item,
-        userId,
         orgId: item.orgId || currentUser.orgId || currentOrg?.id,
         userEmail: item.userEmail || currentUser.email,
-        id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-        isRead: false,
-        createdAt: new Date().toISOString(),
       };
-      setNotifications((prev) => {
-        const updated = [newNotif, ...prev];
-        persistNotifications(userId, updated);
-        return updated;
-      });
+      void (async () => {
+        const saved = await ApiService.createNotification(payload);
+        const newNotif: AppNotification = saved ?? {
+          ...payload,
+          userId,
+          id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        };
+        setNotifications((prev) => {
+          const updated = [newNotif, ...prev];
+          persistNotifications(userId, updated);
+          return updated;
+        });
+      })();
     },
     [currentUser?.id, currentUser?.email, currentUser?.orgId, currentOrg?.id, persistNotifications],
   );
@@ -846,6 +907,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     (id: string) => {
       if (!currentUser?.id) return;
       const userId = currentUser.id;
+      void ApiService.markNotificationRead(id);
       setNotifications((prev) => {
         const updated = prev.map((n) =>
           n.id === id ? { ...n, isRead: true } : n,
@@ -860,6 +922,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const markAllNotificationsAsRead = useCallback(() => {
     if (!currentUser?.id) return;
     const userId = currentUser.id;
+    void ApiService.markAllNotificationsRead();
     setNotifications((prev) => {
       const updated = prev.map((n) => ({ ...n, isRead: true }));
       persistNotifications(userId, updated);
@@ -870,6 +933,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const clearAllNotifications = useCallback(() => {
     if (!currentUser?.id) return;
     const userId = currentUser.id;
+    void ApiService.clearNotifications();
     setNotifications([]);
     persistNotifications(userId, []);
   }, [currentUser?.id, persistNotifications]);
@@ -921,6 +985,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
 
         organizations,
         currentOrg,
+        orgLocale,
         activeTab,
         isLoading,
         toast,

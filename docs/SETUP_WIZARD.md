@@ -38,6 +38,7 @@ Existing databases with organizations + users are auto-marked `initialized = tru
 
 - `SetupWizardView` — 8 steps at `viewMode === 'setup'`, URL `/setup`.
 - `AppContext` checks `/api/setup/status` on boot and redirects uninitialized installs to the wizard.
+- **راهنمای فیلدها (PDF):** از صفحهٔ خوش‌آمدگوی setup لینک «دانلود راهنمای PDF» — فایل `public/docs/setup-field-guide.pdf` (منبع HTML: `public/docs/setup-field-guide.html`). بازتولید: `npm run docs:setup-pdf`
 
 ## Post-install admin
 

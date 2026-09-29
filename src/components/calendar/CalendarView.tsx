@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Booking, Room } from '../../types';
@@ -10,18 +10,17 @@ import {
   Filter,
   RefreshCw,
 } from 'lucide-react';
-import {
-  formatGregorianIsoLocal,
-  formatToJalali,
-  formatToJalaliDescriptive,
-  PERSIAN_WEEK_DAYS,
-} from '../../utils/jalali';
 import { CalendarSkeleton } from '../common/Skeletons';
-import { PersianDatePicker } from '../common/PersianDatePicker';
+import { OrgDatePicker } from '../common/OrgDatePicker';
 import {
-  CalendarDayInfo,
   CalendarTimeGrid,
 } from './CalendarTimeGrid';
+import {
+  addDaysToIso,
+  dayInfoFromIso,
+  getWeekDates,
+  todayIso,
+} from './calendarWeekUtils';
 
 function useMatchMedia(query: string): boolean {
   const [matches, setMatches] = useState(() => {
@@ -40,31 +39,8 @@ function useMatchMedia(query: string): boolean {
   return matches;
 }
 
-function todayIso(): string {
-  return formatGregorianIsoLocal();
-}
-
-function addDaysToIso(iso: string, delta: number): string {
-  const d = new Date(`${iso}T12:00:00`);
-  d.setDate(d.getDate() + delta);
-  return formatGregorianIsoLocal(d);
-}
-
-function dayInfoFromIso(isoDate: string): CalendarDayInfo {
-  const d = new Date(`${isoDate}T12:00:00`);
-  const jsDay = d.getDay();
-  const dayIndex = (jsDay + 1) % 7;
-  return {
-    dayIndex,
-    name: PERSIAN_WEEK_DAYS[dayIndex].name,
-    short: PERSIAN_WEEK_DAYS[dayIndex].short,
-    isoDate,
-    isToday: isoDate === todayIso(),
-  };
-}
-
 export const CalendarView: React.FC = () => {
-  const { currentOrg } = useApp();
+  const { currentOrg, orgLocale } = useApp();
   const isNarrow = useMatchMedia('(max-width: 767px)');
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0);
   const [focusDateIso, setFocusDateIso] = useState<string>(() => todayIso());
@@ -73,33 +49,9 @@ export const CalendarView: React.FC = () => {
   const [selectedRoomId, setSelectedRoomId] = useState<string>('all');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getWeekDates = useCallback((offsetWeeks: number) => {
-    const today = new Date();
-    const jsDay = today.getDay();
-    const daysSinceShanbeh = (jsDay + 1) % 7;
-
-    const shanbeh = new Date(today);
-    shanbeh.setDate(today.getDate() - daysSinceShanbeh + offsetWeeks * 7);
-
-    const days: CalendarDayInfo[] = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(shanbeh);
-      d.setDate(shanbeh.getDate() + i);
-      const isoStr = formatGregorianIsoLocal(d);
-      days.push({
-        dayIndex: i,
-        name: PERSIAN_WEEK_DAYS[i].name,
-        short: PERSIAN_WEEK_DAYS[i].short,
-        isoDate: isoStr,
-        isToday: isoStr === todayIso(),
-      });
-    }
-    return days;
-  }, []);
-
   const weekDays = useMemo(
-    () => getWeekDates(currentWeekOffset),
-    [currentWeekOffset, getWeekDates],
+    () => getWeekDates(currentWeekOffset, orgLocale),
+    [currentWeekOffset, orgLocale],
   );
   const startDay = weekDays[0];
   const endDay = weekDays[6];
@@ -107,9 +59,9 @@ export const CalendarView: React.FC = () => {
   const showDayView = isNarrow;
 
   const gridDays = useMemo(() => {
-    if (showDayView) return [dayInfoFromIso(focusDateIso)];
+    if (showDayView) return [dayInfoFromIso(focusDateIso, orgLocale)];
     return weekDays;
-  }, [showDayView, focusDateIso, weekDays]);
+  }, [showDayView, focusDateIso, weekDays, orgLocale]);
 
   const loadData = async () => {
     if (!currentOrg) return;
@@ -166,9 +118,9 @@ export const CalendarView: React.FC = () => {
         <div className="flex flex-col gap-3 min-w-0">
           {showDayView ? (
             <div className="space-y-3">
-              <PersianDatePicker
+              <OrgDatePicker
                 id="calendar-focus-date"
-                label="انتخاب روز"
+                label={orgLocale.t('selectDay')}
                 value={focusDateIso}
                 onChange={setFocusDateIso}
                 className="w-full"
@@ -187,7 +139,7 @@ export const CalendarView: React.FC = () => {
                   onClick={goToToday}
                   className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-[#334155] text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#334155] cursor-pointer"
                 >
-                  امروز
+                  {orgLocale.t('today')}
                 </button>
                 <button
                   type="button"
@@ -199,7 +151,7 @@ export const CalendarView: React.FC = () => {
                 </button>
               </div>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-100 text-center sm:text-right">
-                {formatToJalaliDescriptive(focusDateIso)}
+                {orgLocale.formatDateLong(focusDateIso)}
               </p>
             </div>
           ) : (
@@ -226,14 +178,16 @@ export const CalendarView: React.FC = () => {
                   onClick={goToToday}
                   className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-[#334155] text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#334155] cursor-pointer"
                 >
-                  امروز
+                  {orgLocale.t('today')}
                 </button>
               </div>
               <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 text-center sm:text-right leading-relaxed">
-                {formatToJalali(startDay.isoDate)} الی {formatToJalali(endDay.isoDate)}
+                {orgLocale.formatDate(startDay.isoDate)}
+                {orgLocale.language === 'en' ? ' – ' : ' الی '}
+                {orgLocale.formatDate(endDay.isoDate)}
                 {currentWeekOffset === 0 && (
                   <span className="mr-1.5 text-[11px] font-normal text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-2 py-0.5 rounded-md">
-                    (هفته جاری)
+                    {orgLocale.language === 'en' ? '(This week)' : '(هفته جاری)'}
                   </span>
                 )}
               </span>

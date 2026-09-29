@@ -1,10 +1,11 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { OrgPortalBrand } from './OrgPortalBrand';
 import { Logo } from './Logo';
 import { Sparkles } from 'lucide-react';
 
 export const PortalFooter: React.FC = () => {
-  const { setViewMode, showToast } = useApp();
+  const { setViewMode, showToast, currentOrg } = useApp();
   const year = new Date().getFullYear();
 
   return (
@@ -12,7 +13,11 @@ export const PortalFooter: React.FC = () => {
       <div className="max-w-7xl mx-auto rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-[#111C2E]/85 backdrop-blur-md shadow-sm dark:shadow-black/20 p-5 sm:p-7">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
           <div className="md:col-span-4 space-y-3 text-center md:text-right">
-            <Logo variant="horizontal" size="sm" showTagline={false} className="mx-auto md:mx-0 md:mr-0" />
+            {currentOrg ? (
+              <OrgPortalBrand variant="footer" className="mx-auto md:mx-0 md:mr-0 justify-center md:justify-start" />
+            ) : (
+              <Logo variant="horizontal" size="sm" showTagline={false} className="mx-auto md:mx-0 md:mr-0" />
+            )}
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-xs mx-auto md:mx-0">
               سامانه یکپارچه رزرو اتاق جلسه و مدیریت فضاهای کاری برای تیم‌های سازمانی.
             </p>

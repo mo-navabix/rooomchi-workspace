@@ -57,7 +57,18 @@ export async function ensureBaseSchema(): Promise<void> {
   console.log("✅ Base schema applied.");
 }
 
+let orgLogoColumnMigrated = false;
+
+/** Expand organizations.logo from VARCHAR(32) to TEXT (idempotent). */
+export async function ensureOrgLogoColumnIsText(): Promise<void> {
+  if (orgLogoColumnMigrated) return;
+  if (!(await organizationsTableExists())) return;
+  await query(`ALTER TABLE organizations ALTER COLUMN logo TYPE TEXT`);
+  orgLogoColumnMigrated = true;
+}
+
 export async function ensureServerSchema(): Promise<void> {
+  await ensureOrgLogoColumnIsText();
   const extensionsPath = path.join(process.cwd(), "schema", "02-server-extensions.sql");
   if (fs.existsSync(extensionsPath)) {
     await runSqlFile("schema/02-server-extensions.sql");
@@ -69,6 +80,14 @@ export async function ensureServerSchema(): Promise<void> {
   const adminPath = path.join(process.cwd(), "schema", "04-admin-settings.sql");
   if (fs.existsSync(adminPath)) {
     await runSqlFile("schema/04-admin-settings.sql");
+  }
+  const notifPath = path.join(process.cwd(), "schema", "05-user-notifications.sql");
+  if (fs.existsSync(notifPath)) {
+    await runSqlFile("schema/05-user-notifications.sql");
+  }
+  const logoPath = path.join(process.cwd(), "schema", "06-org-logo-text.sql");
+  if (fs.existsSync(logoPath)) {
+    await runSqlFile("schema/06-org-logo-text.sql");
   }
 }
 
@@ -150,48 +169,25 @@ export async function createOrganization(
     });
   }
 
-  if (initialRooms.length === 0) {
-    const defaultBuilding = org.buildings?.[0] || "ساختمان مرکزی";
-    const defaultColor = org.primaryColor || "#2563eb";
-    await createRoom({
-      id: `room-${Date.now()}-1`,
-      orgId: org.id,
-      name: "اتاق جلسات اصلی",
-      code: "M-101",
-      floor: 1,
-      building: defaultBuilding,
-      capacity: 10,
-      amenities: ["projector", "whiteboard", "videoconf", "wifi"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1517502884422-41eaead166d4?w=800&auto=format&fit=crop&q=80",
-      status: "available",
-      color: defaultColor,
-      requiresApproval: false,
-    });
-    await createRoom({
-      id: `room-${Date.now()}-2`,
-      orgId: org.id,
-      name: "اتاق کنفرانس و ارائه",
-      code: "C-201",
-      floor: 2,
-      building: defaultBuilding,
-      capacity: 20,
-      amenities: ["projector", "smart_tv", "whiteboard", "videoconf", "catering", "wifi"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80",
-      status: "available",
-      color: "#8b5cf6",
-      requiresApproval: true,
-    });
-  }
-
   return org;
 }
 
 export async function patchOrganization(id: string, patch: Partial<Organization>): Promise<Organization | null> {
+  if (patch.logo !== undefined && patch.logo !== null) {
+    await ensureOrgLogoColumnIsText();
+  }
   const existing = await getOrganizationById(id);
   if (!existing) return null;
-  const merged = { ...existing, ...patch, updatedAt: new Date().toISOString() };
+  const mergedSettings =
+    patch.settings != null
+      ? { ...(existing.settings || {}), ...patch.settings }
+      : existing.settings;
+  const merged = {
+    ...existing,
+    ...patch,
+    settings: mergedSettings,
+    updatedAt: new Date().toISOString(),
+  };
   await query(
     `UPDATE organizations SET
       name = COALESCE($2, name),

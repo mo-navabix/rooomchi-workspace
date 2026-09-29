@@ -16,6 +16,7 @@ services:
       - rooomchi_pg_data:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./schema/02-server-extensions.sql:/docker-entrypoint-initdb.d/02-server-extensions.sql:ro
+      - ./schema/05-user-notifications.sql:/docker-entrypoint-initdb.d/03-user-notifications.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d rooomchi_db"]
       interval: 3s

@@ -3,11 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Booking } from '../../types';
 import { isBookingOrganizer } from '../../utils/bookingPermissions';
-import {
-  formatGregorianIsoLocal,
-  formatToJalaliDescriptive,
-  toPersianDigits,
-} from '../../utils/jalali';
+import { formatGregorianIsoLocal } from '../../utils/jalali';
 import {
   Calendar,
   Clock,
@@ -24,7 +20,7 @@ import {
 import { MyBookingsSkeleton } from '../common/Skeletons';
 
 export const MyBookingsView: React.FC = () => {
-  const { currentOrg, currentUser, showToast } = useApp();
+  const { currentOrg, currentUser, showToast, orgLocale } = useApp();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filterTab, setFilterTab] = useState<'all' | 'upcoming' | 'pending' | 'cancelled'>('upcoming');
@@ -62,7 +58,7 @@ export const MyBookingsView: React.FC = () => {
   };
 
   const handleCopyMeetingDetails = (booking: Booking) => {
-    const text = `دعوت به جلسه: ${booking.title}\nاتاق: ${booking.roomName}\nتاریخ: ${formatToJalaliDescriptive(booking.date)}\nساعت: ${toPersianDigits(booking.startTime)} الی ${toPersianDigits(booking.endTime)}\nبرگزارکننده: ${booking.organizerName}`;
+    const text = `دعوت به جلسه: ${booking.title}\nاتاق: ${booking.roomName}\nتاریخ: ${orgLocale.formatDateLong(booking.date)}\nساعت: ${orgLocale.formatDigits(booking.startTime)} الی ${orgLocale.formatDigits(booking.endTime)}\nبرگزارکننده: ${booking.organizerName}`;
     navigator.clipboard.writeText(text);
     showToast('متن دعوتنامه جلسه در کلیپ‌بورد کپی شد', 'info');
   };
@@ -125,21 +121,21 @@ export const MyBookingsView: React.FC = () => {
                 مدیریت جلسات شما
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {toPersianDigits(filteredBookings.length)} مورد در نمای فعلی
+                {orgLocale.formatDigits(filteredBookings.length)} مورد در نمای فعلی
                 {pendingCount > 0 && (
                   <span className="text-amber-600 dark:text-amber-400 font-semibold">
                     {' '}
-                    · {toPersianDigits(pendingCount)} در انتظار تأیید
+                    · {orgLocale.formatDigits(pendingCount)} در انتظار تأیید
                   </span>
                 )}
               </p>
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:text-[var(--brand-primary-on-dark)] border border-brand-soft dark:dark:border-[rgb(var(--brand-primary-rgb)/0.3)]">
                   <CalendarDays className="w-3 h-3" />
-                  {toPersianDigits(upcomingCount)} پیش‌رو
+                  {orgLocale.formatDigits(upcomingCount)} پیش‌رو
                 </span>
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                  {toPersianDigits(bookings.length)} کل رزروها
+                  {orgLocale.formatDigits(bookings.length)} کل رزروها
                 </span>
               </div>
             </div>
@@ -219,19 +215,19 @@ export const MyBookingsView: React.FC = () => {
 
                 <div className="flex items-center gap-1.5 font-medium">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{formatToJalaliDescriptive(b.date)}</span>
+                  <span>{orgLocale.formatDateLong(b.date)}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5 font-medium">
                   <Clock className="w-3.5 h-3.5 text-slate-400" />
                   <span>
-                    {toPersianDigits(b.startTime)} تا {toPersianDigits(b.endTime)}
+                    {orgLocale.formatDigits(b.startTime)} تا {orgLocale.formatDigits(b.endTime)}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5 font-medium">
                   <Users className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{toPersianDigits(b.attendeesCount)} نفر حاضرین</span>
+                  <span>{orgLocale.formatDigits(b.attendeesCount)} نفر حاضرین</span>
                 </div>
 
                 {b.cateringNeeded && (

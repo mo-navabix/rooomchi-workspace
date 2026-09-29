@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
 
 export interface OrgLogoBadgeProps {
   logo?: string;
+  /** When set, used in dark theme instead of `logo` */
+  logoDark?: string;
+  /** Override app theme for admin previews */
+  previewTheme?: 'light' | 'dark';
   name?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
@@ -20,11 +25,17 @@ export const isImageLogo = (val?: string): boolean => {
 
 export const OrgLogoBadge: React.FC<OrgLogoBadgeProps> = ({
   logo = '🏢',
+  logoDark,
+  previewTheme,
   name = 'سازمان',
   size = 'md',
   className = '',
 }) => {
   const [hasError, setHasError] = useState(false);
+  const { theme: appTheme } = useApp();
+  const mode = previewTheme ?? appTheme;
+  const resolvedLogo =
+    mode === 'dark' && logoDark?.trim() ? logoDark : logo;
 
   const sizeClasses = {
     xs: {
@@ -49,7 +60,7 @@ export const OrgLogoBadge: React.FC<OrgLogoBadgeProps> = ({
     },
   }[size];
 
-  const isImg = !hasError && isImageLogo(logo);
+  const isImg = !hasError && isImageLogo(resolvedLogo);
 
   return (
     <div
@@ -58,14 +69,14 @@ export const OrgLogoBadge: React.FC<OrgLogoBadgeProps> = ({
     >
       {isImg ? (
         <img
-          src={logo}
+          src={resolvedLogo}
           alt={name}
           className={`object-contain max-h-full max-w-full ${sizeClasses.img}`}
           referrerPolicy="no-referrer"
           onError={() => setHasError(true)}
         />
       ) : (
-        <span className="leading-none">{hasError ? '🏢' : logo || '🏢'}</span>
+        <span className="leading-none">{hasError ? '🏢' : resolvedLogo || '🏢'}</span>
       )}
     </div>
   );

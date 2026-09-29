@@ -10,6 +10,8 @@ import {
 import { asyncRoute, stripPassword } from "./http";
 import type { Booking, Organization, Room, TeamRecord, User } from "./types";
 import * as store from "./persistence/store";
+import * as userNotifications from "./persistence/user-notifications.store";
+import type { AppNotification } from "./types";
 import { registerAuthRoutes } from "./auth/auth.routes";
 import { registerSetupRoutes } from "./installation/setup.routes";
 import { registerAdminRoutes } from "./admin/admin.routes";
@@ -592,7 +594,9 @@ export function registerApiRoutes(app: Express): void {
     const caller = extractJwtUser(req);
     let targetOrgId = req.query.orgId as string | undefined;
     if (!targetOrgId && caller) targetOrgId = caller.organizationId;
-    if (!targetOrgId) targetOrgId = "org-1";
+    if (!targetOrgId) {
+      return res.json([]);
+    }
     if (caller && caller.role !== "SUPER_ADMIN" && caller.organizationId !== targetOrgId) {
       return res.status(403).json({ statusCode: 403, error: "Forbidden", message: "عدم دسترسی" });
     }
@@ -739,4 +743,60 @@ export function registerApiRoutes(app: Express): void {
 
   app.delete("/api/teams/:id/members/:userId", handleRemoveTeamMember);
   app.delete("/teams/:id/members/:userId", handleRemoveTeamMember);
+
+  // --- In-app notifications ---
+  app.get("/api/notifications", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId) {
+      return res.status(401).json({ error: "ورود الزامی است" });
+    }
+    const items = await userNotifications.listUserNotifications(caller.userId);
+    res.json(items);
+  }));
+
+  app.post("/api/notifications", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId) {
+      return res.status(401).json({ error: "ورود الزامی است" });
+    }
+    const body = req.body as Partial<AppNotification>;
+    if (!body.title || !body.message || !body.type) {
+      return res.status(400).json({ error: "title، message و type الزامی است" });
+    }
+    const created = await userNotifications.insertUserNotification(caller.userId, {
+      orgId: body.orgId || caller.organizationId,
+      title: String(body.title),
+      message: String(body.message),
+      type: body.type,
+      bookingId: body.bookingId,
+      roomName: body.roomName,
+      date: body.date,
+      startTime: body.startTime,
+      endTime: body.endTime,
+      organizerName: body.organizerName,
+      userEmail: body.userEmail,
+    });
+    res.status(201).json(created);
+  }));
+
+  app.patch("/api/notifications/read-all", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId) return res.status(401).json({ error: "ورود الزامی است" });
+    await userNotifications.markAllUserNotificationsRead(caller.userId);
+    res.json({ ok: true });
+  }));
+
+  app.patch("/api/notifications/:id/read", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId) return res.status(401).json({ error: "ورود الزامی است" });
+    await userNotifications.markUserNotificationRead(caller.userId, req.params.id);
+    res.json({ ok: true });
+  }));
+
+  app.delete("/api/notifications", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId) return res.status(401).json({ error: "ورود الزامی است" });
+    await userNotifications.clearUserNotifications(caller.userId);
+    res.json({ ok: true });
+  }));
 }

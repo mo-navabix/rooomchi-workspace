@@ -25,7 +25,7 @@ const HELP = `
 Rooomchi DB CLI
 
 Commands:
-  sync     Schema extensions + reference data + demo users (default)
+  sync     Schema extensions + demo users (default; no sample rooms/orgs)
   seed     Schema extensions + demo users (admin@rooomchi.ir, …)
   schema   Only schema/02-server-extensions.sql
   data     Only schema/idempotent-seed.sql (orgs, rooms, teams, …)
@@ -33,7 +33,8 @@ Commands:
 
 Options:
   --force-users   Retry demo user inserts even if user-super exists
-  --no-reference  Skip idempotent SQL seed (sync/seed)
+  --reference     Load demo orgs/rooms/teams (schema/idempotent-seed.sql)
+  --no-reference  Skip reference seed (default for sync)
   --no-demo       Skip demo users (sync only)
   --help          Show this help
 
@@ -109,7 +110,7 @@ async function main() {
       }
       case "seed": {
         await ensureServerSchema();
-        if (!flags.has("no-reference")) {
+        if (flags.has("reference")) {
           await seedReferenceData();
         }
         await seedDevUsers({ force: flags.has("force-users") });
@@ -119,7 +120,7 @@ async function main() {
       default: {
         await syncDatabase({
           schema: true,
-          reference: !flags.has("no-reference"),
+          reference: flags.has("reference"),
           demoUsers: !flags.has("no-demo"),
           forceDemoUsers: flags.has("force-users"),
         });
