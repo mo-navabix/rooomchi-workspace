@@ -32,6 +32,7 @@ jobs:
           VERSION="${{ github.event.release.tag_name }}"
           VERSION="${VERSION#v}"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Release version: $VERSION"
 
       - name: Lint
         run: npm run lint
@@ -40,27 +41,39 @@ jobs:
         run: npm run build
 
       - name: Build Enterprise Package
-  env:
-    ROOOMCHI_RELEASE_VERSION: ${{ env.VERSION }}
-  run: |
-    chmod +x scripts/build-enterprise-release.sh
-    ./scripts/build-enterprise-release.sh
+        env:
+          ROOOMCHI_RELEASE_VERSION: ${{ env.VERSION }}
+        run: |
+          chmod +x scripts/build-enterprise-release.sh
+          ./scripts/build-enterprise-release.sh
 
       - name: Verify package
         run: |
-          test -f "dist-enterprise/rooomchi-enterprise-v${VERSION}.tar.gz"
-          tar -tzf "dist-enterprise/rooomchi-enterprise-v${VERSION}.tar.gz" > /dev/null
+          PACKAGE="dist-enterprise/rooomchi-enterprise-v${VERSION}.tar.gz"
+
+          echo "Verifying: $PACKAGE"
+
+          test -f "$PACKAGE"
+          tar -tzf "$PACKAGE" > /dev/null
+
+          echo "Package verification successful."
 
       - name: Generate SHA256
         run: |
           cd dist-enterprise
-          sha256sum "rooomchi-enterprise-v${VERSION}.tar.gz" > SHA256SUMS.txt
+
+          sha256sum \
+            "rooomchi-enterprise-v${VERSION}.tar.gz" \
+            > SHA256SUMS.txt
+
+          cat SHA256SUMS.txt
 
       - name: Upload package to GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
+          gh release upload \
+            "${{ github.event.release.tag_name }}" \
             "dist-enterprise/rooomchi-enterprise-v${VERSION}.tar.gz" \
             "dist-enterprise/SHA256SUMS.txt" \
             --clobber
