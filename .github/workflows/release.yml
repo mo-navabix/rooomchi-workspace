@@ -40,9 +40,11 @@ jobs:
         run: npm run build
 
       - name: Build Enterprise Package
-        run: |
-          chmod +x scripts/build-enterprise-release.sh
-          ./scripts/build-enterprise-release.sh "$VERSION"
+  env:
+    ROOOMCHI_RELEASE_VERSION: ${{ env.VERSION }}
+  run: |
+    chmod +x scripts/build-enterprise-release.sh
+    ./scripts/build-enterprise-release.sh
 
       - name: Verify package
         run: |
