@@ -1,0 +1,89 @@
+# Rooomchi Enterprise — self-hosted stack (no source code required on server)
+# Usage: ./install.sh   or   docker compose --env-file config/.env up -d --build
+
+name: rooomchi-enterprise
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - ./config/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-rooomchi_db}
+    volumes:
+      - rooomchi_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-rooomchi_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - rooomchi
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: rooomchi-backend:${ROOOMCHI_VERSION:-1.0.0}
+    restart: unless-stopped
+    env_file:
+      - ./config/.env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      API_ONLY: "true"
+      SERVE_STATIC: "false"
+      SKIP_SCHEMA_ENSURE: "true"
+      RUN_MIGRATIONS_ON_START: ${RUN_MIGRATIONS_ON_START:-true}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rooomchi_db}
+      UPLOAD_PATH: /data/uploads
+      LICENSE_PATH: /app/config/license.json
+    volumes:
+      - ./storage/uploads:/data/uploads
+      - ./config:/app/config:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health | grep -q healthy || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    networks:
+      - rooomchi
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: rooomchi-frontend:${ROOOMCHI_VERSION:-1.0.0}
+    restart: unless-stopped
+    networks:
+      - rooomchi
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${ROOOMCHI_HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    networks:
+      - rooomchi
+
+volumes:
+  rooomchi_pg_data:
+
+networks:
+  rooomchi:
+    driver: bridge

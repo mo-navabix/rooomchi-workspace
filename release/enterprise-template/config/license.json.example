@@ -1,0 +1,6 @@
+{
+  "organization": "Company Name",
+  "maxUsers": 500,
+  "expireDate": "2027-01-01",
+  "features": ["SSO", "Reports", "LDAP", "Audit"]
+}

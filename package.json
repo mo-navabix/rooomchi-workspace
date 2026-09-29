@@ -38,7 +38,8 @@
     "build:api": "nx build api",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "release:enterprise": "bash scripts/build-enterprise-release.sh"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
