@@ -15,6 +15,7 @@ import type { AppNotification } from "./types";
 import { registerAuthRoutes } from "./auth/auth.routes";
 import { registerSetupRoutes } from "./installation/setup.routes";
 import { registerAdminRoutes } from "./admin/admin.routes";
+import { registerEnterpriseRoutes } from "./enterprise/enterprise.routes";
 import { normalizePasswordForStorage } from "./auth/password.service";
 
 async function populateTeamResponse(team: TeamRecord) {
@@ -52,6 +53,7 @@ export function registerApiRoutes(app: Express): void {
 
   registerSetupRoutes(app);
   registerAdminRoutes(app);
+  registerEnterpriseRoutes(app);
 
   app.get("/api/organizations", asyncRoute(async (_req, res) => {
     res.json(await store.listOrganizations());

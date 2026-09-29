@@ -36,6 +36,11 @@ export const EnterpriseAdminSettingsView: React.FC<{
   const [authForm, setAuthForm] = useState<Record<string, unknown>>({});
   const [integrations, setIntegrations] = useState<Record<string, unknown>>({});
   const [systemForm, setSystemForm] = useState<Record<string, unknown>>({});
+  const [platformInfo, setPlatformInfo] = useState<{
+    version: { version: string };
+    license: { configured: boolean; valid: boolean; message: string; daysUntilExpiry: number | null };
+    updates: { currentVersion: string; migrationsApplied: number; latestMigration: string | null; availableUpdate: string | null };
+  } | null>(null);
   const [auditLogs, setAuditLogs] = useState<
     { id: string; eventType: string; summary: string; userName: string; createdAt: string }[]
   >([]);
@@ -63,6 +68,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
       setIntegrations(integ);
       setSystemForm(sys);
       setAuditLogs(audit);
+      try {
+        const platform = await ApiService.getAdminEnterprisePlatform();
+        setPlatformInfo(platform);
+      } catch {
+        setPlatformInfo(null);
+      }
     } catch (e: unknown) {
       showToast(e instanceof Error ? e.message : 'خطا در بارگذاری', 'error');
     } finally {
@@ -782,6 +793,41 @@ export const EnterpriseAdminSettingsView: React.FC<{
 
           {section === 'system' && (
             <>
+              {platformInfo && (
+                <AdminSection title="نسخه و لایسنس Enterprise">
+                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                    <div className="rounded-xl border border-slate-200 dark:border-slate-600 p-4">
+                      <p className="text-xs text-slate-500">نسخه نصب‌شده</p>
+                      <p className="font-bold text-lg mt-1" dir="ltr">{platformInfo.updates.currentVersion}</p>
+                      <p className="text-xs text-slate-500 mt-2">
+                        Migration‌ها: {platformInfo.updates.migrationsApplied}
+                        {platformInfo.updates.latestMigration
+                          ? ` · آخرین: ${platformInfo.updates.latestMigration}`
+                          : ''}
+                      </p>
+                      {platformInfo.updates.availableUpdate && (
+                        <p className="text-xs text-[var(--brand-primary)] mt-1">
+                          به‌روزرسانی موجود: {platformInfo.updates.availableUpdate}
+                        </p>
+                      )}
+                    </div>
+                    <div className="rounded-xl border border-slate-200 dark:border-slate-600 p-4">
+                      <p className="text-xs text-slate-500">وضعیت لایسنس</p>
+                      <p className={`font-bold mt-1 ${platformInfo.license.valid ? 'text-emerald-600' : 'text-amber-600'}`}>
+                        {platformInfo.license.message}
+                      </p>
+                      {platformInfo.license.daysUntilExpiry != null && (
+                        <p className="text-xs text-slate-500 mt-2">
+                          {platformInfo.license.daysUntilExpiry} روز تا انقضا
+                        </p>
+                      )}
+                      <p className="text-xs text-slate-400 mt-2">
+                        فایل: <span dir="ltr">config/license.json</span>
+                      </p>
+                    </div>
+                  </div>
+                </AdminSection>
+              )}
               <FormGrid>
                 <FormField label="Application URL">
                   <input

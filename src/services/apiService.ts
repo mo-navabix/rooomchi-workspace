@@ -48,6 +48,38 @@ export class ApiService {
     return res.json();
   }
 
+  static async getSetupPreflight(): Promise<{
+    ok: boolean;
+    checks: { id: string; label: string; ok: boolean; detail: string }[];
+  }> {
+    const res = await fetch(`${API_BASE}/setup/preflight`);
+    const data = await res.json();
+    if (!res.ok && res.status !== 503) throw new Error('خطا در بررسی پیش‌نیازها');
+    return data;
+  }
+
+  static async getAdminEnterprisePlatform(): Promise<{
+    version: { name: string; version: string; nodeEnv: string };
+    license: {
+      configured: boolean;
+      valid: boolean;
+      message: string;
+      daysUntilExpiry: number | null;
+      license: { organization: string; maxUsers: number; expireDate: string; features: string[] } | null;
+    };
+    updates: {
+      currentVersion: string;
+      applicationName: string;
+      migrationsApplied: number;
+      latestMigration: string | null;
+      availableUpdate: string | null;
+    };
+  }> {
+    const res = await ApiService.adminFetch('enterprise/platform');
+    if (!res.ok) throw new Error('خطا در بارگذاری اطلاعات سامانه');
+    return res.json();
+  }
+
   static async completeSetup(payload: Record<string, unknown>): Promise<{
     organization: Organization;
     accessToken: string;

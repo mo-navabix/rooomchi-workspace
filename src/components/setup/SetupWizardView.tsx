@@ -155,6 +155,11 @@ export const SetupWizardView: React.FC = () => {
   const [stepError, setStepError] = useState<string | null>(null);
   const [ldapConfigOpen, setLdapConfigOpen] = useState(false);
   const [googleConfigOpen, setGoogleConfigOpen] = useState(false);
+  const [preflight, setPreflight] = useState<{
+    ok: boolean;
+    checks: { id: string; label: string; ok: boolean; detail: string }[];
+  } | null>(null);
+  const [preflightLoading, setPreflightLoading] = useState(true);
 
   const [org, setOrg] = useState({
     name: '',
@@ -212,6 +217,26 @@ export const SetupWizardView: React.FC = () => {
     ApiService.getSetupStatus().then((s) => {
       if (s.initialized) navigateToAppHome(true);
     });
+  }, []);
+
+  useEffect(() => {
+    setPreflightLoading(true);
+    ApiService.getSetupPreflight()
+      .then(setPreflight)
+      .catch(() =>
+        setPreflight({
+          ok: false,
+          checks: [
+            {
+              id: 'preflight',
+              label: 'بررسی پیش‌نیازها',
+              ok: false,
+              detail: 'سرور در دسترس نیست یا نصب قبلاً انجام شده است.',
+            },
+          ],
+        }),
+      )
+      .finally(() => setPreflightLoading(false));
   }, []);
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
@@ -334,6 +359,29 @@ export const SetupWizardView: React.FC = () => {
                 <li>تنظیم احراز هویت (Local / LDAP / Google)</li>
                 <li>یکپارچه‌سازی SMTP و فایل</li>
               </ul>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-600 p-4 text-right space-y-2">
+                <p className="text-xs font-bold text-slate-600 dark:text-slate-300">بررسی پیش‌نیاز سرور</p>
+                {preflightLoading ? (
+                  <p className="text-xs text-slate-500 flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    در حال بررسی…
+                  </p>
+                ) : (
+                  preflight?.checks.map((c) => (
+                    <div
+                      key={c.id}
+                      className={`text-xs rounded-lg px-3 py-2 border ${
+                        c.ok
+                          ? 'border-emerald-200 bg-emerald-50/80 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-200'
+                          : 'border-amber-200 bg-amber-50/80 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200'
+                      }`}
+                    >
+                      <span className="font-bold">{c.label}</span>
+                      <span className="block mt-0.5 opacity-90">{c.detail}</span>
+                    </div>
+                  ))
+                )}
+              </div>
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center sm:justify-start gap-2">
                 <a
                   href={SETUP_GUIDE_PDF_URL}

@@ -15,7 +15,15 @@ import { runSqlFile } from "../src/server/persistence/sql-runner";
 import { query } from "../src/server/persistence/db";
 import { logger } from "../src/server/logger";
 
-const CORE_MIGRATIONS = ["schema.sql", "schema/02-server-extensions.sql"];
+const CORE_MIGRATIONS = [
+  "schema.sql",
+  "schema/02-server-extensions.sql",
+  "schema/03-installation-setup.sql",
+  "schema/04-admin-settings.sql",
+  "schema/05-user-notifications.sql",
+  "schema/06-org-logo-text.sql",
+  "schema/07-campus-hierarchy.sql",
+];
 
 async function ensureMigrationsTable(): Promise<void> {
   await query(`

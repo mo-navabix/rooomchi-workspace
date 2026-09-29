@@ -1,0 +1,79 @@
+# Rooomchi Enterprise — run from this directory
+# Requires repository root one level up (..)
+
+name: rooomchi-enterprise
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - ./config/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-rooomchi_db}
+    volumes:
+      - rooomchi_pg_data:/var/lib/postgresql/data
+      - ../schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-rooomchi_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - rooomchi
+
+  backend:
+    build:
+      context: ..
+      dockerfile: deployment/backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./config/.env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      API_ONLY: "true"
+      SERVE_STATIC: "false"
+      SKIP_SCHEMA_ENSURE: "false"
+      RUN_MIGRATIONS_ON_START: ${RUN_MIGRATIONS_ON_START:-true}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rooomchi_db}
+      UPLOAD_PATH: /data/uploads
+      LICENSE_PATH: /app/config/license.json
+    volumes:
+      - ./storage/uploads:/data/uploads
+      - ./config:/app/config:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - rooomchi
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: deployment/frontend/Dockerfile
+    restart: unless-stopped
+    networks:
+      - rooomchi
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${ROOOMCHI_HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - rooomchi
+
+volumes:
+  rooomchi_pg_data:
+
+networks:
+  rooomchi:
+    driver: bridge

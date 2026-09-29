@@ -9,6 +9,7 @@ import {
 } from "./setup.service";
 import { testLdapConnection } from "../auth/providers/ldap.provider";
 import type { GoogleConfiguration, LdapConfiguration } from "../auth/types";
+import { runSetupPreflight } from "../enterprise/preflight.service";
 
 async function ensureSetupAllowed(_req: Request, res: Response): Promise<boolean> {
   if (await isInstallationInitialized()) {
@@ -22,6 +23,14 @@ async function ensureSetupAllowed(_req: Request, res: Response): Promise<boolean
 }
 
 export function registerSetupRoutes(app: Express): void {
+  app.get("/api/setup/preflight", asyncRoute(async (_req, res) => {
+    if (await isInstallationInitialized()) {
+      return res.status(403).json({ error: "SetupDisabled" });
+    }
+    const result = await runSetupPreflight();
+    res.status(result.ok ? 200 : 503).json(result);
+  }));
+
   app.get("/api/setup/status", asyncRoute(async (_req, res) => {
     const status = await getInstallationStatus();
     res.json({

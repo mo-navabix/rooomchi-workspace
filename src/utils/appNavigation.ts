@@ -1,5 +1,7 @@
 export const LOGIN_PATH = "/login";
 export const SETUP_PATH = "/setup";
+/** Alias for enterprise install docs — same wizard as /setup */
+export const INSTALL_PATH = "/install";
 
 export function buildLoginUrl(orgSlugOrId?: string | null): string {
   if (!orgSlugOrId?.trim()) return LOGIN_PATH;
@@ -9,13 +11,14 @@ export function buildLoginUrl(orgSlugOrId?: string | null): string {
 export function readSetupRoute(): boolean {
   if (typeof window === "undefined") return false;
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
-  return path === SETUP_PATH;
+  return path === SETUP_PATH || path === INSTALL_PATH;
 }
 
-export function navigateToSetupPath(replace = false): void {
+export function navigateToSetupPath(replace = false, useInstallAlias = false): void {
   if (typeof window === "undefined") return;
-  if (replace) window.history.replaceState({}, "", SETUP_PATH);
-  else window.history.pushState({}, "", SETUP_PATH);
+  const target = useInstallAlias ? INSTALL_PATH : SETUP_PATH;
+  if (replace) window.history.replaceState({}, "", target);
+  else window.history.pushState({}, "", target);
 }
 
 export function readLoginRoute(): {
