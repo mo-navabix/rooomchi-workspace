@@ -36,6 +36,7 @@ import {
   ADMIN_SETTINGS_NAV,
   ADMIN_SETTINGS_TABS,
   isAdminSettingsTab,
+  type AdminSettingsTab,
 } from "../../features/enterprise-admin/adminSettingsTabs";
 
 const SIDEBAR_COLLAPSED_KEY = "rooomchi-portal-sidebar-collapsed";
@@ -197,7 +198,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
 
   const orgSettingsSubItems = useMemo(() => {
     const icons: Record<
-      ActiveTab,
+      AdminSettingsTab,
       React.ComponentType<{ className?: string }>
     > = {
       "admin-settings-org": Building2,

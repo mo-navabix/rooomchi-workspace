@@ -1,5 +1,12 @@
 import type { ActiveTab } from '../../types';
 
+export type AdminSettingsTab =
+  | 'admin-settings-org'
+  | 'admin-settings-auth'
+  | 'admin-settings-integrations'
+  | 'admin-settings-system'
+  | 'admin-settings-audit';
+
 export type AdminSettingsSection =
   | 'organization'
   | 'authentication'
@@ -20,7 +27,7 @@ export function isAdminSettingsTab(tab: ActiveTab): boolean {
 }
 
 export const ADMIN_SETTINGS_NAV: {
-  tab: ActiveTab;
+  tab: AdminSettingsTab;
   label: string;
   section: AdminSettingsSection;
   permission: string;

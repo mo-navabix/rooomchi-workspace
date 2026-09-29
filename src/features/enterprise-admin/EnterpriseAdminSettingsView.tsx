@@ -100,7 +100,7 @@ export const EnterpriseAdminSettingsView: React.FC<{
           logo: updated.logo,
           primaryColor: updated.primaryColor,
           contactEmail: updated.contactEmail,
-          code: updated.code,
+          slug: String(updated.code ?? updated.slug ?? currentOrg.slug),
           workHours: updated.workHours,
           settings: {
             ...currentOrg.settings,
