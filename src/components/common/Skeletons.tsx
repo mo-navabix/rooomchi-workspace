@@ -612,6 +612,8 @@ export const AppLoadingSkeleton: React.FC<{ tab: string }> = ({ tab }) => {
     case 'analytics':
       return <AnalyticsSkeleton />;
     case 'admin-rooms':
+    case 'admin-rooms-campus':
+    case 'admin-rooms-amenities':
       return <AdminRoomsSkeleton />;
     case 'admin-bookings':
       return <AdminBookingsSkeleton />;

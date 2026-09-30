@@ -15,9 +15,6 @@ import { upsertIntegration } from "./integrations.store";
 
 export type SetupOrganizationInput = {
   name: string;
-  code: string;
-  contactEmail: string;
-  domain: string;
   timezone?: string;
   country?: string;
   logo?: string;
@@ -61,12 +58,28 @@ export type SetupCompletePayload = {
   storage: SetupStorageInput;
 };
 
-function slugify(code: string): string {
-  return code
+function slugify(value: string): string {
+  return value
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+async function generateUniqueOrgCode(name: string): Promise<string> {
+  const compact =
+    name
+      .trim()
+      .replace(/\s+/g, "")
+      .replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, "")
+      .slice(0, 12)
+      .toUpperCase() || "ORG";
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const suffix = attempt === 0 ? "" : `-${randomUUID().slice(0, 4).toUpperCase()}`;
+    const code = `${compact}${suffix}`.slice(0, 32);
+    if (!(await store.organizationCodeExists(code))) return code;
+  }
+  return `ORG-${randomUUID().slice(0, 8).toUpperCase()}`;
 }
 
 async function writeSetupAudit(req: Request, action: string, success: boolean, meta?: Record<string, unknown>) {
@@ -131,29 +144,27 @@ export async function completeInstallation(
   req: Request,
   payload: SetupCompletePayload,
 ): Promise<{ organization: Organization; session: Awaited<ReturnType<typeof issueSessionForUser>> }> {
-  const orgCode = payload.organization.code.trim().toUpperCase();
-  if (await store.organizationCodeExists(orgCode)) {
-    throw Object.assign(new Error("کد سازمان قبلاً ثبت شده است"), { statusCode: 409 });
-  }
   if (await store.emailExists(payload.admin.email)) {
     throw Object.assign(new Error("این ایمیل قبلاً ثبت شده است"), { statusCode: 409 });
   }
 
   const orgId = `org-${randomUUID().slice(0, 8)}`;
-  const slug = slugify(payload.organization.code) || orgId;
+  const orgCode = await generateUniqueOrgCode(payload.organization.name);
+  const slug = slugify(payload.organization.name) || orgId;
+  const adminEmail = payload.admin.email.trim().toLowerCase();
   const now = new Date().toISOString();
 
   const org: Organization = {
     id: orgId,
     name: payload.organization.name.trim(),
     code: orgCode,
-    domain: payload.organization.domain.trim(),
+    domain: `${slug}.rooomchi.ir`,
     status: "ACTIVE",
     slug,
     logo: payload.organization.logo || "🏢",
     primaryColor: "#0f786e",
     plan: "enterprise",
-    contactEmail: payload.organization.contactEmail.trim().toLowerCase(),
+    contactEmail: adminEmail,
     buildings: ["ساختمان اصلی"],
     departments: ["عمومی"],
     workHours: { start: "08:00", end: "19:00" },

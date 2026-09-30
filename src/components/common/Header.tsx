@@ -44,12 +44,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
       className="sticky top-0 z-40 w-full bg-white dark:bg-[#0f172a] border-b border-slate-200/80 dark:border-white/[0.06]"
     >
       <div className="flex w-full items-center justify-between gap-4 h-[4.25rem] sm:h-[4.5rem] px-4 sm:px-5 lg:px-6">
-        {/* راست هدر (RTL): خط سبز + عنوان */}
+        {/* راست هدر (RTL): عنوان صفحه */}
         <div className="flex min-w-0 flex-1 items-center justify-start gap-3">
-          <div
-            className="w-1 self-stretch min-h-[2.75rem] rounded-full bg-[var(--brand-primary)] shrink-0"
-            aria-hidden
-          />
           <div className="min-w-0 py-0.5 text-right">
             <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate leading-tight">
               {page.title}

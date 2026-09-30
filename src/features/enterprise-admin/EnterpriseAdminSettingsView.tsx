@@ -198,7 +198,7 @@ export const EnterpriseAdminSettingsView: React.FC<{
   > = {
     organization: {
       title: 'تنظیمات سازمان',
-      subtitle: 'لوگو، رنگ تم، دامنه و تقویم سازمان',
+      subtitle: 'لوگو، رنگ تم و تقویم سازمان',
     },
     authentication: {
       title: 'احراز هویت',
@@ -303,30 +303,6 @@ export const EnterpriseAdminSettingsView: React.FC<{
                       className={adminInputClass}
                       value={String(orgForm.name || '')}
                       onChange={(e) => setOrgForm({ ...orgForm, name: e.target.value })}
-                    />
-                  </FormField>
-                  <FormField label="کد سازمان">
-                    <input
-                      className={adminInputClass}
-                      dir="ltr"
-                      value={String(orgForm.code || '')}
-                      onChange={(e) => setOrgForm({ ...orgForm, code: e.target.value })}
-                    />
-                  </FormField>
-                  <FormField label="ایمیل شرکت">
-                    <input
-                      className={adminInputClass}
-                      dir="ltr"
-                      value={String(orgForm.contactEmail || '')}
-                      onChange={(e) => setOrgForm({ ...orgForm, contactEmail: e.target.value })}
-                    />
-                  </FormField>
-                  <FormField label="دامنه">
-                    <input
-                      className={adminInputClass}
-                      dir="ltr"
-                      value={String(orgForm.domain || '')}
-                      onChange={(e) => setOrgForm({ ...orgForm, domain: e.target.value })}
                     />
                   </FormField>
                   <FormField label="کشور">

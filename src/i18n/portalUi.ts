@@ -9,12 +9,21 @@ const FA: Partial<Record<ActiveTab, PageMeta>> = {
   rooms: { title: 'اتاق‌ها', subtitle: 'جستجو و رزرو سالن‌های جلسه' },
   'my-bookings': { title: 'جلسات من', subtitle: 'رزروها و جلسات شما' },
   teams: { title: 'تیم‌ها', subtitle: 'مدیریت تیم‌ها و اعضا' },
+  notifications: { title: 'اعلان‌ها', subtitle: 'پیام‌های درون‌برنامه‌ای شما' },
   analytics: { title: 'گزارش‌ها و آمار', subtitle: 'تحلیل بهره‌وری و استفاده از فضا' },
   profile: { title: 'پروفایل من', subtitle: 'اطلاعات شخصی و حساب کاربری' },
   'support-ticket': { title: 'پشتیبانی', subtitle: 'ثبت درخواست؛ پاسخ تیم در ساعات اداری' },
   'admin-rooms': {
-    title: 'مدیریت اتاق‌ها و تجهیزات',
-    subtitle: 'تعریف سالن‌ها، ساختمان، طبقه و امکانات',
+    title: 'فهرست اتاق‌ها و سالن‌ها',
+    subtitle: 'افزودن، ویرایش و وضعیت اتاق‌های قابل رزرو',
+  },
+  'admin-rooms-campus': {
+    title: 'ساختمان‌ها و طبقات',
+    subtitle: 'تعریف ساختمان و شماره طبقات برای فرم اتاق',
+  },
+  'admin-rooms-amenities': {
+    title: 'امکانات و تجهیزات',
+    subtitle: 'فهرست امکانات قابل انتخاب برای هر اتاق',
   },
   'admin-bookings': {
     title: 'نظارت بر رزروها',
@@ -34,7 +43,7 @@ const FA: Partial<Record<ActiveTab, PageMeta>> = {
   },
   'admin-settings-org': {
     title: 'تنظیمات سازمان',
-    subtitle: 'لوگو، رنگ تم، دامنه و تقویم سازمان',
+    subtitle: 'لوگو، رنگ تم و تقویم سازمان',
   },
   'admin-settings-auth': {
     title: 'احراز هویت',

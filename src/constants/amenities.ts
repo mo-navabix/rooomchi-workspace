@@ -109,3 +109,20 @@ export const getAllAmenitiesList = (): Amenity[] => {
 export const getAmenityById = (id: string): Amenity | undefined => {
   return getAllAmenitiesList().find((a) => a.id === id);
 };
+
+export const deleteCustomAmenity = (id: string): boolean => {
+  if (!id.startsWith('custom_')) return false;
+  const updated = getStoredCustomAmenities().filter((a) => a.id !== id);
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(CUSTOM_AMENITIES_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error('Error deleting custom amenity', e);
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isBaseAmenity = (id: string): boolean =>
+  BASE_AMENITIES.some((b) => b.id === id);

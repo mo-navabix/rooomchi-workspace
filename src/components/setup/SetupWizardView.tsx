@@ -163,9 +163,6 @@ export const SetupWizardView: React.FC = () => {
 
   const [org, setOrg] = useState({
     name: '',
-    code: '',
-    contactEmail: '',
-    domain: '',
     timezone: 'Asia/Tehran',
     country: 'IR',
     logo: '🏢',
@@ -251,8 +248,8 @@ export const SetupWizardView: React.FC = () => {
   const tryNext = () => {
     setStepError(null);
     if (step === 1) {
-      if (!org.name.trim() || !org.code.trim() || !org.domain.trim() || !org.contactEmail.trim()) {
-        setStepError('لطفاً همه فیلدهای الزامی سازمان را پر کنید.');
+      if (!org.name.trim()) {
+        setStepError('لطفاً نام سازمان را وارد کنید.');
         return;
       }
     }
@@ -412,18 +409,6 @@ export const SetupWizardView: React.FC = () => {
                   <input className={inputClass} value={org.name} onChange={(e) => setOrg({ ...org, name: e.target.value })} />
                 </div>
                 <div>
-                  <label className={labelClass}>کد سازمان *</label>
-                  <input className={inputClass} value={org.code} onChange={(e) => setOrg({ ...org, code: e.target.value })} />
-                </div>
-                <div>
-                  <label className={labelClass}>دامنه شرکت *</label>
-                  <input className={inputClass} placeholder="company.com" dir="ltr" value={org.domain} onChange={(e) => setOrg({ ...org, domain: e.target.value })} />
-                </div>
-                <div>
-                  <label className={labelClass}>ایمیل شرکت *</label>
-                  <input type="email" className={inputClass} dir="ltr" value={org.contactEmail} onChange={(e) => setOrg({ ...org, contactEmail: e.target.value })} />
-                </div>
-                <div>
                   <label className={labelClass} htmlFor="setup-org-timezone">منطقه زمانی</label>
                   <div className="relative">
                     <select
@@ -450,7 +435,7 @@ export const SetupWizardView: React.FC = () => {
                   <div className="relative">
                     <select
                       id="setup-org-country"
-                      className={`${selectFieldClass} pe-3.5 ps-10`}
+                      className={`${selectFieldClass} ps-3.5 pe-10`}
                       value={org.country}
                       onChange={(e) => setOrg({ ...org, country: e.target.value })}
                     >
@@ -796,9 +781,6 @@ export const SetupWizardView: React.FC = () => {
                     </header>
                     <div className="px-4 py-1">
                       <ReviewDetailRow label="نام سازمان" value={org.name || '—'} />
-                      <ReviewDetailRow label="کد سازمان" value={org.code || '—'} dir="ltr" />
-                      <ReviewDetailRow label="دامنه" value={org.domain || '—'} dir="ltr" />
-                      <ReviewDetailRow label="ایمیل تماس" value={org.contactEmail || '—'} dir="ltr" />
                       <ReviewDetailRow label="کشور" value={countryLabel} />
                       <ReviewDetailRow label="منطقه زمانی" value={timezoneLabel} dir="ltr" />
                     </div>

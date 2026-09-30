@@ -41,6 +41,8 @@ export type ActiveTab =
   | 'rooms'
   | 'my-bookings'
   | 'admin-rooms'
+  | 'admin-rooms-campus'
+  | 'admin-rooms-amenities'
   | 'admin-bookings'
   | 'admin-rbac'
   | 'analytics'
@@ -52,6 +54,7 @@ export type ActiveTab =
   | 'admin-support-tickets'
   | 'admin-notifications'
   | 'teams'
+  | 'notifications'
   | 'profile'
   | 'support-ticket'
   | 'provisioning';

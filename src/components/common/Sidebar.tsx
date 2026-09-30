@@ -1,76 +1,34 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useApp } from "../../context/AppContext";
-import { getRoleMeta, normalizeUserRole } from "../../constants/rbac";
+import { getRoleMeta } from "../../constants/rbac";
 import { UserAvatar } from "./UserAvatar";
 import { OrgPortalBrand } from "./OrgPortalBrand";
 import {
-  LayoutDashboard,
-  Calendar,
-  DoorOpen,
-  CalendarCheck,
-  BarChart3,
-  Sliders,
-  ShieldCheck,
   X,
   ChevronLeft,
   ChevronRight,
-  Layers,
-  User,
-  Ticket,
-  Users,
   Search,
-  Building2,
-  KeyRound,
-  Plug,
-  Server,
-  History,
   ChevronDown,
   MoreHorizontal,
   Sun,
   Moon,
   LogOut,
-  BellRing,
+  User,
 } from "lucide-react";
 import { ActiveTab } from "../../types";
 import {
-  ADMIN_SETTINGS_NAV,
-  ADMIN_SETTINGS_TABS,
-  isAdminSettingsTab,
-  type AdminSettingsTab,
-} from "../../features/enterprise-admin/adminSettingsTabs";
+  buildPortalSidebarNav,
+  findSidebarGroupForTab,
+  flattenSearchableNav,
+  type PortalNavItem,
+  type PortalNavGroup,
+} from "../../navigation/portalSidebarNav";
 
 const SIDEBAR_COLLAPSED_KEY = "rooomchi-portal-sidebar-collapsed";
-
-const MAIN_NAV_TABS: ActiveTab[] = [
-  "dashboard",
-  "rooms",
-  "calendar",
-  "my-bookings",
-  "teams",
-  "support-ticket",
-  "profile",
-];
-
-const ADMIN_NAV_TABS: ActiveTab[] = [
-  "admin-bookings",
-  "admin-rooms",
-  "admin-rbac",
-  "analytics",
-  "admin-notifications",
-  "admin-support-tickets",
-  ...ADMIN_SETTINGS_TABS,
-];
 
 type SidebarProps = {
   mobileOpen: boolean;
   onClose: () => void;
-};
-
-type NavItem = {
-  id: ActiveTab;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  permissionCheck?: boolean;
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
@@ -86,7 +44,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     currentOrg,
   } = useApp();
 
-  // Collapsed state
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
@@ -96,38 +53,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   });
 
   const roleMeta = getRoleMeta(userRole);
-  const normalizedRole = normalizeUserRole(userRole);
-  const isEmployee = normalizedRole === "employee";
 
-  const [mode, setMode] = useState<"personal" | "business">("personal");
-
-  // User dropdown menu
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-  // Quick Search Dialog
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [orgSettingsExpanded, setOrgSettingsExpanded] = useState(() =>
-    isAdminSettingsTab(activeTab),
-  );
+
+  const portalNav = useMemo(() => buildPortalSidebarNav(can), [can]);
+
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    const gid = findSidebarGroupForTab(buildPortalSidebarNav(can), activeTab);
+    return gid ? { [gid]: true } : {};
+  });
 
   useEffect(() => {
-    if (isEmployee) {
-      setMode("personal");
-      return;
+    const gid = findSidebarGroupForTab(portalNav, activeTab);
+    if (gid) {
+      setExpandedGroups((prev) => (prev[gid] ? prev : { ...prev, [gid]: true }));
     }
-    if (ADMIN_NAV_TABS.includes(activeTab)) {
-      setMode("business");
-    } else if (MAIN_NAV_TABS.includes(activeTab)) {
-      setMode("personal");
-    }
-  }, [activeTab, isEmployee]);
-
-  useEffect(() => {
-    if (isAdminSettingsTab(activeTab)) {
-      setOrgSettingsExpanded(true);
-    }
-  }, [activeTab]);
+  }, [activeTab, portalNav]);
 
   useEffect(() => {
     try {
@@ -142,141 +85,127 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   const displayRole =
     roleMeta?.titleFa?.split(" ").slice(0, 2).join(" ") || "عضو سازمان";
 
-  const personalNavItems: NavItem[] = useMemo(
-    () => [
-      { id: "dashboard", label: "داشبورد", icon: LayoutDashboard },
-      { id: "rooms", label: "رزرو اتاق‌ها و سالن‌ها", icon: DoorOpen },
-      { id: "calendar", label: "تقویم جلسات", icon: Calendar },
-      { id: "my-bookings", label: "جلسات من", icon: CalendarCheck },
-      { id: "teams", label: "تیم‌ها و همکاران", icon: Users },
-      { id: "support-ticket", label: "پشتیبانی و تیکت من", icon: Ticket },
-      { id: "profile", label: "پروفایل من", icon: User },
-    ],
-    [],
-  );
-
-  const businessNavItems: NavItem[] = useMemo(() => {
-    const items: NavItem[] = [
-      {
-        id: "admin-bookings",
-        label: "نظارت بر رزروها",
-        icon: CalendarCheck,
-        permissionCheck: can("APPROVE_BOOKINGS"),
-      },
-      {
-        id: "admin-rooms",
-        label: "مدیریت اتاق‌ها و تجهیزات",
-        icon: Layers,
-        permissionCheck: can("MANAGE_ROOMS"),
-      },
-      {
-        id: "admin-rbac",
-        label: "کاربران و سطوح دسترسی",
-        icon: ShieldCheck,
-        permissionCheck: can("MANAGE_USERS_ROLES"),
-      },
-      {
-        id: "analytics",
-        label: "گزارش‌ها و آمار سازمان",
-        icon: BarChart3,
-      },
-      {
-        id: "admin-notifications",
-        label: "مدیریت اعلان‌ها (SMS و تلگرام)",
-        icon: BellRing,
-        permissionCheck: can("MANAGE_ORG_SETTINGS"),
-      },
-      {
-        id: "admin-support-tickets",
-        label: "تیکت‌های سازمانی",
-        icon: Ticket,
-        permissionCheck: can("MANAGE_ORG_SETTINGS"),
-      },
-    ];
-    return items.filter((i) => i.permissionCheck === undefined || i.permissionCheck);
-  }, [can]);
-
-  const orgSettingsSubItems = useMemo(() => {
-    const icons: Record<
-      AdminSettingsTab,
-      React.ComponentType<{ className?: string }>
-    > = {
-      "admin-settings-org": Building2,
-      "admin-settings-auth": KeyRound,
-      "admin-settings-integrations": Plug,
-      "admin-settings-system": Server,
-      "admin-settings-audit": History,
-    };
-    return ADMIN_SETTINGS_NAV.filter((item) =>
-      can(item.permission as Parameters<typeof can>[0]),
-    ).map((item) => ({
-      id: item.tab,
-      label: item.label,
-      icon: icons[item.tab],
-    }));
-  }, [can]);
-
-  const showBusinessMode =
-    !isEmployee &&
-    (businessNavItems.length > 0 || orgSettingsSubItems.length > 0);
-  const orgSettingsGroupActive = isAdminSettingsTab(activeTab);
-  const activeMainItems =
-    isEmployee || mode === "personal" ? personalNavItems : businessNavItems;
-
-  const handleSwitchToBusiness = () => {
-    setMode("business");
-    if (!ADMIN_NAV_TABS.includes(activeTab)) {
-      setActiveTab(businessNavItems[0]?.id || "admin-bookings");
-    }
-  };
-
-  const handleSwitchToPersonal = () => {
-    setMode("personal");
-    if (!MAIN_NAV_TABS.includes(activeTab)) {
-      setActiveTab("dashboard");
-    }
-  };
-
   const goTo = (id: ActiveTab) => {
     setActiveTab(id);
     onClose();
     setSearchModalOpen(false);
   };
 
-  // Filter searchable items for Command Palette / Quick Search
   const allSearchableItems = useMemo(() => {
-    const items = [
-      { id: "dashboard" as ActiveTab, label: "داشبورد اصلی", category: "ناوبری", forEmployee: true },
-      { id: "rooms" as ActiveTab, label: "رزرو اتاق‌ها و فضاها", category: "جلسات", forEmployee: true },
-      { id: "calendar" as ActiveTab, label: "تقویم جلسات و هماهنگی", category: "جلسات", forEmployee: true },
-      { id: "my-bookings" as ActiveTab, label: "جلسات و رزروهای من", category: "جلسات", forEmployee: true },
-      { id: "teams" as ActiveTab, label: "تیم‌ها و همکاران", category: "سازمان", forEmployee: true },
-      { id: "support-ticket" as ActiveTab, label: "ثبت و پیگیری تیکت پشتیبانی", category: "پشتیبانی", forEmployee: true },
-      { id: "admin-bookings" as ActiveTab, label: "نظارت و تأیید رزروها", category: "مدیریت", forEmployee: false },
-      { id: "admin-rooms" as ActiveTab, label: "مدیریت اتاق‌ها و تجهیزات", category: "مدیریت", forEmployee: false },
-      { id: "admin-rbac" as ActiveTab, label: "مدیریت کاربران و نقش‌ها", category: "امنیت", forEmployee: false },
-      ...orgSettingsSubItems.map((item) => ({
-        id: item.id,
-        label: item.label,
-        category: "تنظیمات سازمان",
-        forEmployee: false as const,
-      })),
-      { id: "analytics" as ActiveTab, label: "گزارش‌ها و آمار بهره‌وری", category: "تحلیل", forEmployee: false },
-      { id: "admin-support-tickets" as ActiveTab, label: "مدیریت تیکت‌های پرسنل", category: "پشتیبانی", forEmployee: false },
-      { id: "profile" as ActiveTab, label: "پروفایل من و امنیت حساب", category: "حساب", forEmployee: true },
-    ];
-    return items
-      .filter((item) => !isEmployee || item.forEmployee)
-      .filter((item) =>
-        item.label.toLowerCase().includes(searchQuery.toLowerCase().trim())
-      );
-  }, [searchQuery, isEmployee, orgSettingsSubItems]);
+    const q = searchQuery.toLowerCase().trim();
+    return flattenSearchableNav(portalNav).filter((item) =>
+      item.label.toLowerCase().includes(q),
+    );
+  }, [searchQuery, portalNav]);
 
   const shellWidth = collapsed ? "w-[76px]" : "w-[275px]";
 
+  const renderNavButton = (
+    item: PortalNavItem,
+    isActive: boolean,
+    opts?: { nested?: boolean },
+  ) => {
+    const Icon = item.icon;
+    const nested = opts?.nested;
+    return (
+      <button
+        key={item.id}
+        type="button"
+        id={`sidebar-nav-${item.id}`}
+        title={collapsed ? item.label : undefined}
+        onClick={() => goTo(item.id)}
+        className={`group relative w-full flex items-center gap-3 rounded-xl font-semibold transition-all cursor-pointer ${
+          nested ? "text-[12px]" : "text-[13px]"
+        } ${
+          collapsed
+            ? "justify-center px-2 py-2.5"
+            : nested
+              ? "pr-6 pl-3 py-2 mt-0.5"
+              : "px-3 py-2.5"
+        } ${
+          isActive
+            ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-bold shadow-2xs"
+            : nested
+              ? "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-800 dark:hover:text-white"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+        }`}
+      >
+        {isActive && (
+          <span
+            className={`absolute rounded-full bg-[var(--brand-primary)] dark:bg-[var(--brand-primary-on-dark)] ${
+              nested && !collapsed
+                ? "right-2 top-2 bottom-2 w-0.5"
+                : "right-1 top-2 bottom-2 w-1"
+            }`}
+            aria-hidden
+          />
+        )}
+        <Icon
+          className={`shrink-0 transition-colors ${
+            nested ? "w-4 h-4" : "w-[18px] h-[18px]"
+          } ${
+            isActive
+              ? "text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]"
+              : "text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200"
+          }`}
+        />
+        {!collapsed && <span className="flex-1 text-right truncate">{item.label}</span>}
+      </button>
+    );
+  };
+
+  const renderGroup = (group: PortalNavGroup) => {
+    const GroupIcon = group.icon;
+    const isGroupActive = group.items.some((i) => i.id === activeTab);
+    const expanded = expandedGroups[group.id] ?? false;
+
+    return (
+      <div key={group.id} className="pt-1">
+        {!collapsed ? (
+          <button
+            type="button"
+            onClick={() =>
+              setExpandedGroups((prev) => ({ ...prev, [group.id]: !expanded }))
+            }
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+              isGroupActive
+                ? "text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+            }`}
+          >
+            <GroupIcon className="w-[18px] h-[18px] shrink-0" />
+            <span className="flex-1 text-right truncate">{group.label}</span>
+            <ChevronDown
+              className={`w-4 h-4 shrink-0 transition-transform ${
+                expanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        ) : (
+          <button
+            type="button"
+            title={group.label}
+            onClick={() => goTo(group.items[0]?.id ?? "dashboard")}
+            className={`w-full flex justify-center px-2 py-2.5 rounded-xl cursor-pointer ${
+              isGroupActive
+                ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] text-[var(--brand-primary)]"
+                : "text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
+            }`}
+          >
+            <GroupIcon className="w-[18px] h-[18px]" />
+          </button>
+        )}
+
+        {(expanded || collapsed) &&
+          group.items.map((item) =>
+            renderNavButton(item, activeTab === item.id, { nested: !collapsed }),
+          )}
+      </div>
+    );
+  };
+
   return (
     <>
-      {/* Mobile Backdrop */}
       {mobileOpen && (
         <button
           type="button"
@@ -286,22 +215,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         />
       )}
 
-      {/* Floating Card Sidebar Container */}
       <aside
         id="portal-sidebar"
         className={`fixed z-50 shrink-0 select-none transition-all duration-300 ease-out top-0 bottom-0 right-0 lg:sticky lg:top-0 lg:h-screen lg:max-h-screen bg-white dark:bg-[#111C2E] border-s border-slate-200 dark:border-white/10 shadow-sm flex flex-col justify-between ${shellWidth} ${
           mobileOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
         } ${mobileOpen ? "flex" : "hidden lg:flex"}`}
       >
-        {/* TOP SECTION */}
         <div className="flex flex-col shrink-0">
-          {/* Logo & Top Controls (Dots removed as requested) */}
           <div
             className={`pt-3.5 pb-2 px-3.5 flex items-center justify-between gap-2 shrink-0 ${
               collapsed ? "flex-col items-center" : ""
             }`}
           >
-            {/* Site Official Logo */}
             <button
               type="button"
               onClick={() => goTo("dashboard")}
@@ -311,7 +236,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               <OrgPortalBrand collapsed={collapsed} />
             </button>
 
-            {/* Quick Action Icons: Search & Collapse + Mobile Close */}
             <div
               className={`flex items-center gap-1 ${
                 collapsed ? "flex-col mt-2" : ""
@@ -341,7 +265,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                 )}
               </button>
 
-              {/* Mobile close button */}
               <button
                 type="button"
                 onClick={onClose}
@@ -352,187 +275,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               </button>
             </div>
           </div>
-
-          {showBusinessMode && (
-            !collapsed ? (
-              <div className="px-3.5 pt-1 pb-2.5">
-                <div className="bg-slate-100/90 dark:bg-slate-800/70 p-1 rounded-2xl flex items-center gap-1 border border-slate-200/50 dark:border-white/5">
-                  <button
-                    type="button"
-                    onClick={handleSwitchToPersonal}
-                    className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      mode === "personal"
-                        ? "bg-[var(--brand-primary)] text-white shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.3)]"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                    }`}
-                  >
-                    شخصی
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSwitchToBusiness}
-                    className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      mode === "business"
-                        ? "bg-[var(--brand-primary)] text-white shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.3)]"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                    }`}
-                  >
-                    سازمانی
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="py-2 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (mode === "personal") {
-                      handleSwitchToBusiness();
-                    } else {
-                      handleSwitchToPersonal();
-                    }
-                  }}
-                  title={`حالت فعلی: ${mode === "personal" ? "شخصی" : "سازمانی"} (برای تغییر کلیک کنید)`}
-                  className="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full p-0.5 cursor-pointer transition-colors relative"
-                >
-                  <span
-                    className={`block w-4 h-4 rounded-full bg-[var(--brand-primary)] shadow-sm transition-transform duration-200 ${
-                      mode === "business" ? "-translate-x-5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-            )
-          )}
         </div>
 
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-1 space-y-3">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-1 space-y-1">
           <nav className="space-y-1">
-            {activeMainItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  id={`sidebar-nav-${item.id}`}
-                  title={collapsed ? item.label : undefined}
-                  onClick={() => goTo(item.id)}
-                  className={`group relative w-full flex items-center gap-3 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
-                    collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
-                  } ${
-                    isActive
-                      ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-bold shadow-2xs"
-                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-                  }`}
-                >
-                  {isActive && (
-                    <span
-                      className="absolute right-1 top-2 bottom-2 w-1 rounded-full bg-[var(--brand-primary)] dark:bg-[var(--brand-primary-on-dark)]"
-                      aria-hidden
-                    />
-                  )}
-                  <Icon
-                    className={`w-[18px] h-[18px] shrink-0 transition-colors ${
-                      isActive
-                        ? "text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]"
-                        : "text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200"
-                    }`}
-                  />
-                  {!collapsed && (
-                    <span className="flex-1 text-right truncate">{item.label}</span>
-                  )}
-                </button>
-              );
-            })}
-
-            {mode === "business" && orgSettingsSubItems.length > 0 && (
-              <div className="pt-2 mt-1 border-t border-slate-100 dark:border-white/5">
-                {!collapsed ? (
-                  <button
-                    type="button"
-                    onClick={() => setOrgSettingsExpanded((v) => !v)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
-                      orgSettingsGroupActive
-                        ? "text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]"
-                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
-                    }`}
-                  >
-                    <Sliders className="w-[18px] h-[18px] shrink-0" />
-                    <span className="flex-1 text-right truncate">
-                      مدیریت و تنظیمات سازمان
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 shrink-0 transition-transform ${
-                        orgSettingsExpanded ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    title="مدیریت و تنظیمات سازمان"
-                    onClick={() =>
-                      goTo(
-                        orgSettingsSubItems[0]?.id || "admin-settings-org",
-                      )
-                    }
-                    className={`w-full flex justify-center px-2 py-2.5 rounded-xl cursor-pointer ${
-                      orgSettingsGroupActive
-                        ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] text-[var(--brand-primary)]"
-                        : "text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
-                    }`}
-                  >
-                    <Sliders className="w-[18px] h-[18px]" />
-                  </button>
-                )}
-
-                {(orgSettingsExpanded || collapsed) &&
-                  orgSettingsSubItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = activeTab === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        id={`sidebar-nav-${item.id}`}
-                        title={collapsed ? item.label : undefined}
-                        onClick={() => goTo(item.id)}
-                        className={`group relative w-full flex items-center gap-3 rounded-xl text-[12px] font-semibold transition-all cursor-pointer ${
-                          collapsed
-                            ? "justify-center px-2 py-2 mt-0.5"
-                            : "pr-6 pl-3 py-2 mt-0.5"
-                        } ${
-                          isActive
-                            ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-bold"
-                            : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-800 dark:hover:text-white"
-                        }`}
-                      >
-                        {isActive && !collapsed && (
-                          <span
-                            className="absolute right-2 top-2 bottom-2 w-0.5 rounded-full bg-[var(--brand-primary)]"
-                            aria-hidden
-                          />
-                        )}
-                        <Icon className="w-4 h-4 shrink-0" />
-                        {!collapsed && (
-                          <span className="flex-1 text-right truncate">
-                            {item.label}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-              </div>
-            )}
+            {renderNavButton(portalNav.dashboard, activeTab === portalNav.dashboard.id)}
+            {portalNav.groups.map((group) => renderGroup(group))}
+            <div className="pt-2 mt-1 border-t border-slate-100 dark:border-white/5">
+              {renderNavButton(portalNav.profile, activeTab === portalNav.profile.id)}
+            </div>
           </nav>
         </div>
 
-        {/* BOTTOM USER PROFILE CARD */}
         <div
           className={`shrink-0 relative ${collapsed ? "px-2 pt-3 pb-5 sm:pb-6" : "p-3"}`}
         >
-          {/* User Options Popover Menu */}
           {userMenuOpen && (
             <>
               <button
@@ -561,7 +318,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                   </span>
                 </div>
 
-                {/* Theme Toggle */}
                 <button
                   type="button"
                   onClick={toggleTheme}
@@ -577,7 +333,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                   </div>
                 </button>
 
-                {/* My Profile */}
                 <button
                   type="button"
                   onClick={() => {
@@ -590,7 +345,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
                   <span>پروفایل کاربری من</span>
                 </button>
 
-                {/* Logout */}
                 <button
                   type="button"
                   onClick={() => {
@@ -606,7 +360,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
             </>
           )}
 
-          {/* Profile Card Pill */}
           <div
             className={`border border-slate-200/90 dark:border-white/10 rounded-2xl p-2 flex items-center justify-between gap-2 bg-slate-50/70 dark:bg-white/[0.03] hover:bg-slate-100/80 dark:hover:bg-white/[0.06] transition-all cursor-pointer ${
               collapsed ? "flex-col p-1.5" : ""
@@ -631,7 +384,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               )}
             </div>
 
-            {/* Three dots button */}
             <button
               type="button"
               aria-label="گزینه‌های بیشتر"
@@ -643,14 +395,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         </div>
       </aside>
 
-      {/* QUICK COMMAND PALETTE / SEARCH MODAL */}
       {searchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150">
           <div
             className="w-full max-w-lg bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Search Input Bar */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
               <Search className="w-5 h-5 text-slate-400 shrink-0" />
               <input
@@ -670,7 +420,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               </button>
             </div>
 
-            {/* Search Results */}
             <div className="max-h-72 overflow-y-auto p-2 space-y-1">
               {allSearchableItems.length > 0 ? (
                 allSearchableItems.map((item) => (
