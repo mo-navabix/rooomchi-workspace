@@ -1,3 +1,5 @@
+import type { AccessControlConfig, Amenity } from "../../libs/shared-types/src/index";
+
 export interface Room {
   id: string;
   orgId: string;
@@ -56,6 +58,14 @@ export interface Organization {
     autoApprove: boolean;
     maxBookingHours: number;
     allowWeekend: boolean;
+    language?: "fa" | "en";
+    dateFormat?: "jalali" | "gregorian";
+    timezone?: string;
+    country?: string;
+    buildingFloors?: Record<string, number[]>;
+    logoDark?: string;
+    customAmenities?: Amenity[];
+    accessControl?: AccessControlConfig;
   };
 }
 

@@ -146,6 +146,10 @@ export interface Organization {
     buildingFloors?: Record<string, number[]>;
     /** Optional logo for dark UI; falls back to `logo` on organization */
     logoDark?: string;
+    /** Org-specific amenity definitions (merged with system defaults in UI) */
+    customAmenities?: Amenity[];
+    /** Auth / session policies persisted with organization settings */
+    accessControl?: AccessControlConfig;
   };
 }
 

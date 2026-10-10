@@ -201,7 +201,17 @@ export const EnterpriseAdminSettingsView: React.FC<{
     );
   }
 
-  const ldap = (authForm.ldapConfiguration || {}) as Record<string, string | boolean>;
+  const ldap = (authForm.ldapConfiguration || {}) as {
+    url?: string;
+    bindDn?: string;
+    bindPassword?: string;
+    baseDn?: string;
+    userFilter?: string;
+    emailAttribute?: string;
+    nameAttribute?: string;
+    defaultRole?: string;
+    useTls?: boolean;
+  };
   const ldapGroupRoleMappings = (authForm.ldapGroupRoleMappings || []) as LdapGroupRoleMapping[];
 
   const setLdapGroupRoleMappings = (next: LdapGroupRoleMapping[]) => {

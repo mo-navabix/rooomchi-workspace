@@ -1,5 +1,16 @@
 import { normalizeUserRole, normalizeUserStatus } from '../constants/rbac';
-import { AppNotification, Booking, Organization, Room, Stats, User, UserRole, Team } from '../types';
+import {
+  AppNotification,
+  Booking,
+  NotificationLogEntry,
+  NotificationSettings,
+  Organization,
+  Room,
+  Stats,
+  User,
+  UserRole,
+  Team,
+} from '../types';
 
 const API_BASE = '/api';
 
@@ -886,8 +897,8 @@ export class ApiService {
   }
 
   static async getAdminNotificationSettings(): Promise<{
-    settings: Record<string, unknown>;
-    logs: unknown[];
+    settings: Partial<NotificationSettings>;
+    logs: NotificationLogEntry[];
   }> {
     const res = await ApiService.adminFetch('notification-settings');
     if (!res.ok) throw new Error('خطا در بارگذاری تنظیمات اعلان');
@@ -895,9 +906,9 @@ export class ApiService {
   }
 
   static async putAdminNotificationSettings(payload: {
-    settings: Record<string, unknown>;
-    logs?: unknown[];
-  }): Promise<{ settings: Record<string, unknown>; logs: unknown[] }> {
+    settings: NotificationSettings;
+    logs?: NotificationLogEntry[];
+  }): Promise<{ settings: NotificationSettings; logs: NotificationLogEntry[] }> {
     const res = await ApiService.adminFetch('notification-settings', {
       method: 'PUT',
       body: JSON.stringify(payload),

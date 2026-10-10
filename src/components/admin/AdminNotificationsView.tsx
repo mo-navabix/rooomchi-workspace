@@ -123,7 +123,7 @@ export const AdminNotificationsView: React.FC = () => {
       try {
         const bundle = await ApiService.getAdminNotificationSettings();
         if (cancelled) return;
-        const s = bundle.settings as NotificationSettings;
+        const s = bundle.settings;
         if (s && typeof s === 'object' && Object.keys(s).length > 0) {
           setSettings({ ...DEFAULT_NOTIFICATION_SETTINGS, ...s });
         }

@@ -55,11 +55,11 @@ export const OrgLogoUploader: React.FC<Props> = ({ logo, orgName, onChange }) =>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-white">
-          <OrgLogoBadge logo={hasLogo ? logo : '🏢'} orgName={orgName} size="lg" previewTheme="light" />
+          <OrgLogoBadge logo={hasLogo ? logo : '🏢'} name={orgName} size="lg" previewTheme="light" />
           <span className="text-xs text-slate-500">پیش‌نمایش — تم روشن</span>
         </div>
         <div className="flex items-center gap-3 p-3 rounded-xl border border-slate-600 bg-[#0f172a]">
-          <OrgLogoBadge logo={hasLogo ? logo : '🏢'} orgName={orgName} size="lg" previewTheme="dark" />
+          <OrgLogoBadge logo={hasLogo ? logo : '🏢'} name={orgName} size="lg" previewTheme="dark" />
           <span className="text-xs text-slate-400">پیش‌نمایش — تم تاریک</span>
         </div>
       </div>
