@@ -4,6 +4,7 @@ import type { AuthProviderId } from "./types";
 import type { User } from "../types";
 import * as store from "../persistence/store";
 import { normalizePasswordForStorage } from "./password.service";
+import { normalizeUserRole } from "../../constants/rbac";
 
 export async function findIdentity(
   organizationId: string,
@@ -78,6 +79,8 @@ export async function provisionUser(params: {
   const normalizedEmail = params.email.trim().toLowerCase();
   let user = await findUserByProviderEmail(params.organizationId, normalizedEmail);
 
+  const desiredRole = normalizeUserRole(params.role);
+
   if (!user) {
     const passwordHash = params.password
       ? await normalizePasswordForStorage(params.password)
@@ -92,13 +95,27 @@ export async function provisionUser(params: {
       email: normalizedEmail,
       password: passwordHash,
       status: "ACTIVE",
-      role: params.role,
+      role: desiredRole,
       department: "عمومی",
       jobTitle: "کاربر",
       phone: "",
       isProfileComplete: true,
       createdAt: new Date().toISOString(),
     });
+  } else {
+    const currentRole = normalizeUserRole(user.role);
+    const skipRoleSync =
+      user.isPermanentAdmin === true || currentRole === "super_admin";
+    const displayName = `${params.firstName} ${params.lastName}`.trim();
+    const patch: Partial<User> = {
+      firstName: params.firstName,
+      lastName: params.lastName,
+      name: displayName || user.name,
+    };
+    if (!skipRoleSync && currentRole !== desiredRole) {
+      patch.role = desiredRole;
+    }
+    user = (await store.updateUser(user.id, patch)) ?? user;
   }
 
   await linkIdentity({

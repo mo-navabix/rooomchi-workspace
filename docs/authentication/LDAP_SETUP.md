@@ -47,4 +47,8 @@ Table `ldap_group_role_mappings`:
 | Roomchi Admins | ORGANIZATION_ADMIN |
 | Roomchi Users | EMPLOYEE |
 
-Managed via `PUT /api/organizations/:id/auth-settings` with `ldapGroupRoleMappings`.
+Managed via `PUT /api/organizations/:id/auth-settings` or **Admin → Authentication → LDAP** with `ldapGroupRoleMappings`.
+
+On each LDAP login, the user’s role is synced from `memberOf` (first matching mapping, else `defaultRole` in LDAP config). Permanent admins and super admins are not downgraded.
+
+**TLS:** prefer `ldaps://host:636` or enable TLS in the admin LDAP panel. For connection tests from admin, stored bind passwords are merged automatically (masked field in UI).

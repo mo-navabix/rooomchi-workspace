@@ -23,11 +23,7 @@ import {
   applyOrgBrandTheme,
   clearOrgBrandThemeOverrides,
 } from "../utils/orgBrandTheme";
-import {
-  dropLegacySharedNotifications,
-  loadNotificationsForUser,
-  saveNotificationsForUser,
-} from "../utils/userNotificationsStorage";
+import { dropLegacySharedNotifications } from "../utils/userNotificationsStorage";
 import {
   formatOrgDate,
   formatOrgDateLong,
@@ -183,8 +179,6 @@ const LOCAL_STORAGE_USER_KEY = "rooomchi_auth_user";
 const LOCAL_STORAGE_TOKEN_KEY = "rooomchi_auth_token";
 const LOCAL_STORAGE_THEME_KEY = "rooomchi_theme";
 const LOCAL_STORAGE_VIEW_KEY = "rooomchi_view_mode";
-const LOCAL_STORAGE_ACCESS_CONTROL_KEY = "roomchi_access_control_v1";
-
 const DEFAULT_ACCESS_CONTROL: AccessControlConfig = {
   googleAuthEnabled: true,
   googleAutoSignOut: true,
@@ -267,28 +261,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Access Control & Security Policies State
-  const [accessControl, setAccessControl] = useState<AccessControlConfig>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_ACCESS_CONTROL_KEY);
-      if (saved) {
-        return { ...DEFAULT_ACCESS_CONTROL, ...JSON.parse(saved) };
-      }
-    } catch {
-      /* ignore */
-    }
-    return DEFAULT_ACCESS_CONTROL;
-  });
+  const [accessControl, setAccessControl] = useState<AccessControlConfig>(DEFAULT_ACCESS_CONTROL);
 
   const updateAccessControl = useCallback((updates: Partial<AccessControlConfig>) => {
-    setAccessControl((prev) => {
-      const updated = { ...prev, ...updates };
-      try {
-        localStorage.setItem(LOCAL_STORAGE_ACCESS_CONTROL_KEY, JSON.stringify(updated));
-      } catch {
-        /* ignore */
-      }
-      return updated;
-    });
+    setAccessControl((prev) => ({ ...prev, ...updates }));
   }, []);
 
   // Auth & RBAC State
@@ -428,6 +404,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     document.documentElement.lang = "fa";
     document.documentElement.dir = "rtl";
   }, [viewMode]);
+
+  useEffect(() => {
+    if (!currentOrg?.id) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const auth = await ApiService.getOrganizationAuthSettings(currentOrg.id);
+        if (cancelled) return;
+        const stored = (currentOrg.settings as { accessControl?: Partial<AccessControlConfig> })
+          ?.accessControl;
+        setAccessControl({
+          ...DEFAULT_ACCESS_CONTROL,
+          ...stored,
+          googleAuthEnabled: auth.googleEnabled,
+          emailPasswordAuthEnabled: auth.localEnabled,
+          selfRegistrationEnabled: auth.authPolicies?.selfRegistrationEnabled !== false,
+        });
+      } catch {
+        /* defaults */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentOrg?.id, currentOrg?.settings]);
 
   // Deep-link: /login?org=... or legacy ?auth=login&org=...
   useEffect(() => {
@@ -841,22 +842,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       setNotifications([]);
       return;
     }
-    const userId = currentUser.id;
     let cancelled = false;
-    (async () => {
+    void (async () => {
       try {
         const fromApi = await ApiService.getNotifications();
-        if (cancelled) return;
-        if (fromApi.length > 0) {
-          setNotifications(fromApi);
-          saveNotificationsForUser(userId, fromApi);
-          return;
-        }
+        if (!cancelled) setNotifications(fromApi);
       } catch {
-        /* offline / table missing */
-      }
-      if (!cancelled) {
-        setNotifications(loadNotificationsForUser(userId, currentUser.orgId || currentOrg?.id));
+        if (!cancelled) setNotifications([]);
       }
     })();
     return () => {
@@ -867,13 +859,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const unreadNotificationsCount = useMemo(() => {
     return notifications.filter((n) => !n.isRead).length;
   }, [notifications]);
-
-  const persistNotifications = useCallback(
-    (userId: string, items: AppNotification[]) => {
-      saveNotificationsForUser(userId, items);
-    },
-    [],
-  );
 
   const addNotification = useCallback(
     (item: Omit<AppNotification, "id" | "createdAt" | "isRead">) => {
@@ -893,14 +878,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
           isRead: false,
           createdAt: new Date().toISOString(),
         };
-        setNotifications((prev) => {
-          const updated = [newNotif, ...prev];
-          persistNotifications(userId, updated);
-          return updated;
-        });
+        setNotifications((prev) => [newNotif, ...prev]);
       })();
     },
-    [currentUser?.id, currentUser?.email, currentUser?.orgId, currentOrg?.id, persistNotifications],
+    [currentUser?.id, currentUser?.email, currentUser?.orgId, currentOrg?.id],
   );
 
   const markNotificationAsRead = useCallback(
@@ -908,35 +889,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       if (!currentUser?.id) return;
       const userId = currentUser.id;
       void ApiService.markNotificationRead(id);
-      setNotifications((prev) => {
-        const updated = prev.map((n) =>
-          n.id === id ? { ...n, isRead: true } : n,
-        );
-        persistNotifications(userId, updated);
-        return updated;
-      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+      );
     },
-    [currentUser?.id, persistNotifications],
+    [currentUser?.id],
   );
 
   const markAllNotificationsAsRead = useCallback(() => {
     if (!currentUser?.id) return;
     const userId = currentUser.id;
     void ApiService.markAllNotificationsRead();
-    setNotifications((prev) => {
-      const updated = prev.map((n) => ({ ...n, isRead: true }));
-      persistNotifications(userId, updated);
-      return updated;
-    });
-  }, [currentUser?.id, persistNotifications]);
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+  }, [currentUser?.id]);
 
   const clearAllNotifications = useCallback(() => {
     if (!currentUser?.id) return;
     const userId = currentUser.id;
     void ApiService.clearNotifications();
     setNotifications([]);
-    persistNotifications(userId, []);
-  }, [currentUser?.id, persistNotifications]);
+  }, [currentUser?.id]);
 
   // ==========================================
   // Google Login & Profile Sync

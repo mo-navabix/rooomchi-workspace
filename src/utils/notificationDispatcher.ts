@@ -1,38 +1,13 @@
 import { NotificationSettings, NotificationLogEntry } from '../types';
-import {
-  DEFAULT_NOTIFICATION_SETTINGS,
-  INITIAL_NOTIFICATION_LOGS,
-} from '../constants/notifications';
+import { DEFAULT_NOTIFICATION_SETTINGS } from '../constants/notifications';
 
-const STORAGE_KEY_SETTINGS = 'rooomchi_notification_settings_v1';
-const STORAGE_KEY_LOGS = 'rooomchi_notification_logs_v1';
-
+/** Runtime rules for client-side dispatch (admin configures via API). */
 export function getActiveNotificationSettings(): NotificationSettings {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
-    if (saved) return JSON.parse(saved);
-  } catch {
-    /* ignore */
-  }
   return DEFAULT_NOTIFICATION_SETTINGS;
 }
 
-export function logNotificationDispatch(entry: Omit<NotificationLogEntry, 'id' | 'timestamp'>) {
-  try {
-    const savedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
-    const logs: NotificationLogEntry[] = savedLogs ? JSON.parse(savedLogs) : INITIAL_NOTIFICATION_LOGS;
-
-    const newLog: NotificationLogEntry = {
-      ...entry,
-      id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      timestamp: 'همین الان',
-    };
-
-    const updated = [newLog, ...logs].slice(0, 50); // keep last 50
-    localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(updated));
-  } catch {
-    /* ignore */
-  }
+export function logNotificationDispatch(_entry: Omit<NotificationLogEntry, 'id' | 'timestamp'>) {
+  /* Logs are persisted server-side from the admin notifications panel. */
 }
 
 export function triggerBookingNotifications(

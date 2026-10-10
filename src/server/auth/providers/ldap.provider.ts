@@ -1,4 +1,3 @@
-import { Client } from "ldapts";
 import type { Request } from "express";
 import type { Organization } from "../../types";
 import { writeAuthAudit } from "../audit.service";
@@ -8,6 +7,7 @@ import { provisionUser } from "../identity.store";
 import { listLdapGroupRoleMappings } from "../auth-settings.store";
 import { toApiRole } from "../../persistence/mappers";
 import { decryptSecret } from "../../security/secret-crypto";
+import { createLdapClient } from "../ldap-config.util";
 
 function resolveLdapConfig(settings: OrganizationAuthSettings): LdapConfiguration {
   const c = settings.ldapConfiguration;
@@ -62,7 +62,7 @@ export async function ldapLogin(params: {
     throw Object.assign(new Error("پیکربندی LDAP سازمان ناقص است"), { statusCode: 500 });
   }
 
-  const client = new Client({ url: cfg.url, tlsOptions: cfg.useTls ? { rejectUnauthorized: false } : undefined });
+  const client = createLdapClient(cfg.url, cfg.useTls);
   const safeUser = escapeLdapFilter(username.trim());
   const filter = cfg.userFilter!.replace(/\{username\}/g, safeUser);
 
@@ -184,10 +184,7 @@ export async function testLdapUserLookup(
   if (!cfg.url || !cfg.baseDn || !username.trim()) {
     return { ok: false, message: "URL، Base DN و نام کاربر الزامی است." };
   }
-  const client = new Client({
-    url: cfg.url,
-    tlsOptions: cfg.useTls ? { rejectUnauthorized: false } : undefined,
-  });
+  const client = createLdapClient(cfg.url, cfg.useTls);
   const safeUser = escapeLdapFilter(username.trim());
   const filter = (cfg.userFilter || "(mail={username})").replace(/\{username\}/g, safeUser);
   try {
@@ -227,10 +224,7 @@ export async function testLdapConnection(
   if (!cfg.url || !cfg.baseDn) {
     return { ok: false, message: "آدرس سرور LDAP و Base DN الزامی است." };
   }
-  const client = new Client({
-    url: cfg.url,
-    tlsOptions: cfg.useTls ? { rejectUnauthorized: false } : undefined,
-  });
+  const client = createLdapClient(cfg.url, cfg.useTls);
   try {
     if (cfg.bindDn && cfg.bindPassword) {
       await client.bind(cfg.bindDn, cfg.bindPassword);

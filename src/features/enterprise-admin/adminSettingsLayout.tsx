@@ -3,6 +3,13 @@ import React from 'react';
 export const adminInputClass =
   'w-full text-base px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900/80 text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.35)] focus:border-transparent focus:outline-hidden';
 
+/** RTL selects: custom chevron on the visual left (consistent across fields). */
+export const adminSelectClass = `${adminInputClass} appearance-none cursor-pointer bg-no-repeat bg-[length:1.125rem] bg-[position:left_0.875rem_center] pl-10 pr-4`;
+
+export const adminSelectChevronStyle: React.CSSProperties = {
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+};
+
 export const AdminPage: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="w-full max-w-6xl mx-auto pb-12 min-w-0 px-0 sm:px-1" id="enterprise-admin-settings">
     {children}
@@ -52,7 +59,7 @@ export const FormField: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ label, hint, children, className }) => (
-  <label className={`block space-y-2 ${className ?? ''}`}>
+  <label className={`block space-y-1.5 ${className ?? ''}`}>
     <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</span>
     {children}
     {hint && <span className="block text-xs text-slate-500">{hint}</span>}
@@ -63,7 +70,13 @@ export const FormGrid: React.FC<{ children: React.ReactNode; cols?: 1 | 2 }> = (
   children,
   cols = 2,
 }) => (
-  <div className={cols === 2 ? 'grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6' : 'space-y-5'}>
+  <div
+    className={
+      cols === 2
+        ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 items-start'
+        : 'space-y-4'
+    }
+  >
     {children}
   </div>
 );

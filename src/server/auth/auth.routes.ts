@@ -9,6 +9,8 @@ import {
   upsertOrganizationAuthSettings,
   replaceLdapGroupRoleMappings,
 } from "./auth-settings.store";
+import type { LdapConfiguration } from "./types";
+import { mergeLdapConfiguration } from "./ldap-config.util";
 import { localLogin, localRegister } from "./providers/local.provider";
 import { ldapLogin } from "./providers/ldap.provider";
 import {
@@ -81,11 +83,13 @@ export function registerAuthRoutes(app: Express): void {
         return res.status(403).json({ error: "Forbidden" });
       }
       const body = req.body as Record<string, unknown>;
+      const current = await getOrganizationAuthSettings(req.params.orgId);
+      const ldapPatch = (body.ldapConfiguration || {}) as LdapConfiguration;
       const updated = await upsertOrganizationAuthSettings(req.params.orgId, {
         localEnabled: body.localEnabled as boolean | undefined,
         ldapEnabled: body.ldapEnabled as boolean | undefined,
         googleEnabled: body.googleEnabled as boolean | undefined,
-        ldapConfiguration: body.ldapConfiguration as Record<string, unknown> | undefined,
+        ldapConfiguration: mergeLdapConfiguration(current.ldapConfiguration, ldapPatch),
         googleConfiguration: body.googleConfiguration as Record<string, unknown> | undefined,
         authPolicies: body.authPolicies as Record<string, unknown> | undefined,
       });

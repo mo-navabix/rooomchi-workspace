@@ -1,12 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Amenity } from '../../types';
-import {
-  deleteCustomAmenity,
-  getAllAmenitiesList,
-  isBaseAmenity,
-  saveCustomAmenity,
-} from '../../constants/amenities';
+import { getAllAmenitiesList, isBaseAmenity } from '../../constants/amenities';
+import { ApiService } from '../../services/apiService';
 import {
   AMENITY_CATEGORY_LABELS,
   AMENITY_ICON_OPTIONS,
@@ -15,8 +11,31 @@ import {
 import { ChevronDown, Plus, Sparkles, Trash2, X } from 'lucide-react';
 
 export const AdminAmenitiesView: React.FC = () => {
-  const { showToast } = useApp();
-  const [amenities, setAmenities] = useState<Amenity[]>(() => getAllAmenitiesList());
+  const { showToast, currentOrg, updateCurrentOrgData } = useApp();
+  const customFromOrg = useMemo(() => {
+    const raw = (currentOrg?.settings as { customAmenities?: Amenity[] })?.customAmenities;
+    return Array.isArray(raw) ? raw : [];
+  }, [currentOrg?.settings]);
+  const [customAmenities, setCustomAmenities] = useState<Amenity[]>(customFromOrg);
+  const amenities = useMemo(
+    () => getAllAmenitiesList(customAmenities),
+    [customAmenities],
+  );
+
+  useEffect(() => {
+    setCustomAmenities(customFromOrg);
+  }, [customFromOrg]);
+
+  const persistCustom = async (nextCustom: Amenity[]) => {
+    const org = await ApiService.getAdminOrganization();
+    await ApiService.putAdminOrganization({ ...org, customAmenities: nextCustom });
+    setCustomAmenities(nextCustom);
+    if (currentOrg) {
+      updateCurrentOrgData({
+        settings: { ...currentOrg.settings, customAmenities: nextCustom },
+      });
+    }
+  };
   const [newAmenityName, setNewAmenityName] = useState('');
   const [newAmenityCategory, setNewAmenityCategory] = useState<
     'av' | 'tech' | 'comfort' | 'facility'
@@ -24,11 +43,7 @@ export const AdminAmenitiesView: React.FC = () => {
   const [newAmenityIcon, setNewAmenityIcon] = useState('Sparkles');
   const [formOpen, setFormOpen] = useState(false);
 
-  const refresh = useCallback(() => {
-    setAmenities(getAllAmenitiesList());
-  }, []);
-
-  const handleAdd = (e?: React.FormEvent) => {
+  const handleAdd = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!newAmenityName.trim()) {
       showToast('عنوان امکانات را وارد کنید', 'error');
@@ -41,24 +56,33 @@ export const AdminAmenitiesView: React.FC = () => {
       icon: newAmenityIcon,
       category: newAmenityCategory,
     };
-    saveCustomAmenity(newAmenity);
-    refresh();
-    setNewAmenityName('');
-    setFormOpen(false);
-    showToast(`«${newAmenity.nameFa}» به فهرست امکانات اضافه شد`, 'success');
+    const existingIdx = customAmenities.findIndex((a) => a.id === newAmenity.id);
+    const nextCustom =
+      existingIdx >= 0
+        ? customAmenities.map((a, i) => (i === existingIdx ? newAmenity : a))
+        : [...customAmenities, newAmenity];
+    try {
+      await persistCustom(nextCustom);
+      setNewAmenityName('');
+      setFormOpen(false);
+      showToast(`«${newAmenity.nameFa}» به فهرست امکانات اضافه شد`, 'success');
+    } catch {
+      showToast('ذخیره روی سرور ناموفق بود', 'error');
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (isBaseAmenity(id)) {
       showToast('امکانات پیش‌فرض سیستم قابل حذف نیست', 'error');
       return;
     }
-    if (!deleteCustomAmenity(id)) {
+    const nextCustom = customAmenities.filter((a) => a.id !== id);
+    try {
+      await persistCustom(nextCustom);
+      showToast('امکانات سفارشی حذف شد', 'success');
+    } catch {
       showToast('حذف انجام نشد', 'error');
-      return;
     }
-    refresh();
-    showToast('امکانات سفارشی حذف شد', 'success');
   };
 
   return (

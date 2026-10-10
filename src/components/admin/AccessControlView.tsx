@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useApp } from "../../context/AppContext";
 import {
   KeyRound,
@@ -81,58 +81,32 @@ interface AuditLogEntry {
   details: string;
 }
 
-const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
-  {
-    id: "log-1",
-    userName: "محمد نوابی",
-    userEmail: "mohammad.navabi.2025@gmail.com",
-    method: "google",
-    action: "login",
-    ip: "185.120.45.12",
-    device: "Chrome / macOS (دسکتاپ)",
-    timestamp: "امروز - ۱۰:۲۵",
-    status: "success",
-    details: "ورود موفق با SSO حساب کاربری گوگل",
-  },
-  {
-    id: "log-2",
-    userName: "علی احمدی",
-    userEmail: "employee@technova.ir",
-    method: "password",
-    action: "login",
-    ip: "178.252.189.90",
-    device: "Firefox / Windows",
-    timestamp: "امروز - ۰۹:۱۵",
-    status: "success",
-    details: "ورود موفق با ایمیل و گذرواژه سازمانی",
-  },
-  {
-    id: "log-3",
-    userName: "ناشناس (مهمان)",
-    userEmail: "guest@external.com",
-    method: "google",
-    action: "blocked",
-    ip: "91.98.11.23",
-    device: "Safari / iPhone",
-    timestamp: "دیروز - ۱۸:۴۰",
-    status: "warning",
-    details: "درخواست ورود به دلیل عدم تطابق دامنه رد شد",
-  },
-  {
-    id: "log-4",
-    userName: "سارا مرادی",
-    userEmail: "manager@technova.ir",
-    method: "password",
-    action: "logout",
-    ip: "185.120.45.12",
-    device: "Chrome / macOS",
-    timestamp: "دیروز - ۱۷:۳۰",
-    status: "success",
-    details: "خروج عادی کاربر از سامانه",
-  },
-];
-
 import { ApiService } from "../../services/apiService";
+import { hasPermission } from "../../constants/rbac";
+
+function mapAuthAuditRow(row: Record<string, unknown>): AuditLogEntry {
+  const action = String(row.action || "");
+  const provider = String(row.provider || "local").toLowerCase();
+  const method =
+    provider.includes("google") ? "google" : provider === "ldap" ? "password" : "password";
+  const success = row.success === true;
+  let uiAction: AuditLogEntry["action"] = "login";
+  if (action.includes("failed") || !success) uiAction = "blocked";
+  else if (action === "logout") uiAction = "logout";
+  const created = row.createdAt ? new Date(String(row.createdAt)) : new Date();
+  return {
+    id: String(row.id),
+    userName: String(row.userName || "ناشناس"),
+    userEmail: String(row.userEmail || "—"),
+    method,
+    action: uiAction,
+    ip: String(row.ipAddress || "—"),
+    device: String(row.userAgent || "—").slice(0, 96),
+    timestamp: created.toLocaleString("fa-IR"),
+    status: success ? "success" : "warning",
+    details: action,
+  };
+}
 
 export const AccessControlView: React.FC = () => {
   const {
@@ -145,8 +119,35 @@ export const AccessControlView: React.FC = () => {
     setActiveTab,
   } = useApp();
 
-  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(INITIAL_AUDIT_LOGS);
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
   const [newDomainInput, setNewDomainInput] = useState("");
+
+  useEffect(() => {
+    if (!currentOrg?.id || !hasPermission(userRole, "MANAGE_AUTHENTICATION_SETTINGS")) return;
+    void (async () => {
+      try {
+        const auth = await ApiService.getAdminAuthSettings();
+        const google = (auth.googleConfiguration || {}) as { allowedDomains?: string[] };
+        if (Array.isArray(google.allowedDomains) && google.allowedDomains.length) {
+          updateAccessControl({ allowedGoogleDomains: google.allowedDomains });
+        }
+      } catch {
+        /* ignore */
+      }
+      try {
+        const sys = await ApiService.getAdminSystemSettings();
+        updateAccessControl({ sessionTimeoutMinutes: Number(sys.sessionTimeoutMinutes) || 60 });
+      } catch {
+        /* ignore */
+      }
+      try {
+        const rows = await ApiService.getAdminAuthAudit();
+        setAuditLogs(rows.map((r) => mapAuthAuditRow(r)));
+      } catch {
+        setAuditLogs([]);
+      }
+    })();
+  }, [currentOrg?.id, userRole, updateAccessControl]);
 
   const persistOrgAuthFromUi = async (next: Partial<typeof accessControl>) => {
     if (!currentOrg?.id) return;
@@ -162,8 +163,13 @@ export const AccessControlView: React.FC = () => {
           allowedDomains: merged.allowedGoogleDomains,
         },
       });
+      const org = await ApiService.getAdminOrganization();
+      await ApiService.putAdminOrganization({
+        ...org,
+        accessControl: merged,
+      });
     } catch {
-      showToast("ذخیره روی سرور ناموفق بود؛ تنظیمات فقط محلی به‌روز شد.", "error");
+      showToast("ذخیره روی سرور ناموفق بود.", "error");
     }
   };
 
@@ -172,13 +178,7 @@ export const AccessControlView: React.FC = () => {
     const nextVal = !currentVal;
     const patch = { [key]: nextVal } as Partial<typeof accessControl>;
     updateAccessControl(patch);
-    if (
-      key === "googleAuthEnabled" ||
-      key === "emailPasswordAuthEnabled" ||
-      key === "selfRegistrationEnabled"
-    ) {
-      void persistOrgAuthFromUi(patch);
-    }
+    void persistOrgAuthFromUi(patch);
     showToast(
       `${label} ${nextVal ? "«فعال»" : "«غیرفعال»"} شد.`,
       nextVal ? "success" : "info"
@@ -187,6 +187,9 @@ export const AccessControlView: React.FC = () => {
 
   const handleTimeoutChange = (minutes: number) => {
     updateAccessControl({ sessionTimeoutMinutes: minutes });
+    void ApiService.putAdminSystemSettings({ sessionTimeoutMinutes: minutes }).catch(() => {
+      showToast("ذخیره زمان نشست روی سرور ناموفق بود", "error");
+    });
     showToast(
       minutes === 0
         ? "انقضای خودکار نشست غیرفعال شد (نامحدود)"

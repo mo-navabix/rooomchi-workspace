@@ -96,7 +96,14 @@ export const AdminRoomsView: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Available amenities (base + custom created by admin)
-  const [availableAmenities, setAvailableAmenities] = useState<Amenity[]>(getAllAmenitiesList());
+  const customAmenities = useMemo(() => {
+    const raw = (currentOrg?.settings as { customAmenities?: Amenity[] })?.customAmenities;
+    return Array.isArray(raw) ? raw : [];
+  }, [currentOrg?.settings]);
+  const availableAmenities = useMemo(
+    () => getAllAmenitiesList(customAmenities),
+    [customAmenities],
+  );
 
   // Image upload and input mode state
   const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
@@ -126,10 +133,6 @@ export const AdminRoomsView: React.FC = () => {
     fetchRooms();
   }, [currentOrg]);
 
-  useEffect(() => {
-    setAvailableAmenities(getAllAmenitiesList());
-  }, []);
-
   const campusBuildings = useMemo(() => {
     return currentOrg?.buildings?.length ? [...currentOrg.buildings] : ['ساختمان مرکزی'];
   }, [currentOrg]);
@@ -155,7 +158,6 @@ export const AdminRoomsView: React.FC = () => {
     );
     setImageInputMode('upload');
     setImageUploadError(null);
-    setAvailableAmenities(getAllAmenitiesList());
     setIsModalOpen(true);
   };
 
@@ -171,7 +173,6 @@ export const AdminRoomsView: React.FC = () => {
     setImageUrl(room.imageUrl);
     setImageInputMode(room.imageUrl?.startsWith('data:') ? 'upload' : 'url');
     setImageUploadError(null);
-    setAvailableAmenities(getAllAmenitiesList());
     setIsModalOpen(true);
   };
 
@@ -617,7 +618,7 @@ export const AdminRoomsView: React.FC = () => {
                           <div className="flex items-center gap-1.5">
                             {/* Up to 3 icon capsules */}
                             {room.amenities.slice(0, 3).map((amId) => {
-                              const am = availableAmenities.find((a) => a.id === amId) || getAmenityById(amId);
+                              const am = availableAmenities.find((a) => a.id === amId) || getAmenityById(amId, customAmenities);
                               const IconComponent = getAmenityIcon(am?.icon);
                               const nameFa = am ? am.nameFa : amId;
 
@@ -1180,7 +1181,7 @@ export const AdminRoomsView: React.FC = () => {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {viewAmenitiesRoom.amenities.map((amId) => {
-                    const am = availableAmenities.find((a) => a.id === amId) || getAmenityById(amId);
+                    const am = availableAmenities.find((a) => a.id === amId) || getAmenityById(amId, customAmenities);
                     const IconComp = getAmenityIcon(am?.icon);
                     const nameFa = am ? am.nameFa : amId;
 

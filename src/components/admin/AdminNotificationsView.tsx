@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Bell,
@@ -38,9 +38,7 @@ import {
 } from '../../constants/notifications';
 import { toPersianDigits } from '../../utils/jalali';
 import { TimePicker } from '../common/TimePicker';
-
-const STORAGE_KEY_SETTINGS = 'rooomchi_notification_settings_v1';
-const STORAGE_KEY_LOGS = 'rooomchi_notification_logs_v1';
+import { ApiService } from '../../services/apiService';
 
 // Custom Accessible RTL-safe Toggle Switch
 interface SwitchToggleProps {
@@ -115,27 +113,35 @@ const SwitchToggle: React.FC<SwitchToggleProps> = ({
 export const AdminNotificationsView: React.FC = () => {
   const { currentOrg, showToast, addNotification } = useApp();
 
-  // Load Settings from LocalStorage or defaults
-  const [settings, setSettings] = useState<NotificationSettings>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      /* ignore */
-    }
-    return DEFAULT_NOTIFICATION_SETTINGS;
-  });
+  const [settings, setSettings] = useState<NotificationSettings>(DEFAULT_NOTIFICATION_SETTINGS);
+  const [logs, setLogs] = useState<NotificationLogEntry[]>([]);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
-  // Load Logs
-  const [logs, setLogs] = useState<NotificationLogEntry[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_LOGS);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      /* ignore */
-    }
-    return INITIAL_NOTIFICATION_LOGS;
-  });
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const bundle = await ApiService.getAdminNotificationSettings();
+        if (cancelled) return;
+        const s = bundle.settings as NotificationSettings;
+        if (s && typeof s === 'object' && Object.keys(s).length > 0) {
+          setSettings({ ...DEFAULT_NOTIFICATION_SETTINGS, ...s });
+        }
+        if (Array.isArray(bundle.logs) && bundle.logs.length) {
+          setLogs(bundle.logs as NotificationLogEntry[]);
+        } else {
+          setLogs(INITIAL_NOTIFICATION_LOGS);
+        }
+      } catch {
+        setLogs(INITIAL_NOTIFICATION_LOGS);
+      } finally {
+        if (!cancelled) setSettingsLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentOrg?.id]);
 
   const [activeTab, setActiveInternalTab] = useState<'channels' | 'rules' | 'logs'>('channels');
   const [showApiKey, setShowApiKey] = useState(false);
@@ -160,27 +166,29 @@ export const AdminNotificationsView: React.FC = () => {
   const [logFilterChannel, setLogFilterChannel] = useState<'all' | 'sms' | 'telegram' | 'in_app'>('all');
   const [logSearchQuery, setLogSearchQuery] = useState('');
 
-  // Save changes to localStorage
-  const handleSave = () => {
+  const handleSave = async () => {
+    setIsSaving(true);
     try {
-      setIsSaving(true);
-      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
-      setTimeout(() => {
-        setIsSaving(false);
-        showToast('پیکربندی سیستم اطلاع‌رسانی با موفقیت ذخیره شد', 'success');
-      }, 350);
-    } catch {
+      await ApiService.putAdminNotificationSettings({ settings, logs });
+      showToast('پیکربندی سیستم اطلاع‌رسانی با موفقیت ذخیره شد', 'success');
+    } catch (e: unknown) {
+      showToast(e instanceof Error ? e.message : 'خطا در ذخیره تنظیمات', 'error');
+    } finally {
       setIsSaving(false);
-      showToast('خطا در ذخیره تنظیمات', 'error');
     }
   };
 
-  // Reset to default
-  const handleResetToDefaults = () => {
-    if (confirm('آیا مایل به بازنشانی تنظیمات نوتیفیکیشن‌ها به حالت پیش‌فرض هستید؟')) {
-      setSettings(DEFAULT_NOTIFICATION_SETTINGS);
-      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(DEFAULT_NOTIFICATION_SETTINGS));
+  const handleResetToDefaults = async () => {
+    if (!confirm('آیا مایل به بازنشانی تنظیمات نوتیفیکیشن‌ها به حالت پیش‌فرض هستید؟')) return;
+    setSettings(DEFAULT_NOTIFICATION_SETTINGS);
+    try {
+      await ApiService.putAdminNotificationSettings({
+        settings: DEFAULT_NOTIFICATION_SETTINGS,
+        logs,
+      });
       showToast('تنظیمات به حالت پیش‌فرض بازنشانی گردید', 'info');
+    } catch {
+      showToast('ذخیره روی سرور ناموفق بود', 'error');
     }
   };
 
@@ -253,11 +261,7 @@ export const AdminNotificationsView: React.FC = () => {
 
       const updatedLogs = [newEntry, ...logs];
       setLogs(updatedLogs);
-      try {
-        localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(updatedLogs));
-      } catch {
-        /* ignore */
-      }
+      void ApiService.putAdminNotificationSettings({ settings, logs: updatedLogs }).catch(() => undefined);
 
       setIsSendingTest(false);
       setIsTestModalOpen(false);
@@ -269,11 +273,14 @@ export const AdminNotificationsView: React.FC = () => {
   };
 
   // Clear Logs
-  const handleClearLogs = () => {
-    if (confirm('آیا از پاکسازی تاریخچه لاگ‌های نوتیفیکیشن اطمینان دارید؟')) {
-      setLogs([]);
-      localStorage.removeItem(STORAGE_KEY_LOGS);
+  const handleClearLogs = async () => {
+    if (!confirm('آیا از پاکسازی تاریخچه لاگ‌های نوتیفیکیشن اطمینان دارید؟')) return;
+    setLogs([]);
+    try {
+      await ApiService.putAdminNotificationSettings({ settings, logs: [] });
       showToast('تاریخچه ارسال اعلان‌ها پاک شد', 'info');
+    } catch {
+      showToast('پاکسازی روی سرور ناموفق بود', 'error');
     }
   };
 

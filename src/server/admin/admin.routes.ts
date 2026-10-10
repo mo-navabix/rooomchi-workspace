@@ -8,14 +8,25 @@ import {
 } from "../auth/auth-settings.store";
 import type { GoogleConfiguration, LdapConfiguration, OrganizationAuthSettings } from "../auth/types";
 import { testLdapConnection, testLdapUserLookup } from "../auth/providers/ldap.provider";
+import {
+  listLdapGroupRoleMappings,
+  replaceLdapGroupRoleMappings,
+} from "../auth/auth-settings.store";
+import { LDAP_BIND_PASSWORD_MASK, mergeLdapConfiguration } from "../auth/ldap-config.util";
 import { testGoogleConfiguration, testSmtpConfiguration } from "../installation/setup.service";
 import { listIntegrations, upsertIntegration } from "../installation/integrations.store";
 import { requireAdminPermission } from "./admin-guard";
 import { writeConfigAudit, listConfigAuditLogs } from "./config-audit.service";
-import { getSystemSettings, upsertSystemSettings } from "./system-settings.store";
+import {
+  getOrgNotificationBundle,
+  getSystemSettings,
+  saveOrgNotificationBundle,
+  upsertSystemSettings,
+} from "./system-settings.store";
+import { listAuthAuditLogs } from "../auth/audit.service";
 import type { SystemSettings } from "./system-settings.store";
 
-const MASK = "••••••••";
+const MASK = LDAP_BIND_PASSWORD_MASK;
 
 function maskAuthSettings(settings: OrganizationAuthSettings) {
   return {
@@ -39,11 +50,7 @@ function mergeLdapSecrets(
   current: LdapConfiguration,
   patch: LdapConfiguration,
 ): LdapConfiguration {
-  const merged = { ...current, ...patch };
-  if (!patch.bindPassword || patch.bindPassword === MASK) {
-    merged.bindPassword = current.bindPassword;
-  }
-  return merged;
+  return mergeLdapConfiguration(current, patch);
 }
 
 function mergeGoogleSecrets(
@@ -107,6 +114,13 @@ export function registerAdminRoutes(app: Express): void {
       allowWeekend:
         (body.bookingSettings as Record<string, unknown>)?.allowWeekend ??
         beforeOrg.settings?.allowWeekend,
+      accessControl:
+        body.accessControl && typeof body.accessControl === "object"
+          ? body.accessControl
+          : beforeOrg.settings?.accessControl,
+      customAmenities: Array.isArray(body.customAmenities)
+        ? body.customAmenities
+        : beforeOrg.settings?.customAmenities,
     };
 
     let updated: Awaited<ReturnType<typeof store.getOrganizationById>>;
@@ -151,8 +165,10 @@ export function registerAdminRoutes(app: Express): void {
     if (!caller) return;
     const settings = await getOrganizationAuthSettings(caller.organizationId);
     const system = await getSystemSettings(caller.organizationId);
+    const ldapGroupRoleMappings = await listLdapGroupRoleMappings(caller.organizationId);
     res.json({
       ...maskAuthSettings(settings),
+      ldapGroupRoleMappings,
       passwordPolicy: system.security,
     });
   }));
@@ -174,6 +190,13 @@ export function registerAdminRoutes(app: Express): void {
       googleConfiguration: mergeGoogleSecrets(before.googleConfiguration, googlePatch),
       authPolicies: body.authPolicies as OrganizationAuthSettings["authPolicies"],
     });
+
+    if (Array.isArray(body.ldapGroupRoleMappings)) {
+      await replaceLdapGroupRoleMappings(
+        caller.organizationId,
+        body.ldapGroupRoleMappings as { ldapGroup: string; role: string }[],
+      );
+    }
 
     if (body.passwordPolicy) {
       await upsertSystemSettings(caller.organizationId, {
@@ -197,7 +220,11 @@ export function registerAdminRoutes(app: Express): void {
   app.post("/api/admin/auth-settings/test-ldap", asyncRoute(async (req, res) => {
     const caller = requireAdminPermission(req, res, "manage_authentication_settings");
     if (!caller) return;
-    const ldap = req.body?.ldap as LdapConfiguration;
+    const stored = await getOrganizationAuthSettings(caller.organizationId);
+    const ldap = mergeLdapSecrets(
+      stored.ldapConfiguration,
+      (req.body?.ldap || {}) as LdapConfiguration,
+    );
     const result = await testLdapConnection(ldap);
     res.status(result.ok ? 200 : 400).json(result);
   }));
@@ -205,7 +232,12 @@ export function registerAdminRoutes(app: Express): void {
   app.post("/api/admin/auth-settings/test-ldap-user", asyncRoute(async (req, res) => {
     const caller = requireAdminPermission(req, res, "manage_authentication_settings");
     if (!caller) return;
-    const { ldap, username } = req.body as { ldap: LdapConfiguration; username: string };
+    const stored = await getOrganizationAuthSettings(caller.organizationId);
+    const { ldap: ldapBody, username } = req.body as {
+      ldap: LdapConfiguration;
+      username: string;
+    };
+    const ldap = mergeLdapSecrets(stored.ldapConfiguration, ldapBody || {});
     const result = await testLdapUserLookup(ldap, username);
     res.status(result.ok ? 200 : 400).json(result);
   }));
@@ -333,5 +365,34 @@ export function registerAdminRoutes(app: Express): void {
     if (!caller) return;
     const logs = await listConfigAuditLogs(caller.organizationId, 40);
     res.json(logs);
+  }));
+
+  app.get("/api/admin/auth-audit", asyncRoute(async (req, res) => {
+    const caller = requireAdminPermission(req, res, "manage_authentication_settings");
+    if (!caller) return;
+    const logs = await listAuthAuditLogs(caller.organizationId, 60);
+    res.json(logs);
+  }));
+
+  app.get("/api/admin/notification-settings", asyncRoute(async (req, res) => {
+    const caller = requireAdminPermission(req, res, "manage_organization_settings");
+    if (!caller) return;
+    const bundle = await getOrgNotificationBundle(caller.organizationId);
+    res.json(bundle);
+  }));
+
+  app.put("/api/admin/notification-settings", asyncRoute(async (req, res) => {
+    const caller = requireAdminPermission(req, res, "manage_organization_settings");
+    if (!caller) return;
+    const body = req.body as { settings?: Record<string, unknown>; logs?: unknown[] };
+    if (!body.settings || typeof body.settings !== "object") {
+      return res.status(400).json({ error: "settings الزامی است" });
+    }
+    await saveOrgNotificationBundle(
+      caller.organizationId,
+      body.settings,
+      Array.isArray(body.logs) ? body.logs : undefined,
+    );
+    res.json(await getOrgNotificationBundle(caller.organizationId));
   }));
 }

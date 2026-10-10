@@ -28,4 +28,10 @@ docker compose -f deployment/docker-compose.production.yml --env-file .env up -d
 
 ## Version pinning
 
-For enterprise deployments, build and push images from CI and reference immutable tags in compose overrides rather than `:latest`.
+For enterprise deployments, use **GHCR** images with immutable tags (`v1.2.3` or `sha-…`) — see [GHCR.md](./GHCR.md).
+
+```bash
+# .env: ROOOMCHI_BACKEND_IMAGE / ROOOMCHI_FRONTEND_IMAGE
+npm run prod:ghcr:pull
+npm run prod:ghcr:up
+```

@@ -15,6 +15,8 @@ import type { AdminSettingsSection } from './adminSettingsTabs';
 import { applyOrgBrandTheme } from '../../utils/orgBrandTheme';
 import {
   adminInputClass,
+  adminSelectClass,
+  adminSelectChevronStyle,
   AdminFormFooter,
   AdminPage,
   AdminPanel,
@@ -24,6 +26,14 @@ import {
   FormField,
   FormGrid,
 } from './adminSettingsLayout';
+
+const LDAP_ROLE_OPTIONS = [
+  { value: 'EMPLOYEE', label: 'کارمند' },
+  { value: 'MANAGER', label: 'مدیر اتاق' },
+  { value: 'ORGANIZATION_ADMIN', label: 'مدیر سازمان' },
+] as const;
+
+type LdapGroupRoleMapping = { ldapGroup: string; role: string };
 
 export const EnterpriseAdminSettingsView: React.FC<{
   section: AdminSettingsSection;
@@ -129,7 +139,13 @@ export const EnterpriseAdminSettingsView: React.FC<{
   const saveAuth = async () => {
     setSaving(true);
     try {
-      await ApiService.putAdminAuthSettings(authForm);
+      const payload: Record<string, unknown> = { ...authForm };
+      if (Array.isArray(payload.ldapGroupRoleMappings)) {
+        payload.ldapGroupRoleMappings = (
+          payload.ldapGroupRoleMappings as LdapGroupRoleMapping[]
+        ).filter((m) => m.ldapGroup.trim());
+      }
+      await ApiService.putAdminAuthSettings(payload);
       showToast('تنظیمات احراز هویت ذخیره شد', 'success');
       load();
     } catch (e: unknown) {
@@ -185,7 +201,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
     );
   }
 
-  const ldap = (authForm.ldapConfiguration || {}) as Record<string, string>;
+  const ldap = (authForm.ldapConfiguration || {}) as Record<string, string | boolean>;
+  const ldapGroupRoleMappings = (authForm.ldapGroupRoleMappings || []) as LdapGroupRoleMapping[];
+
+  const setLdapGroupRoleMappings = (next: LdapGroupRoleMapping[]) => {
+    setAuthForm({ ...authForm, ldapGroupRoleMappings: next });
+  };
   const google = (authForm.googleConfiguration || {}) as Record<string, string>;
   const policies = (authForm.authPolicies || {}) as Record<string, boolean>;
   const pwdPolicy = (authForm.passwordPolicy || {}) as Record<string, boolean | number>;
@@ -281,13 +302,13 @@ export const EnterpriseAdminSettingsView: React.FC<{
           {section === 'organization' && (
             <>
               <AdminSection title="هویت و برند">
-                <div className="space-y-4">
+                <div className="space-y-5">
                   <OrgLogoUploader
-                    logoLight={String(orgForm.logo || '')}
-                    logoDark={String(orgForm.logoDark || '')}
+                    logo={String(orgForm.logo || orgForm.logoDark || '')}
                     orgName={String(orgForm.name || 'سازمان')}
-                    onChangeLight={(logo) => setOrgForm({ ...orgForm, logo })}
-                    onChangeDark={(logoDark) => setOrgForm({ ...orgForm, logoDark })}
+                    onChange={(nextLogo) =>
+                      setOrgForm({ ...orgForm, logo: nextLogo, logoDark: '' })
+                    }
                   />
                   <OrgBrandThemePicker
                     color={primaryColor}
@@ -307,7 +328,8 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   </FormField>
                   <FormField label="کشور">
                     <select
-                      className={adminInputClass}
+                      className={adminSelectClass}
+                      style={adminSelectChevronStyle}
                       value={orgCountrySelectValue(String(orgForm.country || ''))}
                       onChange={(e) => setOrgForm({ ...orgForm, country: e.target.value })}
                     >
@@ -320,8 +342,8 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   </FormField>
                   <FormField label="منطقه زمانی">
                     <select
-                      className={adminInputClass}
-                      dir="ltr"
+                      className={adminSelectClass}
+                      style={adminSelectChevronStyle}
                       value={orgTimezoneSelectValue(String(orgForm.timezone || ''))}
                       onChange={(e) => setOrgForm({ ...orgForm, timezone: e.target.value })}
                     >
@@ -334,7 +356,8 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   </FormField>
                   <FormField label="تقویم">
                     <select
-                      className={adminInputClass}
+                      className={adminSelectClass}
+                      style={adminSelectChevronStyle}
                       value={String(orgForm.dateFormat || 'jalali')}
                       onChange={(e) => setOrgForm({ ...orgForm, dateFormat: e.target.value })}
                     >
@@ -520,7 +543,7 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={ldap.userFilter || ''}
+                      value={String(ldap.userFilter || '')}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
@@ -528,6 +551,65 @@ export const EnterpriseAdminSettingsView: React.FC<{
                         })
                       }
                     />
+                  </FormField>
+                  <FormField label="ویژگی ایمیل (LDAP)">
+                    <input
+                      className={adminInputClass}
+                      dir="ltr"
+                      value={String(ldap.emailAttribute || 'mail')}
+                      onChange={(e) =>
+                        setAuthForm({
+                          ...authForm,
+                          ldapConfiguration: { ...ldap, emailAttribute: e.target.value },
+                        })
+                      }
+                    />
+                  </FormField>
+                  <FormField label="ویژگی نام نمایشی">
+                    <input
+                      className={adminInputClass}
+                      dir="ltr"
+                      value={String(ldap.nameAttribute || 'displayName')}
+                      onChange={(e) =>
+                        setAuthForm({
+                          ...authForm,
+                          ldapConfiguration: { ...ldap, nameAttribute: e.target.value },
+                        })
+                      }
+                    />
+                  </FormField>
+                  <FormField label="نقش پیش‌فرض (بدون گروه)">
+                    <select
+                      className={adminInputClass}
+                      value={String(ldap.defaultRole || 'EMPLOYEE')}
+                      onChange={(e) =>
+                        setAuthForm({
+                          ...authForm,
+                          ldapConfiguration: { ...ldap, defaultRole: e.target.value },
+                        })
+                      }
+                    >
+                      {LDAP_ROLE_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
+                  </FormField>
+                  <FormField label="TLS / LDAPS" className="lg:col-span-2">
+                    <label className="flex items-center gap-3 text-sm font-medium cursor-pointer">
+                      <ToggleSwitch
+                        checked={ldap.useTls === true}
+                        onChange={() =>
+                          setAuthForm({
+                            ...authForm,
+                            ldapConfiguration: { ...ldap, useTls: ldap.useTls !== true },
+                          })
+                        }
+                      />
+                      <span>
+                        اتصال امن (برای Active Directory معمولاً آدرس{' '}
+                        <span dir="ltr" className="font-mono text-xs">ldaps://</span> یا این گزینه)
+                      </span>
+                    </label>
                   </FormField>
                 </FormGrid>
                 <div className="flex flex-wrap gap-3 pt-2">
@@ -561,6 +643,71 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     }}
                   >
                     جستجوی کاربر
+                  </button>
+                </div>
+              </AdminSection>
+              <AdminSection
+                title="نگاشت گروه AD به نقش"
+                description="نام گروه (مثلاً Roomchi Admins) با memberOf کاربر مقایسه می‌شود. اولین تطابق اعمال می‌شود؛ در هر ورود LDAP نقش به‌روز می‌شود."
+              >
+                <div className="space-y-3">
+                  {ldapGroupRoleMappings.map((row, index) => (
+                    <div
+                      key={`ldap-gr-${index}`}
+                      className="grid grid-cols-1 md:grid-cols-[1fr_200px_auto] gap-3 items-end"
+                    >
+                      <FormField label="نام گروه LDAP">
+                        <input
+                          className={adminInputClass}
+                          dir="ltr"
+                          placeholder="Roomchi Admins"
+                          value={row.ldapGroup}
+                          onChange={(e) => {
+                            const next = [...ldapGroupRoleMappings];
+                            next[index] = { ...row, ldapGroup: e.target.value };
+                            setLdapGroupRoleMappings(next);
+                          }}
+                        />
+                      </FormField>
+                      <FormField label="نقش در روم‌چی">
+                        <select
+                          className={adminInputClass}
+                          value={row.role || 'EMPLOYEE'}
+                          onChange={(e) => {
+                            const next = [...ldapGroupRoleMappings];
+                            next[index] = { ...row, role: e.target.value };
+                            setLdapGroupRoleMappings(next);
+                          }}
+                        >
+                          {LDAP_ROLE_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                          ))}
+                        </select>
+                      </FormField>
+                      <button
+                        type="button"
+                        className="text-sm font-bold text-red-600 px-3 py-2.5 rounded-xl border border-red-200 cursor-pointer mb-0.5"
+                        onClick={() =>
+                          setLdapGroupRoleMappings(
+                            ldapGroupRoleMappings.filter((_, i) => i !== index),
+                          )
+                        }
+                      >
+                        حذف
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="text-sm font-bold text-brand cursor-pointer"
+                    onClick={() =>
+                      setLdapGroupRoleMappings([
+                        ...ldapGroupRoleMappings,
+                        { ldapGroup: '', role: 'EMPLOYEE' },
+                      ])
+                    }
+                  >
+                    + افزودن نگاشت گروه
                   </button>
                 </div>
               </AdminSection>

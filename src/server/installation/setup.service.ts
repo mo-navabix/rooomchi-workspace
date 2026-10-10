@@ -4,7 +4,10 @@ import type { Request } from "express";
 import type { Organization, User } from "../types";
 import * as store from "../persistence/store";
 import { hashPassword } from "../auth/password.service";
-import { upsertOrganizationAuthSettings } from "../auth/auth-settings.store";
+import {
+  replaceLdapGroupRoleMappings,
+  upsertOrganizationAuthSettings,
+} from "../auth/auth-settings.store";
 import type { GoogleConfiguration, LdapConfiguration } from "../auth/types";
 import { issueSessionForUser } from "../auth/session.service";
 import { writeAuthAudit } from "../auth/audit.service";
@@ -32,6 +35,7 @@ export type SetupAuthInput = {
   selfRegistrationEnabled: boolean;
   ldapEnabled: boolean;
   ldap?: LdapConfiguration;
+  ldapGroupRoleMappings?: { ldapGroup: string; role: string }[];
   googleEnabled: boolean;
   google?: GoogleConfiguration;
 };
@@ -246,6 +250,10 @@ export async function completeInstallation(
       defaultLocalRole: "EMPLOYEE",
     },
   });
+
+  if (payload.auth.ldapGroupRoleMappings?.length) {
+    await replaceLdapGroupRoleMappings(orgId, payload.auth.ldapGroupRoleMappings);
+  }
 
   if (payload.smtp?.host) {
     await upsertIntegration(orgId, "smtp", {

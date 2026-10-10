@@ -8,6 +8,7 @@ import {
   ChevronDown,
   Clock,
   Filter,
+  Plus,
   RefreshCw,
 } from 'lucide-react';
 import { CalendarSkeleton } from '../common/Skeletons';
@@ -40,7 +41,7 @@ function useMatchMedia(query: string): boolean {
 }
 
 export const CalendarView: React.FC = () => {
-  const { currentOrg, orgLocale } = useApp();
+  const { currentOrg, orgLocale, openBookingModal } = useApp();
   const isNarrow = useMatchMedia('(max-width: 767px)');
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0);
   const [focusDateIso, setFocusDateIso] = useState<string>(() => todayIso());
@@ -106,6 +107,15 @@ export const CalendarView: React.FC = () => {
   const goToToday = () => {
     setFocusDateIso(todayIso());
     setCurrentWeekOffset(0);
+  };
+
+  const handleReserveRoom = () => {
+    if (selectedRoomId !== 'all') {
+      const room = rooms.find((r) => r.id === selectedRoomId);
+      openBookingModal(room);
+      return;
+    }
+    openBookingModal();
   };
 
   if (isLoading) {
@@ -196,6 +206,14 @@ export const CalendarView: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-slate-100 dark:border-[#334155]">
+          <button
+            type="button"
+            onClick={handleReserveRoom}
+            className="portal-btn-primary flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs sm:text-sm font-bold cursor-pointer shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.15)] dark:shadow-black/30 shrink-0 w-full sm:w-auto sm:ms-auto order-first sm:order-last"
+          >
+            <Plus className="w-4 h-4" />
+            <span>رزرو اتاق</span>
+          </button>
           <button
             type="button"
             onClick={loadData}

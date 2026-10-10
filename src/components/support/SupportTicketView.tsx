@@ -7,9 +7,9 @@ import {
   categoryLabels,
   priorityLabels,
   statusLabels,
-  loadTickets,
-  saveTickets,
+  mapApiSupportTicket,
 } from '../../services/supportTickets';
+import { ApiService } from '../../services/apiService';
 import { Ticket, Send, Clock, CheckCircle2, Inbox, ChevronDown } from 'lucide-react';
 
 export type { TicketCategory, TicketPriority, SupportTicket };
@@ -26,9 +26,17 @@ export const SupportTicketView: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
 
   useEffect(() => {
-    setTickets(loadTickets());
+    if (!isAuthenticated) return;
+    void (async () => {
+      try {
+        const rows = await ApiService.getSupportTickets();
+        setTickets(rows.map((r) => mapApiSupportTicket(r, currentOrg?.name)));
+      } catch {
+        setTickets([]);
+      }
+    })();
     if (currentUser?.phone) setContactPhone(currentUser.phone);
-  }, [currentUser?.phone]);
+  }, [currentUser?.phone, isAuthenticated, currentOrg?.name]);
 
   const myTickets = tickets.filter(
     (t) => !currentUser || t.userEmail === currentUser.email || t.userId === currentUser.id
@@ -47,25 +55,15 @@ export const SupportTicketView: React.FC = () => {
 
     setSubmitting(true);
     try {
-      const ticket: SupportTicket = {
-        id: `TKT-${Date.now().toString(36).toUpperCase()}`,
+      const created = await ApiService.createSupportTicket({
         subject: subject.trim(),
         category,
         priority,
         description: description.trim(),
         contactPhone: contactPhone.trim() || undefined,
-        userId: currentUser.id,
-        userEmail: currentUser.email,
-        userName: currentUser.name,
-        orgId: currentOrg?.id,
-        orgName: currentOrg?.name,
-        status: 'open',
-        createdAt: new Date().toISOString(),
-      };
-
-      const next = [ticket, ...loadTickets()];
-      saveTickets(next);
-      setTickets(next);
+      });
+      const ticket = mapApiSupportTicket(created, currentOrg?.name);
+      setTickets((prev) => [ticket, ...prev]);
       setSubject('');
       setDescription('');
       setCategory('technical');

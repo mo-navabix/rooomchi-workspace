@@ -89,3 +89,42 @@ export async function upsertSystemSettings(
   );
   return getSystemSettings(organizationId);
 }
+
+export async function getOrgNotificationBundle(organizationId: string): Promise<{
+  settings: Record<string, unknown>;
+  logs: unknown[];
+}> {
+  await upsertSystemSettings(organizationId, {});
+  const { rows } = await query<{ notification_settings: unknown; notification_logs: unknown }>(
+    `SELECT notification_settings, notification_logs FROM system_settings WHERE organization_id = $1`,
+    [organizationId],
+  );
+  const row = rows[0];
+  const settings =
+    row?.notification_settings && typeof row.notification_settings === "object"
+      ? (row.notification_settings as Record<string, unknown>)
+      : {};
+  const logs = Array.isArray(row?.notification_logs) ? row.notification_logs : [];
+  return { settings, logs };
+}
+
+export async function saveOrgNotificationBundle(
+  organizationId: string,
+  settings: Record<string, unknown>,
+  logs?: unknown[],
+): Promise<void> {
+  await upsertSystemSettings(organizationId, {});
+  if (logs) {
+    await query(
+      `UPDATE system_settings SET notification_settings = $2::jsonb, notification_logs = $3::jsonb, updated_at = NOW()
+       WHERE organization_id = $1`,
+      [organizationId, JSON.stringify(settings), JSON.stringify(logs)],
+    );
+    return;
+  }
+  await query(
+    `UPDATE system_settings SET notification_settings = $2::jsonb, updated_at = NOW()
+     WHERE organization_id = $1`,
+    [organizationId, JSON.stringify(settings)],
+  );
+}

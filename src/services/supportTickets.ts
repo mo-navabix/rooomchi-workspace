@@ -25,8 +25,6 @@ export type SupportTicket = {
   updatedAt?: string;
 };
 
-export const STORAGE_KEY = 'rooomchi-support-tickets';
-
 export const categoryLabels: Record<TicketCategory, string> = {
   technical: 'مشکل فنی',
   booking: 'رزرو و اتاق‌ها',
@@ -47,31 +45,27 @@ export const statusLabels: Record<SupportTicket['status'], string> = {
   resolved: 'بسته شده',
 };
 
-export function loadTickets(): SupportTicket[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as SupportTicket[];
-  } catch {
-    return [];
-  }
-}
-
-export function saveTickets(tickets: SupportTicket[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
-}
-
-export function updateTicket(
-  id: string,
-  patch: Partial<Pick<SupportTicket, 'status' | 'adminNote' | 'priority'>>
-): SupportTicket[] {
-  const next = loadTickets().map((t) =>
-    t.id === id
-      ? { ...t, ...patch, updatedAt: new Date().toISOString() }
-      : t
-  );
-  saveTickets(next);
-  return next;
+export function mapApiSupportTicket(
+  row: Record<string, unknown>,
+  orgName?: string,
+): SupportTicket {
+  return {
+    id: String(row.id),
+    subject: String(row.subject),
+    category: row.category as TicketCategory,
+    priority: row.priority as TicketPriority,
+    description: String(row.description),
+    contactPhone: row.contactPhone ? String(row.contactPhone) : undefined,
+    userId: row.userId ? String(row.userId) : undefined,
+    userEmail: row.userEmail ? String(row.userEmail) : undefined,
+    userName: row.userName ? String(row.userName) : undefined,
+    orgId: row.orgId ? String(row.orgId) : undefined,
+    orgName,
+    status: row.status as SupportTicket['status'],
+    adminNote: row.adminNote ? String(row.adminNote) : undefined,
+    createdAt: String(row.createdAt),
+    updatedAt: row.updatedAt ? String(row.updatedAt) : undefined,
+  };
 }
 
 export function ticketBelongsToOrg(ticket: SupportTicket, orgId: string, orgName?: string): boolean {

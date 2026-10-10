@@ -6,12 +6,12 @@ import {
   TicketCategory,
   TicketPriority,
   categoryLabels,
-  loadTickets,
   priorityLabels,
   statusLabels,
   ticketBelongsToOrg,
-  updateTicket,
+  mapApiSupportTicket,
 } from '../../services/supportTickets';
+import { ApiService } from '../../services/apiService';
 import {
   Ticket,
   Search,
@@ -54,14 +54,22 @@ export const AdminSupportTicketsView: React.FC = () => {
   const [draftNote, setDraftNote] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const refresh = () => {
-    setTickets(loadTickets());
-    setLoading(false);
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      const rows = await ApiService.getSupportTickets();
+      setTickets(rows.map((r) => mapApiSupportTicket(r, currentOrg?.name)));
+    } catch {
+      setTickets([]);
+      showToast('بارگذاری تیکت‌ها از سرور ناموفق بود', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    refresh();
-  }, []);
+    void refresh();
+  }, [currentOrg?.id]);
 
   const orgTickets = useMemo(() => {
     if (!currentOrg) return [];
@@ -104,16 +112,19 @@ export const AdminSupportTicketsView: React.FC = () => {
 
   const openDetail = (t: SupportTicket) => setSelectedId(t.id);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selected) return;
     setSaving(true);
     try {
-      const next = updateTicket(selected.id, {
+      const updated = await ApiService.patchSupportTicket(selected.id, {
         status: draftStatus,
         adminNote: draftNote.trim() || undefined,
       });
-      setTickets(next);
+      const ticket = mapApiSupportTicket(updated, currentOrg?.name);
+      setTickets((prev) => prev.map((t) => (t.id === ticket.id ? ticket : t)));
       showToast('تیکت به‌روزرسانی شد.', 'success');
+    } catch (e: unknown) {
+      showToast(e instanceof Error ? e.message : 'خطا در ذخیره', 'error');
     } finally {
       setSaving(false);
     }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
-import { Room } from '../../types';
+import { Amenity, Room } from '../../types';
 import {
   ALL_AMENITIES,
   getAllAmenitiesList,
@@ -38,6 +38,11 @@ import { RoomBrowserSkeleton } from '../common/Skeletons';
 
 export const RoomBrowser: React.FC = () => {
   const { currentOrg, openBookingModal } = useApp();
+  const customAmenities = useMemo(() => {
+    const raw = (currentOrg?.settings as { customAmenities?: Amenity[] })?.customAmenities;
+    return Array.isArray(raw) ? raw : [];
+  }, [currentOrg?.settings]);
+  const allAmenities = useMemo(() => getAllAmenitiesList(customAmenities), [customAmenities]);
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -144,7 +149,7 @@ export const RoomBrowser: React.FC = () => {
               className="w-full text-xs pr-3.5 pl-9 py-2.5 appearance-none bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer"
             >
               <option value="all">همه امکانات و تجهیزات</option>
-              {getAllAmenitiesList().map((a) => (
+              {allAmenities.map((a) => (
                 <option key={a.id} value={a.id}>
                   دارای {a.nameFa}
                 </option>
@@ -269,7 +274,7 @@ export const RoomBrowser: React.FC = () => {
                   >
                     <div className="flex items-center gap-1 overflow-hidden">
                       {room.amenities.slice(0, 3).map((amId) => {
-                        const am = getAmenityById(amId);
+                        const am = getAmenityById(amId, customAmenities);
                         let IconComp = Check;
                         if (am?.icon === 'Wifi' || amId.includes('wifi')) IconComp = Wifi;
                         else if (am?.icon === 'Projector' || amId.includes('projector') || am?.icon === 'Tv' || amId.includes('tv')) IconComp = Tv;

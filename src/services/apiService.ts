@@ -840,4 +840,72 @@ export class ApiService {
       headers: getAuthHeaders(),
     });
   }
+
+  static async getSupportTickets(): Promise<Record<string, unknown>[]> {
+    const res = await fetch(`${API_BASE}/support-tickets`, { headers: getAuthHeaders() });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در بارگذاری تیکت‌ها');
+    }
+    return res.json();
+  }
+
+  static async createSupportTicket(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const res = await fetch(`${API_BASE}/support-tickets`, {
+      method: 'POST',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در ثبت تیکت');
+    }
+    return res.json();
+  }
+
+  static async patchSupportTicket(
+    id: string,
+    patch: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const res = await fetch(`${API_BASE}/support-tickets/${id}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(patch),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در به‌روزرسانی تیکت');
+    }
+    return res.json();
+  }
+
+  static async getAdminAuthAudit(): Promise<Record<string, unknown>[]> {
+    const res = await ApiService.adminFetch('auth-audit');
+    if (!res.ok) throw new Error('خطا در بارگذاری لاگ احراز هویت');
+    return res.json();
+  }
+
+  static async getAdminNotificationSettings(): Promise<{
+    settings: Record<string, unknown>;
+    logs: unknown[];
+  }> {
+    const res = await ApiService.adminFetch('notification-settings');
+    if (!res.ok) throw new Error('خطا در بارگذاری تنظیمات اعلان');
+    return res.json();
+  }
+
+  static async putAdminNotificationSettings(payload: {
+    settings: Record<string, unknown>;
+    logs?: unknown[];
+  }): Promise<{ settings: Record<string, unknown>; logs: unknown[] }> {
+    const res = await ApiService.adminFetch('notification-settings', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'خطا در ذخیره تنظیمات اعلان');
+    }
+    return res.json();
+  }
 }

@@ -7,6 +7,7 @@ import type {
   OrganizationAuthSettings,
 } from "./types";
 import { decryptSecret, encryptSecret } from "../security/secret-crypto";
+import { mergeLdapConfiguration } from "./ldap-config.util";
 
 function parseJson<T extends Record<string, unknown>>(value: unknown, fallback: T): T {
   if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -90,10 +91,10 @@ export async function upsertOrganizationAuthSettings(
   patch: Partial<OrganizationAuthSettings>,
 ): Promise<OrganizationAuthSettings> {
   const current = await getOrganizationAuthSettings(organizationId);
-  const mergedLdap: LdapConfiguration = {
-    ...current.ldapConfiguration,
-    ...patch.ldapConfiguration,
-  };
+  const mergedLdap = mergeLdapConfiguration(
+    current.ldapConfiguration,
+    patch.ldapConfiguration ?? {},
+  );
   if (mergedLdap.bindPassword?.trim()) {
     mergedLdap.bindPassword = encryptSecret(mergedLdap.bindPassword);
   }

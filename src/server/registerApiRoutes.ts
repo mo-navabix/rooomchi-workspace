@@ -11,6 +11,7 @@ import { asyncRoute, stripPassword } from "./http";
 import type { Booking, Organization, Room, TeamRecord, User } from "./types";
 import * as store from "./persistence/store";
 import * as userNotifications from "./persistence/user-notifications.store";
+import * as supportTickets from "./persistence/support-tickets.store";
 import type { AppNotification } from "./types";
 import { registerAuthRoutes } from "./auth/auth.routes";
 import { registerSetupRoutes } from "./installation/setup.routes";
@@ -800,5 +801,63 @@ export function registerApiRoutes(app: Express): void {
     if (!caller?.userId) return res.status(401).json({ error: "ورود الزامی است" });
     await userNotifications.clearUserNotifications(caller.userId);
     res.json({ ok: true });
+  }));
+
+  function isOrgAdminRole(role: string): boolean {
+    const r = role.toUpperCase();
+    return r === "SUPER_ADMIN" || r === "ORGANIZATION_ADMIN" || r === "ORG_ADMIN";
+  }
+
+  app.get("/api/support-tickets", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId || !caller.organizationId) {
+      return res.status(401).json({ error: "ورود الزامی است" });
+    }
+    const list = isOrgAdminRole(caller.role)
+      ? await supportTickets.listSupportTicketsForOrg(caller.organizationId)
+      : await supportTickets.listSupportTicketsForUser(caller.organizationId, caller.userId);
+    res.json(list);
+  }));
+
+  app.post("/api/support-tickets", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId || !caller.organizationId) {
+      return res.status(401).json({ error: "ورود الزامی است" });
+    }
+    const body = req.body as Record<string, unknown>;
+    if (!body.subject || !body.description) {
+      return res.status(400).json({ error: "عنوان و شرح تیکت الزامی است" });
+    }
+    const user = await store.getUserById(caller.userId);
+    const created = await supportTickets.insertSupportTicket({
+      organizationId: caller.organizationId,
+      userId: caller.userId,
+      userEmail: user?.email || String(body.userEmail || ""),
+      userName: user?.name || String(body.userName || ""),
+      subject: String(body.subject).trim(),
+      category: String(body.category || "other"),
+      priority: String(body.priority || "medium"),
+      description: String(body.description).trim(),
+      contactPhone: body.contactPhone ? String(body.contactPhone) : undefined,
+    });
+    res.status(201).json(created);
+  }));
+
+  app.patch("/api/support-tickets/:id", asyncRoute(async (req, res) => {
+    const caller = extractJwtUser(req);
+    if (!caller?.userId || !caller.organizationId) {
+      return res.status(401).json({ error: "ورود الزامی است" });
+    }
+    if (!isOrgAdminRole(caller.role)) {
+      return res.status(403).json({ error: "دسترسی مجاز نیست" });
+    }
+    const body = req.body as Record<string, unknown>;
+    const updated = await supportTickets.patchSupportTicket(caller.organizationId, req.params.id, {
+      status: body.status ? String(body.status) : undefined,
+      adminNote: body.adminNote !== undefined ? String(body.adminNote) : undefined,
+      priority: body.priority ? String(body.priority) : undefined,
+    });
+    if (!updated) return res.status(404).json({ error: "تیکت یافت نشد" });
+    res.json(updated);
   }));
 }

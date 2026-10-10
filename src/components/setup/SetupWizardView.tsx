@@ -187,8 +187,12 @@ export const SetupWizardView: React.FC = () => {
       bindPassword: '',
       baseDn: '',
       userFilter: '(|(sAMAccountName={username})(mail={username}))',
-      useTls: true,
+      emailAttribute: 'mail',
+      nameAttribute: 'displayName',
+      defaultRole: 'EMPLOYEE',
+      useTls: false,
     },
+    ldapGroupRoleMappings: [] as { ldapGroup: string; role: string }[],
     google: {
       clientId: '',
       clientSecret: '',
@@ -312,6 +316,9 @@ export const SetupWizardView: React.FC = () => {
           selfRegistrationEnabled: auth.selfRegistrationEnabled,
           ldapEnabled: auth.ldapEnabled,
           ldap: auth.ldapEnabled ? auth.ldap : undefined,
+          ldapGroupRoleMappings: auth.ldapEnabled
+            ? auth.ldapGroupRoleMappings.filter((m) => m.ldapGroup.trim())
+            : undefined,
           googleEnabled: auth.googleEnabled,
           google: auth.googleEnabled ? auth.google : undefined,
         },
@@ -602,10 +609,77 @@ export const SetupWizardView: React.FC = () => {
                       }
                     />
                     <SetupSwitchRow
-                      label="استفاده از TLS"
+                      label="استفاده از TLS / LDAPS"
                       checked={auth.ldap.useTls}
                       onChange={(useTls) => setAuth({ ...auth, ldap: { ...auth.ldap, useTls } })}
                     />
+                    <SetupLabeledInput
+                      id="setup-ldap-default-role"
+                      label="نقش پیش‌فرض کاربران LDAP"
+                      dir="ltr"
+                      value={auth.ldap.defaultRole}
+                      onChange={(defaultRole) =>
+                        setAuth({ ...auth, ldap: { ...auth.ldap, defaultRole } })
+                      }
+                    />
+                    <p className="text-xs text-slate-500">
+                      نگاشت گروه (اختیاری): نام گروه AD و نقش — مثلاً Roomchi Admins → ORGANIZATION_ADMIN
+                    </p>
+                    {auth.ldapGroupRoleMappings.map((row, index) => (
+                      <div key={`setup-ldap-gr-${index}`} className="flex flex-wrap gap-2 items-end">
+                        <SetupLabeledInput
+                          id={`setup-ldap-group-${index}`}
+                          label="گروه LDAP"
+                          dir="ltr"
+                          value={row.ldapGroup}
+                          onChange={(ldapGroup) => {
+                            const next = [...auth.ldapGroupRoleMappings];
+                            next[index] = { ...row, ldapGroup };
+                            setAuth({ ...auth, ldapGroupRoleMappings: next });
+                          }}
+                        />
+                        <SetupLabeledInput
+                          id={`setup-ldap-role-${index}`}
+                          label="نقش"
+                          dir="ltr"
+                          value={row.role}
+                          onChange={(role) => {
+                            const next = [...auth.ldapGroupRoleMappings];
+                            next[index] = { ...row, role };
+                            setAuth({ ...auth, ldapGroupRoleMappings: next });
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="text-xs font-bold text-red-600 px-2 py-2 cursor-pointer"
+                          onClick={() =>
+                            setAuth({
+                              ...auth,
+                              ldapGroupRoleMappings: auth.ldapGroupRoleMappings.filter(
+                                (_, i) => i !== index,
+                              ),
+                            })
+                          }
+                        >
+                          حذف
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="text-xs font-bold text-[var(--brand-primary)] cursor-pointer"
+                      onClick={() =>
+                        setAuth({
+                          ...auth,
+                          ldapGroupRoleMappings: [
+                            ...auth.ldapGroupRoleMappings,
+                            { ldapGroup: '', role: 'EMPLOYEE' },
+                          ],
+                        })
+                      }
+                    >
+                      + افزودن نگاشت گروه
+                    </button>
                     <button
                       type="button"
                       onClick={() => runTest('ldap')}
