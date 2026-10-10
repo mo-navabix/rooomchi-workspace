@@ -1,0 +1,128 @@
+# Rooomchi — production on GHCR images + PostgreSQL + optional auto-updates (Watchtower)
+#
+# Prerequisites:
+#   cp .env.example .env   # IMAGE_GHCR_* or ROOOMCHI_*_IMAGE, secrets, JWT
+#   docker login ghcr.io -u YOUR_GITHUB_USER -p YOUR_PAT   # read:packages
+#
+# Start (from repo root):
+#   docker compose -f deployment/docker-compose.prod.ghcr.yml --env-file .env up -d
+#
+# Watchtower updates only services labeled com.centurylinklabs.watchtower.enable=true
+# (backend + frontend). Postgres, proxy, and Watchtower itself are excluded.
+
+name: rooomchi
+
+x-watchtower-labels: &watchtower_app_labels
+  com.centurylinklabs.watchtower.enable: "true"
+
+x-watchtower-skip: &watchtower_skip_labels
+  com.centurylinklabs.watchtower.enable: "false"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    labels:
+      <<: *watchtower_skip_labels
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-rooomchi_db}
+    volumes:
+      - rooomchi_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-rooomchi_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - rooomchi
+
+  backend:
+    image: ${IMAGE_GHCR_BACKEND:-${ROOOMCHI_BACKEND_IMAGE}}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      <<: *watchtower_app_labels
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      API_ONLY: "true"
+      SERVE_STATIC: "false"
+      SKIP_SCHEMA_ENSURE: "true"
+      RUN_MIGRATIONS_ON_START: ${RUN_MIGRATIONS_ON_START:-true}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rooomchi_db}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_URL: ${APP_URL:-http://localhost}
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-300}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      SETUP_ENCRYPTION_KEY: ${SETUP_ENCRYPTION_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health | grep -q healthy || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks:
+      - rooomchi
+
+  frontend:
+    image: ${IMAGE_GHCR_FRONTEND:-${ROOOMCHI_FRONTEND_IMAGE}}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      <<: *watchtower_app_labels
+    networks:
+      - rooomchi
+
+  proxy:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    labels:
+      <<: *watchtower_skip_labels
+    ports:
+      - "${ROOOMCHI_HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    networks:
+      - rooomchi
+
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    profiles:
+      - watchtower
+    restart: unless-stopped
+    labels:
+      <<: *watchtower_skip_labels
+    environment:
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-86400}
+      WATCHTOWER_ROLLING_RESTART: "true"
+      WATCHTOWER_INCLUDE_RESTARTING: "true"
+      WATCHTOWER_NO_STARTUP_MESSAGE: "true"
+      # Optional if `docker login ghcr.io` on the host is not enough for pulls:
+      REPO_USER: ${GHCR_USERNAME:-}
+      REPO_PASS: ${GHCR_TOKEN:-}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - rooomchi
+
+volumes:
+  rooomchi_pg_data:
+
+networks:
+  rooomchi:
+    driver: bridge

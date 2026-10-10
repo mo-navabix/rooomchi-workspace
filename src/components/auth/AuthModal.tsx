@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { UserRole } from '../../types';
 import { Logo } from '../common/Logo';
 import {
   X,
@@ -31,7 +30,6 @@ export const AuthModal: React.FC = () => {
     verifyOtp,
     forgotPassword,
     resetPassword,
-    quickLoginAs,
     loginWithGoogle,
     accessControl,
     showToast,
@@ -41,8 +39,8 @@ export const AuthModal: React.FC = () => {
   const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot' | 'reset'>('login');
 
   // Login form state
-  const [loginEmail, setLoginEmail] = useState<string>('admin@rooomchi.ir');
-  const [loginPassword, setLoginPassword] = useState<string>('password123');
+  const [loginEmail, setLoginEmail] = useState<string>('');
+  const [loginPassword, setLoginPassword] = useState<string>('');
   const [showLoginPassword, setShowLoginPassword] = useState<boolean>(false);
 
   // Register flow state (Email only -> OTP verification)
@@ -414,61 +412,6 @@ export const AuthModal: React.FC = () => {
                 >
                   فراموشی رمز عبور
                 </button>
-              </div>
-
-              {/* Demo Accounts Bar (Helpful for quick test of roles) */}
-              <div className="pt-3 border-t border-slate-100 dark:border-[#334155]">
-                <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 flex items-center justify-between">
-                  <span>تست سریع با نقش‌های سازمانی (دمو):</span>
-                  <span className="text-[10px] bg-slate-100 dark:bg-[#0F172A] text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-full font-mono border border-slate-200 dark:border-[#334155]">
-                    رمز: password123
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => quickLoginAs('super_admin')}
-                    className="p-2 text-right rounded-lg border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/50 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
-                  >
-                    <span>مدیر کل روم‌چی</span>
-                    <span className="text-[9px] bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-1.5 py-0.5 rounded text-brand dark:text-[var(--brand-primary-on-dark)]">
-                      Super Admin
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => quickLoginAs('org_admin')}
-                    className="p-2 text-right rounded-lg border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/50 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
-                  >
-                    <span>مدیر سازمان</span>
-                    <span className="text-[9px] bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-1.5 py-0.5 rounded text-brand dark:text-[var(--brand-primary-on-dark)]">
-                      Org Admin
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => quickLoginAs('room_manager')}
-                    className="p-2 text-right rounded-lg border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.2)] text-brand dark:text-[var(--brand-primary-on-dark)] text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
-                  >
-                    <span>مدیر تشریفات</span>
-                    <span className="text-[9px] bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-1.5 py-0.5 rounded text-brand dark:text-[var(--brand-primary-on-dark)]">
-                      Manager
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => quickLoginAs('employee')}
-                    className="p-2 text-right rounded-lg border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0F172A] hover:bg-slate-100 dark:hover:bg-[#334155] text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-colors flex items-center justify-between cursor-pointer"
-                  >
-                    <span>کارمند عادی</span>
-                    <span className="text-[9px] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">
-                      Staff
-                    </span>
-                  </button>
-                </div>
               </div>
             </form>
           )}

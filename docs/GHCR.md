@@ -74,28 +74,42 @@ Use a **machine user** or deploy bot account for production if you prefer not to
 
 ## 4. Pull and run
 
+Production stack file: [`deployment/docker-compose.prod.ghcr.yml`](../deployment/docker-compose.prod.ghcr.yml) (Postgres + GHCR backend/frontend + edge nginx + optional Watchtower).
+
 In `.env` (see [`.env.example`](../.env.example)):
 
 ```env
-ROOOMCHI_BACKEND_IMAGE=ghcr.io/YOUR_GITHUB_USER/rooomchi-backend:v1.0.0
-ROOOMCHI_FRONTEND_IMAGE=ghcr.io/YOUR_GITHUB_USER/rooomchi-frontend:v1.0.0
+IMAGE_GHCR_BACKEND=ghcr.io/YOUR_GITHUB_USER/rooomchi-backend:v1.0.0
+IMAGE_GHCR_FRONTEND=ghcr.io/YOUR_GITHUB_USER/rooomchi-frontend:v1.0.0
 ```
+
+(`ROOOMCHI_BACKEND_IMAGE` / `ROOOMCHI_FRONTEND_IMAGE` still work as fallbacks.)
 
 From repo root:
 
 ```bash
-docker compose -f deployment/docker-compose.ghcr.yml --env-file .env pull
-docker compose -f deployment/docker-compose.ghcr.yml --env-file .env up -d
+docker compose -f deployment/docker-compose.prod.ghcr.yml --env-file .env pull
+docker compose -f deployment/docker-compose.prod.ghcr.yml --env-file .env --profile watchtower up -d
 ```
 
 Or npm scripts:
 
 ```bash
 npm run prod:ghcr:pull
-npm run prod:ghcr:up
+npm run prod:ghcr:up          # stack + Watchtower
+npm run prod:ghcr:up:stack    # without Watchtower
 ```
 
-Postgres, nginx proxy, migrations, and healthchecks behave like [docker-compose.production.yml](../deployment/docker-compose.production.yml); only backend/frontend images come from GHCR.
+Postgres, nginx proxy, migrations on backend start, and healthchecks behave like [docker-compose.production.yml](../deployment/docker-compose.production.yml); only backend/frontend images come from GHCR.
+
+### Watchtower
+
+- Service `watchtower` uses profile `watchtower` (enabled by `npm run prod:ghcr:up`).
+- Only containers with label `com.centurylinklabs.watchtower.enable=true` are updated (**backend** and **frontend**).
+- **Postgres**, **proxy**, and Watchtower itself are labeled `enable=false`.
+- Default poll interval: `WATCHTOWER_POLL_INTERVAL` (seconds, default `86400`).
+- Run `docker login ghcr.io` on the host so pulls succeed; optionally set `GHCR_USERNAME` / `GHCR_TOKEN` for Watchtower.
+- Prefer **immutable** image tags (`v1.2.3`) in production; with `:latest`, Watchtower will roll forward on every GHCR publish.
 
 ## 5. Upgrade
 
@@ -110,7 +124,8 @@ Postgres, nginx proxy, migrations, and healthchecks behave like [docker-compose.
 | `denied` / `unauthorized` | `docker login ghcr.io`, PAT has `read:packages`, username is correct |
 | `manifest unknown` | Tag exists on GitHub Packages; image name owner is lowercase |
 | Private package | Package visibility or login required |
-| Old containers | `pull_policy: always` in ghcr compose; run `docker compose pull` before `up` |
+| Old containers | `pull_policy: always`; run `npm run prod:ghcr:pull` or let Watchtower pull |
+| Watchtower restarts nothing | `WATCHTOWER_LABEL_ENABLE=true` and backend/frontend labels; check Watchtower logs |
 
 ## CI
 

@@ -152,7 +152,6 @@ interface AppContextType {
     code: string;
     newPassword: string;
   }) => Promise<void>;
-  quickLoginAs: (userRole: UserRole) => Promise<void>;
 
   // Notifications
   notifications: AppNotification[];
@@ -691,27 +690,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     setAuthModalView("login");
   };
 
-  // Preset Fast Switching for quick demonstrations
-  const quickLoginAs = async (role: UserRole) => {
-    const roleAccounts: Record<UserRole, { email: string; password: string }> =
-      {
-        super_admin: { email: "admin@rooomchi.ir", password: "password123" },
-        org_admin: { email: "admin@technova.ir", password: "password123" },
-        room_manager: {
-          email: "facility@technova.ir",
-          password: "password123",
-        },
-        employee: { email: "employee@technova.ir", password: "password123" },
-      };
-
-    const creds = roleAccounts[role];
-    try {
-      await login(creds);
-    } catch (e: any) {
-      showToast(e.message || "خطا در ورود سریع", "error");
-    }
-  };
-
   const sendOtp = async (email: string) => {
     const res = await ApiService.sendOtp(email);
     showToast(res.message || "کد تأیید ارسال شد", "info");
@@ -1007,7 +985,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         logout,
         forgotPassword,
         resetPassword,
-        quickLoginAs,
 
         // Notifications
         notifications,

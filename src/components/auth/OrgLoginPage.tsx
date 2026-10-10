@@ -17,10 +17,6 @@ import {
 import { navigateToAppHome } from "../../utils/appNavigation";
 import { ApiService } from "../../services/apiService";
 import type { OrganizationAuthSettingsPublic } from "../../types/orgAuth";
-import {
-  DEMO_ACCOUNTS_FOR_CUSTOMERS,
-  DEMO_LOGIN_PASSWORD,
-} from "../../constants/demoAccounts";
 
 export const OrgLoginPage: React.FC = () => {
   const {
@@ -445,39 +441,6 @@ export const OrgLoginPage: React.FC = () => {
                   ورود با حساب گوگل
                 </button>
               </>
-            )}
-
-            {(import.meta.env.DEV ||
-              import.meta.env.VITE_SHOW_DEMO_ACCOUNTS === "true") && (
-              <details className="mt-5 rounded-xl border border-amber-200/80 dark:border-amber-900/50 bg-amber-50/80 dark:bg-amber-950/20 p-3 text-xs">
-                <summary className="cursor-pointer font-bold text-amber-900 dark:text-amber-200">
-                  حساب‌های دمو برای مشتریان (رمز: {DEMO_LOGIN_PASSWORD})
-                </summary>
-                <ul className="mt-2 space-y-1.5 text-slate-600 dark:text-slate-300">
-                  {DEMO_ACCOUNTS_FOR_CUSTOMERS.map((a) => (
-                    <li key={a.email}>
-                      <button
-                        type="button"
-                        className="text-left w-full hover:text-[var(--brand-primary)] cursor-pointer"
-                        onClick={() => {
-                          setLoginEmail(a.email);
-                          setLoginPassword(DEMO_LOGIN_PASSWORD);
-                          setAuthMode("local");
-                        }}
-                      >
-                        <span className="font-mono text-[11px]" dir="ltr">
-                          {a.email}
-                        </span>
-                        <span className="text-slate-500"> — {a.label}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-2 text-[10px] text-slate-500">
-                  سازمان را با ایمیل کاربر هماهنگ کنید (مثلاً TechNova برای
-                  *@technova.ir).
-                </p>
-              </details>
             )}
 
             <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">

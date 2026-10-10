@@ -2,9 +2,12 @@
 
 ## Production Compose
 
-File: `deployment/docker-compose.production.yml`
+| File | Use case |
+|------|----------|
+| `deployment/docker-compose.production.yml` | Build images on the server (`npm run prod:up`) |
+| `deployment/docker-compose.prod.ghcr.yml` | Pull backend/frontend from GHCR + Postgres + proxy + Watchtower — [GHCR.md](./GHCR.md) |
 
-Services:
+Services (both stacks):
 
 | Service | Role |
 |---------|------|
@@ -12,6 +15,7 @@ Services:
 | `backend` | Express API, migrations on start |
 | `frontend` | Vite build served by Nginx |
 | `proxy` | Edge Nginx — `/api` → backend, `/` → frontend |
+| `watchtower` | GHCR stack only — auto-pull labeled app containers |
 
 ## Commands
 
