@@ -132,7 +132,7 @@ export function registerAdminRoutes(app: Express): void {
         contactEmail: body.contactEmail as string,
         logo: body.logo as string,
         primaryColor: body.primaryColor as string,
-        workHours: body.workHours as Organization["workHours"],
+        workHours: (body.workHours as Organization["workHours"]) ?? beforeOrg.workHours,
         settings: settings as unknown as Organization["settings"],
       });
     } catch (err: unknown) {

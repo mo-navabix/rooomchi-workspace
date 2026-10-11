@@ -160,8 +160,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     const expanded = expandedGroups[group.id] ?? false;
 
     return (
-      <div key={group.id} className="pt-1">
-        {!collapsed ? (
+      <div
+        key={group.id}
+        className={collapsed ? "pt-2 mt-2 border-t border-slate-200/80 dark:border-white/10 first:mt-0 first:pt-0 first:border-t-0" : "pt-1"}
+      >
+        {!collapsed && (
           <button
             type="button"
             onClick={() =>
@@ -181,22 +184,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
               }`}
             />
           </button>
-        ) : (
-          <button
-            type="button"
-            title={group.label}
-            onClick={() => goTo(group.items[0]?.id ?? "dashboard")}
-            className={`w-full flex justify-center px-2 py-2.5 rounded-xl cursor-pointer ${
-              isGroupActive
-                ? "bg-[rgb(var(--brand-primary-rgb)/0.1)] text-[var(--brand-primary)]"
-                : "text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
-            }`}
-          >
-            <GroupIcon className="w-[18px] h-[18px]" />
-          </button>
         )}
 
-        {(expanded || collapsed) &&
+        {(collapsed || expanded) &&
           group.items.map((item) =>
             renderNavButton(item, activeTab === item.id, { nested: !collapsed }),
           )}

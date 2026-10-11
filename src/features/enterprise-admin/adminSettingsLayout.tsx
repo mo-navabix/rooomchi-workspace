@@ -59,8 +59,8 @@ export const FormField: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ label, hint, children, className }) => (
-  <label className={`block space-y-1.5 ${className ?? ''}`}>
-    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</span>
+  <label className={`block space-y-2 ${className ?? ''}`}>
+    <span className="block text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</span>
     {children}
     {hint && <span className="block text-xs text-slate-500">{hint}</span>}
   </label>
@@ -73,7 +73,7 @@ export const FormGrid: React.FC<{ children: React.ReactNode; cols?: 1 | 2 }> = (
   <div
     className={
       cols === 2
-        ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 items-start'
+        ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 items-start'
         : 'space-y-4'
     }
   >

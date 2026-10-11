@@ -567,6 +567,7 @@ export class ApiService {
   static async createUser(data: {
     name: string;
     email: string;
+    password: string;
     orgId: string;
     role: UserRole;
     department: string;

@@ -23,6 +23,8 @@ import {
   AlertTriangle,
   Layers,
   ChevronDown,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { AdminRbacSkeleton } from '../common/Skeletons';
 
@@ -43,6 +45,8 @@ export const AdminRbacView: React.FC = () => {
   const [newDept, setNewDept] = useState<string>('');
   const [newJobTitle, setNewJobTitle] = useState<string>('');
   const [newPhone, setNewPhone] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const fetchUsers = async () => {
@@ -121,15 +125,31 @@ export const AdminRbacView: React.FC = () => {
     }
   };
 
+  const resetAddUserForm = () => {
+    setNewName('');
+    setNewEmail('');
+    setNewRole('employee');
+    setNewDept(currentOrg?.departments?.[0] || 'عمومی');
+    setNewJobTitle('');
+    setNewPhone('');
+    setNewPassword('');
+    setShowNewPassword(false);
+  };
+
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentOrg || !newName.trim() || !newEmail.trim()) return;
+    if (newPassword.length < 8) {
+      showToast('رمز عبور باید حداقل ۸ کاراکتر باشد', 'error');
+      return;
+    }
 
     try {
       setIsSubmitting(true);
       const created = await ApiService.createUser({
         name: newName.trim(),
         email: newEmail.trim(),
+        password: newPassword,
         orgId: currentOrg.id,
         role: newRole,
         department: newDept || currentOrg.departments[0] || 'عمومی',
@@ -139,8 +159,7 @@ export const AdminRbacView: React.FC = () => {
       setUsers((prev) => [...prev, created]);
       showToast(`کاربر «${created.name}» با نقش ${ROLE_DEFINITIONS[newRole].titleFa} ایجاد شد`, 'success');
       setIsAddModalOpen(false);
-      setNewName('');
-      setNewEmail('');
+      resetAddUserForm();
     } catch (err: any) {
       showToast(err.message || 'خطا در ایجاد کاربر', 'error');
     } finally {
@@ -541,6 +560,37 @@ export const AdminRbacView: React.FC = () => {
                   dir="ltr"
                   required
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  رمز عبور ورود *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="حداقل ۸ کاراکتر"
+                    minLength={8}
+                    autoComplete="new-password"
+                    className="w-full text-xs px-3.5 py-2.5 pl-10 border border-slate-200 dark:border-[#334155] rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white transition-all shadow-xs"
+                    dir="ltr"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((v) => !v)}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    tabIndex={-1}
+                    aria-label={showNewPassword ? 'پنهان کردن رمز' : 'نمایش رمز'}
+                  >
+                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                  این رمز برای ورود با ایمیل و رمز عبور در پورتال استفاده می‌شود.
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-3.5">

@@ -264,7 +264,7 @@ export const UnifiedDashboardView: React.FC = () => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-right min-w-0">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-            سلام، {firstName}
+            سلام، {firstName} عزیز
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             {formatToJalaliDescriptive(todayStr)} — خلاصهٔ فعالیت‌های امروز شما

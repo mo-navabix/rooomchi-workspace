@@ -11,6 +11,8 @@ import {
   orgTimezoneSelectValue,
 } from './orgRegionOptions';
 import { ToggleSwitch } from '../../components/admin/AccessControlView';
+import { TimePicker } from '../../components/common/TimePicker';
+import { parseTimeToMinutes } from '../../utils/bookingRules';
 import type { AdminSettingsSection } from './adminSettingsTabs';
 import { applyOrgBrandTheme } from '../../utils/orgBrandTheme';
 import {
@@ -73,7 +75,15 @@ export const EnterpriseAdminSettingsView: React.FC<{
         ApiService.getAdminSystemSettings(),
         ApiService.getAdminConfigAudit(),
       ]);
-      setOrgForm(org);
+      setOrgForm({
+        ...org,
+        workHours: org.workHours || { start: '08:00', end: '19:00' },
+        bookingSettings: org.bookingSettings || {
+          maxBookingHours: 4,
+          autoApprove: true,
+          allowWeekend: false,
+        },
+      });
       setAuthForm(auth);
       setIntegrations(integ);
       setSystemForm(sys);
@@ -96,6 +106,27 @@ export const EnterpriseAdminSettingsView: React.FC<{
   }, [load]);
 
   const saveOrganization = async () => {
+    const workHours = (orgForm.workHours as { start?: string; end?: string }) || {
+      start: '08:00',
+      end: '19:00',
+    };
+    const booking = (orgForm.bookingSettings as { maxBookingHours?: number }) || {};
+    const maxH = Number(booking.maxBookingHours ?? 4);
+    if (parseTimeToMinutes(workHours.start || '08:00') >= parseTimeToMinutes(workHours.end || '19:00')) {
+      showToast('ساعت پایان رزرو باید بعد از ساعت شروع باشد', 'error');
+      return;
+    }
+    if (!Number.isFinite(maxH) || maxH < 0.5 || maxH > 24) {
+      showToast('حداکثر طول جلسه باید بین ۰٫۵ تا ۲۴ ساعت باشد', 'error');
+      return;
+    }
+    const windowMinutes =
+      parseTimeToMinutes(workHours.end || '19:00') - parseTimeToMinutes(workHours.start || '08:00');
+    if (maxH * 60 > windowMinutes) {
+      showToast('حداکثر طول جلسه نمی‌تواند بیشتر از بازهٔ مجاز رزرو باشد', 'error');
+      return;
+    }
+
     setSaving(true);
     try {
       const updated = await ApiService.putAdminOrganization(orgForm);
@@ -374,6 +405,79 @@ export const EnterpriseAdminSettingsView: React.FC<{
                       <option value="jalali">تقویم شمسی</option>
                       <option value="gregorian">میلادی</option>
                     </select>
+                  </FormField>
+                </FormGrid>
+              </AdminSection>
+
+              <AdminSection
+                title="قوانین رزرو جلسه"
+                description="بازهٔ ساعتی که کاربران می‌توانند جلسه رزرو کنند و حداکثر مدت هر جلسه را مشخص کنید."
+              >
+                <FormGrid>
+                  <FormField label="شروع بازهٔ رزرو">
+                    <TimePicker
+                      compact
+                      value={String((orgForm.workHours as { start?: string })?.start || '08:00')}
+                      minTime="00:00"
+                      maxTime="23:55"
+                      modalTitle="شروع بازهٔ مجاز رزرو"
+                      onChange={(t) =>
+                        setOrgForm({
+                          ...orgForm,
+                          workHours: {
+                            ...((orgForm.workHours as object) || {}),
+                            start: t,
+                            end: String((orgForm.workHours as { end?: string })?.end || '19:00'),
+                          },
+                        })
+                      }
+                    />
+                  </FormField>
+                  <FormField label="پایان بازهٔ رزرو">
+                    <TimePicker
+                      compact
+                      value={String((orgForm.workHours as { end?: string })?.end || '19:00')}
+                      minTime="00:00"
+                      maxTime="23:55"
+                      modalTitle="پایان بازهٔ مجاز رزرو"
+                      onChange={(t) =>
+                        setOrgForm({
+                          ...orgForm,
+                          workHours: {
+                            ...((orgForm.workHours as object) || {}),
+                            start: String((orgForm.workHours as { start?: string })?.start || '08:00'),
+                            end: t,
+                          },
+                        })
+                      }
+                    />
+                  </FormField>
+                  <FormField label="حداکثر طول هر جلسه (ساعت)" className="sm:col-span-2 pt-1">
+                    <input
+                      type="number"
+                      min={0.5}
+                      max={24}
+                      step={0.5}
+                      className={adminInputClass}
+                      dir="ltr"
+                      value={Number(
+                        (orgForm.bookingSettings as { maxBookingHours?: number })?.maxBookingHours ?? 4,
+                      )}
+                      onChange={(e) =>
+                        setOrgForm({
+                          ...orgForm,
+                          bookingSettings: {
+                            ...((orgForm.bookingSettings as object) || {}),
+                            maxBookingHours: parseFloat(e.target.value) || 4,
+                            autoApprove:
+                              (orgForm.bookingSettings as { autoApprove?: boolean })?.autoApprove ?? true,
+                            allowWeekend:
+                              (orgForm.bookingSettings as { allowWeekend?: boolean })?.allowWeekend ??
+                              false,
+                          },
+                        })
+                      }
+                    />
                   </FormField>
                 </FormGrid>
               </AdminSection>

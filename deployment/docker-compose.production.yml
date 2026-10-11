@@ -36,7 +36,8 @@ services:
       SERVE_STATIC: "false"
       SKIP_SCHEMA_ENSURE: "true"
       RUN_MIGRATIONS_ON_START: ${RUN_MIGRATIONS_ON_START:-true}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rooomchi_db}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rooomchi_db}}
+      DATABASE_SSL: ${DATABASE_SSL:-false}
       JWT_SECRET: ${JWT_SECRET}
       APP_URL: ${APP_URL:-http://localhost}
       CORS_ORIGIN: ${CORS_ORIGIN:-}

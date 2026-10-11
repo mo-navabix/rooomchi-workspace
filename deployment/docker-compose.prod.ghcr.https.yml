@@ -1,0 +1,15 @@
+# Override: enable HTTPS on edge nginx (mount certs under deployment/nginx/ssl/).
+# Usage:
+#   mkdir -p deployment/nginx/ssl
+#   # fullchain.pem + privkey.pem (or cert.pem + key.pem — see nginx.https.conf)
+#   docker compose -f deployment/docker-compose.prod.ghcr.yml \
+#     -f deployment/docker-compose.prod.ghcr.https.yml --env-file .env up -d
+
+services:
+  proxy:
+    ports:
+      - "${ROOOMCHI_HTTP_PORT:-80}:80"
+      - "${ROOOMCHI_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.https.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro

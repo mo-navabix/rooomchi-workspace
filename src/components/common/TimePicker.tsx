@@ -307,7 +307,10 @@ export const TimePicker: React.FC<TimePickerProps> = ({
   const dialogSubtitle = subtitle || `ساعات کاری: ${minTime} الی ${maxTime}`;
 
   return (
-    <div className={`${compact ? 'inline-block' : 'flex flex-col gap-1.5 min-w-0'} ${className}`} id={id}>
+    <div
+      className={`${compact ? 'flex w-full min-w-0 flex-col' : 'flex flex-col gap-1.5 min-w-0'} ${className}`}
+      id={id}
+    >
       {label && !compact && (
         <div className="flex items-center gap-1.5 min-h-[20px] text-xs font-bold text-slate-600 dark:text-slate-400">
           <Clock className="w-3.5 h-3.5 shrink-0 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
@@ -323,7 +326,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         onClick={openPicker}
         className={
           compact
-            ? `inline-flex items-center justify-between gap-2.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+            ? `w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-sm font-bold transition-all cursor-pointer shadow-xs min-h-[48px] ${
                 isOpen
                   ? 'border-[var(--brand-primary)] ring-2 ring-[rgb(var(--brand-primary-rgb)/0.30)] bg-brand-soft/20'
                   : 'border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] hover:border-[rgb(var(--brand-primary-rgb)/0.60)] text-slate-800 dark:text-slate-100'

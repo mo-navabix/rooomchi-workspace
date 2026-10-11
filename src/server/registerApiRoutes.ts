@@ -18,6 +18,7 @@ import { registerSetupRoutes } from "./installation/setup.routes";
 import { registerAdminRoutes } from "./admin/admin.routes";
 import { registerEnterpriseRoutes } from "./enterprise/enterprise.routes";
 import { normalizePasswordForStorage } from "./auth/password.service";
+import { validateBookingTimes } from "../utils/bookingRules";
 
 async function populateTeamResponse(team: TeamRecord) {
   const members = await store.getTeamMembersPopulated(team.id);
@@ -321,6 +322,22 @@ export function registerApiRoutes(app: Express): void {
     }
 
     const org = await store.getOrganizationById(orgId);
+    if (org) {
+      const workStart = org.workHours?.start || "08:00";
+      const workEnd = org.workHours?.end || "19:00";
+      const maxH = org.settings?.maxBookingHours ?? 4;
+      const rulesError = validateBookingTimes(
+        String(startTime),
+        String(endTime),
+        workStart,
+        workEnd,
+        maxH,
+      );
+      if (rulesError) {
+        return res.status(400).json({ error: rulesError });
+      }
+    }
+
     let initialStatus: Booking["status"] = "confirmed";
     if (room.requiresApproval || (org?.settings && !org.settings.autoApprove)) {
       initialStatus = "pending_approval";

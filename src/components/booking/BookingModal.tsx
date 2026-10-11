@@ -8,6 +8,10 @@ import { formatGregorianIsoLocal } from '../../utils/jalali';
 import { X, Calendar, AlertTriangle, ChevronDown, UserPlus } from 'lucide-react';
 import { ParticipantSelector } from './ParticipantSelector';
 import { triggerBookingNotifications } from '../../utils/notificationDispatcher';
+import {
+  latestEndTimeForStart,
+  validateBookingTimes,
+} from '../../utils/bookingRules';
 
 interface Props {
   onSuccess?: () => void;
@@ -34,10 +38,12 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const today = formatGregorianIsoLocal();
   const orgWorkStart = currentOrg?.workHours?.start || '08:00';
   const orgWorkEnd = currentOrg?.workHours?.end || '18:00';
+  const maxBookingHours = currentOrg?.settings?.maxBookingHours ?? 4;
 
   const [date, setDate] = useState<string>(today);
   const [startTime, setStartTime] = useState<string>(orgWorkStart);
   const [endTime, setEndTime] = useState<string>('09:00');
+  const endTimeCap = latestEndTimeForStart(startTime, orgWorkEnd, maxBookingHours);
   const [title, setTitle] = useState<string>('');
   const [inviteeEmails, setInviteeEmails] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -98,6 +104,13 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   }, [currentOrg, isBookingModalOpen, date]);
 
   useEffect(() => {
+    const cap = latestEndTimeForStart(startTime, orgWorkEnd, maxBookingHours);
+    if (endTime > cap) {
+      setEndTime(cap);
+    }
+  }, [startTime, orgWorkEnd, maxBookingHours, endTime]);
+
+  useEffect(() => {
     if (endTime <= startTime) {
       const parts = startTime.split(':');
       const h = parseInt(parts[0], 10);
@@ -118,8 +131,15 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       return;
     }
 
-    if (startTime >= endTime) {
-      setConflictMessage('ساعت پایان باید بعد از شروع باشد');
+    const rulesError = validateBookingTimes(
+      startTime,
+      endTime,
+      orgWorkStart,
+      orgWorkEnd,
+      maxBookingHours,
+    );
+    if (rulesError) {
+      setConflictMessage(rulesError);
       return;
     }
 
@@ -137,7 +157,17 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     } else {
       setConflictMessage(null);
     }
-  }, [selectedRoomId, date, startTime, endTime, existingBookings]);
+  }, [
+    selectedRoomId,
+    date,
+    startTime,
+    endTime,
+    existingBookings,
+    orgWorkStart,
+    orgWorkEnd,
+    maxBookingHours,
+    orgLocale,
+  ]);
 
   if (!isBookingModalOpen) return null;
 
@@ -164,6 +194,17 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
 
     if (!title.trim()) {
       showToast('عنوان جلسه را وارد کنید', 'error');
+      return;
+    }
+    const rulesError = validateBookingTimes(
+      startTime,
+      endTime,
+      orgWorkStart,
+      orgWorkEnd,
+      maxBookingHours,
+    );
+    if (rulesError) {
+      showToast(rulesError, 'error');
       return;
     }
     if (conflictMessage) {
@@ -360,8 +401,8 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
                 label="پایان"
                 value={endTime}
                 onChange={setEndTime}
-                minTime={orgWorkStart}
-                maxTime={orgWorkEnd}
+                minTime={startTime}
+                maxTime={endTimeCap}
                 isEndTime
                 referenceStartTime={startTime}
                 required

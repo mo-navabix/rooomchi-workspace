@@ -33,7 +33,6 @@ import { AdminAmenitiesView } from "./components/admin/AdminAmenitiesView";
 import { isAdminRoomsTab } from "./features/room-admin/adminRoomsTabs";
 import { CompleteProfileModal } from "./components/auth/CompleteProfileModal";
 import { AppLoadingSkeleton } from "./components/common/Skeletons";
-import { PortalFooter } from "./components/common/PortalFooter";
 import { SupportChipsBar } from "./components/common/SupportChipsBar";
 
 const MainContent: React.FC = () => {
@@ -103,7 +102,6 @@ const MainContent: React.FC = () => {
                 )}
               </main>
 
-              <PortalFooter />
               <SupportChipsBar />
             </div>
           </div>

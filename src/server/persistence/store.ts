@@ -89,6 +89,10 @@ export async function ensureServerSchema(): Promise<void> {
   if (fs.existsSync(logoPath)) {
     await runSqlFile("schema/06-org-logo-text.sql");
   }
+  const campusPath = path.join(process.cwd(), "schema", "07-campus-hierarchy.sql");
+  if (fs.existsSync(campusPath)) {
+    await runSqlFile("schema/07-campus-hierarchy.sql");
+  }
   const apiDataPath = path.join(process.cwd(), "schema", "07-support-tickets-and-notifications.sql");
   if (fs.existsSync(apiDataPath)) {
     await runSqlFile("schema/07-support-tickets-and-notifications.sql");

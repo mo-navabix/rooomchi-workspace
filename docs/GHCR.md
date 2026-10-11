@@ -102,6 +102,8 @@ npm run prod:ghcr:up:stack    # without Watchtower
 
 Postgres, nginx proxy, migrations on backend start, and healthchecks behave like [docker-compose.production.yml](../deployment/docker-compose.production.yml); only backend/frontend images come from GHCR.
 
+**Customer handoff:** full checklist in [CUSTOMER_GO_LIVE.md](./CUSTOMER_GO_LIVE.md) (external DB, HTTPS, backup, security).
+
 ### Watchtower
 
 - Service `watchtower` uses profile `watchtower` (enabled by `npm run prod:ghcr:up`).

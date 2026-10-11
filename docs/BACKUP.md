@@ -17,7 +17,7 @@ export $(grep -v '^#' .env | xargs)
 Or inside the Postgres container:
 
 ```bash
-docker compose -f deployment/docker-compose.production.yml exec -T postgres \
+docker compose -f deployment/docker-compose.prod.ghcr.yml exec -T postgres \
   pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB" | gzip > rooomchi_manual.sql.gz
 ```
 
@@ -32,9 +32,9 @@ docker compose -f deployment/docker-compose.production.yml exec -T postgres \
 Stop the backend during restore to avoid active connections:
 
 ```bash
-docker compose -f deployment/docker-compose.production.yml stop backend
+docker compose -f deployment/docker-compose.prod.ghcr.yml stop backend
 # restore
-docker compose -f deployment/docker-compose.production.yml start backend
+docker compose -f deployment/docker-compose.prod.ghcr.yml start backend
 ```
 
 ## Schedule
