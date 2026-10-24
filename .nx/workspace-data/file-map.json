@@ -19,100 +19,116 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "schema/05-user-notifications.sql",
-        "hash": "1402071709013833702"
-      },
-      {
-        "file": "package.json",
-        "hash": "16570499175262963439"
-      },
-      {
-        "file": "public/docs/setup-field-guide.html",
-        "hash": "18035396989171969415"
-      },
-      {
-        "file": "src/server/auth/identity.store.ts",
-        "hash": "15956061397744500592"
-      },
-      {
-        "file": "src/components/booking/ParticipantSelector.tsx",
-        "hash": "2038152073954770488"
+        "file": ".env.docker.example",
+        "hash": "14070523817877360045"
       },
       {
         "file": ".env.example",
-        "hash": "16602022345673281714"
+        "hash": "10973674203583440426"
       },
       {
-        "file": ".env",
-        "hash": "5474648541793514916"
+        "file": ".github/workflows/ci.yml",
+        "hash": "17867431635525304408"
       },
       {
-        "file": "schema/01-repair-core-tables.sql",
-        "hash": "10802479713547206635"
+        "file": ".github/workflows/ghcr-publish.yml",
+        "hash": "6913389096194376952"
       },
       {
-        "file": "src/components/admin/AdminNotificationsView.tsx",
-        "hash": "5261401513845838300"
+        "file": ".github/workflows/release.yml",
+        "hash": "14633904618810079323"
       },
       {
-        "file": "src/components/common/PersianDatePicker.tsx",
-        "hash": "9604068808286650356"
+        "file": ".gitignore",
+        "hash": "17435008099230318598"
       },
       {
-        "file": "src/context/AppContext.tsx",
-        "hash": "11776354618371667090"
+        "file": ".gitlab-ci.yml",
+        "hash": "10938256490035815474"
       },
       {
-        "file": "src/components/common/OrgLogoBadge.tsx",
-        "hash": "5325755164581567336"
+        "file": "README.md",
+        "hash": "7833275260198932293"
       },
       {
-        "file": "deployment/docker-compose.production.yml",
-        "hash": "1638929608050904776"
+        "file": "bun.lock",
+        "hash": "4114078282751518323"
       },
       {
-        "file": "src/features/teams/components/TeamDetail.tsx",
-        "hash": "12925992547219833136"
-      },
-      {
-        "file": "src/features/enterprise-admin/OrgLogoUploader.tsx",
-        "hash": "9721454002497710295"
-      },
-      {
-        "file": "public/assets/logo/rooomchi-logo-light.svg",
-        "hash": "10440719367097892749"
-      },
-      {
-        "file": "src/server/auth/password.service.ts",
-        "hash": "754104119954923291"
-      },
-      {
-        "file": "public/assets/logo/rooomchi-mark-dark.svg",
-        "hash": "9296754689270554803"
-      },
-      {
-        "file": "src/components/support/SupportTicketView.tsx",
-        "hash": "11116438055976790031"
-      },
-      {
-        "file": "src/components/onboarding/OrgProvisioningModal.tsx",
-        "hash": "5117414094264943182"
+        "file": "database/backup/backup.sh",
+        "hash": "408844444835032984"
       },
       {
         "file": "database/backup/restore.sh",
         "hash": "12094300896829774261"
       },
       {
-        "file": "src/components/profile/AvatarSettings.tsx",
-        "hash": "8052531577975150466"
+        "file": "database/migrations/000003_enterprise_auth.sql",
+        "hash": "9248945748712704874"
       },
       {
-        "file": "src/server/auth/auth-context.ts",
-        "hash": "4203479374812274907"
+        "file": "database/migrations/000004_installation_setup.sql",
+        "hash": "17923916157496035803"
       },
       {
-        "file": "src/server/middleware/security.ts",
-        "hash": "18081229995789720571"
+        "file": "database/migrations/README.md",
+        "hash": "3570477064793839029"
+      },
+      {
+        "file": "database/seed/001_reference.sql",
+        "hash": "15959538560107895509"
+      },
+      {
+        "file": "deployment/backend/Dockerfile",
+        "hash": "3792814725692267220"
+      },
+      {
+        "file": "deployment/backend/docker-entrypoint.sh",
+        "hash": "3832621678281016982"
+      },
+      {
+        "file": "deployment/docker-compose.ghcr.yml",
+        "hash": "11927132536341438734"
+      },
+      {
+        "file": "deployment/docker-compose.prod.ghcr.external-db.yml",
+        "hash": "13182272361643680672"
+      },
+      {
+        "file": "deployment/docker-compose.prod.ghcr.https.yml",
+        "hash": "5949446208440936960"
+      },
+      {
+        "file": "deployment/docker-compose.prod.ghcr.yml",
+        "hash": "4147059511216209490"
+      },
+      {
+        "file": "deployment/docker-compose.production.yml",
+        "hash": "15961521417129541777"
+      },
+      {
+        "file": "deployment/frontend/Dockerfile",
+        "hash": "14680596313035279466"
+      },
+      {
+        "file": "deployment/frontend/nginx-spa.conf",
+        "hash": "2574784804833709094"
+      },
+      {
+        "file": "deployment/nginx/SSL_SETUP.md",
+        "hash": "16933924955163161164"
+      },
+      {
+        "file": "deployment/nginx/nginx.conf",
+        "hash": "14481815660248736957"
+      },
+      {
+        "file": "deployment/nginx/nginx.https.conf",
+        "hash": "9639031083252096267"
+      },
+      {
+        "file": "deployment/postgres/README.md",
+        "hash": "12652737743692491697"
       },
       {
         "file": "docker-compose.production.yml",
@@ -123,624 +139,304 @@
         "hash": "14048422367779776654"
       },
       {
-        "file": "src/components/admin/OrgLoginQrModal.tsx",
-        "hash": "16317645240548339705"
+        "file": "docker/pgadmin/servers.json",
+        "hash": "17117795606847249400"
       },
       {
-        "file": "src/constants/amenities.ts",
-        "hash": "9761626812677258076"
-      },
-      {
-        "file": "src/components/profile/ProfileView.tsx",
-        "hash": "15850704582198329578"
-      },
-      {
-        "file": "scripts/demo-passwords-cli.ts",
-        "hash": "6953563267694889734"
-      },
-      {
-        "file": "docs/enterprise/DOMAIN_SSL.md",
-        "hash": "936623901361459268"
-      },
-      {
-        "file": "database/seed/001_reference.sql",
-        "hash": "15959538560107895509"
-      },
-      {
-        "file": "schema/02-server-extensions.sql",
-        "hash": "1738018065307428296"
-      },
-      {
-        "file": "database/backup/backup.sh",
-        "hash": "408844444835032984"
-      },
-      {
-        "file": "src/components/common/GregorianDatePicker.tsx",
-        "hash": "16997133603164154392"
-      },
-      {
-        "file": "src/components/admin/AdminSupportTicketsView.tsx",
-        "hash": "451119674932701912"
-      },
-      {
-        "file": "schema/03-installation-setup.sql",
-        "hash": "14752574499442592108"
-      },
-      {
-        "file": "vite.config.ts",
-        "hash": "14248421557554775616"
-      },
-      {
-        "file": "deployment/docker-compose.ghcr.yml",
-        "hash": "11927132536341438734"
+        "file": "docs/BACKUP.md",
+        "hash": "12056528048164568808"
       },
       {
         "file": "docs/CONFIGURATION.md",
         "hash": "9162741720276426031"
       },
       {
-        "file": "src/server/auth/types.ts",
-        "hash": "13818602785545001252"
-      },
-      {
-        "file": "scripts/migrate-cli.ts",
-        "hash": "10238281166347475495"
-      },
-      {
-        "file": "src/components/admin/AdminSettingsView.tsx",
-        "hash": "15954437928186784501"
-      },
-      {
-        "file": "public/assets/logo/didar-logo-light.png",
-        "hash": "6413593523200156179"
-      },
-      {
-        "file": "schema/04-admin-settings.sql",
-        "hash": "15779855551572051525"
-      },
-      {
-        "file": "release/enterprise-template/nginx/nginx.conf",
-        "hash": "15856743577773164893"
-      },
-      {
-        "file": "schema/07-campus-hierarchy.sql",
-        "hash": "9406074903551728111"
-      },
-      {
-        "file": "src/server/auth/auth-settings.store.ts",
-        "hash": "6671612786739832289"
-      },
-      {
-        "file": "src/components/common/OrgDatePicker.tsx",
-        "hash": "8645304663762834489"
-      },
-      {
-        "file": ".gitlab-ci.yml",
-        "hash": "10938256490035815474"
-      },
-      {
-        "file": "schema.sql",
-        "hash": "2393216861013511710"
-      },
-      {
-        "file": "public/assets/logo/didar-logo.svg",
-        "hash": "3527398641629126838"
-      },
-      {
-        "file": "src/server/enterprise/preflight.service.ts",
-        "hash": "1721794116640545418"
-      },
-      {
-        "file": "src/features/enterprise-admin/EnterpriseAdminSettingsView.tsx",
-        "hash": "16915353812204854325"
-      },
-      {
-        "file": "schema/idempotent-seed.sql",
-        "hash": "15959538560107895509"
-      },
-      {
-        "file": "src/components/common/PortalFooter.tsx",
-        "hash": "17626676725849054802"
+        "file": "docs/CUSTOMER_GO_LIVE.md",
+        "hash": "11271064716448726054"
       },
       {
         "file": "docs/DEPLOYMENT.md",
         "hash": "13201459532087120440"
       },
       {
-        "file": "src/server/installation/setup.service.ts",
-        "hash": "6365302428926931197"
+        "file": "docs/ENTERPRISE_AUDIT.md",
+        "hash": "13281537879041638930"
       },
       {
-        "file": "server.ts",
-        "hash": "9497635061914993232"
-      },
-      {
-        "file": "schema/06-org-logo-text.sql",
-        "hash": "6601868526000399101"
-      },
-      {
-        "file": "src/services/dbService.ts",
-        "hash": "15291522519157347588"
-      },
-      {
-        "file": "src/features/room-admin/adminRoomsTabs.ts",
-        "hash": "13210332724070789074"
-      },
-      {
-        "file": "src/components/common/Logo.tsx",
-        "hash": "8910502902391377516"
-      },
-      {
-        "file": "src/components/dashboard/UnifiedDashboardView.tsx",
-        "hash": "2981684433128867405"
-      },
-      {
-        "file": "docs/BACKUP.md",
-        "hash": "3353535629031977283"
-      },
-      {
-        "file": "database/migrations/000003_enterprise_auth.sql",
-        "hash": "9248945748712704874"
-      },
-      {
-        "file": "src/utils/orgBrandTheme.ts",
-        "hash": "480761591218947502"
-      },
-      {
-        "file": "docs/PROJECT_CONTEXT_AND_AI_PROMPT.md",
-        "hash": "11958414672917786295"
-      },
-      {
-        "file": "src/components/calendar/calendarWeekUtils.ts",
-        "hash": "13716867824709496169"
-      },
-      {
-        "file": "src/components/common/RooomchiLogo.tsx",
-        "hash": "14943671454284071223"
-      },
-      {
-        "file": "src/components/booking/StepperBookingModal.tsx",
-        "hash": "5146697858639639624"
-      },
-      {
-        "file": "scripts/fix-org-logo-column-cli.ts",
-        "hash": "4610500867752876123"
-      },
-      {
-        "file": "src/server/persistence/support-tickets.store.ts",
-        "hash": "13758812211951181941"
-      },
-      {
-        "file": "docs/authentication/ORGANIZATION_AUTH_CONFIG.md",
-        "hash": "13041998011070137876"
-      },
-      {
-        "file": "src/utils/avatar.ts",
-        "hash": "13061647232398558488"
-      },
-      {
-        "file": "public/docs/setup-field-guide.pdf",
-        "hash": "8649463357290721993"
-      },
-      {
-        "file": "src/utils/userNotificationsStorage.ts",
-        "hash": "2461933095984967445"
-      },
-      {
-        "file": "public/assets/logo/didar-logo-stacked.png",
-        "hash": "13324147746472467439"
-      },
-      {
-        "file": "rooomchi-enterprise/docker-compose.yml",
-        "hash": "11596020096608314881"
-      },
-      {
-        "file": "src/server/logger.ts",
-        "hash": "16592811196213530579"
-      },
-      {
-        "file": "src/utils/buildingFloors.ts",
-        "hash": "6826876406160275517"
-      },
-      {
-        "file": "release/enterprise-template/backup.sh",
-        "hash": "18144316514442132208"
+        "file": "docs/GHCR.md",
+        "hash": "10858403536240362805"
       },
       {
         "file": "docs/INSTALLATION.md",
         "hash": "5188891379292803078"
       },
       {
-        "file": "src/server/admin/config-audit.service.ts",
-        "hash": "11765189402698613573"
+        "file": "docs/POSTGRES.md",
+        "hash": "1291046865790792414"
       },
       {
-        "file": "release/enterprise-template/config/license.json.example",
-        "hash": "6014169503617978913"
+        "file": "docs/PROJECT_CONTEXT_AND_AI_PROMPT.md",
+        "hash": "11958414672917786295"
       },
       {
-        "file": "src/components/analytics/AnalyticsView.tsx",
-        "hash": "11938619632910962276"
+        "file": "docs/SECRETS_ROTATION.md",
+        "hash": "1165050778316963929"
       },
       {
-        "file": "src/components/common/SupportChipsBar.tsx",
-        "hash": "6340493337612589805"
-      },
-      {
-        "file": "src/components/admin/CampusStructurePanel.tsx",
-        "hash": "2477752975319286546"
-      },
-      {
-        "file": "public/assets/logo/rooomchi-mark-light.svg",
-        "hash": "4629778644693963969"
-      },
-      {
-        "file": "src/components/common/RooomchiBrandMark.tsx",
-        "hash": "9252514281468631639"
-      },
-      {
-        "file": "kubernetes/namespace.yaml",
-        "hash": "16274839423146739385"
-      },
-      {
-        "file": "release/enterprise-template/frontend/nginx-spa.conf",
-        "hash": "2574784804833709094"
-      },
-      {
-        "file": "public/assets/logo/didar-logo-dark.svg",
-        "hash": "274901954720138450"
-      },
-      {
-        "file": "src/features/enterprise-admin/adminSettingsLayout.tsx",
-        "hash": "373132163865018205"
-      },
-      {
-        "file": "metadata.json",
-        "hash": "6635764442128984796"
-      },
-      {
-        "file": "src/components/booking/BookingModal.tsx",
-        "hash": "650892239608122766"
-      },
-      {
-        "file": ".github/workflows/ci.yml",
-        "hash": "17867431635525304408"
-      },
-      {
-        "file": "src/server/persistence/db.ts",
-        "hash": "15281303606793708117"
-      },
-      {
-        "file": "src/features/teams/types.ts",
-        "hash": "15147843414021643490"
-      },
-      {
-        "file": "docs/setup/SETUP_FIELD_GUIDE.fa.md",
-        "hash": "4681805310291529174"
-      },
-      {
-        "file": "public/assets/logo/didar-mark.svg",
-        "hash": "10030412246256441395"
-      },
-      {
-        "file": "rooomchi-enterprise/database/README.md",
-        "hash": "2794785331923797961"
-      },
-      {
-        "file": "docs/SETUP_WIZARD.md",
-        "hash": "4740624178604906304"
-      },
-      {
-        "file": "docs/enterprise/INSTALLATION.md",
-        "hash": "17757089149309949856"
-      },
-      {
-        "file": "docs/ENTERPRISE_AUDIT.md",
-        "hash": "13281537879041638930"
-      },
-      {
-        "file": "src/utils/appNavigation.ts",
-        "hash": "11236687307373988178"
-      },
-      {
-        "file": "release/enterprise-template/config/.env.example",
-        "hash": "6357276885277345357"
-      },
-      {
-        "file": "src/server/installation/setup.routes.ts",
-        "hash": "9610003813613941192"
-      },
-      {
-        "file": "src/components/admin/AdminRoomsView.tsx",
-        "hash": "1054564979765015801"
-      },
-      {
-        "file": "scripts/reset-installation-cli.ts",
-        "hash": "16051530935759017409"
-      },
-      {
-        "file": "src/features/teams/components/TeamsList.tsx",
-        "hash": "6821083647520912599"
-      },
-      {
-        "file": "release/enterprise-template/backend/Dockerfile",
-        "hash": "14848876322369197827"
-      },
-      {
-        "file": "src/components/dashboard/DashboardView.tsx",
-        "hash": "7031977949894812764"
-      },
-      {
-        "file": "bun.lock",
-        "hash": "4114078282751518323"
-      },
-      {
-        "file": "src/server/auth/audit.service.ts",
-        "hash": "2407251956754718286"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "222135741689202629"
-      },
-      {
-        "file": "public/assets/logo/rooomchi-logo-dark.svg",
-        "hash": "3248867065908650617"
-      },
-      {
-        "file": "deployment/frontend/Dockerfile",
-        "hash": "14680596313035279466"
-      },
-      {
-        "file": "docs/TROUBLESHOOTING.md",
-        "hash": "10291393705344831487"
-      },
-      {
-        "file": "src/components/admin/adminAmenityUi.tsx",
-        "hash": "12421585960849406629"
-      },
-      {
-        "file": "rooomchi-enterprise/documentation/README.md",
-        "hash": "4461767262108813590"
-      },
-      {
-        "file": "docs/enterprise/CONFIGURATION.md",
-        "hash": "12207573794531569877"
-      },
-      {
-        "file": "src/components/admin/AccessControlView.tsx",
-        "hash": "6329637685862992492"
-      },
-      {
-        "file": "src/utils/notificationDispatcher.ts",
-        "hash": "8349190586811376603"
-      },
-      {
-        "file": "docs/enterprise/UPDATE.md",
-        "hash": "16062990987340126242"
-      },
-      {
-        "file": "src/components/auth/OrgLoginPage.tsx",
-        "hash": "7529964863218316665"
-      },
-      {
-        "file": "docs/enterprise/TROUBLESHOOTING.md",
-        "hash": "1016161309442989297"
-      },
-      {
-        "file": ".env.docker.example",
-        "hash": "14070523817877360045"
-      },
-      {
-        "file": "src/server/auth/ldap-config.util.ts",
-        "hash": "5681598337281221837"
+        "file": "docs/SECURITY_ACCEPTANCE.md",
+        "hash": "2486801791713715859"
       },
       {
         "file": "docs/SETUP.md",
         "hash": "1892261287148208959"
       },
       {
-        "file": "src/server/persistence/user-notifications.store.ts",
-        "hash": "8417723588112303184"
+        "file": "docs/SETUP_WIZARD.md",
+        "hash": "4740624178604906304"
       },
       {
-        "file": "src/server/enterprise/version.ts",
-        "hash": "11837668970021153764"
+        "file": "docs/TROUBLESHOOTING.md",
+        "hash": "10291393705344831487"
       },
       {
-        "file": "release/enterprise-template/VERSION",
-        "hash": "7882764581180834273"
-      },
-      {
-        "file": "public/assets/logo/didar-logo-dark.png",
-        "hash": "16624322072818249364"
-      },
-      {
-        "file": "scripts/build-enterprise-release.sh",
-        "hash": "8273335220819439172"
-      },
-      {
-        "file": "src/types/orgAuth.ts",
-        "hash": "6918823706799994712"
-      },
-      {
-        "file": "release/enterprise-template/restore.sh",
-        "hash": "2407518500557156381"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "12799754539062195048"
-      },
-      {
-        "file": "kubernetes/ingress.yaml",
-        "hash": "85251492797018202"
-      },
-      {
-        "file": "src/components/admin/AdminAmenitiesView.tsx",
-        "hash": "11578091951379882321"
-      },
-      {
-        "file": "src/server/admin/system-settings.store.ts",
-        "hash": "12618363798012554133"
-      },
-      {
-        "file": "database/migrations/000004_installation_setup.sql",
-        "hash": "17923916157496035803"
-      },
-      {
-        "file": "release/enterprise-template/docs/UPDATE_GUIDE.md",
-        "hash": "6388899555748975595"
-      },
-      {
-        "file": "rooomchi-enterprise/config/.env.example",
-        "hash": "18242041829130382989"
-      },
-      {
-        "file": "src/components/booking/RoomBrowser.tsx",
-        "hash": "9447971355741967901"
-      },
-      {
-        "file": "src/components/notifications/UserNotificationsView.tsx",
-        "hash": "12180981746364227683"
-      },
-      {
-        "file": "src/server/auth/providers/local.provider.ts",
-        "hash": "12404026992790660050"
-      },
-      {
-        "file": "src/components/common/UserAvatar.tsx",
-        "hash": "16623319562149756127"
-      },
-      {
-        "file": "src/server/types.ts",
-        "hash": "7528305190112588548"
-      },
-      {
-        "file": "src/components/auth/AuthModal.tsx",
-        "hash": "5528286033032493259"
-      },
-      {
-        "file": "docs/GHCR.md",
-        "hash": "15646673622554709487"
-      },
-      {
-        "file": "src/features/teams/components/TeamForm.tsx",
-        "hash": "15855438907462152093"
-      },
-      {
-        "file": "release/enterprise-template/docs/ADMIN_GUIDE.md",
-        "hash": "5288255076744895174"
-      },
-      {
-        "file": "src/server/http.ts",
-        "hash": "8534533043126635961"
-      },
-      {
-        "file": "docker/pgadmin/servers.json",
-        "hash": "17117795606847249400"
-      },
-      {
-        "file": "release/enterprise-template/README.md",
-        "hash": "8061947434152230928"
-      },
-      {
-        "file": "src/components/admin/AdminBookingsView.tsx",
-        "hash": "7711621162270082841"
-      },
-      {
-        "file": "schema/07-support-tickets-and-notifications.sql",
-        "hash": "8404547530227953323"
-      },
-      {
-        "file": "src/server/admin/admin-guard.ts",
-        "hash": "16180521610967862374"
-      },
-      {
-        "file": "src/App.tsx",
-        "hash": "130582783268473303"
-      },
-      {
-        "file": "src/components/common/Toast.tsx",
-        "hash": "9048200053421225748"
+        "file": "docs/UPGRADE.md",
+        "hash": "9009905134320658394"
       },
       {
         "file": "docs/authentication/GOOGLE_OAUTH_SETUP.md",
         "hash": "1527298853132498407"
       },
       {
-        "file": "src/components/common/OrgPortalBrand.tsx",
-        "hash": "14127464782173166123"
+        "file": "docs/authentication/LDAP_SETUP.md",
+        "hash": "17736414489730957820"
       },
       {
-        "file": "src/config/database.ts",
-        "hash": "11615344952812549424"
+        "file": "docs/authentication/LOCAL_AUTH.md",
+        "hash": "13391098467803083950"
       },
       {
-        "file": "rooomchi-enterprise/config/license.json.example",
-        "hash": "6014169503617978913"
+        "file": "docs/authentication/ORGANIZATION_AUTH_CONFIG.md",
+        "hash": "13041998011070137876"
       },
       {
-        "file": "src/features/enterprise-admin/adminSettingsTabs.ts",
-        "hash": "14731089978684950700"
+        "file": "docs/authentication/SECURITY.md",
+        "hash": "6000754145809656414"
+      },
+      {
+        "file": "docs/enterprise/ARCHITECTURE.fa.md",
+        "hash": "15718587934601804735"
+      },
+      {
+        "file": "docs/enterprise/BACKUP.md",
+        "hash": "1750103116512158060"
+      },
+      {
+        "file": "docs/enterprise/CONFIGURATION.md",
+        "hash": "12207573794531569877"
+      },
+      {
+        "file": "docs/enterprise/DOMAIN_SSL.md",
+        "hash": "936623901361459268"
+      },
+      {
+        "file": "docs/enterprise/INSTALLATION.md",
+        "hash": "17757089149309949856"
+      },
+      {
+        "file": "docs/enterprise/TROUBLESHOOTING.md",
+        "hash": "1016161309442989297"
+      },
+      {
+        "file": "docs/enterprise/UPDATE.md",
+        "hash": "16062990987340126242"
+      },
+      {
+        "file": "docs/setup/SETUP_FIELD_GUIDE.fa.md",
+        "hash": "4681805310291529174"
+      },
+      {
+        "file": "index.html",
+        "hash": "3107283490966660854"
+      },
+      {
+        "file": "kubernetes/backend-deployment.yaml",
+        "hash": "2668854744718066663"
+      },
+      {
+        "file": "kubernetes/frontend-deployment.yaml",
+        "hash": "14731810365695513080"
+      },
+      {
+        "file": "kubernetes/ingress.yaml",
+        "hash": "85251492797018202"
+      },
+      {
+        "file": "kubernetes/namespace.yaml",
+        "hash": "16274839423146739385"
       },
       {
         "file": "kubernetes/postgres-statefulset.yaml",
         "hash": "15261091892055387017"
       },
       {
-        "file": "src/services/supportTickets.ts",
-        "hash": "12824809452509135065"
+        "file": "kubernetes/secrets.example.yaml",
+        "hash": "12010206015065390591"
       },
       {
-        "file": "src/components/common/Skeletons.tsx",
-        "hash": "678127185104308783"
+        "file": "kubernetes/service.yaml",
+        "hash": "7508728203082435675"
       },
       {
-        "file": "public/assets/logo/didar-logo.png",
-        "hash": "13324147746472467439"
+        "file": "metadata.json",
+        "hash": "6635764442128984796"
       },
       {
-        "file": "rooomchi-enterprise/storage/.gitkeep",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": "src/server/enterprise/migrations-info.service.ts",
-        "hash": "10409974924085931330"
-      },
-      {
-        "file": "deployment/frontend/nginx-spa.conf",
-        "hash": "2574784804833709094"
-      },
-      {
-        "file": "src/server/registerApiRoutes.ts",
-        "hash": "6482385648468534732"
-      },
-      {
-        "file": "src/components/auth/CompleteProfileModal.tsx",
-        "hash": "16025359099631962577"
-      },
-      {
-        "file": "src/components/setup/SetupWizardView.tsx",
-        "hash": "18222002583934837405"
-      },
-      {
-        "file": "src/server/admin/admin.routes.ts",
-        "hash": "2704241724745728707"
-      },
-      {
-        "file": "src/features/enterprise-admin/orgRegionOptions.ts",
-        "hash": "10044558163525451084"
-      },
-      {
-        "file": "src/navigation/portalSidebarNav.ts",
-        "hash": "6835065498858486613"
+        "file": "nx.json",
+        "hash": "12230589572780083299"
       },
       {
         "file": "package-lock.json",
         "hash": "3178882082279793120"
       },
       {
-        "file": "src/constants/brand.ts",
-        "hash": "6448215164604185054"
+        "file": "package.json",
+        "hash": "11226980177917791425"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-dark.png",
+        "hash": "16624322072818249364"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-dark.svg",
+        "hash": "274901954720138450"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-light.png",
+        "hash": "6413593523200156179"
+      },
+      {
+        "file": "public/assets/logo/didar-logo-stacked.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "public/assets/logo/didar-logo.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "public/assets/logo/didar-logo.svg",
+        "hash": "3527398641629126838"
+      },
+      {
+        "file": "public/assets/logo/didar-mark.svg",
+        "hash": "10030412246256441395"
+      },
+      {
+        "file": "public/assets/logo/rooomchi-logo-dark.svg",
+        "hash": "3248867065908650617"
+      },
+      {
+        "file": "public/assets/logo/rooomchi-logo-light.svg",
+        "hash": "10440719367097892749"
+      },
+      {
+        "file": "public/assets/logo/rooomchi-mark-dark.svg",
+        "hash": "9296754689270554803"
+      },
+      {
+        "file": "public/assets/logo/rooomchi-mark-light.svg",
+        "hash": "4629778644693963969"
+      },
+      {
+        "file": "public/didar-logo.png",
+        "hash": "13324147746472467439"
+      },
+      {
+        "file": "public/didar-logo.svg",
+        "hash": "4543980933865034417"
+      },
+      {
+        "file": "public/docs/setup-field-guide.html",
+        "hash": "18035396989171969415"
+      },
+      {
+        "file": "public/docs/setup-field-guide.pdf",
+        "hash": "8649463357290721993"
+      },
+      {
+        "file": "public/rooomchi-logo-dark.svg",
+        "hash": "6675358820255526384"
+      },
+      {
+        "file": "public/rooomchi-logo-light.svg",
+        "hash": "16045602385067401897"
+      },
+      {
+        "file": "release/enterprise-template/README.md",
+        "hash": "8061947434152230928"
+      },
+      {
+        "file": "release/enterprise-template/VERSION",
+        "hash": "7882764581180834273"
+      },
+      {
+        "file": "release/enterprise-template/backend/Dockerfile",
+        "hash": "14848876322369197827"
+      },
+      {
+        "file": "release/enterprise-template/backend/docker-entrypoint.sh",
+        "hash": "3832621678281016982"
+      },
+      {
+        "file": "release/enterprise-template/backup.sh",
+        "hash": "18144316514442132208"
+      },
+      {
+        "file": "release/enterprise-template/config/.env.example",
+        "hash": "6357276885277345357"
+      },
+      {
+        "file": "release/enterprise-template/config/license.json.example",
+        "hash": "6014169503617978913"
+      },
+      {
+        "file": "release/enterprise-template/docker-compose.yml",
+        "hash": "17735327227403040430"
+      },
+      {
+        "file": "release/enterprise-template/docs/ADMIN_GUIDE.md",
+        "hash": "5288255076744895174"
+      },
+      {
+        "file": "release/enterprise-template/docs/INSTALLATION.md",
+        "hash": "13104146206152445356"
+      },
+      {
+        "file": "release/enterprise-template/docs/UPDATE_GUIDE.md",
+        "hash": "6388899555748975595"
+      },
+      {
+        "file": "release/enterprise-template/frontend/Dockerfile",
+        "hash": "14564426611534913933"
+      },
+      {
+        "file": "release/enterprise-template/frontend/nginx-spa.conf",
+        "hash": "2574784804833709094"
+      },
+      {
+        "file": "release/enterprise-template/install.sh",
+        "hash": "9396459575889269541"
+      },
+      {
+        "file": "release/enterprise-template/nginx/nginx.conf",
+        "hash": "15856743577773164893"
+      },
+      {
+        "file": "release/enterprise-template/restore.sh",
+        "hash": "2407518500557156381"
+      },
+      {
+        "file": "release/enterprise-template/storage/uploads/.gitkeep",
+        "hash": "3244421341483603138"
       },
       {
         "file": "release/enterprise-template/update.sh",
@@ -751,136 +447,628 @@
         "hash": "16935116519656548294"
       },
       {
-        "file": "public/rooomchi-logo-light.svg",
-        "hash": "16045602385067401897"
+        "file": "rooomchi-enterprise/backend/README.md",
+        "hash": "16528982720826620454"
       },
       {
-        "file": "src/utils/orgLocale.ts",
-        "hash": "8026031096422277791"
+        "file": "rooomchi-enterprise/config/.env.example",
+        "hash": "18242041829130382989"
       },
       {
-        "file": "src/features/teams/TeamsView.tsx",
-        "hash": "18301631762106401933"
+        "file": "rooomchi-enterprise/config/license.json.example",
+        "hash": "6014169503617978913"
       },
       {
-        "file": "src/components/calendar/CalendarTimeGrid.tsx",
-        "hash": "7508156346718310809"
+        "file": "rooomchi-enterprise/database/README.md",
+        "hash": "2794785331923797961"
       },
       {
-        "file": "src/components/common/TopHeader.tsx",
-        "hash": "4986145793852823554"
+        "file": "rooomchi-enterprise/docker-compose.yml",
+        "hash": "11596020096608314881"
       },
       {
-        "file": "src/server/auth/auth.routes.ts",
-        "hash": "9060256767701942260"
+        "file": "rooomchi-enterprise/documentation/README.md",
+        "hash": "4461767262108813590"
       },
       {
-        "file": "src/server/installation/integrations.store.ts",
-        "hash": "2007515651590925595"
-      },
-      {
-        "file": "src/components/booking/MyBookingsView.tsx",
-        "hash": "5234240001903829986"
-      },
-      {
-        "file": "nx.json",
-        "hash": "12230589572780083299"
-      },
-      {
-        "file": "src/types/index.ts",
-        "hash": "14252912641104858749"
-      },
-      {
-        "file": "kubernetes/secrets.example.yaml",
-        "hash": "12010206015065390591"
-      },
-      {
-        "file": "src/i18n/portalUi.ts",
-        "hash": "18342553298021097896"
-      },
-      {
-        "file": "src/components/dashboard/ModernDashboardView.tsx",
-        "hash": "10629448966844066647"
-      },
-      {
-        "file": "src/server/auth/providers/ldap.provider.ts",
-        "hash": "11830256596755967009"
-      },
-      {
-        "file": "src/server/authHelpers.ts",
-        "hash": "12261381303325533934"
-      },
-      {
-        "file": "src/components/common/TimePicker.tsx",
-        "hash": "14328605799424366975"
-      },
-      {
-        "file": "src/components/admin/AdminRbacView.tsx",
-        "hash": "15008830284456483410"
-      },
-      {
-        "file": "src/server/enterprise/license.service.ts",
-        "hash": "11775950770430585357"
-      },
-      {
-        "file": "src/components/calendar/CalendarView.tsx",
-        "hash": "4802211953368842479"
-      },
-      {
-        "file": "deployment/nginx/nginx.conf",
-        "hash": "14481815660248736957"
-      },
-      {
-        "file": "src/server/persistence/mappers.ts",
-        "hash": "12443518544813096751"
-      },
-      {
-        "file": "src/server/persistence/store.ts",
-        "hash": "4198245826021807460"
-      },
-      {
-        "file": "src/services/apiService.ts",
-        "hash": "15335114869335847914"
-      },
-      {
-        "file": "src/main.tsx",
-        "hash": "10886610349449672931"
-      },
-      {
-        "file": "src/server/auth/providers/google.provider.ts",
-        "hash": "4412145816624751073"
-      },
-      {
-        "file": "release/enterprise-template/storage/uploads/.gitkeep",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": "src/features/enterprise-admin/OrgBrandThemePicker.tsx",
-        "hash": "6242290020801306654"
-      },
-      {
-        "file": "src/server/middleware/requestLogger.ts",
-        "hash": "8525951854398662354"
-      },
-      {
-        "file": "index.html",
-        "hash": "3107283490966660854"
+        "file": "rooomchi-enterprise/frontend/README.md",
+        "hash": "14820387517175349716"
       },
       {
         "file": "rooomchi-enterprise/nginx/nginx.conf",
         "hash": "16832821286113135673"
       },
       {
-        "file": "release/enterprise-template/frontend/Dockerfile",
-        "hash": "14564426611534913933"
+        "file": "rooomchi-enterprise/storage/.gitkeep",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "schema.sql",
+        "hash": "2393216861013511710"
+      },
+      {
+        "file": "schema/01-repair-core-tables.sql",
+        "hash": "10802479713547206635"
+      },
+      {
+        "file": "schema/02-server-extensions.sql",
+        "hash": "1738018065307428296"
+      },
+      {
+        "file": "schema/03-installation-setup.sql",
+        "hash": "14752574499442592108"
+      },
+      {
+        "file": "schema/04-admin-settings.sql",
+        "hash": "15779855551572051525"
+      },
+      {
+        "file": "schema/05-user-notifications.sql",
+        "hash": "1402071709013833702"
+      },
+      {
+        "file": "schema/06-org-logo-text.sql",
+        "hash": "6601868526000399101"
+      },
+      {
+        "file": "schema/07-campus-hierarchy.sql",
+        "hash": "9406074903551728111"
+      },
+      {
+        "file": "schema/07-support-tickets-and-notifications.sql",
+        "hash": "8404547530227953323"
+      },
+      {
+        "file": "schema/idempotent-seed.sql",
+        "hash": "15959538560107895509"
+      },
+      {
+        "file": "scripts/build-enterprise-release.sh",
+        "hash": "8273335220819439172"
+      },
+      {
+        "file": "scripts/build-setup-guide-pdf.mjs",
+        "hash": "7329028347494181769"
+      },
+      {
+        "file": "scripts/db-cli.ts",
+        "hash": "14544243095094015273"
+      },
+      {
+        "file": "scripts/demo-passwords-cli.ts",
+        "hash": "6953563267694889734"
+      },
+      {
+        "file": "scripts/fix-org-logo-column-cli.ts",
+        "hash": "4610500867752876123"
+      },
+      {
+        "file": "scripts/migrate-brand-to-css-vars.mjs",
+        "hash": "10489503286795201171"
+      },
+      {
+        "file": "scripts/migrate-cli.ts",
+        "hash": "7793155167076494946"
+      },
+      {
+        "file": "scripts/reset-installation-cli.ts",
+        "hash": "16051530935759017409"
+      },
+      {
+        "file": "scripts/security-rbac-smoke.sh",
+        "hash": "8438081962477507765"
+      },
+      {
+        "file": "scripts/seed-cli.ts",
+        "hash": "510711818472889507"
+      },
+      {
+        "file": "scripts/verify-go-live.sh",
+        "hash": "9409010871050638793"
+      },
+      {
+        "file": "server.ts",
+        "hash": "9497635061914993232"
+      },
+      {
+        "file": "src/App.tsx",
+        "hash": "8217272853442970126"
+      },
+      {
+        "file": "src/components/admin/AccessControlView.tsx",
+        "hash": "6329637685862992492"
+      },
+      {
+        "file": "src/components/admin/AdminAmenitiesView.tsx",
+        "hash": "11578091951379882321"
+      },
+      {
+        "file": "src/components/admin/AdminBookingsView.tsx",
+        "hash": "7711621162270082841"
+      },
+      {
+        "file": "src/components/admin/AdminCampusView.tsx",
+        "hash": "9892906978659969124"
+      },
+      {
+        "file": "src/components/admin/AdminNotificationsView.tsx",
+        "hash": "5261401513845838300"
+      },
+      {
+        "file": "src/components/admin/AdminRbacView.tsx",
+        "hash": "8985508305847827081"
+      },
+      {
+        "file": "src/components/admin/AdminRoomsView.tsx",
+        "hash": "1054564979765015801"
+      },
+      {
+        "file": "src/components/admin/AdminSettingsView.tsx",
+        "hash": "15954437928186784501"
+      },
+      {
+        "file": "src/components/admin/AdminSupportTicketsView.tsx",
+        "hash": "451119674932701912"
+      },
+      {
+        "file": "src/components/admin/CampusStructurePanel.tsx",
+        "hash": "2477752975319286546"
+      },
+      {
+        "file": "src/components/admin/OrgLoginQrModal.tsx",
+        "hash": "16317645240548339705"
+      },
+      {
+        "file": "src/components/admin/adminAmenityUi.tsx",
+        "hash": "12421585960849406629"
+      },
+      {
+        "file": "src/components/analytics/AnalyticsView.tsx",
+        "hash": "11938619632910962276"
+      },
+      {
+        "file": "src/components/auth/AuthModal.tsx",
+        "hash": "5528286033032493259"
+      },
+      {
+        "file": "src/components/auth/CompleteProfileModal.tsx",
+        "hash": "16025359099631962577"
+      },
+      {
+        "file": "src/components/auth/OrgLoginPage.tsx",
+        "hash": "7529964863218316665"
+      },
+      {
+        "file": "src/components/booking/BookingModal.tsx",
+        "hash": "12939636157770771978"
+      },
+      {
+        "file": "src/components/booking/MyBookingsView.tsx",
+        "hash": "5234240001903829986"
+      },
+      {
+        "file": "src/components/booking/ParticipantSelector.tsx",
+        "hash": "2038152073954770488"
+      },
+      {
+        "file": "src/components/booking/RoomBrowser.tsx",
+        "hash": "9447971355741967901"
+      },
+      {
+        "file": "src/components/booking/StepperBookingModal.tsx",
+        "hash": "5146697858639639624"
+      },
+      {
+        "file": "src/components/calendar/CalendarTimeGrid.tsx",
+        "hash": "10403744995461152518"
+      },
+      {
+        "file": "src/components/calendar/CalendarView.tsx",
+        "hash": "11811596813096110479"
+      },
+      {
+        "file": "src/components/calendar/calendarWeekUtils.ts",
+        "hash": "13716867824709496169"
+      },
+      {
+        "file": "src/components/common/GregorianDatePicker.tsx",
+        "hash": "16997133603164154392"
+      },
+      {
+        "file": "src/components/common/Header.tsx",
+        "hash": "8780742844677325172"
+      },
+      {
+        "file": "src/components/common/Logo.tsx",
+        "hash": "8910502902391377516"
+      },
+      {
+        "file": "src/components/common/OrgDatePicker.tsx",
+        "hash": "8645304663762834489"
+      },
+      {
+        "file": "src/components/common/OrgLogoBadge.tsx",
+        "hash": "5325755164581567336"
+      },
+      {
+        "file": "src/components/common/OrgPortalBrand.tsx",
+        "hash": "14127464782173166123"
+      },
+      {
+        "file": "src/components/common/PersianDatePicker.tsx",
+        "hash": "9604068808286650356"
+      },
+      {
+        "file": "src/components/common/RooomchiBrandMark.tsx",
+        "hash": "9252514281468631639"
+      },
+      {
+        "file": "src/components/common/RooomchiLogo.tsx",
+        "hash": "14943671454284071223"
+      },
+      {
+        "file": "src/components/common/Sidebar.tsx",
+        "hash": "1396357588086923995"
+      },
+      {
+        "file": "src/components/common/Skeletons.tsx",
+        "hash": "678127185104308783"
+      },
+      {
+        "file": "src/components/common/SupportChipsBar.tsx",
+        "hash": "15941029596469686365"
+      },
+      {
+        "file": "src/components/common/TimePicker.tsx",
+        "hash": "10724410318752752659"
+      },
+      {
+        "file": "src/components/common/Toast.tsx",
+        "hash": "9048200053421225748"
+      },
+      {
+        "file": "src/components/common/TopHeader.tsx",
+        "hash": "4986145793852823554"
+      },
+      {
+        "file": "src/components/common/UserAvatar.tsx",
+        "hash": "16623319562149756127"
+      },
+      {
+        "file": "src/components/dashboard/DashboardView.tsx",
+        "hash": "7031977949894812764"
+      },
+      {
+        "file": "src/components/dashboard/ModernDashboardView.tsx",
+        "hash": "10629448966844066647"
+      },
+      {
+        "file": "src/components/dashboard/UnifiedDashboardView.tsx",
+        "hash": "10334792646525898066"
+      },
+      {
+        "file": "src/components/landing/LandingView.tsx",
+        "hash": "9232960003152214227"
+      },
+      {
+        "file": "src/components/notifications/UserNotificationsView.tsx",
+        "hash": "12180981746364227683"
+      },
+      {
+        "file": "src/components/onboarding/OrgProvisioningModal.tsx",
+        "hash": "5117414094264943182"
+      },
+      {
+        "file": "src/components/profile/AvatarSettings.tsx",
+        "hash": "8052531577975150466"
+      },
+      {
+        "file": "src/components/profile/ProfileView.tsx",
+        "hash": "15850704582198329578"
+      },
+      {
+        "file": "src/components/rooms/ModernRoomView.tsx",
+        "hash": "15580282992241418263"
+      },
+      {
+        "file": "src/components/setup/SetupWizardView.tsx",
+        "hash": "18222002583934837405"
+      },
+      {
+        "file": "src/components/support/SupportTicketView.tsx",
+        "hash": "11116438055976790031"
+      },
+      {
+        "file": "src/config/database.ts",
+        "hash": "11615344952812549424"
+      },
+      {
+        "file": "src/constants/amenities.ts",
+        "hash": "9761626812677258076"
+      },
+      {
+        "file": "src/constants/brand.ts",
+        "hash": "6448215164604185054"
+      },
+      {
+        "file": "src/constants/notifications.ts",
+        "hash": "11266832570373439514"
       },
       {
         "file": "src/constants/rbac.ts",
         "hash": "7932950266769992018"
       },
       {
-        "file": "database/migrations/README.md",
-        "hash": "3570477064793839029"
+        "file": "src/context/AppContext.tsx",
+        "hash": "14782220695946941536"
+      },
+      {
+        "file": "src/features/enterprise-admin/EnterpriseAdminSettingsView.tsx",
+        "hash": "9502038796291048557"
+      },
+      {
+        "file": "src/features/enterprise-admin/OrgBrandThemePicker.tsx",
+        "hash": "6242290020801306654"
+      },
+      {
+        "file": "src/features/enterprise-admin/OrgLogoUploader.tsx",
+        "hash": "9721454002497710295"
+      },
+      {
+        "file": "src/features/enterprise-admin/adminSettingsLayout.tsx",
+        "hash": "10008391948222192371"
+      },
+      {
+        "file": "src/features/enterprise-admin/adminSettingsTabs.ts",
+        "hash": "14731089978684950700"
+      },
+      {
+        "file": "src/features/enterprise-admin/orgRegionOptions.ts",
+        "hash": "10044558163525451084"
+      },
+      {
+        "file": "src/features/room-admin/adminRoomsTabs.ts",
+        "hash": "13210332724070789074"
+      },
+      {
+        "file": "src/features/teams/TeamsView.tsx",
+        "hash": "18301631762106401933"
+      },
+      {
+        "file": "src/features/teams/components/TeamDetail.tsx",
+        "hash": "12925992547219833136"
+      },
+      {
+        "file": "src/features/teams/components/TeamForm.tsx",
+        "hash": "15855438907462152093"
+      },
+      {
+        "file": "src/features/teams/components/TeamsList.tsx",
+        "hash": "6821083647520912599"
+      },
+      {
+        "file": "src/features/teams/types.ts",
+        "hash": "15147843414021643490"
+      },
+      {
+        "file": "src/i18n/portalUi.ts",
+        "hash": "18342553298021097896"
+      },
+      {
+        "file": "src/index.css",
+        "hash": "5702568493195620333"
+      },
+      {
+        "file": "src/main.tsx",
+        "hash": "10886610349449672931"
+      },
+      {
+        "file": "src/navigation/portalSidebarNav.ts",
+        "hash": "6835065498858486613"
+      },
+      {
+        "file": "src/server/admin/admin-guard.ts",
+        "hash": "16180521610967862374"
+      },
+      {
+        "file": "src/server/admin/admin.routes.ts",
+        "hash": "13438425778132262057"
+      },
+      {
+        "file": "src/server/admin/config-audit.service.ts",
+        "hash": "11765189402698613573"
+      },
+      {
+        "file": "src/server/admin/system-settings.store.ts",
+        "hash": "12618363798012554133"
+      },
+      {
+        "file": "src/server/auth/audit.service.ts",
+        "hash": "2407251956754718286"
+      },
+      {
+        "file": "src/server/auth/auth-context.ts",
+        "hash": "4203479374812274907"
+      },
+      {
+        "file": "src/server/auth/auth-settings.store.ts",
+        "hash": "6671612786739832289"
+      },
+      {
+        "file": "src/server/auth/auth.routes.ts",
+        "hash": "9060256767701942260"
+      },
+      {
+        "file": "src/server/auth/identity.store.ts",
+        "hash": "15956061397744500592"
+      },
+      {
+        "file": "src/server/auth/ldap-config.util.ts",
+        "hash": "5681598337281221837"
+      },
+      {
+        "file": "src/server/auth/password.service.ts",
+        "hash": "754104119954923291"
+      },
+      {
+        "file": "src/server/auth/providers/google.provider.ts",
+        "hash": "4412145816624751073"
+      },
+      {
+        "file": "src/server/auth/providers/ldap.provider.ts",
+        "hash": "11830256596755967009"
+      },
+      {
+        "file": "src/server/auth/providers/local.provider.ts",
+        "hash": "12404026992790660050"
+      },
+      {
+        "file": "src/server/auth/session.service.ts",
+        "hash": "6349008395160077968"
+      },
+      {
+        "file": "src/server/auth/types.ts",
+        "hash": "13818602785545001252"
+      },
+      {
+        "file": "src/server/authHelpers.ts",
+        "hash": "12261381303325533934"
+      },
+      {
+        "file": "src/server/enterprise/enterprise.routes.ts",
+        "hash": "407435366862216334"
+      },
+      {
+        "file": "src/server/enterprise/license.service.ts",
+        "hash": "11775950770430585357"
+      },
+      {
+        "file": "src/server/enterprise/migrations-info.service.ts",
+        "hash": "10409974924085931330"
+      },
+      {
+        "file": "src/server/enterprise/preflight.service.ts",
+        "hash": "1721794116640545418"
+      },
+      {
+        "file": "src/server/enterprise/version.ts",
+        "hash": "11837668970021153764"
+      },
+      {
+        "file": "src/server/http.ts",
+        "hash": "8534533043126635961"
+      },
+      {
+        "file": "src/server/installation/installation.store.ts",
+        "hash": "6496240234380533783"
+      },
+      {
+        "file": "src/server/installation/integrations.store.ts",
+        "hash": "2007515651590925595"
+      },
+      {
+        "file": "src/server/installation/setup.routes.ts",
+        "hash": "9610003813613941192"
+      },
+      {
+        "file": "src/server/installation/setup.service.ts",
+        "hash": "6365302428926931197"
+      },
+      {
+        "file": "src/server/integrations/integration-manager.ts",
+        "hash": "11052878455156542068"
+      },
+      {
+        "file": "src/server/logger.ts",
+        "hash": "16592811196213530579"
+      },
+      {
+        "file": "src/server/middleware/requestLogger.ts",
+        "hash": "8525951854398662354"
+      },
+      {
+        "file": "src/server/middleware/security.ts",
+        "hash": "18081229995789720571"
+      },
+      {
+        "file": "src/server/persistence/db.ts",
+        "hash": "15281303606793708117"
+      },
+      {
+        "file": "src/server/persistence/mappers.ts",
+        "hash": "12443518544813096751"
+      },
+      {
+        "file": "src/server/persistence/seed.ts",
+        "hash": "9470367759781642593"
+      },
+      {
+        "file": "src/server/persistence/sql-runner.ts",
+        "hash": "14259890902552751796"
+      },
+      {
+        "file": "src/server/persistence/store.ts",
+        "hash": "16270204842944461961"
+      },
+      {
+        "file": "src/server/persistence/support-tickets.store.ts",
+        "hash": "13758812211951181941"
+      },
+      {
+        "file": "src/server/persistence/user-notifications.store.ts",
+        "hash": "8417723588112303184"
+      },
+      {
+        "file": "src/server/registerApiRoutes.ts",
+        "hash": "3403743761411096936"
+      },
+      {
+        "file": "src/server/security/secret-crypto.ts",
+        "hash": "13535204201206022562"
+      },
+      {
+        "file": "src/server/types.ts",
+        "hash": "7528305190112588548"
+      },
+      {
+        "file": "src/services/apiService.ts",
+        "hash": "12211302098612615719"
+      },
+      {
+        "file": "src/services/dbService.ts",
+        "hash": "15291522519157347588"
+      },
+      {
+        "file": "src/services/supportTickets.ts",
+        "hash": "12824809452509135065"
+      },
+      {
+        "file": "src/types/index.ts",
+        "hash": "14252912641104858749"
+      },
+      {
+        "file": "src/types/orgAuth.ts",
+        "hash": "6918823706799994712"
+      },
+      {
+        "file": "src/utils/appNavigation.ts",
+        "hash": "11236687307373988178"
+      },
+      {
+        "file": "src/utils/avatar.ts",
+        "hash": "13061647232398558488"
+      },
+      {
+        "file": "src/utils/bookingPermissions.ts",
+        "hash": "4152322731592475453"
+      },
+      {
+        "file": "src/utils/bookingRules.ts",
+        "hash": "6074609863170114753"
+      },
+      {
+        "file": "src/utils/buildingFloors.ts",
+        "hash": "6826876406160275517"
       },
       {
         "file": "src/utils/imageDataUrl.ts",
@@ -891,184 +1079,28 @@
         "hash": "13507724315185008219"
       },
       {
-        "file": ".github/workflows/ghcr-publish.yml",
-        "hash": "6913389096194376952"
+        "file": "src/utils/notificationDispatcher.ts",
+        "hash": "8349190586811376603"
       },
       {
-        "file": "src/components/rooms/ModernRoomView.tsx",
-        "hash": "15580282992241418263"
+        "file": "src/utils/orgBrandTheme.ts",
+        "hash": "480761591218947502"
       },
       {
-        "file": "src/constants/notifications.ts",
-        "hash": "11266832570373439514"
+        "file": "src/utils/orgLocale.ts",
+        "hash": "8026031096422277791"
       },
       {
-        "file": "release/enterprise-template/docs/INSTALLATION.md",
-        "hash": "13104146206152445356"
+        "file": "src/utils/userNotificationsStorage.ts",
+        "hash": "2461933095984967445"
       },
       {
-        "file": "src/server/enterprise/enterprise.routes.ts",
-        "hash": "407435366862216334"
+        "file": "tsconfig.json",
+        "hash": "12799754539062195048"
       },
       {
-        "file": "scripts/build-setup-guide-pdf.mjs",
-        "hash": "7329028347494181769"
-      },
-      {
-        "file": "src/server/auth/session.service.ts",
-        "hash": "6349008395160077968"
-      },
-      {
-        "file": "deployment/docker-compose.prod.ghcr.yml",
-        "hash": "12627732353182763255"
-      },
-      {
-        "file": ".github/workflows/release.yml",
-        "hash": "14633904618810079323"
-      },
-      {
-        "file": "public/didar-logo.svg",
-        "hash": "4543980933865034417"
-      },
-      {
-        "file": "public/didar-logo.png",
-        "hash": "13324147746472467439"
-      },
-      {
-        "file": "docs/enterprise/BACKUP.md",
-        "hash": "1750103116512158060"
-      },
-      {
-        "file": "src/utils/bookingPermissions.ts",
-        "hash": "4152322731592475453"
-      },
-      {
-        "file": "src/components/landing/LandingView.tsx",
-        "hash": "9232960003152214227"
-      },
-      {
-        "file": "src/components/admin/AdminCampusView.tsx",
-        "hash": "9892906978659969124"
-      },
-      {
-        "file": "rooomchi-enterprise/backend/README.md",
-        "hash": "16528982720826620454"
-      },
-      {
-        "file": "kubernetes/backend-deployment.yaml",
-        "hash": "2668854744718066663"
-      },
-      {
-        "file": "release/enterprise-template/install.sh",
-        "hash": "9396459575889269541"
-      },
-      {
-        "file": "release/enterprise-template/docker-compose.yml",
-        "hash": "17735327227403040430"
-      },
-      {
-        "file": "kubernetes/frontend-deployment.yaml",
-        "hash": "14731810365695513080"
-      },
-      {
-        "file": "kubernetes/service.yaml",
-        "hash": "7508728203082435675"
-      },
-      {
-        "file": "deployment/postgres/README.md",
-        "hash": "12652737743692491697"
-      },
-      {
-        "file": "src/server/security/secret-crypto.ts",
-        "hash": "13535204201206022562"
-      },
-      {
-        "file": "rooomchi-enterprise/frontend/README.md",
-        "hash": "14820387517175349716"
-      },
-      {
-        "file": "src/server/persistence/sql-runner.ts",
-        "hash": "14259890902552751796"
-      },
-      {
-        "file": "scripts/seed-cli.ts",
-        "hash": "510711818472889507"
-      },
-      {
-        "file": "docs/authentication/LDAP_SETUP.md",
-        "hash": "17736414489730957820"
-      },
-      {
-        "file": "docs/enterprise/ARCHITECTURE.fa.md",
-        "hash": "15718587934601804735"
-      },
-      {
-        "file": "scripts/migrate-brand-to-css-vars.mjs",
-        "hash": "10489503286795201171"
-      },
-      {
-        "file": "README.md",
-        "hash": "7833275260198932293"
-      },
-      {
-        "file": "src/index.css",
-        "hash": "5702568493195620333"
-      },
-      {
-        "file": "public/rooomchi-logo-dark.svg",
-        "hash": "6675358820255526384"
-      },
-      {
-        "file": "src/components/common/Sidebar.tsx",
-        "hash": "10106604528859526724"
-      },
-      {
-        "file": "src/server/installation/installation.store.ts",
-        "hash": "6496240234380533783"
-      },
-      {
-        "file": "release/enterprise-template/backend/docker-entrypoint.sh",
-        "hash": "3832621678281016982"
-      },
-      {
-        "file": "docs/authentication/SECURITY.md",
-        "hash": "6000754145809656414"
-      },
-      {
-        "file": "src/components/common/Header.tsx",
-        "hash": "8780742844677325172"
-      },
-      {
-        "file": "docs/authentication/LOCAL_AUTH.md",
-        "hash": "13391098467803083950"
-      },
-      {
-        "file": "deployment/backend/docker-entrypoint.sh",
-        "hash": "3832621678281016982"
-      },
-      {
-        "file": "src/server/integrations/integration-manager.ts",
-        "hash": "11052878455156542068"
-      },
-      {
-        "file": "src/server/persistence/seed.ts",
-        "hash": "9470367759781642593"
-      },
-      {
-        "file": "scripts/db-cli.ts",
-        "hash": "14544243095094015273"
-      },
-      {
-        "file": "deployment/backend/Dockerfile",
-        "hash": "3792814725692267220"
-      },
-      {
-        "file": "docs/POSTGRES.md",
-        "hash": "1291046865790792414"
-      },
-      {
-        "file": "docs/UPGRADE.md",
-        "hash": "9009905134320658394"
+        "file": "vite.config.ts",
+        "hash": "14034969236901323234"
       }
     ],
     "projectFileMap": {

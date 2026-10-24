@@ -22,6 +22,10 @@ import {
   getWeekDates,
   todayIso,
 } from './calendarWeekUtils';
+import {
+  minutesToTime,
+  parseTimeToMinutes,
+} from '../../utils/bookingRules';
 
 function useMatchMedia(query: string): boolean {
   const [matches, setMatches] = useState(() => {
@@ -116,6 +120,20 @@ export const CalendarView: React.FC = () => {
       return;
     }
     openBookingModal();
+  };
+
+  const handleCalendarSlotClick = (isoDate: string, startTime: string) => {
+    const workEnd = currentOrg?.workHours?.end ?? '18:00';
+    const oneHourEnd = minutesToTime(parseTimeToMinutes(startTime) + 60);
+    const endTime =
+      parseTimeToMinutes(oneHourEnd) <= parseTimeToMinutes(workEnd)
+        ? oneHourEnd
+        : workEnd;
+    const room =
+      selectedRoomId !== 'all'
+        ? rooms.find((r) => r.id === selectedRoomId)
+        : undefined;
+    openBookingModal(room, { date: isoDate, startTime, endTime });
   };
 
   if (isLoading) {
@@ -246,6 +264,7 @@ export const CalendarView: React.FC = () => {
           days={gridDays}
           bookingsByDay={gridBookingsByDay}
           rooms={rooms}
+          onSlotClick={handleCalendarSlotClick}
         />
       ) : (
         <div className="overflow-x-auto">
@@ -254,6 +273,7 @@ export const CalendarView: React.FC = () => {
             bookingsByDay={gridBookingsByDay}
             rooms={rooms}
             className="min-w-[760px]"
+            onSlotClick={handleCalendarSlotClick}
           />
         </div>
       )}

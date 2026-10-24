@@ -89,6 +89,7 @@ type CalendarTimeGridProps = {
   bookingsByDay: Booking[][];
   rooms: Room[];
   className?: string;
+  onSlotClick?: (isoDate: string, startTime: string) => void;
 };
 
 export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
@@ -96,6 +97,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
   bookingsByDay,
   rooms,
   className = "",
+  onSlotClick,
 }) => {
   const colTemplate = `minmax(2.5rem, 3.25rem) repeat(${days.length}, minmax(0, 1fr))`;
 
@@ -180,6 +182,21 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
                 className="absolute inset-x-0 bottom-0 border-t border-slate-100 dark:border-[#334155]/70 pointer-events-none"
               />
 
+              {onSlotClick &&
+                HOUR_LABELS.map((hour, index) => (
+                  <button
+                    key={`slot-${d.isoDate}-${hour}`}
+                    type="button"
+                    className="absolute inset-x-0 z-[1] border-0 bg-transparent cursor-pointer hover:bg-[rgb(var(--brand-primary-rgb)/0.08)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.12)] focus:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--brand-primary)] transition-colors"
+                    style={{
+                      top: index * HOUR_HEIGHT_PX,
+                      height: HOUR_HEIGHT_PX,
+                    }}
+                    onClick={() => onSlotClick(d.isoDate, hour)}
+                    aria-label={`رزرو ${d.name} ساعت ${hour}`}
+                  />
+                ))}
+
               {placed.map(({ booking: bk, column, columnCount }, bkIdx) => {
                 const gridStartMin = DAY_START_HOUR * 60;
                 const gridEndMin = DAY_END_HOUR * 60;
@@ -220,7 +237,7 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
                       borderRightColor: accentColor,
                       zIndex: 10 + column,
                     }}
-                    className={`absolute rounded-lg px-2 py-1.5 text-right overflow-hidden ${styleClass}`}
+                    className={`absolute rounded-lg px-2 py-1.5 text-right overflow-hidden pointer-events-auto ${styleClass}`}
                     title={`${bk.title}\n${bk.roomName}\n${bk.startTime} – ${bk.endTime}`}
                   >
                     <p

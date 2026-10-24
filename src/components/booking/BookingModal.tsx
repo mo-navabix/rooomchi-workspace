@@ -22,6 +22,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     currentOrg,
     currentUser,
     selectedRoomForBooking,
+    bookingModalDraft,
     isBookingModalOpen,
     closeBookingModal,
     openCompleteProfileModal,
@@ -54,23 +55,39 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
 
     setTitle('');
     setInviteeEmails([]);
-    setDate(today);
 
     const initStart = currentOrg?.workHours?.start || '08:00';
     const initEndOrg = currentOrg?.workHours?.end || '18:00';
-    setStartTime(initStart);
 
-    const [sh, sm] = initStart.split(':').map(Number);
-    const endH = sh + 1;
-    const endFormatted = `${endH.toString().padStart(2, '0')}:${(sm || 0).toString().padStart(2, '0')}`;
-    setEndTime(endFormatted <= initEndOrg ? endFormatted : initEndOrg);
+    const effectiveDate = bookingModalDraft?.date ?? today;
+    let effectiveStart = initStart;
+    let effectiveEnd: string;
+    if (bookingModalDraft?.startTime) {
+      effectiveStart = bookingModalDraft.startTime;
+      effectiveEnd =
+        bookingModalDraft.endTime ??
+        latestEndTimeForStart(effectiveStart, initEndOrg, maxBookingHours);
+    } else {
+      const [sh, sm] = initStart.split(':').map(Number);
+      const endH = sh + 1;
+      const endFormatted = `${endH.toString().padStart(2, '0')}:${(sm || 0).toString().padStart(2, '0')}`;
+      effectiveEnd = endFormatted <= initEndOrg ? endFormatted : initEndOrg;
+    }
+
+    setDate(effectiveDate);
+    setStartTime(effectiveStart);
+    setEndTime(effectiveEnd);
     setConflictMessage(null);
 
     const loadData = async () => {
       try {
         const [roomsData, bookingsData] = await Promise.all([
           ApiService.getRooms({ orgId: currentOrg.id, status: 'available' }),
-          ApiService.getBookings({ orgId: currentOrg.id, date, scope: 'all' }),
+          ApiService.getBookings({
+            orgId: currentOrg.id,
+            date: effectiveDate,
+            scope: 'all',
+          }),
         ]);
         setAvailableRooms(roomsData);
         setExistingBookings(bookingsData);
@@ -88,7 +105,14 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     };
 
     loadData();
-  }, [currentOrg, isBookingModalOpen, selectedRoomForBooking]);
+  }, [
+    currentOrg,
+    isBookingModalOpen,
+    selectedRoomForBooking,
+    bookingModalDraft,
+    today,
+    maxBookingHours,
+  ]);
 
   useEffect(() => {
     if (!currentOrg || !isBookingModalOpen) return;

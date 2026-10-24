@@ -17,6 +17,12 @@ import {
   User,
   UserRole,
 } from "../types";
+
+export type BookingModalDraft = {
+  date: string;
+  startTime: string;
+  endTime: string;
+};
 import { ApiService } from "../services/apiService";
 import { hasPermission, normalizeUserRole } from "../constants/rbac";
 import {
@@ -76,6 +82,7 @@ interface AppContextType {
   toast: ToastInfo | null;
   searchQuery: string;
   selectedRoomForBooking: Room | null;
+  bookingModalDraft: BookingModalDraft | null;
   isBookingModalOpen: boolean;
   isProvisioningModalOpen: boolean;
   isCompleteProfileModalOpen: boolean;
@@ -98,7 +105,7 @@ interface AppContextType {
   setActiveTab: (tab: ActiveTab) => void;
   showToast: (message: string, type?: "success" | "error" | "info") => void;
   hideToast: () => void;
-  openBookingModal: (room?: Room) => void;
+  openBookingModal: (room?: Room, draft?: BookingModalDraft) => void;
   closeBookingModal: () => void;
   openCompleteProfileModal: (pendingRoom?: Room) => void;
   closeCompleteProfileModal: () => void;
@@ -250,6 +257,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [toast, setToast] = useState<ToastInfo | null>(null);
   const [selectedRoomForBooking, setSelectedRoomForBooking] =
     useState<Room | null>(null);
+  const [bookingModalDraft, setBookingModalDraft] =
+    useState<BookingModalDraft | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
   const [isProvisioningModalOpen, setIsProvisioningModalOpen] =
     useState<boolean>(false);
@@ -773,7 +782,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     setIsCompleteProfileModalOpen(false);
   };
 
-  const openBookingModal = (room?: Room) => {
+  const openBookingModal = (room?: Room, draft?: BookingModalDraft) => {
     // 1. If not authenticated at all:
     if (!currentUser) {
       showToast("برای رزرو اتاق، لطفاً وارد سامانه شوید یا ثبت‌نام کنید", "info");
@@ -792,6 +801,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     // 3. Complete user: proceed directly to booking modal
+    setBookingModalDraft(draft ?? null);
     setSelectedRoomForBooking(room || null);
     setIsBookingModalOpen(true);
   };
@@ -799,6 +809,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const closeBookingModal = () => {
     setIsBookingModalOpen(false);
     setSelectedRoomForBooking(null);
+    setBookingModalDraft(null);
   };
 
   const openProvisioningModal = () => {
@@ -941,6 +952,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         toast,
         searchQuery,
         selectedRoomForBooking,
+        bookingModalDraft,
         isBookingModalOpen,
         isProvisioningModalOpen,
         isCompleteProfileModalOpen,
