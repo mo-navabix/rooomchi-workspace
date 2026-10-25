@@ -113,6 +113,9 @@ interface AppContextType {
   openProvisioningModal: () => void;
   closeProvisioningModal: () => void;
   setSearchQuery: (q: string) => void;
+  /** Increment after create/cancel/status change so calendar & dashboard refetch. */
+  bookingsDataVersion: number;
+  notifyBookingsChanged: () => void;
   refreshOrganizations: () => Promise<void>;
   updateCurrentOrgData: (updated: Partial<Organization>) => void;
   updateCurrentUser: (updated: Partial<User>) => void;
@@ -267,6 +270,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [pendingRoomForBooking, setPendingRoomForBooking] =
     useState<Room | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [bookingsDataVersion, setBookingsDataVersion] = useState(0);
+  const notifyBookingsChanged = useCallback(() => {
+    setBookingsDataVersion((v) => v + 1);
+  }, []);
 
   // Access Control & Security Policies State
   const [accessControl, setAccessControl] = useState<AccessControlConfig>(DEFAULT_ACCESS_CONTROL);
@@ -981,6 +988,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         openProvisioningModal,
         closeProvisioningModal,
         setSearchQuery,
+        bookingsDataVersion,
+        notifyBookingsChanged,
         refreshOrganizations,
         updateCurrentOrgData,
         updateCurrentUser,

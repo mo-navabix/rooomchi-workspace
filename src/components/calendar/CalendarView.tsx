@@ -45,7 +45,8 @@ function useMatchMedia(query: string): boolean {
 }
 
 export const CalendarView: React.FC = () => {
-  const { currentOrg, orgLocale, openBookingModal } = useApp();
+  const { currentOrg, orgLocale, openBookingModal, bookingsDataVersion } =
+    useApp();
   const isNarrow = useMatchMedia('(max-width: 767px)');
   const [currentWeekOffset, setCurrentWeekOffset] = useState<number>(0);
   const [focusDateIso, setFocusDateIso] = useState<string>(() => todayIso());
@@ -68,10 +69,10 @@ export const CalendarView: React.FC = () => {
     return weekDays;
   }, [showDayView, focusDateIso, weekDays, orgLocale]);
 
-  const loadData = async () => {
+  const loadData = async (silent = false) => {
     if (!currentOrg) return;
     try {
-      setIsLoading(true);
+      if (!silent) setIsLoading(true);
       const [bookingsData, roomsData] = await Promise.all([
         ApiService.getBookings({ orgId: currentOrg.id, scope: 'all' }),
         ApiService.getRooms({ orgId: currentOrg.id }),
@@ -86,8 +87,8 @@ export const CalendarView: React.FC = () => {
   };
 
   useEffect(() => {
-    loadData();
-  }, [currentOrg]);
+    loadData(bookingsDataVersion > 0);
+  }, [currentOrg, bookingsDataVersion]);
 
   const activeBookings =
     selectedRoomId === 'all'
@@ -234,7 +235,7 @@ export const CalendarView: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={loadData}
+            onClick={() => loadData()}
             className="p-2 rounded-xl border border-slate-200 dark:border-[#334155] text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#334155] transition-colors cursor-pointer self-end sm:self-auto"
             title="بروزرسانی"
           >

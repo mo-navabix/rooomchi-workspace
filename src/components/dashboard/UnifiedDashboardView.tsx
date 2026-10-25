@@ -123,6 +123,7 @@ export const UnifiedDashboardView: React.FC = () => {
     can,
     userRole,
     notifications: appNotifications,
+    bookingsDataVersion,
   } = useApp();
 
   const canManageTeams =
@@ -143,9 +144,9 @@ export const UnifiedDashboardView: React.FC = () => {
 
   useEffect(() => {
     if (!currentOrg) return;
-    const loadData = async () => {
+    const loadData = async (silent = false) => {
       try {
-        setIsLoading(true);
+        if (!silent) setIsLoading(true);
         const [statsData, roomsData, bookingsData, teamsData, usersData] =
           await Promise.all([
             ApiService.getStats(currentOrg.id),
@@ -165,8 +166,8 @@ export const UnifiedDashboardView: React.FC = () => {
         setIsLoading(false);
       }
     };
-    loadData();
-  }, [currentOrg, todayStr, currentUser?.id]);
+    loadData(bookingsDataVersion > 0);
+  }, [currentOrg, todayStr, currentUser?.id, bookingsDataVersion]);
 
   const chartData =
     chartRange === "week"

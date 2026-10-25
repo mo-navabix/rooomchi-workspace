@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ApiService } from '../../services/apiService';
 import { Room, Booking } from '../../types';
@@ -29,6 +29,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     isRegistrationComplete,
     showToast,
     addNotification,
+    notifyBookingsChanged,
     orgLocale,
   } = useApp();
 
@@ -50,8 +51,18 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
 
+  const wasBookingModalOpen = useRef(false);
+
   useEffect(() => {
-    if (!currentOrg || !isBookingModalOpen) return;
+    if (!currentOrg || !isBookingModalOpen) {
+      wasBookingModalOpen.current = false;
+      return;
+    }
+
+    const justOpened = !wasBookingModalOpen.current;
+    wasBookingModalOpen.current = true;
+
+    if (!justOpened) return;
 
     setTitle('');
     setInviteeEmails([]);
@@ -78,20 +89,24 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
     setStartTime(effectiveStart);
     setEndTime(effectiveEnd);
     setConflictMessage(null);
+  }, [
+    currentOrg,
+    isBookingModalOpen,
+    bookingModalDraft,
+    today,
+    maxBookingHours,
+  ]);
 
-    const loadData = async () => {
+  useEffect(() => {
+    if (!currentOrg || !isBookingModalOpen) return;
+
+    void (async () => {
       try {
-        const [roomsData, bookingsData] = await Promise.all([
-          ApiService.getRooms({ orgId: currentOrg.id, status: 'available' }),
-          ApiService.getBookings({
-            orgId: currentOrg.id,
-            date: effectiveDate,
-            scope: 'all',
-          }),
-        ]);
+        const roomsData = await ApiService.getRooms({
+          orgId: currentOrg.id,
+          status: 'available',
+        });
         setAvailableRooms(roomsData);
-        setExistingBookings(bookingsData);
-
         if (selectedRoomForBooking) {
           setSelectedRoomId(selectedRoomForBooking.id);
         } else if (roomsData.length > 0) {
@@ -102,29 +117,24 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       } catch (err) {
         console.error(err);
       }
-    };
-
-    loadData();
-  }, [
-    currentOrg,
-    isBookingModalOpen,
-    selectedRoomForBooking,
-    bookingModalDraft,
-    today,
-    maxBookingHours,
-  ]);
+    })();
+  }, [currentOrg, isBookingModalOpen, selectedRoomForBooking]);
 
   useEffect(() => {
-    if (!currentOrg || !isBookingModalOpen) return;
-    const refreshBookings = async () => {
+    if (!currentOrg || !isBookingModalOpen || !date) return;
+
+    void (async () => {
       try {
-        const bookingsData = await ApiService.getBookings({ orgId: currentOrg.id, date, scope: 'all' });
+        const bookingsData = await ApiService.getBookings({
+          orgId: currentOrg.id,
+          date,
+          scope: 'all',
+        });
         setExistingBookings(bookingsData);
       } catch (err) {
         console.error(err);
       }
-    };
-    refreshBookings();
+    })();
   }, [currentOrg, isBookingModalOpen, date]);
 
   useEffect(() => {
@@ -289,6 +299,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
         'success'
       );
 
+      notifyBookingsChanged();
       closeBookingModal();
       onSuccess?.();
     } catch (err: unknown) {

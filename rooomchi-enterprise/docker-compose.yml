@@ -1,5 +1,15 @@
-# Rooomchi Enterprise — run from this directory
-# Requires repository root one level up (..)
+# Rooomchi Enterprise — production (GHCR images, no source on server)
+#
+# Install path example: /opt/room.acorex.ir
+#
+# Always pass the env file for Compose variable substitution:
+#   docker compose --env-file ./config/.env pull
+#   docker compose --env-file ./config/.env up -d
+#
+# Or: ./deploy.sh
+#
+# Database: migrations run on backend start (RUN_MIGRATIONS_ON_START=true).
+# Do not mount schema.sql — the backend image ships schema/ + dist/migrate.cjs.
 
 name: rooomchi-enterprise
 
@@ -7,38 +17,41 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
-    env_file:
-      - ./config/.env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required — set in config/.env and use --env-file}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_DB: ${POSTGRES_DB:-rooomchi_db}
     volumes:
       - rooomchi_pg_data:/var/lib/postgresql/data
-      - ../schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-rooomchi_db}"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 20s
     networks:
       - rooomchi
 
   backend:
-    build:
-      context: ..
-      dockerfile: deployment/backend/Dockerfile
+    image: ${IMAGE_GHCR_BACKEND:?IMAGE_GHCR_BACKEND is required}
+    pull_policy: always
     restart: unless-stopped
-    env_file:
-      - ./config/.env
     environment:
       NODE_ENV: production
       PORT: 3000
       API_ONLY: "true"
       SERVE_STATIC: "false"
-      SKIP_SCHEMA_ENSURE: "false"
+      SKIP_SCHEMA_ENSURE: "true"
       RUN_MIGRATIONS_ON_START: ${RUN_MIGRATIONS_ON_START:-true}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rooomchi_db}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rooomchi_db}}
+      DATABASE_SSL: ${DATABASE_SSL:-false}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      APP_URL: ${APP_URL:?APP_URL is required}
+      CORS_ORIGIN: ${CORS_ORIGIN:-${APP_URL}}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-300}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      SETUP_ENCRYPTION_KEY: ${SETUP_ENCRYPTION_KEY:-}
       UPLOAD_PATH: /data/uploads
       LICENSE_PATH: /app/config/license.json
     volumes:
@@ -47,13 +60,18 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health | grep -q healthy || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
     networks:
       - rooomchi
 
   frontend:
-    build:
-      context: ..
-      dockerfile: deployment/frontend/Dockerfile
+    image: ${IMAGE_GHCR_FRONTEND:?IMAGE_GHCR_FRONTEND is required}
+    pull_policy: always
     restart: unless-stopped
     networks:
       - rooomchi
@@ -62,12 +80,33 @@ services:
     image: nginx:1.27-alpine
     restart: unless-stopped
     ports:
-      - "${ROOOMCHI_HTTP_PORT:-80}:80"
+      - "${ROOOMCHI_HTTP_PORT:-8080}:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - backend
-      - frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    networks:
+      - rooomchi
+
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    profiles:
+      - watchtower
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_POLL_INTERVAL: ${WATCHTOWER_POLL_INTERVAL:-86400}
+      WATCHTOWER_ROLLING_RESTART: "true"
+      WATCHTOWER_INCLUDE_RESTARTING: "true"
+      WATCHTOWER_NO_STARTUP_MESSAGE: "true"
+      REPO_USER: ${GHCR_USERNAME:-}
+      REPO_PASS: ${GHCR_TOKEN:-}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - rooomchi
 

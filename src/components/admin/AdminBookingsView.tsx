@@ -24,7 +24,8 @@ import { toPersianDigits } from '../../utils/jalali';
 import { triggerBookingNotifications } from '../../utils/notificationDispatcher';
 
 export const AdminBookingsView: React.FC = () => {
-  const { currentOrg, showToast, addNotification } = useApp();
+  const { currentOrg, showToast, addNotification, bookingsDataVersion, notifyBookingsChanged } =
+    useApp();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filterDepartment, setFilterDepartment] = useState<string>('all');
@@ -57,7 +58,7 @@ export const AdminBookingsView: React.FC = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [currentOrg]);
+  }, [currentOrg, bookingsDataVersion]);
 
   const handleUpdateStatus = async (id: string, newStatus: Booking['status'], title: string) => {
     try {
@@ -79,7 +80,7 @@ export const AdminBookingsView: React.FC = () => {
         );
       }
 
-      fetchBookings();
+      notifyBookingsChanged();
     } catch (err: any) {
       showToast(err.message || 'خطا در تغییر وضعیت رزرو', 'error');
     }

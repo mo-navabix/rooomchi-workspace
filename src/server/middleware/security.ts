@@ -42,18 +42,33 @@ export function registerSecurityMiddleware(app: Express): void {
     next();
   });
 
-  const windowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
-  const max = Number(process.env.RATE_LIMIT_MAX) || 300;
-  app.use(
-    "/api",
-    rateLimit({
-      windowMs,
-      max,
-      standardHeaders: true,
-      legacyHeaders: false,
-      message: { error: "Too many requests" },
-    }),
-  );
+  const rawMax = process.env.RATE_LIMIT_MAX?.trim();
+  const rateLimitDisabled =
+    rawMax === "0" ||
+    rawMax === "off" ||
+    rawMax === "false" ||
+    process.env.NODE_ENV !== "production";
+
+  if (!rateLimitDisabled) {
+    const windowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
+    const max = Number(rawMax) || 300;
+    app.use(
+      "/api",
+      rateLimit({
+        windowMs,
+        max,
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: { error: "Too many requests" },
+      }),
+    );
+    logger.info({ windowMs, max }, "api_rate_limit_enabled");
+  } else {
+    logger.info(
+      { reason: process.env.NODE_ENV !== "production" ? "non_production" : "RATE_LIMIT_MAX" },
+      "api_rate_limit_disabled",
+    );
+  }
 
   app.use((_req, res, next) => {
     res.setHeader("X-Content-Type-Options", "nosniff");

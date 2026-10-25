@@ -20,7 +20,14 @@ import {
 import { MyBookingsSkeleton } from '../common/Skeletons';
 
 export const MyBookingsView: React.FC = () => {
-  const { currentOrg, currentUser, showToast, orgLocale } = useApp();
+  const {
+    currentOrg,
+    currentUser,
+    showToast,
+    orgLocale,
+    bookingsDataVersion,
+    notifyBookingsChanged,
+  } = useApp();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [filterTab, setFilterTab] = useState<'all' | 'upcoming' | 'pending' | 'cancelled'>('upcoming');
@@ -43,7 +50,7 @@ export const MyBookingsView: React.FC = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [currentOrg]);
+  }, [currentOrg, bookingsDataVersion]);
 
   const handleCancelBooking = async (id: string, title: string) => {
     if (!window.confirm(`آیا از لغو رزرو جلسه «${title}» اطمینان دارید؟`)) return;
@@ -51,7 +58,7 @@ export const MyBookingsView: React.FC = () => {
     try {
       await ApiService.cancelBooking(id);
       showToast('جلسه مورد نظر با موفقیت لغو شد', 'success');
-      fetchBookings();
+      notifyBookingsChanged();
     } catch (err: any) {
       showToast(err.message || 'خطا در لغو رزرو', 'error');
     }

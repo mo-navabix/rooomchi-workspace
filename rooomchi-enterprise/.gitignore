@@ -1,0 +1,5 @@
+config/.env
+config/license.json
+nginx/ssl/
+backups/
+*.log

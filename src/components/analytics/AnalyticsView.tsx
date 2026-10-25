@@ -20,7 +20,7 @@ const RANGE_LABELS: Record<'week' | 'month' | 'quarter', string> = {
 };
 
 export const AnalyticsView: React.FC = () => {
-  const { currentOrg } = useApp();
+  const { currentOrg, bookingsDataVersion } = useApp();
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter'>('month');
   const [stats, setStats] = useState<Stats | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -42,7 +42,7 @@ export const AnalyticsView: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentOrg?.id, timeRange]);
+  }, [currentOrg?.id, timeRange, bookingsDataVersion]);
 
   useEffect(() => {
     loadData();

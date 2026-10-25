@@ -1,11 +1,13 @@
-# Enterprise IT Documentation
+# Enterprise deployment documentation
 
-See repository `docs/enterprise/`:
+Primary guide for GHCR production:
 
-- [ARCHITECTURE.fa.md](../../docs/enterprise/ARCHITECTURE.fa.md)
-- [INSTALLATION.md](../../docs/enterprise/INSTALLATION.md)
-- [CONFIGURATION.md](../../docs/enterprise/CONFIGURATION.md)
-- [DOMAIN_SSL.md](../../docs/enterprise/DOMAIN_SSL.md)
-- [BACKUP.md](../../docs/enterprise/BACKUP.md)
-- [UPDATE.md](../../docs/enterprise/UPDATE.md)
-- [TROUBLESHOOTING.md](../../docs/enterprise/TROUBLESHOOTING.md)
+- **[../README.md](../README.md)** — install, upgrade, HTTPS, troubleshooting
+
+Application repository (when available):
+
+- [docs/GHCR.md](../../docs/GHCR.md)
+- [docs/CUSTOMER_GO_LIVE.md](../../docs/CUSTOMER_GO_LIVE.md)
+- [docs/enterprise/INSTALLATION.md](../../docs/enterprise/INSTALLATION.md)
+- [docs/enterprise/DOMAIN_SSL.md](../../docs/enterprise/DOMAIN_SSL.md)
+- [docs/BACKUP.md](../../docs/BACKUP.md)
