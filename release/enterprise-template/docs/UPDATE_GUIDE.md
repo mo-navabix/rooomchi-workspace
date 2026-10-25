@@ -17,10 +17,10 @@
 
 This will:
 
-- Extract new `backend/`, `frontend/`, `database/`, `schema/`, and `docker-compose.yml`
+- Extract updated `docker-compose.yml`, `nginx/`, and scripts when present in the tarball
 - **Preserve** `config/` and `storage/`
 - Run `./backup.sh` automatically
-- Rebuild images, run migrations on backend start, and restart services
+- Pull latest GHCR images (`IMAGE_GHCR_*`), run migrations on backend start, and restart services
 
 ## Manual upgrade
 
@@ -28,7 +28,8 @@ This will:
 ./backup.sh
 docker compose stop backend
 # replace application files (keep config/ and storage/)
-docker compose --env-file config/.env up -d --build
+docker compose --env-file config/.env pull backend frontend
+docker compose --env-file config/.env up -d
 ```
 
 Migrations run when `RUN_MIGRATIONS_ON_START=true` (default).

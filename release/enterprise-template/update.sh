@@ -29,14 +29,15 @@ fi
 echo "[rooomchi-update] Pre-upgrade backup..."
 "$ROOT/backup.sh"
 
-echo "[rooomchi-update] Rebuilding and restarting..."
-docker compose --env-file "$ENV_FILE" up -d --build
+echo "[rooomchi-update] Pulling and restarting..."
+docker compose --env-file "$ENV_FILE" pull backend frontend
+docker compose --env-file "$ENV_FILE" up -d
 
 echo "[rooomchi-update] Waiting for health..."
 TRIES=0
 # shellcheck disable=SC1090
 set -a && source "$ENV_FILE" && set +a
-until curl -sf "http://127.0.0.1:${ROOOMCHI_HTTP_PORT:-80}/health" | grep -q healthy; do
+until curl -sf "http://127.0.0.1:${ROOOMCHI_HTTP_PORT:-10808}/health" | grep -q healthy; do
   TRIES=$((TRIES + 1))
   if [ "$TRIES" -gt 60 ]; then
     echo "Health check failed. Roll back from backups/ if needed."

@@ -39,6 +39,12 @@ fi
 if [ "${POSTGRES_PASSWORD:-}" = "CHANGE_ME_STRONG_PASSWORD" ] || [ -z "${POSTGRES_PASSWORD:-}" ]; then
   die "Set POSTGRES_PASSWORD in config/.env"
 fi
+if [ -z "${IMAGE_GHCR_BACKEND:-}" ] || [ -z "${IMAGE_GHCR_FRONTEND:-}" ]; then
+  die "Set IMAGE_GHCR_BACKEND and IMAGE_GHCR_FRONTEND in config/.env"
+fi
+if [ -z "${APP_URL:-}" ]; then
+  die "Set APP_URL in config/.env"
+fi
 
 if [ ! -f "$ROOT/config/license.json" ] && [ -f "$ROOT/config/license.json.example" ]; then
   cp "$ROOT/config/license.json.example" "$ROOT/config/license.json"
@@ -47,12 +53,13 @@ fi
 
 mkdir -p "$ROOT/storage/uploads" "$ROOT/backups"
 
-log "Building and starting containers..."
-docker compose --env-file "$ENV_FILE" up -d --build
+log "Pulling and starting containers..."
+docker compose --env-file "$ENV_FILE" pull backend frontend
+docker compose --env-file "$ENV_FILE" up -d
 
 log "Waiting for API health..."
 TRIES=0
-until curl -sf "http://127.0.0.1:${ROOOMCHI_HTTP_PORT:-80}/health" | grep -q healthy; do
+until curl -sf "http://127.0.0.1:${ROOOMCHI_HTTP_PORT:-10808}/health" | grep -q healthy; do
   TRIES=$((TRIES + 1))
   if [ "$TRIES" -gt 60 ]; then
     die "Backend did not become healthy. Check: docker compose logs backend"
