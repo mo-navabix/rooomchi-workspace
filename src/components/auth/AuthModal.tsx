@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Logo } from '../common/Logo';
+import { OrgLogoBadge } from '../common/OrgLogoBadge';
 import {
   X,
   Lock,
@@ -47,7 +48,9 @@ export const AuthModal: React.FC = () => {
   const [regEmail, setRegEmail] = useState<string>('');
   const [regCode, setRegCode] = useState<string>('');
   const [regStep, setRegStep] = useState<'email' | 'code'>('email');
-  const [regSimulatedCode, setRegSimulatedCode] = useState<string | null>(null);
+  const [regPassword, setRegPassword] = useState<string>('');
+  const [regPasswordConfirm, setRegPasswordConfirm] = useState<string>('');
+  const [showRegPassword, setShowRegPassword] = useState<boolean>(false);
   const [regCooldown, setRegCooldown] = useState<number>(0);
 
   // Forgot / Reset password state
@@ -55,8 +58,6 @@ export const AuthModal: React.FC = () => {
   const [resetCode, setResetCode] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
-  const [resetSimulatedCode, setResetSimulatedCode] = useState<string | null>(null);
-
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -86,6 +87,8 @@ export const AuthModal: React.FC = () => {
   }, [regCooldown]);
 
   if (!isAuthModalOpen) return null;
+
+  const showRooomchiLogo = currentView === 'login' && !currentOrg;
 
   // -------------------------------------------------------------
   // 1. Password Login Handler
@@ -127,13 +130,12 @@ export const AuthModal: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await sendOtp(regEmail.trim());
+      await sendOtp(regEmail.trim());
       setRegStep('code');
       setRegCooldown(60);
-      if (res.simulatedCode) {
-        setRegSimulatedCode(res.simulatedCode);
-        setRegCode(res.simulatedCode); // autofill for instant preview testing
-      }
+      setRegCode('');
+      setRegPassword('');
+      setRegPasswordConfirm('');
     } catch (err: any) {
       setErrorMessage(err.message || 'خطا در ارسال کد تأیید');
     } finally {
@@ -149,11 +151,18 @@ export const AuthModal: React.FC = () => {
       setErrorMessage('لطفاً کد تأیید ۶ رقمی را وارد کنید');
       return;
     }
+    if (!regPassword || regPassword.length < 8) {
+      setErrorMessage('رمز عبور باید حداقل ۸ کاراکتر باشد');
+      return;
+    }
+    if (regPassword !== regPasswordConfirm) {
+      setErrorMessage('رمز عبور و تکرار آن یکسان نیستند');
+      return;
+    }
 
     try {
       setIsSubmitting(true);
-      await verifyOtp(regEmail.trim(), regCode.trim());
-      showToast('ثبت‌نام با موفقیت انجام شد! برای رزرو اتاق‌ها، ابتدا اطلاعات خود را تکمیل فرمایید.', 'info');
+      await verifyOtp(regEmail.trim(), regCode.trim(), regPassword);
     } catch (err: any) {
       setErrorMessage(err.message || 'کد تأیید نامعتبر است یا منقضی شده است');
     } finally {
@@ -175,11 +184,7 @@ export const AuthModal: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await forgotPassword(forgotEmail.trim());
-      if (res.simulatedCode) {
-        setResetSimulatedCode(res.simulatedCode);
-        setResetCode(res.simulatedCode); // autofill for effortless preview testing
-      }
+      await forgotPassword(forgotEmail.trim());
       setCurrentView('reset');
       showToast('کد تأیید بازیابی به ایمیل شما ارسال شد', 'success');
     } catch (err: any) {
@@ -239,11 +244,13 @@ export const AuthModal: React.FC = () => {
           </button>
 
           <div className="flex flex-col items-center text-center">
-            <div className="mb-2">
-              <Logo variant="stacked" size="lg" />
-            </div>
+            {showRooomchiLogo && (
+              <div className="mb-2">
+                <Logo variant="stacked" size="lg" />
+              </div>
+            )}
 
-            <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white mt-2">
+            <h3 className={`text-lg sm:text-xl font-bold tracking-tight text-white ${showRooomchiLogo ? 'mt-2' : 'mt-0'}`}>
               {currentView === 'login' && 'ورود به سامانه روم‌چی'}
               {currentView === 'register' && 'ساخت اکانت جدید'}
               {currentView === 'forgot' && 'فراموشی رمز عبور'}
@@ -252,15 +259,26 @@ export const AuthModal: React.FC = () => {
 
             <p className="text-xs text-white/85 mt-1 max-w-xs leading-relaxed">
               {currentView === 'login' && 'ورود با ایمیل و رمز عبور به سامانه رزرواسیون'}
-              {currentView === 'register' && 'ثبت‌نام سریع همکاران — فقط با وارد کردن ایمیل'}
+              {currentView === 'register' && 'ایمیل، کد تأیید و تعیین رمز عبور'}
               {currentView === 'forgot' && 'ایمیل حساب خود را جهت دریافت کد تأیید وارد نمایید'}
               {currentView === 'reset' && 'کد تأیید ارسال‌شده و رمز جدید خود را وارد کنید'}
             </p>
 
             {currentOrg && (
-              <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-xs rounded-full border border-white/20 text-white text-[11px] font-semibold shadow-xs">
-                <span className="opacity-80">ورود به پورتال:</span>
-                <span className="font-bold underline decoration-white/50 underline-offset-2">{currentOrg.name}</span>
+              <div
+                className="mt-3 w-full max-w-xs flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-black/15 ring-1 ring-white/25 text-white text-start"
+              >
+                <OrgLogoBadge
+                  logo={currentOrg.logo}
+                  logoDark={currentOrg.settings?.logoDark}
+                  name={currentOrg.name}
+                  size="md"
+                  className="shrink-0"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-semibold text-white/70 leading-tight">پورتال سازمان</p>
+                  <p className="text-sm font-bold truncate leading-snug">{currentOrg.name}</p>
+                </div>
               </div>
             )}
           </div>
@@ -429,7 +447,7 @@ export const AuthModal: React.FC = () => {
                       <span>ثبت‌نام سریع فقط با ایمیل</span>
                     </div>
                     <p className="text-[11px] text-brand dark:text-[var(--brand-primary-on-dark)]/80">
-                      تنها با وارد کردن آدرس ایمیل، کد تأیید یکبارمصرف برای شما ارسال شده و بلافاصله وارد داشبورد می‌شوید. (تکمیل نام و تلفن در هنگام اولین رزرو اتاق انجام خواهد شد).
+                      کد ۶ رقمی به ایمیل شما ارسال می‌شود. در مرحله بعد کد را وارد کنید و رمز عبور حساب خود را تعیین نمایید.
                     </p>
                   </div>
 
@@ -538,25 +556,6 @@ export const AuthModal: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Simulated Code helper for instant test */}
-                  {regSimulatedCode && (
-                    <div className="p-3 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 rounded-xl text-brand dark:text-[var(--brand-primary-on-dark)] text-xs flex items-center justify-between">
-                      <span>کد آزمایشی دریافتی (تست سریع):</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-black text-sm bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-2 py-0.5 rounded tracking-wider">
-                          {regSimulatedCode}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setRegCode(regSimulatedCode)}
-                          className="text-[10px] bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-2 py-0.5 rounded font-bold cursor-pointer"
-                        >
-                          درج خودکار
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                       کد تأیید ۶ رقمی *
@@ -574,17 +573,63 @@ export const AuthModal: React.FC = () => {
                     />
                   </div>
 
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      رمز عبور *
+                    </label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type={showRegPassword ? 'text' : 'password'}
+                        value={regPassword}
+                        onChange={(e) => setRegPassword(e.target.value)}
+                        placeholder="حداقل ۸ کاراکتر"
+                        className="w-full text-xs pr-9 pl-9 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[var(--brand-primary-light)] text-left"
+                        dir="ltr"
+                        minLength={8}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowRegPassword((v) => !v)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                        aria-label={showRegPassword ? 'پنهان کردن رمز' : 'نمایش رمز'}
+                      >
+                        {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      تکرار رمز عبور *
+                    </label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type={showRegPassword ? 'text' : 'password'}
+                        value={regPasswordConfirm}
+                        onChange={(e) => setRegPasswordConfirm(e.target.value)}
+                        placeholder="همان رمز را دوباره وارد کنید"
+                        className="w-full text-xs pr-9 pl-3 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[var(--brand-primary-light)] text-left"
+                        dir="ltr"
+                        minLength={8}
+                        required
+                      />
+                    </div>
+                  </div>
+
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full py-2.5 btn-brand text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
-                      <span>در حال بررسی کد...</span>
+                      <span>در حال تکمیل ثبت‌نام...</span>
                     ) : (
                       <>
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>تأیید و ورود به سیستم</span>
+                        <span>تأیید کد و ساخت حساب</span>
                       </>
                     )}
                   </button>
@@ -699,24 +744,6 @@ export const AuthModal: React.FC = () => {
                   تغییر ایمیل
                 </button>
               </div>
-
-              {resetSimulatedCode && (
-                <div className="p-3 bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft dark:border-[rgb(var(--brand-primary-rgb)/0.35)]/40 rounded-xl text-brand dark:text-[var(--brand-primary-on-dark)] text-xs flex items-center justify-between">
-                  <span>کد تأیید شبیه‌سازی‌شده (تست):</span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-sm bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.2)] px-2 py-0.5 rounded tracking-wider">
-                      {resetSimulatedCode}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setResetCode(resetSimulatedCode)}
-                      className="text-[10px] bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-2 py-0.5 rounded font-bold cursor-pointer"
-                    >
-                      درج خودکار
-                    </button>
-                  </div>
-                </div>
-              )}
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">

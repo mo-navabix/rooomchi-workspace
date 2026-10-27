@@ -1,20 +1,25 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useApp } from '../../context/AppContext';
-import { ApiService } from '../../services/apiService';
-import { Save, Loader2, ChevronRight, Settings2 } from 'lucide-react';
-import { OrgLogoUploader } from './OrgLogoUploader';
-import { OrgBrandThemePicker } from './OrgBrandThemePicker';
+import React, { useCallback, useEffect, useState } from "react";
+import { useApp } from "../../context/AppContext";
+import { ApiService } from "../../services/apiService";
+import { Save, Loader2, ChevronRight } from "lucide-react";
+import { OrgLogoUploader } from "./OrgLogoUploader";
+import { OrgBrandThemePicker } from "./OrgBrandThemePicker";
 import {
   ORG_COUNTRY_OPTIONS,
   ORG_TIMEZONE_OPTIONS,
   orgCountrySelectValue,
   orgTimezoneSelectValue,
-} from './orgRegionOptions';
-import { ToggleSwitch } from '../../components/admin/AccessControlView';
-import { TimePicker } from '../../components/common/TimePicker';
-import { parseTimeToMinutes } from '../../utils/bookingRules';
-import type { AdminSettingsSection } from './adminSettingsTabs';
-import { applyOrgBrandTheme } from '../../utils/orgBrandTheme';
+} from "./orgRegionOptions";
+import { ToggleSwitch } from "../../components/admin/AccessControlView";
+import { TimePicker } from "../../components/common/TimePicker";
+import { parseTimeToMinutes } from "../../utils/bookingRules";
+import type { AdminSettingsSection } from "./adminSettingsTabs";
+import { IntegrationsHub } from "../integrations/IntegrationsHub";
+import { IntegrationConfigPanel } from "../integrations/IntegrationConfigPanel";
+import { consumeIntegrationConfigView } from "../integrations/integrationNavigation";
+import type { IntegrationCatalogId } from "../integrations/integrationCatalog";
+import { IntegrationProviderCard } from "./IntegrationProviderCard";
+import { applyOrgBrandTheme } from "../../utils/orgBrandTheme";
 import {
   adminInputClass,
   adminSelectClass,
@@ -27,12 +32,12 @@ import {
   AdminSection,
   FormField,
   FormGrid,
-} from './adminSettingsLayout';
+} from "./adminSettingsLayout";
 
 const LDAP_ROLE_OPTIONS = [
-  { value: 'EMPLOYEE', label: 'کارمند' },
-  { value: 'MANAGER', label: 'مدیر اتاق' },
-  { value: 'ORGANIZATION_ADMIN', label: 'مدیر سازمان' },
+  { value: "EMPLOYEE", label: "کارمند" },
+  { value: "MANAGER", label: "مدیر اتاق" },
+  { value: "ORGANIZATION_ADMIN", label: "مدیر سازمان" },
 ] as const;
 
 type LdapGroupRoleMapping = { ldapGroup: string; role: string };
@@ -50,20 +55,47 @@ export const EnterpriseAdminSettingsView: React.FC<{
   const [systemForm, setSystemForm] = useState<Record<string, unknown>>({});
   const [platformInfo, setPlatformInfo] = useState<{
     version: { version: string };
-    license: { configured: boolean; valid: boolean; message: string; daysUntilExpiry: number | null };
-    updates: { currentVersion: string; migrationsApplied: number; latestMigration: string | null; availableUpdate: string | null };
+    license: {
+      configured: boolean;
+      valid: boolean;
+      message: string;
+      daysUntilExpiry: number | null;
+    };
+    updates: {
+      currentVersion: string;
+      migrationsApplied: number;
+      latestMigration: string | null;
+      availableUpdate: string | null;
+    };
   } | null>(null);
   const [auditLogs, setAuditLogs] = useState<
-    { id: string; eventType: string; summary: string; userName: string; createdAt: string }[]
+    {
+      id: string;
+      eventType: string;
+      summary: string;
+      userName: string;
+      createdAt: string;
+    }[]
   >([]);
-  const [ldapTestUser, setLdapTestUser] = useState('');
-  const [authConfigView, setAuthConfigView] = useState<'ldap' | 'google' | null>(null);
+  const [ldapTestUser, setLdapTestUser] = useState("");
+  const [authConfigView, setAuthConfigView] = useState<
+    "ldap" | "google" | null
+  >(null);
+  const [integrationConfigView, setIntegrationConfigView] =
+    useState<IntegrationCatalogId | null>(null);
 
   useEffect(() => {
-    if (section !== 'authentication') setAuthConfigView(null);
+    if (section !== "authentication") setAuthConfigView(null);
+    if (section !== "integrations") setIntegrationConfigView(null);
   }, [section]);
 
-  const primaryColor = String(orgForm.primaryColor || '#0f786e');
+  useEffect(() => {
+    if (section !== "integrations") return;
+    const pending = consumeIntegrationConfigView();
+    if (pending) setIntegrationConfigView(pending);
+  }, [section]);
+
+  const primaryColor = String(orgForm.primaryColor || "#0f786e");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -77,7 +109,7 @@ export const EnterpriseAdminSettingsView: React.FC<{
       ]);
       setOrgForm({
         ...org,
-        workHours: org.workHours || { start: '08:00', end: '19:00' },
+        workHours: org.workHours || { start: "08:00", end: "19:00" },
         bookingSettings: org.bookingSettings || {
           maxBookingHours: 4,
           autoApprove: true,
@@ -95,7 +127,7 @@ export const EnterpriseAdminSettingsView: React.FC<{
         setPlatformInfo(null);
       }
     } catch (e: unknown) {
-      showToast(e instanceof Error ? e.message : 'خطا در بارگذاری', 'error');
+      showToast(e instanceof Error ? e.message : "خطا در بارگذاری", "error");
     } finally {
       setLoading(false);
     }
@@ -105,25 +137,41 @@ export const EnterpriseAdminSettingsView: React.FC<{
     load();
   }, [load]);
 
+  useEffect(() => {
+    if (section !== "integrations") setIntegrationConfigView(null);
+    if (section !== "authentication") setAuthConfigView(null);
+  }, [section]);
+
   const saveOrganization = async () => {
-    const workHours = (orgForm.workHours as { start?: string; end?: string }) || {
-      start: '08:00',
-      end: '19:00',
+    const workHours = (orgForm.workHours as {
+      start?: string;
+      end?: string;
+    }) || {
+      start: "08:00",
+      end: "19:00",
     };
-    const booking = (orgForm.bookingSettings as { maxBookingHours?: number }) || {};
+    const booking =
+      (orgForm.bookingSettings as { maxBookingHours?: number }) || {};
     const maxH = Number(booking.maxBookingHours ?? 4);
-    if (parseTimeToMinutes(workHours.start || '08:00') >= parseTimeToMinutes(workHours.end || '19:00')) {
-      showToast('ساعت پایان رزرو باید بعد از ساعت شروع باشد', 'error');
+    if (
+      parseTimeToMinutes(workHours.start || "08:00") >=
+      parseTimeToMinutes(workHours.end || "19:00")
+    ) {
+      showToast("ساعت پایان رزرو باید بعد از ساعت شروع باشد", "error");
       return;
     }
     if (!Number.isFinite(maxH) || maxH < 0.5 || maxH > 24) {
-      showToast('حداکثر طول جلسه باید بین ۰٫۵ تا ۲۴ ساعت باشد', 'error');
+      showToast("حداکثر طول جلسه باید بین ۰٫۵ تا ۲۴ ساعت باشد", "error");
       return;
     }
     const windowMinutes =
-      parseTimeToMinutes(workHours.end || '19:00') - parseTimeToMinutes(workHours.start || '08:00');
+      parseTimeToMinutes(workHours.end || "19:00") -
+      parseTimeToMinutes(workHours.start || "08:00");
     if (maxH * 60 > windowMinutes) {
-      showToast('حداکثر طول جلسه نمی‌تواند بیشتر از بازهٔ مجاز رزرو باشد', 'error');
+      showToast(
+        "حداکثر طول جلسه نمی‌تواند بیشتر از بازهٔ مجاز رزرو باشد",
+        "error",
+      );
       return;
     }
 
@@ -135,7 +183,8 @@ export const EnterpriseAdminSettingsView: React.FC<{
         applyOrgBrandTheme(String(updated.primaryColor));
       }
       if (currentOrg) {
-        const booking = (updated.bookingSettings || {}) as import('../../types').Organization['settings'];
+        const booking = (updated.bookingSettings ||
+          {}) as import("../../types").Organization["settings"];
         updateCurrentOrgData({
           name: updated.name,
           logo: updated.logo,
@@ -146,22 +195,37 @@ export const EnterpriseAdminSettingsView: React.FC<{
           settings: {
             ...currentOrg.settings,
             ...booking,
-            autoApprove: booking?.autoApprove ?? currentOrg.settings?.autoApprove ?? true,
+            autoApprove:
+              booking?.autoApprove ?? currentOrg.settings?.autoApprove ?? true,
             maxBookingHours:
-              booking?.maxBookingHours ?? currentOrg.settings?.maxBookingHours ?? 4,
-            allowWeekend: booking?.allowWeekend ?? currentOrg.settings?.allowWeekend ?? false,
-            dateFormat: (updated.dateFormat as 'jalali' | 'gregorian') || 'jalali',
-            timezone: String(updated.timezone || currentOrg.settings?.timezone || 'Asia/Tehran'),
-            country: String(updated.country || currentOrg.settings?.country || 'IR'),
-            logoDark: String(updated.logoDark ?? currentOrg.settings?.logoDark ?? ''),
+              booking?.maxBookingHours ??
+              currentOrg.settings?.maxBookingHours ??
+              4,
+            allowWeekend:
+              booking?.allowWeekend ??
+              currentOrg.settings?.allowWeekend ??
+              false,
+            dateFormat:
+              (updated.dateFormat as "jalali" | "gregorian") || "jalali",
+            timezone: String(
+              updated.timezone ||
+                currentOrg.settings?.timezone ||
+                "Asia/Tehran",
+            ),
+            country: String(
+              updated.country || currentOrg.settings?.country || "IR",
+            ),
+            logoDark: String(
+              updated.logoDark ?? currentOrg.settings?.logoDark ?? "",
+            ),
           },
         });
       }
-      showToast('تنظیمات سازمان ذخیره شد', 'success');
+      showToast("تنظیمات سازمان ذخیره شد", "success");
       const audit = await ApiService.getAdminConfigAudit();
       setAuditLogs(audit);
     } catch (e: unknown) {
-      showToast(e instanceof Error ? e.message : 'خطا', 'error');
+      showToast(e instanceof Error ? e.message : "خطا", "error");
     } finally {
       setSaving(false);
     }
@@ -177,10 +241,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
         ).filter((m) => m.ldapGroup.trim());
       }
       await ApiService.putAdminAuthSettings(payload);
-      showToast('تنظیمات احراز هویت ذخیره شد', 'success');
+      showToast("تنظیمات احراز هویت ذخیره شد", "success");
       load();
     } catch (e: unknown) {
-      showToast(e instanceof Error ? e.message : 'خطا', 'error');
+      showToast(e instanceof Error ? e.message : "خطا", "error");
     } finally {
       setSaving(false);
     }
@@ -190,10 +254,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
     setSaving(true);
     try {
       await ApiService.putAdminIntegrations(integrations);
-      showToast('یکپارچه‌سازی‌ها ذخیره شد', 'success');
+      showToast("یکپارچه‌سازی‌ها ذخیره شد", "success");
       load();
     } catch (e: unknown) {
-      showToast(e instanceof Error ? e.message : 'خطا', 'error');
+      showToast(e instanceof Error ? e.message : "خطا", "error");
     } finally {
       setSaving(false);
     }
@@ -203,10 +267,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
     setSaving(true);
     try {
       await ApiService.putAdminSystemSettings(systemForm);
-      showToast('تنظیمات سامانه ذخیره شد', 'success');
+      showToast("تنظیمات سامانه ذخیره شد", "success");
       load();
     } catch (e: unknown) {
-      showToast(e instanceof Error ? e.message : 'خطا', 'error');
+      showToast(e instanceof Error ? e.message : "خطا", "error");
     } finally {
       setSaving(false);
     }
@@ -243,86 +307,63 @@ export const EnterpriseAdminSettingsView: React.FC<{
     defaultRole?: string;
     useTls?: boolean;
   };
-  const ldapGroupRoleMappings = (authForm.ldapGroupRoleMappings || []) as LdapGroupRoleMapping[];
+  const ldapGroupRoleMappings = (authForm.ldapGroupRoleMappings ||
+    []) as LdapGroupRoleMapping[];
 
   const setLdapGroupRoleMappings = (next: LdapGroupRoleMapping[]) => {
     setAuthForm({ ...authForm, ldapGroupRoleMappings: next });
   };
   const google = (authForm.googleConfiguration || {}) as Record<string, string>;
   const policies = (authForm.authPolicies || {}) as Record<string, boolean>;
-  const pwdPolicy = (authForm.passwordPolicy || {}) as Record<string, boolean | number>;
-  const smtp = (integrations.smtp || {}) as Record<string, unknown>;
-  const storage = (integrations.storage || {}) as Record<string, unknown>;
-
+  const pwdPolicy = (authForm.passwordPolicy || {}) as Record<
+    string,
+    boolean | number
+  >;
   const sectionMeta: Record<
     AdminSettingsSection,
     { title: string; subtitle: string }
   > = {
     organization: {
-      title: 'تنظیمات سازمان',
-      subtitle: 'لوگو، رنگ تم و تقویم سازمان',
+      title: "تنظیمات سازمان",
+      subtitle: "لوگو، رنگ تم و تقویم سازمان",
     },
     authentication: {
-      title: 'احراز هویت',
-      subtitle: 'ورود محلی، LDAP و Google OAuth',
+      title: "احراز هویت",
+      subtitle: "ورود محلی، LDAP و Google OAuth",
     },
     integrations: {
-      title: 'یکپارچه‌سازی‌ها',
-      subtitle: 'SMTP و ذخیره‌سازی فایل',
+      title: "یکپارچه‌سازی‌ها",
+      subtitle: "Resend، SMTP (Gmail) و ذخیره‌سازی فایل",
     },
     system: {
-      title: 'تنظیمات سامانه',
-      subtitle: 'URL، نشست، آپلود و نگهداری',
+      title: "تنظیمات سامانه",
+      subtitle: "URL، نشست، آپلود و نگهداری",
     },
     audit: {
-      title: 'ممیزی تنظیمات',
-      subtitle: 'تاریخچه تغییرات پیکربندی',
+      title: "ممیزی تنظیمات",
+      subtitle: "تاریخچه تغییرات پیکربندی",
     },
   };
 
   const authPanelMeta =
-    section === 'authentication' && authConfigView === 'ldap'
-      ? { title: 'پیکربندی LDAP', subtitle: 'اتصال به Active Directory / دایرکتوری سازمان' }
-      : section === 'authentication' && authConfigView === 'google'
-        ? { title: 'پیکربندی Google OAuth', subtitle: 'ورود با حساب Google Workspace' }
-        : sectionMeta[section];
+    section === "authentication" && authConfigView === "ldap"
+      ? {
+          title: "پیکربندی LDAP",
+          subtitle: "اتصال به Active Directory / دایرکتوری سازمان",
+        }
+      : section === "authentication" && authConfigView === "google"
+        ? {
+            title: "پیکربندی Google OAuth",
+            subtitle: "ورود با حساب Google Workspace",
+          }
+        : section === "integrations" && integrationConfigView
+          ? {
+              title: `پیکربندی ${integrationConfigView}`,
+              subtitle: "اتصال API و اعتبار سرویس خارجی",
+            }
+          : sectionMeta[section];
 
   const meta = authPanelMeta;
-
-  const authProviderCard = (
-    title: string,
-    description: string,
-    enabled: boolean,
-    onConfigure: () => void,
-  ) => (
-    <div
-      className="rounded-2xl border border-slate-200/80 dark:border-slate-600/50 p-5 sm:p-6 flex flex-col gap-4 bg-slate-50/40 dark:bg-slate-900/20"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">{title}</h3>
-          <p className="text-sm text-slate-500 mt-1">{description}</p>
-        </div>
-        <span
-          className={`shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ${
-            enabled
-              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
-              : 'bg-slate-200/80 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
-          }`}
-        >
-          {enabled ? 'فعال' : 'غیرفعال'}
-        </span>
-      </div>
-      <button
-        type="button"
-        onClick={onConfigure}
-        className="self-start inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[rgb(var(--brand-primary-rgb)/0.08)] transition-colors cursor-pointer"
-      >
-        <Settings2 className="w-4 h-4" />
-        پیکربندی
-      </button>
-    </div>
-  );
 
   const authBackButton = (
     <button
@@ -340,20 +381,22 @@ export const EnterpriseAdminSettingsView: React.FC<{
       <AdminPanel>
         <AdminPanelHeader title={meta.title} subtitle={meta.subtitle} />
         <AdminPanelBody>
-          {section === 'organization' && (
+          {section === "organization" && (
             <>
               <AdminSection title="هویت و برند">
                 <div className="space-y-5">
                   <OrgLogoUploader
-                    logo={String(orgForm.logo || orgForm.logoDark || '')}
-                    orgName={String(orgForm.name || 'سازمان')}
+                    logo={String(orgForm.logo || orgForm.logoDark || "")}
+                    orgName={String(orgForm.name || "سازمان")}
                     onChange={(nextLogo) =>
-                      setOrgForm({ ...orgForm, logo: nextLogo, logoDark: '' })
+                      setOrgForm({ ...orgForm, logo: nextLogo, logoDark: "" })
                     }
                   />
                   <OrgBrandThemePicker
                     color={primaryColor}
-                    onChange={(c) => setOrgForm({ ...orgForm, primaryColor: c })}
+                    onChange={(c) =>
+                      setOrgForm({ ...orgForm, primaryColor: c })
+                    }
                   />
                 </div>
               </AdminSection>
@@ -363,16 +406,22 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   <FormField label="نام سازمان">
                     <input
                       className={adminInputClass}
-                      value={String(orgForm.name || '')}
-                      onChange={(e) => setOrgForm({ ...orgForm, name: e.target.value })}
+                      value={String(orgForm.name || "")}
+                      onChange={(e) =>
+                        setOrgForm({ ...orgForm, name: e.target.value })
+                      }
                     />
                   </FormField>
                   <FormField label="کشور">
                     <select
                       className={adminSelectClass}
                       style={adminSelectChevronStyle}
-                      value={orgCountrySelectValue(String(orgForm.country || ''))}
-                      onChange={(e) => setOrgForm({ ...orgForm, country: e.target.value })}
+                      value={orgCountrySelectValue(
+                        String(orgForm.country || ""),
+                      )}
+                      onChange={(e) =>
+                        setOrgForm({ ...orgForm, country: e.target.value })
+                      }
                     >
                       {ORG_COUNTRY_OPTIONS.map((c) => (
                         <option key={c.value} value={c.value}>
@@ -385,8 +434,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <select
                       className={adminSelectClass}
                       style={adminSelectChevronStyle}
-                      value={orgTimezoneSelectValue(String(orgForm.timezone || ''))}
-                      onChange={(e) => setOrgForm({ ...orgForm, timezone: e.target.value })}
+                      value={orgTimezoneSelectValue(
+                        String(orgForm.timezone || ""),
+                      )}
+                      onChange={(e) =>
+                        setOrgForm({ ...orgForm, timezone: e.target.value })
+                      }
                     >
                       {ORG_TIMEZONE_OPTIONS.map((tz) => (
                         <option key={tz.value} value={tz.value}>
@@ -399,8 +452,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <select
                       className={adminSelectClass}
                       style={adminSelectChevronStyle}
-                      value={String(orgForm.dateFormat || 'jalali')}
-                      onChange={(e) => setOrgForm({ ...orgForm, dateFormat: e.target.value })}
+                      value={String(orgForm.dateFormat || "jalali")}
+                      onChange={(e) =>
+                        setOrgForm({ ...orgForm, dateFormat: e.target.value })
+                      }
                     >
                       <option value="jalali">تقویم شمسی</option>
                       <option value="gregorian">میلادی</option>
@@ -417,7 +472,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   <FormField label="شروع بازهٔ رزرو">
                     <TimePicker
                       compact
-                      value={String((orgForm.workHours as { start?: string })?.start || '08:00')}
+                      value={String(
+                        (orgForm.workHours as { start?: string })?.start ||
+                          "08:00",
+                      )}
                       minTime="00:00"
                       maxTime="23:55"
                       modalTitle="شروع بازهٔ مجاز رزرو"
@@ -427,7 +485,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                           workHours: {
                             ...((orgForm.workHours as object) || {}),
                             start: t,
-                            end: String((orgForm.workHours as { end?: string })?.end || '19:00'),
+                            end: String(
+                              (orgForm.workHours as { end?: string })?.end ||
+                                "19:00",
+                            ),
                           },
                         })
                       }
@@ -436,7 +497,9 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   <FormField label="پایان بازهٔ رزرو">
                     <TimePicker
                       compact
-                      value={String((orgForm.workHours as { end?: string })?.end || '19:00')}
+                      value={String(
+                        (orgForm.workHours as { end?: string })?.end || "19:00",
+                      )}
                       minTime="00:00"
                       maxTime="23:55"
                       modalTitle="پایان بازهٔ مجاز رزرو"
@@ -445,14 +508,20 @@ export const EnterpriseAdminSettingsView: React.FC<{
                           ...orgForm,
                           workHours: {
                             ...((orgForm.workHours as object) || {}),
-                            start: String((orgForm.workHours as { start?: string })?.start || '08:00'),
+                            start: String(
+                              (orgForm.workHours as { start?: string })
+                                ?.start || "08:00",
+                            ),
                             end: t,
                           },
                         })
                       }
                     />
                   </FormField>
-                  <FormField label="حداکثر طول هر جلسه (ساعت)" className="sm:col-span-2 pt-1">
+                  <FormField
+                    label="حداکثر طول هر جلسه (ساعت)"
+                    className="sm:col-span-2 pt-1"
+                  >
                     <input
                       type="number"
                       min={0.5}
@@ -461,7 +530,11 @@ export const EnterpriseAdminSettingsView: React.FC<{
                       className={adminInputClass}
                       dir="ltr"
                       value={Number(
-                        (orgForm.bookingSettings as { maxBookingHours?: number })?.maxBookingHours ?? 4,
+                        (
+                          orgForm.bookingSettings as {
+                            maxBookingHours?: number;
+                          }
+                        )?.maxBookingHours ?? 4,
                       )}
                       onChange={(e) =>
                         setOrgForm({
@@ -470,10 +543,17 @@ export const EnterpriseAdminSettingsView: React.FC<{
                             ...((orgForm.bookingSettings as object) || {}),
                             maxBookingHours: parseFloat(e.target.value) || 4,
                             autoApprove:
-                              (orgForm.bookingSettings as { autoApprove?: boolean })?.autoApprove ?? true,
+                              (
+                                orgForm.bookingSettings as {
+                                  autoApprove?: boolean;
+                                }
+                              )?.autoApprove ?? true,
                             allowWeekend:
-                              (orgForm.bookingSettings as { allowWeekend?: boolean })?.allowWeekend ??
-                              false,
+                              (
+                                orgForm.bookingSettings as {
+                                  allowWeekend?: boolean;
+                                }
+                              )?.allowWeekend ?? false,
                           },
                         })
                       }
@@ -482,11 +562,13 @@ export const EnterpriseAdminSettingsView: React.FC<{
                 </FormGrid>
               </AdminSection>
 
-              <AdminFormFooter>{saveButton(saveOrganization, 'ذخیره تنظیمات سازمان')}</AdminFormFooter>
+              <AdminFormFooter>
+                {saveButton(saveOrganization, "ذخیره تنظیمات سازمان")}
+              </AdminFormFooter>
             </>
           )}
 
-          {section === 'authentication' && authConfigView === null && (
+          {section === "authentication" && authConfigView === null && (
             <>
               <AdminSection title="روش‌های ورود">
                 <div className="space-y-4 rounded-2xl border border-slate-200/80 dark:border-slate-600/50 p-5 sm:p-6">
@@ -494,7 +576,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <span className="font-semibold">ورود محلی (رمز عبور)</span>
                     <ToggleSwitch
                       checked={authForm.localEnabled !== false}
-                      onChange={() => setAuthForm({ ...authForm, localEnabled: !authForm.localEnabled })}
+                      onChange={() =>
+                        setAuthForm({
+                          ...authForm,
+                          localEnabled: !authForm.localEnabled,
+                        })
+                      }
                     />
                   </label>
                   <label className="flex items-center justify-between text-base py-1">
@@ -506,7 +593,8 @@ export const EnterpriseAdminSettingsView: React.FC<{
                           ...authForm,
                           authPolicies: {
                             ...policies,
-                            selfRegistrationEnabled: !policies.selfRegistrationEnabled,
+                            selfRegistrationEnabled:
+                              !policies.selfRegistrationEnabled,
                           },
                         })
                       }
@@ -525,7 +613,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          passwordPolicy: { ...pwdPolicy, passwordMinLength: Number(e.target.value) },
+                          passwordPolicy: {
+                            ...pwdPolicy,
+                            passwordMinLength: Number(e.target.value),
+                          },
                         })
                       }
                     />
@@ -538,7 +629,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                         onChange={(e) =>
                           setAuthForm({
                             ...authForm,
-                            passwordPolicy: { ...pwdPolicy, passwordRequireNumber: e.target.checked },
+                            passwordPolicy: {
+                              ...pwdPolicy,
+                              passwordRequireNumber: e.target.checked,
+                            },
                           })
                         }
                       />
@@ -551,7 +645,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                         onChange={(e) =>
                           setAuthForm({
                             ...authForm,
-                            passwordPolicy: { ...pwdPolicy, passwordRequireUppercase: e.target.checked },
+                            passwordPolicy: {
+                              ...pwdPolicy,
+                              passwordRequireUppercase: e.target.checked,
+                            },
                           })
                         }
                       />
@@ -564,7 +661,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                         onChange={(e) =>
                           setAuthForm({
                             ...authForm,
-                            passwordPolicy: { ...pwdPolicy, passwordRequireSpecial: e.target.checked },
+                            passwordPolicy: {
+                              ...pwdPolicy,
+                              passwordRequireSpecial: e.target.checked,
+                            },
                           })
                         }
                       />
@@ -579,26 +679,28 @@ export const EnterpriseAdminSettingsView: React.FC<{
                 description="تنظیمات LDAP و Google در صفحه جداگانه انجام می‌شود."
               >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {authProviderCard(
-                    'LDAP / Active Directory',
-                    'احراز هویت کاربران از دایرکتوری سازمان',
-                    authForm.ldapEnabled === true,
-                    () => setAuthConfigView('ldap'),
-                  )}
-                  {authProviderCard(
-                    'Google OAuth',
-                    'ورود با حساب Google سازمانی',
-                    authForm.googleEnabled === true,
-                    () => setAuthConfigView('google'),
-                  )}
+                  <IntegrationProviderCard
+                    title="LDAP / Active Directory"
+                    description="احراز هویت کاربران از دایرکتوری سازمان"
+                    enabled={authForm.ldapEnabled === true}
+                    onConfigure={() => setAuthConfigView("ldap")}
+                  />
+                  <IntegrationProviderCard
+                    title="Google OAuth"
+                    description="ورود با حساب Google سازمانی"
+                    enabled={authForm.googleEnabled === true}
+                    onConfigure={() => setAuthConfigView("google")}
+                  />
                 </div>
               </AdminSection>
 
-              <AdminFormFooter>{saveButton(saveAuth, 'ذخیره احراز هویت')}</AdminFormFooter>
+              <AdminFormFooter>
+                {saveButton(saveAuth, "ذخیره احراز هویت")}
+              </AdminFormFooter>
             </>
           )}
 
-          {section === 'authentication' && authConfigView === 'ldap' && (
+          {section === "authentication" && authConfigView === "ldap" && (
             <>
               {authBackButton}
               <AdminSection title="فعال‌سازی و اتصال">
@@ -606,7 +708,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   <span>استفاده از LDAP برای ورود</span>
                   <ToggleSwitch
                     checked={authForm.ldapEnabled === true}
-                    onChange={() => setAuthForm({ ...authForm, ldapEnabled: !authForm.ldapEnabled })}
+                    onChange={() =>
+                      setAuthForm({
+                        ...authForm,
+                        ldapEnabled: !authForm.ldapEnabled,
+                      })
+                    }
                   />
                 </label>
                 <FormGrid>
@@ -614,9 +721,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={ldap.url || ''}
+                      value={ldap.url || ""}
                       onChange={(e) =>
-                        setAuthForm({ ...authForm, ldapConfiguration: { ...ldap, url: e.target.value } })
+                        setAuthForm({
+                          ...authForm,
+                          ldapConfiguration: { ...ldap, url: e.target.value },
+                        })
                       }
                     />
                   </FormField>
@@ -624,9 +734,15 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={ldap.bindDn || ''}
+                      value={ldap.bindDn || ""}
                       onChange={(e) =>
-                        setAuthForm({ ...authForm, ldapConfiguration: { ...ldap, bindDn: e.target.value } })
+                        setAuthForm({
+                          ...authForm,
+                          ldapConfiguration: {
+                            ...ldap,
+                            bindDn: e.target.value,
+                          },
+                        })
                       }
                     />
                   </FormField>
@@ -634,11 +750,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       type="password"
                       className={adminInputClass}
-                      value={ldap.bindPassword || ''}
+                      value={ldap.bindPassword || ""}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          ldapConfiguration: { ...ldap, bindPassword: e.target.value },
+                          ldapConfiguration: {
+                            ...ldap,
+                            bindPassword: e.target.value,
+                          },
                         })
                       }
                     />
@@ -647,9 +766,15 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={ldap.baseDn || ''}
+                      value={ldap.baseDn || ""}
                       onChange={(e) =>
-                        setAuthForm({ ...authForm, ldapConfiguration: { ...ldap, baseDn: e.target.value } })
+                        setAuthForm({
+                          ...authForm,
+                          ldapConfiguration: {
+                            ...ldap,
+                            baseDn: e.target.value,
+                          },
+                        })
                       }
                     />
                   </FormField>
@@ -657,11 +782,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={String(ldap.userFilter || '')}
+                      value={String(ldap.userFilter || "")}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          ldapConfiguration: { ...ldap, userFilter: e.target.value },
+                          ldapConfiguration: {
+                            ...ldap,
+                            userFilter: e.target.value,
+                          },
                         })
                       }
                     />
@@ -670,11 +798,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={String(ldap.emailAttribute || 'mail')}
+                      value={String(ldap.emailAttribute || "mail")}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          ldapConfiguration: { ...ldap, emailAttribute: e.target.value },
+                          ldapConfiguration: {
+                            ...ldap,
+                            emailAttribute: e.target.value,
+                          },
                         })
                       }
                     />
@@ -683,11 +814,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={String(ldap.nameAttribute || 'displayName')}
+                      value={String(ldap.nameAttribute || "displayName")}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          ldapConfiguration: { ...ldap, nameAttribute: e.target.value },
+                          ldapConfiguration: {
+                            ...ldap,
+                            nameAttribute: e.target.value,
+                          },
                         })
                       }
                     />
@@ -695,16 +829,21 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   <FormField label="نقش پیش‌فرض (بدون گروه)">
                     <select
                       className={adminInputClass}
-                      value={String(ldap.defaultRole || 'EMPLOYEE')}
+                      value={String(ldap.defaultRole || "EMPLOYEE")}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          ldapConfiguration: { ...ldap, defaultRole: e.target.value },
+                          ldapConfiguration: {
+                            ...ldap,
+                            defaultRole: e.target.value,
+                          },
                         })
                       }
                     >
                       {LDAP_ROLE_OPTIONS.map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
+                        <option key={o.value} value={o.value}>
+                          {o.label}
+                        </option>
                       ))}
                     </select>
                   </FormField>
@@ -715,13 +854,19 @@ export const EnterpriseAdminSettingsView: React.FC<{
                         onChange={() =>
                           setAuthForm({
                             ...authForm,
-                            ldapConfiguration: { ...ldap, useTls: ldap.useTls !== true },
+                            ldapConfiguration: {
+                              ...ldap,
+                              useTls: ldap.useTls !== true,
+                            },
                           })
                         }
                       />
                       <span>
-                        اتصال امن (برای Active Directory معمولاً آدرس{' '}
-                        <span dir="ltr" className="font-mono text-xs">ldaps://</span> یا این گزینه)
+                        اتصال امن (برای Active Directory معمولاً آدرس{" "}
+                        <span dir="ltr" className="font-mono text-xs">
+                          ldaps://
+                        </span>{" "}
+                        یا این گزینه)
                       </span>
                     </label>
                   </FormField>
@@ -731,10 +876,13 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     type="button"
                     className="text-sm font-bold text-brand cursor-pointer px-4 py-2 rounded-xl bg-brand-soft"
                     onClick={async () => {
-                      const r = await ApiService.postAdminTest('auth-settings/test-ldap', {
-                        ldap: authForm.ldapConfiguration,
-                      });
-                      showToast(r.message, r.ok ? 'success' : 'error');
+                      const r = await ApiService.postAdminTest(
+                        "auth-settings/test-ldap",
+                        {
+                          ldap: authForm.ldapConfiguration,
+                        },
+                      );
+                      showToast(r.message, r.ok ? "success" : "error");
                     }}
                   >
                     Test LDAP
@@ -749,11 +897,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     type="button"
                     className="text-sm font-bold text-brand cursor-pointer"
                     onClick={async () => {
-                      const r = await ApiService.postAdminTest('auth-settings/test-ldap-user', {
-                        ldap: authForm.ldapConfiguration,
-                        username: ldapTestUser,
-                      });
-                      showToast(r.message, r.ok ? 'success' : 'error');
+                      const r = await ApiService.postAdminTest(
+                        "auth-settings/test-ldap-user",
+                        {
+                          ldap: authForm.ldapConfiguration,
+                          username: ldapTestUser,
+                        },
+                      );
+                      showToast(r.message, r.ok ? "success" : "error");
                     }}
                   >
                     جستجوی کاربر
@@ -786,7 +937,7 @@ export const EnterpriseAdminSettingsView: React.FC<{
                       <FormField label="نقش در روم‌چی">
                         <select
                           className={adminInputClass}
-                          value={row.role || 'EMPLOYEE'}
+                          value={row.role || "EMPLOYEE"}
                           onChange={(e) => {
                             const next = [...ldapGroupRoleMappings];
                             next[index] = { ...row, role: e.target.value };
@@ -794,7 +945,9 @@ export const EnterpriseAdminSettingsView: React.FC<{
                           }}
                         >
                           {LDAP_ROLE_OPTIONS.map((o) => (
-                            <option key={o.value} value={o.value}>{o.label}</option>
+                            <option key={o.value} value={o.value}>
+                              {o.label}
+                            </option>
                           ))}
                         </select>
                       </FormField>
@@ -817,7 +970,7 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     onClick={() =>
                       setLdapGroupRoleMappings([
                         ...ldapGroupRoleMappings,
-                        { ldapGroup: '', role: 'EMPLOYEE' },
+                        { ldapGroup: "", role: "EMPLOYEE" },
                       ])
                     }
                   >
@@ -829,12 +982,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
                 {saveButton(async () => {
                   await saveAuth();
                   setAuthConfigView(null);
-                }, 'ذخیره LDAP')}
+                }, "ذخیره LDAP")}
               </AdminFormFooter>
             </>
           )}
 
-          {section === 'authentication' && authConfigView === 'google' && (
+          {section === "authentication" && authConfigView === "google" && (
             <>
               {authBackButton}
               <AdminSection title="فعال‌سازی و اتصال">
@@ -842,7 +995,12 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   <span>استفاده از Google برای ورود</span>
                   <ToggleSwitch
                     checked={authForm.googleEnabled === true}
-                    onChange={() => setAuthForm({ ...authForm, googleEnabled: !authForm.googleEnabled })}
+                    onChange={() =>
+                      setAuthForm({
+                        ...authForm,
+                        googleEnabled: !authForm.googleEnabled,
+                      })
+                    }
                   />
                 </label>
                 <FormGrid>
@@ -850,11 +1008,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={google.clientId || ''}
+                      value={google.clientId || ""}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          googleConfiguration: { ...google, clientId: e.target.value },
+                          googleConfiguration: {
+                            ...google,
+                            clientId: e.target.value,
+                          },
                         })
                       }
                     />
@@ -863,11 +1024,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       type="password"
                       className={adminInputClass}
-                      value={google.clientSecret || ''}
+                      value={google.clientSecret || ""}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          googleConfiguration: { ...google, clientSecret: e.target.value },
+                          googleConfiguration: {
+                            ...google,
+                            clientSecret: e.target.value,
+                          },
                         })
                       }
                     />
@@ -876,134 +1040,14 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     <input
                       className={adminInputClass}
                       dir="ltr"
-                      value={google.redirectUri || ''}
+                      value={google.redirectUri || ""}
                       onChange={(e) =>
                         setAuthForm({
                           ...authForm,
-                          googleConfiguration: { ...google, redirectUri: e.target.value },
-                        })
-                      }
-                    />
-                  </FormField>
-                </FormGrid>
-                <button
-                  type="button"
-                  className="text-sm font-bold text-brand cursor-pointer"
-                  onClick={async () => {
-                    const r = await ApiService.postAdminTest('auth-settings/test-google', {
-                      google: authForm.googleConfiguration,
-                    });
-                    showToast(r.message, r.ok ? 'success' : 'error');
-                  }}
-                >
-                  Test Google
-                </button>
-              </AdminSection>
-              <AdminFormFooter>
-                {saveButton(async () => {
-                  await saveAuth();
-                  setAuthConfigView(null);
-                }, 'ذخیره Google')}
-              </AdminFormFooter>
-            </>
-          )}
-
-          {section === 'integrations' && (
-            <>
-              <AdminSection title="SMTP">
-                <FormGrid>
-                  <FormField label="Host">
-                    <input
-                      className={adminInputClass}
-                      dir="ltr"
-                      value={String(smtp.host || '')}
-                      onChange={(e) =>
-                        setIntegrations({ ...integrations, smtp: { ...smtp, host: e.target.value } })
-                      }
-                    />
-                  </FormField>
-                  <FormField label="Port">
-                    <input
-                      type="number"
-                      className={adminInputClass}
-                      value={Number(smtp.port || 587)}
-                      onChange={(e) =>
-                        setIntegrations({
-                          ...integrations,
-                          smtp: { ...smtp, port: Number(e.target.value) },
-                        })
-                      }
-                    />
-                  </FormField>
-                  <FormField label="Username">
-                    <input
-                      className={adminInputClass}
-                      dir="ltr"
-                      value={String(smtp.username || '')}
-                      onChange={(e) =>
-                        setIntegrations({ ...integrations, smtp: { ...smtp, username: e.target.value } })
-                      }
-                    />
-                  </FormField>
-                  <FormField label="Password">
-                    <input
-                      type="password"
-                      className={adminInputClass}
-                      value={String(smtp.password || '')}
-                      onChange={(e) =>
-                        setIntegrations({ ...integrations, smtp: { ...smtp, password: e.target.value } })
-                      }
-                    />
-                  </FormField>
-                  <FormField label="From Email" className="lg:col-span-2">
-                    <input
-                      className={adminInputClass}
-                      dir="ltr"
-                      value={String(smtp.fromEmail || '')}
-                      onChange={(e) =>
-                        setIntegrations({ ...integrations, smtp: { ...smtp, fromEmail: e.target.value } })
-                      }
-                    />
-                  </FormField>
-                </FormGrid>
-                <button
-                  type="button"
-                  className="text-sm font-bold text-brand cursor-pointer"
-                  onClick={async () => {
-                    const r = await ApiService.postAdminTest('integrations/test-smtp', {
-                      smtp: integrations.smtp,
-                    });
-                    showToast(r.message, r.ok ? 'success' : 'error');
-                  }}
-                >
-                  Test SMTP
-                </button>
-              </AdminSection>
-
-              <AdminSection title="Storage">
-                <FormGrid cols={1}>
-                  <FormField label="نوع ذخیره‌سازی">
-                    <select
-                      className={adminInputClass}
-                      value={String(storage.type || 'local')}
-                      onChange={(e) =>
-                        setIntegrations({ ...integrations, storage: { ...storage, type: e.target.value } })
-                      }
-                    >
-                      <option value="local">Local</option>
-                      <option value="s3">S3 (آینده)</option>
-                      <option value="minio">MinIO (آینده)</option>
-                    </select>
-                  </FormField>
-                  <FormField label="مسیر / bucket">
-                    <input
-                      className={adminInputClass}
-                      dir="ltr"
-                      value={String(storage.uploadPath || storage.bucketName || '')}
-                      onChange={(e) =>
-                        setIntegrations({
-                          ...integrations,
-                          storage: { ...storage, uploadPath: e.target.value },
+                          googleConfiguration: {
+                            ...google,
+                            redirectUri: e.target.value,
+                          },
                         })
                       }
                     />
@@ -1014,43 +1058,84 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   className="text-sm font-bold text-brand cursor-pointer"
                   onClick={async () => {
                     const r = await ApiService.postAdminTest(
-                      'integrations/test-storage',
-                      integrations.storage as Record<string, unknown>,
+                      "auth-settings/test-google",
+                      {
+                        google: authForm.googleConfiguration,
+                      },
                     );
-                    showToast(r.message, r.ok ? 'success' : 'error');
+                    showToast(r.message, r.ok ? "success" : "error");
                   }}
                 >
-                  Test storage
+                  Test Google
                 </button>
               </AdminSection>
-
-              <AdminFormFooter>{saveButton(saveIntegrations, 'ذخیره یکپارچه‌سازی')}</AdminFormFooter>
+              <AdminFormFooter>
+                {saveButton(async () => {
+                  await saveAuth();
+                  setAuthConfigView(null);
+                }, "ذخیره Google")}
+              </AdminFormFooter>
             </>
           )}
 
-          {section === 'system' && (
+          {section === "integrations" && integrationConfigView === null && (
+            <>
+              <AdminSection
+                title="کاتالوگ یکپارچه‌سازی"
+                description="هر سرویس را یک‌بار متصل کنید؛ در صفحه اعلان‌ها کانال‌ها را فعال و قالب پیام را تنظیم کنید."
+              >
+                <IntegrationsHub
+                  integrations={integrations}
+                  configView={integrationConfigView}
+                  onConfigure={setIntegrationConfigView}
+                />
+              </AdminSection>
+            </>
+          )}
+
+          {section === "integrations" && integrationConfigView !== null && (
+            <IntegrationConfigPanel
+              configView={integrationConfigView}
+              integrations={integrations}
+              setIntegrations={setIntegrations}
+              showToast={showToast}
+              onBack={() => setIntegrationConfigView(null)}
+              onSave={async () => {
+                await saveIntegrations();
+                setIntegrationConfigView(null);
+              }}
+              saving={saving}
+            />
+          )}
+
+          {section === "system" && (
             <>
               {platformInfo && (
                 <AdminSection title="نسخه و لایسنس Enterprise">
                   <div className="grid sm:grid-cols-2 gap-4 text-sm">
                     <div className="rounded-xl border border-slate-200 dark:border-slate-600 p-4">
                       <p className="text-xs text-slate-500">نسخه نصب‌شده</p>
-                      <p className="font-bold text-lg mt-1" dir="ltr">{platformInfo.updates.currentVersion}</p>
+                      <p className="font-bold text-lg mt-1" dir="ltr">
+                        {platformInfo.updates.currentVersion}
+                      </p>
                       <p className="text-xs text-slate-500 mt-2">
                         Migration‌ها: {platformInfo.updates.migrationsApplied}
                         {platformInfo.updates.latestMigration
                           ? ` · آخرین: ${platformInfo.updates.latestMigration}`
-                          : ''}
+                          : ""}
                       </p>
                       {platformInfo.updates.availableUpdate && (
                         <p className="text-xs text-[var(--brand-primary)] mt-1">
-                          به‌روزرسانی موجود: {platformInfo.updates.availableUpdate}
+                          به‌روزرسانی موجود:{" "}
+                          {platformInfo.updates.availableUpdate}
                         </p>
                       )}
                     </div>
                     <div className="rounded-xl border border-slate-200 dark:border-slate-600 p-4">
                       <p className="text-xs text-slate-500">وضعیت لایسنس</p>
-                      <p className={`font-bold mt-1 ${platformInfo.license.valid ? 'text-emerald-600' : 'text-amber-600'}`}>
+                      <p
+                        className={`font-bold mt-1 ${platformInfo.license.valid ? "text-emerald-600" : "text-amber-600"}`}
+                      >
                         {platformInfo.license.message}
                       </p>
                       {platformInfo.license.daysUntilExpiry != null && (
@@ -1070,16 +1155,23 @@ export const EnterpriseAdminSettingsView: React.FC<{
                   <input
                     className={adminInputClass}
                     dir="ltr"
-                    value={String(systemForm.appUrl || '')}
-                    onChange={(e) => setSystemForm({ ...systemForm, appUrl: e.target.value })}
+                    value={String(systemForm.appUrl || "")}
+                    onChange={(e) =>
+                      setSystemForm({ ...systemForm, appUrl: e.target.value })
+                    }
                   />
                 </FormField>
                 <FormField label="Default timezone">
                   <input
                     className={adminInputClass}
                     dir="ltr"
-                    value={String(systemForm.defaultTimezone || '')}
-                    onChange={(e) => setSystemForm({ ...systemForm, defaultTimezone: e.target.value })}
+                    value={String(systemForm.defaultTimezone || "")}
+                    onChange={(e) =>
+                      setSystemForm({
+                        ...systemForm,
+                        defaultTimezone: e.target.value,
+                      })
+                    }
                   />
                 </FormField>
                 <FormField label="Session timeout (minutes)">
@@ -1088,7 +1180,10 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     className={adminInputClass}
                     value={Number(systemForm.sessionTimeoutMinutes || 60)}
                     onChange={(e) =>
-                      setSystemForm({ ...systemForm, sessionTimeoutMinutes: Number(e.target.value) })
+                      setSystemForm({
+                        ...systemForm,
+                        sessionTimeoutMinutes: Number(e.target.value),
+                      })
                     }
                   />
                 </FormField>
@@ -1097,34 +1192,50 @@ export const EnterpriseAdminSettingsView: React.FC<{
                     type="number"
                     className={adminInputClass}
                     value={Number(systemForm.maxUploadMb || 10)}
-                    onChange={(e) => setSystemForm({ ...systemForm, maxUploadMb: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setSystemForm({
+                        ...systemForm,
+                        maxUploadMb: Number(e.target.value),
+                      })
+                    }
                   />
                 </FormField>
               </FormGrid>
               <label className="flex items-center justify-between text-base py-2">
-                <span className="font-semibold">حالت نگهداری (Maintenance)</span>
+                <span className="font-semibold">
+                  حالت نگهداری (Maintenance)
+                </span>
                 <ToggleSwitch
                   checked={systemForm.maintenanceMode === true}
                   onChange={() =>
-                    setSystemForm({ ...systemForm, maintenanceMode: !systemForm.maintenanceMode })
+                    setSystemForm({
+                      ...systemForm,
+                      maintenanceMode: !systemForm.maintenanceMode,
+                    })
                   }
                 />
               </label>
-              <AdminFormFooter>{saveButton(saveSystem, 'ذخیره سامانه')}</AdminFormFooter>
+              <AdminFormFooter>
+                {saveButton(saveSystem, "ذخیره سامانه")}
+              </AdminFormFooter>
             </>
           )}
 
-          {section === 'audit' && (
+          {section === "audit" && (
             <ul className="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
               {auditLogs.length === 0 && (
-                <li className="py-12 text-center text-slate-500">هنوز رویدادی ثبت نشده است.</li>
+                <li className="py-12 text-center text-slate-500">
+                  هنوز رویدادی ثبت نشده است.
+                </li>
               )}
               {auditLogs.map((log) => (
                 <li key={log.id} className="py-4">
-                  <p className="font-semibold text-slate-800 dark:text-slate-100 text-base">{log.summary}</p>
+                  <p className="font-semibold text-slate-800 dark:text-slate-100 text-base">
+                    {log.summary}
+                  </p>
                   <p className="text-xs text-slate-500 mt-1.5">
-                    {log.eventType} · {log.userName} ·{' '}
-                    {new Date(log.createdAt).toLocaleString('fa-IR')}
+                    {log.eventType} · {log.userName} ·{" "}
+                    {new Date(log.createdAt).toLocaleString("fa-IR")}
                   </p>
                 </li>
               ))}

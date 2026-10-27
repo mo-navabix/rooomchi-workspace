@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useApp } from "../../context/AppContext";
+import { ApiService } from "../../services/apiService";
 import { getRoleMeta } from "../../constants/rbac";
 import { OrgLogoBadge } from "../common/OrgLogoBadge";
 import { UserAvatar } from "../common/UserAvatar";
@@ -24,7 +25,7 @@ export const ProfileView: React.FC = () => {
     userRole,
     isAuthenticated,
     openAuthModal,
-    updateCurrentUser,
+    completeAuthLogin,
     showToast,
   } = useApp();
 
@@ -54,14 +55,22 @@ export const ProfileView: React.FC = () => {
     }
     setIsSaving(true);
     try {
-      updateCurrentUser({
+      const res = await ApiService.updateProfile({
         name: name.trim(),
         department: department.trim(),
         jobTitle: jobTitle.trim() || undefined,
         phone: phone.trim() || undefined,
-        isProfileComplete: true,
       });
-      showToast("اطلاعات پروفایل با موفقیت ذخیره شد.", "success");
+      completeAuthLogin({ user: res.user, message: res.message });
+      showToast(
+        res.message || "اطلاعات پروفایل با موفقیت ذخیره شد.",
+        "success",
+      );
+    } catch (err: unknown) {
+      showToast(
+        err instanceof Error ? err.message : "خطا در ذخیره پروفایل",
+        "error",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -98,7 +107,10 @@ export const ProfileView: React.FC = () => {
     : "امروز";
 
   return (
-    <div className="space-y-4 max-w-3xl min-w-0 mx-auto w-full pb-8" id="profile-view">
+    <div
+      className="space-y-4 max-w-3xl min-w-0 mx-auto w-full pb-8"
+      id="profile-view"
+    >
       {/* Compact User Header Card */}
       <div className="dark-surface-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 border border-slate-200/80 dark:border-white/10 shadow-xs">
         <div className="flex items-center gap-3.5 min-w-0">
@@ -152,7 +164,9 @@ export const ProfileView: React.FC = () => {
               name={currentOrg.name}
             />
             <div className="text-right">
-              <span className="block text-[10px] text-slate-400 font-medium">سازمان</span>
+              <span className="block text-[10px] text-slate-400 font-medium">
+                سازمان
+              </span>
               <span
                 className="block text-xs font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap"
                 title={currentOrg.name}
@@ -291,7 +305,9 @@ export const ProfileView: React.FC = () => {
               <Calendar className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
               سوابق دسترسی
             </h4>
-            <span className="text-[11px] text-slate-500">تاریخ عضویت: {createdLabel}</span>
+            <span className="text-[11px] text-slate-500">
+              تاریخ عضویت: {createdLabel}
+            </span>
           </div>
           <span className="text-[11px] font-bold text-brand dark:text-[var(--brand-primary-on-dark)] bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] px-2 py-1 rounded-md border border-brand-soft/50">
             ورود موفق

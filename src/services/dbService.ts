@@ -1,5 +1,5 @@
-import pg from 'pg';
-import { getDatabaseSsl } from '../config/database';
+import pg from "pg";
+import { getDatabaseSsl } from "../config/database";
 
 const { Pool, types } = pg;
 
@@ -15,9 +15,7 @@ export function getDbPool(): pg.Pool | null {
 
   const connectionString = process.env.DATABASE_URL;
   const host =
-    process.env.DB_HOST ||
-    process.env.DATABASE_HOST ||
-    process.env.PGHOST;
+    process.env.DB_HOST || process.env.DATABASE_HOST || process.env.PGHOST;
   const database =
     process.env.DB_DATABASE ||
     process.env.DATABASE_NAME ||
@@ -44,31 +42,34 @@ export function getDbPool(): pg.Pool | null {
     pool = connectionString
       ? new Pool({ connectionString, ...(ssl ? { ssl } : {}) })
       : new Pool({
-          host: host || 'localhost',
+          host: host || "localhost",
           port,
-          database: database || 'rooomchi_db',
-          user: user || 'postgres',
-          password: password || '',
+          database: database || "rooomchi_db",
+          user: user || "postgres",
+          password: password || "",
           ...(ssl ? { ssl } : {}),
         });
 
-    pool.on('error', (err) => {
-      console.warn('PostgreSQL Pool Error:', err.message);
+    pool.on("error", (err) => {
+      console.warn("PostgreSQL Pool Error:", err.message);
       isConnected = false;
       lastError = err.message;
     });
 
     // Test connection asynchronously
-    pool.query('SELECT NOW()')
+    pool
+      .query("SELECT NOW()")
       .then(() => {
         isConnected = true;
         lastError = null;
-        console.log('✅ Connected to PostgreSQL database (rooomchi_db) successfully.');
+        console.log(
+          "✅ Connected to PostgreSQL database (rooomchi_db) successfully.",
+        );
       })
       .catch((err) => {
         isConnected = false;
         lastError = err.message;
-        console.warn('⚠️ Could not connect to PostgreSQL:', err.message);
+        console.warn("⚠️ Could not connect to PostgreSQL:", err.message);
       });
 
     return pool;
@@ -84,17 +85,23 @@ export async function checkDbStatus() {
     return {
       configured: false,
       connected: false,
-      message: 'تنظیمات دیتابیس PostgreSQL پیکربندی نشده است (DATABASE_URL تنظیم نشده است).',
-      host: process.env.PGHOST || 'localhost',
-      database: process.env.PGDATABASE || 'rooomchi_db',
+      message:
+        "تنظیمات دیتابیس PostgreSQL پیکربندی نشده است (DATABASE_URL تنظیم نشده است).",
+      host: process.env.PGHOST || "localhost",
+      database: process.env.PGDATABASE || "rooomchi_db",
     };
   }
 
   try {
-    const result = await currentPool.query('SELECT current_database(), version(), NOW()');
+    const result = await currentPool.query(
+      "SELECT current_database(), version(), NOW()",
+    );
     let tableCounts: Record<string, number> | undefined;
     try {
-      const counts = await currentPool.query<{ table_name: string; c: string }>(`
+      const counts = await currentPool.query<{
+        table_name: string;
+        c: string;
+      }>(`
         SELECT 'rooms' AS table_name, COUNT(*)::text AS c FROM rooms
         UNION ALL SELECT 'bookings', COUNT(*)::text FROM bookings
         UNION ALL SELECT 'users', COUNT(*)::text FROM users
@@ -111,11 +118,11 @@ export async function checkDbStatus() {
     return {
       configured: true,
       connected: true,
-      database: result.rows[0]?.current_database || 'rooomchi_db',
+      database: result.rows[0]?.current_database || "rooomchi_db",
       version: result.rows[0]?.version,
       timestamp: result.rows[0]?.now,
       tableCounts,
-      message: 'اتصال به PostgreSQL با موفقیت برقرار است.',
+      message: "اتصال به PostgreSQL با موفقیت برقرار است.",
     };
   } catch (err: any) {
     isConnected = false;

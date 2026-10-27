@@ -200,6 +200,13 @@ export const SetupWizardView: React.FC = () => {
     },
   });
 
+  const [resend, setResend] = useState({
+    apiKey: '',
+    fromEmail: '',
+    fromName: '',
+    testRecipient: '',
+  });
+
   const [smtp, setSmtp] = useState({
     host: '',
     port: 587,
@@ -207,6 +214,7 @@ export const SetupWizardView: React.FC = () => {
     password: '',
     fromEmail: '',
     fromName: '',
+    testRecipient: '',
   });
 
   const [storage, setStorage] = useState({
@@ -278,15 +286,24 @@ export const SetupWizardView: React.FC = () => {
     next();
   };
 
-  const runTest = async (kind: 'ldap' | 'google' | 'smtp') => {
+  const runTest = async (kind: 'ldap' | 'google' | 'resend' | 'smtp') => {
     setBusy(true);
     try {
+      const testEmail = admin.email.trim() || undefined;
       const result =
         kind === 'ldap'
           ? await ApiService.testSetupLdap(auth.ldap)
           : kind === 'google'
             ? await ApiService.testSetupGoogle(auth.google)
-            : await ApiService.testSetupSmtp(smtp);
+            : kind === 'resend'
+              ? await ApiService.testSetupResend({
+                  ...resend,
+                  testRecipient: resend.testRecipient || testEmail,
+                })
+              : await ApiService.testSetupSmtp({
+                  ...smtp,
+                  testRecipient: smtp.testRecipient || testEmail,
+                });
       showToast(result.message, result.ok ? 'success' : 'error');
     } catch (e: unknown) {
       showToast(e instanceof Error ? e.message : 'خطا در تست', 'error');
@@ -322,6 +339,7 @@ export const SetupWizardView: React.FC = () => {
           googleEnabled: auth.googleEnabled,
           google: auth.googleEnabled ? auth.google : undefined,
         },
+        resend: resend.apiKey && resend.fromEmail ? resend : undefined,
         smtp: smtp.host ? smtp : undefined,
         storage,
       });
@@ -760,9 +778,48 @@ export const SetupWizardView: React.FC = () => {
           )}
 
           {step === 4 && (
-            <div className="space-y-4">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">SMTP (اختیاری)</h2>
-              <p className="text-xs text-slate-500">برای ارسال ایمیل اعلان‌ها؛ در صورت نیاز می‌توانید این مرحله را خالی بگذارید.</p>
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Resend (پیشنهادی برای OTP ثبت‌نام)</h2>
+                <p className="text-xs text-slate-500">
+                  API Key از داشبورد Resend؛ آدرس From باید روی دامنه تأیید‌شده باشد.
+                </p>
+                <SetupPasswordField
+                  id="setup-resend-api-key"
+                  label="API Key"
+                  value={resend.apiKey}
+                  autoComplete="off"
+                  onChange={(apiKey) => setResend({ ...resend, apiKey })}
+                />
+                <SetupLabeledInput
+                  id="setup-resend-from-email"
+                  label="From Email"
+                  type="email"
+                  dir="ltr"
+                  value={resend.fromEmail}
+                  onChange={(fromEmail) => setResend({ ...resend, fromEmail })}
+                />
+                <SetupLabeledInput
+                  id="setup-resend-from-name"
+                  label="From Name"
+                  value={resend.fromName}
+                  onChange={(fromName) => setResend({ ...resend, fromName })}
+                />
+                <button
+                  type="button"
+                  onClick={() => runTest('resend')}
+                  disabled={busy || !resend.apiKey}
+                  className="text-xs font-bold text-[var(--brand-primary)] cursor-pointer disabled:opacity-50"
+                >
+                  تست Resend
+                </button>
+              </div>
+
+              <div className="space-y-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">SMTP (پشتیبان — Gmail)</h2>
+              <p className="text-xs text-slate-500">
+                Gmail: میزبان smtp.gmail.com، پورت 587، App Password. در صورت خطای Resend از SMTP استفاده می‌شود.
+              </p>
               <SetupLabeledInput
                 id="setup-smtp-host"
                 label="میزبان (Host)"
@@ -813,8 +870,9 @@ export const SetupWizardView: React.FC = () => {
                 disabled={busy || !smtp.host}
                 className="text-xs font-bold text-[var(--brand-primary)] cursor-pointer disabled:opacity-50"
               >
-                تست ارسال ایمیل (بررسی اتصال)
+                تست SMTP
               </button>
+              </div>
             </div>
           )}
 
@@ -837,6 +895,7 @@ export const SetupWizardView: React.FC = () => {
               ORG_COUNTRY_OPTIONS.find((c) => c.value === org.country)?.label ?? org.country;
             const timezoneLabel =
               ORG_TIMEZONE_OPTIONS.find((t) => t.value === org.timezone)?.label ?? org.timezone;
+            const resendConfigured = Boolean(resend.apiKey?.trim() && resend.fromEmail?.trim());
             const smtpConfigured = Boolean(smtp.host?.trim());
             return (
               <div className="space-y-5">
@@ -889,10 +948,16 @@ export const SetupWizardView: React.FC = () => {
                     <section className={reviewCardClass}>
                       <header className="flex items-center gap-2 px-4 py-3 border-b border-slate-200/80 dark:border-slate-600/60 bg-white/60 dark:bg-slate-900/40">
                         <Mail className="w-4 h-4 text-[var(--brand-primary)] shrink-0" aria-hidden />
-                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">ایمیل (SMTP)</h3>
+                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">ایمیل</h3>
                       </header>
                       <div className="px-4 py-3 space-y-2">
-                        <ReviewAuthBadge active={smtpConfigured} label={smtpConfigured ? 'پیکربندی شده' : 'رد شده'} />
+                        <ReviewAuthBadge active={resendConfigured} label={resendConfigured ? 'Resend' : 'بدون Resend'} />
+                        <ReviewAuthBadge active={smtpConfigured} label={smtpConfigured ? 'SMTP' : 'بدون SMTP'} />
+                        {resendConfigured && (
+                          <p className="text-xs text-slate-600 dark:text-slate-300 dir-ltr text-left break-all">
+                            {resend.fromEmail}
+                          </p>
+                        )}
                         {smtpConfigured && (
                           <p className="text-xs text-slate-600 dark:text-slate-300 dir-ltr text-left break-all">
                             {smtp.host}:{smtp.port}

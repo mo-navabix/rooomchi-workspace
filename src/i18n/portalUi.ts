@@ -51,7 +51,7 @@ const FA: Partial<Record<ActiveTab, PageMeta>> = {
   },
   'admin-settings-integrations': {
     title: 'یکپارچه‌سازی‌ها',
-    subtitle: 'SMTP و ذخیره‌سازی فایل',
+    subtitle: 'Resend، SMTP (Gmail) و ذخیره‌سازی فایل',
   },
   'admin-settings-system': {
     title: 'تنظیمات سامانه',

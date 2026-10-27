@@ -1,5 +1,7 @@
 import { randomUUID } from "crypto";
 import net from "net";
+import nodemailer from "nodemailer";
+import { sendTestEmail, type ResendConfig } from "../notifications/mail.service";
 import type { Request } from "express";
 import type { Organization, User } from "../types";
 import * as store from "../persistence/store";
@@ -47,6 +49,14 @@ export type SetupSmtpInput = {
   password?: string;
   fromEmail: string;
   fromName?: string;
+  testRecipient?: string;
+};
+
+export type SetupResendInput = {
+  apiKey: string;
+  fromEmail: string;
+  fromName?: string;
+  testRecipient?: string;
 };
 
 export type SetupStorageInput = {
@@ -58,6 +68,7 @@ export type SetupCompletePayload = {
   organization: SetupOrganizationInput;
   admin: SetupAdminInput;
   auth: SetupAuthInput;
+  resend?: SetupResendInput;
   smtp?: SetupSmtpInput;
   storage: SetupStorageInput;
 };
@@ -119,19 +130,77 @@ export async function testGoogleConfiguration(
   return { ok: true, message: "پیکربندی Google OAuth معتبر است." };
 }
 
+export async function testResendConfiguration(
+  resend: SetupResendInput,
+): Promise<{ ok: boolean; message: string }> {
+  if (!resend.apiKey?.trim()) {
+    return { ok: false, message: "API Key Resend الزامی است." };
+  }
+  if (!resend.fromEmail?.trim() || !resend.fromEmail.includes("@")) {
+    return { ok: false, message: "آدرس From معتبر الزامی است." };
+  }
+  const apiRes = await fetch("https://api.resend.com/domains", {
+    headers: { Authorization: `Bearer ${resend.apiKey.trim()}` },
+  });
+  if (!apiRes.ok) {
+    const body = await apiRes.text().catch(() => "");
+    return { ok: false, message: body || `Resend API خطا: HTTP ${apiRes.status}` };
+  }
+  if (resend.testRecipient?.trim()) {
+    const cfg: ResendConfig = {
+      apiKey: resend.apiKey.trim(),
+      fromEmail: resend.fromEmail.trim(),
+      fromName: resend.fromName,
+    };
+    const sent = await sendTestEmail({ to: resend.testRecipient.trim(), resend: cfg, smtp: null });
+    if (!sent.ok) return { ok: false, message: sent.message };
+    return { ok: true, message: `اتصال Resend تأیید شد و ایمیل آزمایشی ارسال شد (${sent.provider}).` };
+  }
+  return { ok: true, message: "اتصال به Resend برقرار شد." };
+}
+
 export async function testSmtpConfiguration(
   smtp: SetupSmtpInput,
 ): Promise<{ ok: boolean; message: string }> {
   if (!smtp.host?.trim() || !smtp.port) {
     return { ok: false, message: "Host و Port SMTP الزامی است." };
   }
+  if (!smtp.fromEmail?.trim()) {
+    return { ok: false, message: "آدرس From الزامی است." };
+  }
   const port = Number(smtp.port);
+
+  if (smtp.testRecipient?.trim()) {
+    const secure = process.env.SMTP_SECURE === "true" || port === 465;
+    const transporter = nodemailer.createTransport({
+      host: smtp.host,
+      port,
+      secure,
+      auth: smtp.username
+        ? { user: smtp.username, pass: smtp.password || "" }
+        : undefined,
+    });
+    try {
+      await transporter.sendMail({
+        from: smtp.fromName ? `"${smtp.fromName}" <${smtp.fromEmail}>` : smtp.fromEmail,
+        to: smtp.testRecipient.trim(),
+        subject: "تست SMTP — روم‌چی",
+        text: "ایمیل آزمایشی SMTP از روم‌چی.",
+        html: "<p>ایمیل آزمایشی <strong>SMTP</strong> از روم‌چی.</p>",
+      });
+      return { ok: true, message: "ایمیل آزمایشی SMTP با موفقیت ارسال شد." };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "ارسال SMTP ناموفق بود";
+      return { ok: false, message };
+    }
+  }
+
   return new Promise((resolve) => {
     const socket = net.createConnection({ host: smtp.host, port, timeout: 8000 }, () => {
       socket.end();
       resolve({
         ok: true,
-        message: "اتصال به سرور SMTP برقرار شد (ارسال واقعی ایمیل در پنل اعلان‌ها پیکربندی می‌شود).",
+        message: "اتصال به سرور SMTP برقرار شد. برای ارسال واقعی، ایمیل گیرنده تست را وارد کنید.",
       });
     });
     socket.on("error", (err) => {
@@ -253,6 +322,14 @@ export async function completeInstallation(
 
   if (payload.auth.ldapGroupRoleMappings?.length) {
     await replaceLdapGroupRoleMappings(orgId, payload.auth.ldapGroupRoleMappings);
+  }
+
+  if (payload.resend?.apiKey && payload.resend.fromEmail) {
+    await upsertIntegration(orgId, "resend", {
+      apiKey: payload.resend.apiKey,
+      fromEmail: payload.resend.fromEmail,
+      fromName: payload.resend.fromName || payload.organization.name,
+    });
   }
 
   if (payload.smtp?.host) {

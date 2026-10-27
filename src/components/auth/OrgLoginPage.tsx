@@ -82,6 +82,9 @@ export const OrgLoginPage: React.FC = () => {
     [organizations],
   );
 
+  const showAuthMethodPicker =
+    orgAuth?.localEnabled === true && orgAuth?.ldapEnabled === true;
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
@@ -233,32 +236,36 @@ export const OrgLoginPage: React.FC = () => {
               {authMode === "ldap" ? "ورود با حساب سازمانی" : "ورود با ایمیل سازمانی"}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">
-              روش‌های ورود بر اساس تنظیمات سازمان شما نمایش داده می‌شود.
+              {showAuthMethodPicker
+                ? "بین ورود با ایمیل یا دایرکتوری سازمان یکی را انتخاب کنید."
+                : authMode === "ldap"
+                  ? "نام کاربری و رمز دایرکتوری سازمان را وارد کنید."
+                  : "ایمیل و رمز عبور حساب سازمانی خود را وارد کنید."}
             </p>
 
-            {orgAuth && (orgAuth.localEnabled || orgAuth.ldapEnabled) && (
-              <div className="flex gap-2 mb-4">
+            {showAuthMethodPicker && (
+              <div className="flex gap-2 mb-4 p-1 rounded-xl bg-slate-100/80 dark:bg-slate-800/50">
                 {orgAuth.localEnabled && (
                   <button
                     type="button"
                     onClick={() => setAuthMode("local")}
-                    className={`flex-1 py-2 rounded-lg text-xs font-bold border ${
+                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors ${
                       authMode === "local"
-                        ? "border-[var(--brand-primary)] text-[var(--brand-primary)]"
-                        : "border-slate-200 dark:border-slate-700 text-slate-500"
+                        ? "bg-white dark:bg-slate-900 text-[var(--brand-primary)] shadow-sm"
+                        : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                     }`}
                   >
-                    ایمیل و رمز
+                    ایمیل سازمانی
                   </button>
                 )}
                 {orgAuth.ldapEnabled && (
                   <button
                     type="button"
                     onClick={() => setAuthMode("ldap")}
-                    className={`flex-1 py-2 rounded-lg text-xs font-bold border ${
+                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors ${
                       authMode === "ldap"
-                        ? "border-[var(--brand-primary)] text-[var(--brand-primary)]"
-                        : "border-slate-200 dark:border-slate-700 text-slate-500"
+                        ? "bg-white dark:bg-slate-900 text-[var(--brand-primary)] shadow-sm"
+                        : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                     }`}
                   >
                     LDAP / AD

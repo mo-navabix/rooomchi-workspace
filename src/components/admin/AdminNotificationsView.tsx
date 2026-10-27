@@ -39,6 +39,11 @@ import {
 import { toPersianDigits } from '../../utils/jalali';
 import { TimePicker } from '../common/TimePicker';
 import { ApiService } from '../../services/apiService';
+import { IntegrationConnectHint } from '../../features/notifications/IntegrationConnectHint';
+import {
+  isSmsIntegrationConfigured,
+  isTelegramIntegrationConfigured,
+} from '../../features/integrations/integrationStatus';
 
 // Custom Accessible RTL-safe Toggle Switch
 interface SwitchToggleProps {
@@ -111,7 +116,7 @@ const SwitchToggle: React.FC<SwitchToggleProps> = ({
 };
 
 export const AdminNotificationsView: React.FC = () => {
-  const { currentOrg, showToast, addNotification } = useApp();
+  const { currentOrg, showToast, addNotification, setActiveTab } = useApp();
 
   const [settings, setSettings] = useState<NotificationSettings>(DEFAULT_NOTIFICATION_SETTINGS);
   const [logs, setLogs] = useState<NotificationLogEntry[]>([]);
@@ -147,6 +152,21 @@ export const AdminNotificationsView: React.FC = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [showBotToken, setShowBotToken] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [emailIntegrations, setEmailIntegrations] = useState<Record<string, unknown>>({});
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const integ = await ApiService.getAdminIntegrations();
+        if (!cancelled) setEmailIntegrations(integ);
+      } catch {
+        if (!cancelled) setEmailIntegrations({});
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentOrg?.id]);
 
   // Selected SMS template for editing
   const [smsTemplateKey, setSmsTemplateKey] = useState<
@@ -453,6 +473,7 @@ export const AdminNotificationsView: React.FC = () => {
       {/* TAB 1: 3 CHANNELS CONFIGURATION (Spacious, Elegant Cards) */}
       {/* ======================================================== */}
       {activeTab === 'channels' && (
+        <>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-stretch">
           {/* ---------------- CHANNEL 1: SMS GATEWAY ---------------- */}
           <div className="bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-[#334155] p-5 sm:p-6 shadow-xs flex flex-col justify-between transition-colors">
@@ -486,104 +507,12 @@ export const AdminNotificationsView: React.FC = () => {
                 />
               </div>
 
-              {/* Provider Selection */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-800 dark:text-slate-200">
-                  سرویس‌دهنده پیامکی (SMS Provider)
-                </label>
-                <select
-                  value={settings.sms.provider}
-                  onChange={(e) =>
-                    setSettings((prev) => ({
-                      ...prev,
-                      sms: {
-                        ...prev.sms,
-                        provider: e.target.value as any,
-                      },
-                    }))
-                  }
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
-                >
-                  {SMS_PROVIDERS.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  {SMS_PROVIDERS.find((p) => p.id === settings.sms.provider)?.desc}
-                </p>
-              </div>
-
-              {/* API Key */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-800 dark:text-slate-200">
-                  کلید دسترسی وب‌سرویس (API Key / Token)
-                </label>
-                <div className="relative">
-                  <input
-                    type={showApiKey ? 'text' : 'password'}
-                    value={settings.sms.apiKey}
-                    onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        sms: { ...prev.sms, apiKey: e.target.value },
-                      }))
-                    }
-                    placeholder="kav_live_9482..."
-                    dir="ltr"
-                    className="w-full text-xs pl-9 pr-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                    title={showApiKey ? 'مخفی‌سازی' : 'نمایش'}
-                  >
-                    {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Line & Phone Inputs */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    شماره خط فرستنده
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.sms.lineNumber}
-                    onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        sms: { ...prev.sms, lineNumber: e.target.value },
-                      }))
-                    }
-                    placeholder="3000500600"
-                    dir="ltr"
-                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    موبایل مدیر (هشدارهای فوری)
-                  </label>
-                  <input
-                    type="tel"
-                    value={settings.sms.managerPhone}
-                    onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        sms: { ...prev.sms, managerPhone: e.target.value },
-                      }))
-                    }
-                    placeholder="09123456789"
-                    dir="ltr"
-                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-[var(--brand-primary)]/20 focus:border-brand focus:outline-hidden"
-                  />
-                </div>
-              </div>
+              <IntegrationConnectHint
+                integrationId="sms"
+                label="درگاه پیامک"
+                configured={isSmsIntegrationConfigured(emailIntegrations)}
+                setActiveTab={setActiveTab}
+              />
 
               {/* Audience Checklist */}
               <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-[#334155]">
@@ -773,75 +702,12 @@ export const AdminNotificationsView: React.FC = () => {
                 />
               </div>
 
-              {/* Bot Token */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-800 dark:text-slate-200">
-                  توکن ربات تلگرام (Bot Token از BotFather)
-                </label>
-                <div className="relative">
-                  <input
-                    type={showBotToken ? 'text' : 'password'}
-                    value={settings.telegram.botToken}
-                    onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        telegram: { ...prev.telegram, botToken: e.target.value },
-                      }))
-                    }
-                    placeholder="6829104821:AAH8fL0wZ..."
-                    dir="ltr"
-                    className="w-full text-xs pl-9 pr-3.5 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowBotToken(!showBotToken)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                    title={showBotToken ? 'مخفی‌سازی' : 'نمایش'}
-                  >
-                    {showBotToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Bot Username & Target Channel */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    شناسه ربات (Username)
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.telegram.botUsername}
-                    onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        telegram: { ...prev.telegram, botUsername: e.target.value },
-                      }))
-                    }
-                    placeholder="@RooomchiMeetingBot"
-                    dir="ltr"
-                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-hidden"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                    کانال یا Chat ID مقصد
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.telegram.targetChatId}
-                    onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        telegram: { ...prev.telegram, targetChatId: e.target.value },
-                      }))
-                    }
-                    placeholder="@rooomchi_management"
-                    dir="ltr"
-                    className="w-full text-xs px-3 py-2 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155] rounded-xl text-slate-800 dark:text-slate-200 font-mono text-left focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-hidden"
-                  />
-                </div>
-              </div>
+              <IntegrationConnectHint
+                integrationId="telegram"
+                label="ربات Telegram"
+                configured={isTelegramIntegrationConfigured(emailIntegrations)}
+                setActiveTab={setActiveTab}
+              />
 
               {/* Target Type */}
               <div className="space-y-1.5">
@@ -1169,6 +1035,7 @@ export const AdminNotificationsView: React.FC = () => {
             </div>
           </div>
         </div>
+        </>
       )}
 
       {/* ======================================================== */}

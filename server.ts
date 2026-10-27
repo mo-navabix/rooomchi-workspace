@@ -4,7 +4,10 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { getDbPool } from "./src/services/dbService";
 import { registerApiRoutes } from "./src/server/registerApiRoutes";
-import { ensureBaseSchema, ensureServerSchema } from "./src/server/persistence/store";
+import {
+  ensureBaseSchema,
+  ensureServerSchema,
+} from "./src/server/persistence/store";
 import { seedDevDataIfNeeded } from "./src/server/persistence/seed";
 import { logger } from "./src/server/logger";
 import { registerSecurityMiddleware } from "./src/server/middleware/security";

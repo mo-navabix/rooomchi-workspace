@@ -2,11 +2,14 @@ import { randomUUID } from "crypto";
 import { query } from "../persistence/db";
 import { decryptConfigSecrets, encryptConfigSecrets } from "../security/secret-crypto";
 
-export type IntegrationProvider = "smtp" | "storage";
+export type IntegrationProvider = "smtp" | "storage" | "resend" | "sms" | "telegram";
 
 const SECRET_KEYS: Record<IntegrationProvider, string[]> = {
   smtp: ["password"],
   storage: [],
+  resend: ["apiKey"],
+  sms: ["apiKey"],
+  telegram: ["botToken"],
 };
 
 export async function upsertIntegration(

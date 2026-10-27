@@ -4,7 +4,13 @@
  */
 import type { LdapConfiguration, GoogleConfiguration } from "../auth/types";
 import { testLdapConnection } from "../auth/providers/ldap.provider";
-import { testGoogleConfiguration, testSmtpConfiguration, type SetupSmtpInput } from "../installation/setup.service";
+import {
+  testGoogleConfiguration,
+  testResendConfiguration,
+  testSmtpConfiguration,
+  type SetupResendInput,
+  type SetupSmtpInput,
+} from "../installation/setup.service";
 import { getIntegration, upsertIntegration, type IntegrationProvider } from "../installation/integrations.store";
 
 export type IntegrationTestResult = { ok: boolean; message: string };
@@ -28,5 +34,9 @@ export const IntegrationManager = {
 
   async testSmtp(config: SetupSmtpInput): Promise<IntegrationTestResult> {
     return testSmtpConfiguration(config);
+  },
+
+  async testResend(config: SetupResendInput): Promise<IntegrationTestResult> {
+    return testResendConfiguration(config);
   },
 };

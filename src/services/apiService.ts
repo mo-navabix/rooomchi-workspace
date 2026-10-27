@@ -126,6 +126,15 @@ export class ApiService {
     return res.json() as Promise<{ ok: boolean; message: string }>;
   }
 
+  static async testSetupResend(resend: Record<string, unknown>) {
+    const res = await fetch(`${API_BASE}/setup/test-resend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resend }),
+    });
+    return res.json() as Promise<{ ok: boolean; message: string }>;
+  }
+
   static async testSetupSmtp(smtp: Record<string, unknown>) {
     const res = await fetch(`${API_BASE}/setup/test-smtp`, {
       method: 'POST',
@@ -446,11 +455,18 @@ export class ApiService {
     return { ...body, token, user, message: body.message || 'ثبت‌نام موفق' };
   }
 
-  static async sendOtp(email: string): Promise<{ success: boolean; message: string; simulatedCode?: string }> {
+  static async sendOtp(
+    email: string,
+    org?: { organizationId?: string; organizationSlug?: string },
+  ): Promise<{ success: boolean; message: string }> {
     const res = await fetch(`${API_BASE}/auth/send-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        organizationId: org?.organizationId,
+        organizationSlug: org?.organizationSlug,
+      }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'خطا در ارسال کد تأیید' }));
@@ -461,7 +477,9 @@ export class ApiService {
 
   static async verifyOtp(
     email: string,
-    code: string
+    code: string,
+    org?: { organizationId?: string; organizationSlug?: string },
+    password?: string,
   ): Promise<{
     token: string;
     accessToken?: string;
@@ -473,7 +491,13 @@ export class ApiService {
     const res = await fetch(`${API_BASE}/auth/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.trim().toLowerCase(), code: code.trim() }),
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        code: code.trim(),
+        password: password?.trim() || undefined,
+        organizationId: org?.organizationId,
+        organizationSlug: org?.organizationSlug,
+      }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'کد تأیید نامعتبر است' }));
@@ -493,6 +517,33 @@ export class ApiService {
         }
       : body.user;
     return { ...body, token, user };
+  }
+
+  static async updateProfile(data: {
+    name: string;
+    department?: string;
+    jobTitle?: string;
+    phone?: string;
+  }): Promise<{ success: boolean; message: string; user: User }> {
+    const res = await fetch(`${API_BASE}/auth/profile`, {
+      method: 'PUT',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'خطا در ذخیره پروفایل' }));
+      throw new Error(err.error || err.message || 'خطا در ذخیره پروفایل');
+    }
+    const body = await res.json();
+    const user: User = {
+      ...body.user,
+      orgId: body.user.orgId || body.user.organizationId,
+      name:
+        body.user.name ||
+        [body.user.firstName, body.user.lastName].filter(Boolean).join(' '),
+      isProfileComplete: body.user.isProfileComplete ?? true,
+    };
+    return { ...body, user };
   }
 
   static async completeProfile(data: {
@@ -523,11 +574,18 @@ export class ApiService {
     return { ...body, user };
   }
 
-  static async forgotPassword(email: string): Promise<{ success: boolean; message: string; simulatedCode?: string }> {
+  static async forgotPassword(
+    email: string,
+    org?: { organizationId?: string; organizationSlug?: string },
+  ): Promise<{ success: boolean; message: string }> {
     const res = await fetch(`${API_BASE}/auth/forgot-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({
+        email,
+        organizationId: org?.organizationId,
+        organizationSlug: org?.organizationSlug,
+      }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'خطا در ارسال کد بازیابی' }));
@@ -540,6 +598,8 @@ export class ApiService {
     email: string;
     code: string;
     newPassword: string;
+    organizationId?: string;
+    organizationSlug?: string;
   }): Promise<{ success: boolean; message: string }> {
     const res = await fetch(`${API_BASE}/auth/reset-password`, {
       method: 'POST',

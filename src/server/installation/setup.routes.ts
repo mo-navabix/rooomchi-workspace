@@ -4,6 +4,7 @@ import { getInstallationStatus, isInstallationInitialized } from "./installation
 import {
   completeInstallation,
   testGoogleConfiguration,
+  testResendConfiguration,
   testSmtpConfiguration,
   type SetupCompletePayload,
 } from "./setup.service";
@@ -54,6 +55,14 @@ export function registerSetupRoutes(app: Express): void {
     const google = req.body?.google as GoogleConfiguration | undefined;
     if (!google) return res.status(400).json({ error: "پیکربندی Google ارسال نشده است" });
     const result = await testGoogleConfiguration(google);
+    res.status(result.ok ? 200 : 400).json(result);
+  }));
+
+  app.post("/api/setup/test-resend", asyncRoute(async (req, res) => {
+    if (!(await ensureSetupAllowed(req, res))) return;
+    const resend = req.body?.resend;
+    if (!resend?.apiKey) return res.status(400).json({ error: "تنظیمات Resend ناقص است" });
+    const result = await testResendConfiguration(resend);
     res.status(result.ok ? 200 : 400).json(result);
   }));
 

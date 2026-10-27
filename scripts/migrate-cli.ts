@@ -24,6 +24,7 @@ const CORE_MIGRATIONS = [
   "schema/06-org-logo-text.sql",
   "schema/07-campus-hierarchy.sql",
   "schema/07-support-tickets-and-notifications.sql",
+  "schema/08-verification-org.sql",
 ];
 
 async function ensureMigrationsTable(): Promise<void> {

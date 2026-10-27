@@ -144,8 +144,12 @@ interface AppContextType {
     phone?: string;
     role?: UserRole;
   }) => Promise<void>;
-  sendOtp: (email: string) => Promise<{ success: boolean; simulatedCode?: string; message: string }>;
-  verifyOtp: (email: string, code: string) => Promise<{ isProfileComplete: boolean }>;
+  sendOtp: (email: string) => Promise<{ success: boolean; message: string }>;
+  verifyOtp: (
+    email: string,
+    code: string,
+    password: string,
+  ) => Promise<{ isProfileComplete: boolean }>;
   completeRegistration: (data: {
     name: string;
     phone: string;
@@ -156,7 +160,7 @@ interface AppContextType {
   logout: () => void;
   forgotPassword: (
     email: string,
-  ) => Promise<{ success: boolean; simulatedCode?: string }>;
+  ) => Promise<{ success: boolean; message?: string }>;
   resetPassword: (data: {
     email: string;
     code: string;
@@ -689,9 +693,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     goToLogin();
   };
 
+  const authOrgContext = () =>
+    currentOrg
+      ? { organizationId: currentOrg.id, organizationSlug: currentOrg.slug }
+      : undefined;
+
   const forgotPassword = async (email: string) => {
     setPendingResetEmail(email);
-    const res = await ApiService.forgotPassword(email);
+    const res = await ApiService.forgotPassword(email, authOrgContext());
     setAuthModalView("reset");
     return res;
   };
@@ -701,19 +710,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     code: string;
     newPassword: string;
   }) => {
-    await ApiService.resetPassword(data);
+    await ApiService.resetPassword({ ...data, ...authOrgContext() });
     showToast("رمز عبور شما بازنشانی شد. لطفاً وارد شوید", "success");
     setAuthModalView("login");
   };
 
   const sendOtp = async (email: string) => {
-    const res = await ApiService.sendOtp(email);
+    const res = await ApiService.sendOtp(email, authOrgContext());
     showToast(res.message || "کد تأیید ارسال شد", "info");
     return res;
   };
 
-  const verifyOtp = async (email: string, code: string) => {
-    const res = await ApiService.verifyOtp(email, code);
+  const verifyOtp = async (email: string, code: string, password: string) => {
+    const res = await ApiService.verifyOtp(email, code, authOrgContext(), password);
     const token = res.token || res.accessToken;
     if (!token) {
       throw new Error("توکن دریافت نشد");

@@ -96,6 +96,7 @@ export async function ensureServerSchema(): Promise<void> {
   const apiDataPath = path.join(process.cwd(), "schema", "07-support-tickets-and-notifications.sql");
   if (fs.existsSync(apiDataPath)) {
     await runSqlFile("schema/07-support-tickets-and-notifications.sql");
+    await runSqlFile("schema/08-verification-org.sql");
   }
 }
 
@@ -763,19 +764,26 @@ export async function setVerificationCode(
   purpose: VerificationPurpose,
   code: string,
   expiresAt: Date,
+  organizationId = "",
 ): Promise<void> {
+  const orgId = organizationId || "";
   await query(
-    `INSERT INTO verification_codes (email, purpose, code, expires_at)
-     VALUES ($1, $2, $3, $4)
-     ON CONFLICT (email, purpose) DO UPDATE SET code = $3, expires_at = $4, created_at = CURRENT_TIMESTAMP`,
-    [email.trim().toLowerCase(), purpose, code, expiresAt.toISOString()],
+    `INSERT INTO verification_codes (email, purpose, organization_id, code, expires_at)
+     VALUES ($1, $2, $3, $4, $5)
+     ON CONFLICT (email, purpose, organization_id) DO UPDATE SET code = $4, expires_at = $5, created_at = CURRENT_TIMESTAMP`,
+    [email.trim().toLowerCase(), purpose, orgId, code, expiresAt.toISOString()],
   );
 }
 
-export async function getVerificationCode(email: string, purpose: VerificationPurpose) {
+export async function getVerificationCode(
+  email: string,
+  purpose: VerificationPurpose,
+  organizationId = "",
+) {
+  const orgId = organizationId || "";
   const { rows } = await query(
-    "SELECT code, expires_at FROM verification_codes WHERE email = $1 AND purpose = $2",
-    [email.trim().toLowerCase(), purpose],
+    "SELECT code, expires_at FROM verification_codes WHERE email = $1 AND purpose = $2 AND organization_id = $3",
+    [email.trim().toLowerCase(), purpose, orgId],
   );
   if (!rows[0]) return null;
   return {
@@ -784,10 +792,16 @@ export async function getVerificationCode(email: string, purpose: VerificationPu
   };
 }
 
-export async function deleteVerificationCode(email: string, purpose: VerificationPurpose): Promise<void> {
-  await query("DELETE FROM verification_codes WHERE email = $1 AND purpose = $2", [
+export async function deleteVerificationCode(
+  email: string,
+  purpose: VerificationPurpose,
+  organizationId = "",
+): Promise<void> {
+  const orgId = organizationId || "";
+  await query("DELETE FROM verification_codes WHERE email = $1 AND purpose = $2 AND organization_id = $3", [
     email.trim().toLowerCase(),
     purpose,
+    orgId,
   ]);
 }
 

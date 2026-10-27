@@ -13,7 +13,11 @@ import {
   replaceLdapGroupRoleMappings,
 } from "../auth/auth-settings.store";
 import { LDAP_BIND_PASSWORD_MASK, mergeLdapConfiguration } from "../auth/ldap-config.util";
-import { testGoogleConfiguration, testSmtpConfiguration } from "../installation/setup.service";
+import {
+  testGoogleConfiguration,
+  testResendConfiguration,
+  testSmtpConfiguration,
+} from "../installation/setup.service";
 import { listIntegrations, upsertIntegration } from "../installation/integrations.store";
 import { requireAdminPermission } from "./admin-guard";
 import { writeConfigAudit, listConfigAuditLogs } from "./config-audit.service";
@@ -255,13 +259,37 @@ export function registerAdminRoutes(app: Express): void {
     if (!caller) return;
     const list = await listIntegrations(caller.organizationId);
     const smtp = list.find((i) => i.provider === "smtp");
+    const resend = list.find((i) => i.provider === "resend");
+    const sms = list.find((i) => i.provider === "sms");
+    const telegram = list.find((i) => i.provider === "telegram");
     const storage = list.find((i) => i.provider === "storage");
     res.json({
+      resend: resend
+        ? {
+            ...resend.config,
+            apiKey: resend.config.apiKey ? MASK : "",
+            enabled: resend.enabled,
+          }
+        : { enabled: false },
       smtp: smtp
         ? {
             ...smtp.config,
             password: smtp.config.password ? MASK : "",
             enabled: smtp.enabled,
+          }
+        : { enabled: false },
+      sms: sms
+        ? {
+            ...sms.config,
+            apiKey: sms.config.apiKey ? MASK : "",
+            enabled: sms.enabled,
+          }
+        : { enabled: false },
+      telegram: telegram
+        ? {
+            ...telegram.config,
+            botToken: telegram.config.botToken ? MASK : "",
+            enabled: telegram.enabled,
           }
         : { enabled: false },
       storage: storage
@@ -275,9 +303,24 @@ export function registerAdminRoutes(app: Express): void {
     if (!caller) return;
     const before = await listIntegrations(caller.organizationId);
     const body = req.body as {
+      resend?: Record<string, unknown> & { enabled?: boolean };
       smtp?: Record<string, unknown> & { enabled?: boolean };
+      sms?: Record<string, unknown> & { enabled?: boolean };
+      telegram?: Record<string, unknown> & { enabled?: boolean };
       storage?: Record<string, unknown> & { enabled?: boolean; type?: string };
     };
+
+    if (body.resend) {
+      const prev = before.find((i) => i.provider === "resend")?.config || {};
+      const key = body.resend.apiKey;
+      const merged = {
+        ...prev,
+        ...body.resend,
+        apiKey: !key || key === MASK ? prev.apiKey : key,
+      };
+      delete merged.enabled;
+      await upsertIntegration(caller.organizationId, "resend", merged, body.resend.enabled !== false);
+    }
 
     if (body.smtp) {
       const prev = before.find((i) => i.provider === "smtp")?.config || {};
@@ -290,6 +333,30 @@ export function registerAdminRoutes(app: Express): void {
       };
       delete merged.enabled;
       await upsertIntegration(caller.organizationId, "smtp", merged, body.smtp.enabled !== false);
+    }
+
+    if (body.sms) {
+      const prev = before.find((i) => i.provider === "sms")?.config || {};
+      const key = body.sms.apiKey;
+      const merged = {
+        ...prev,
+        ...body.sms,
+        apiKey: !key || key === MASK ? prev.apiKey : key,
+      };
+      delete merged.enabled;
+      await upsertIntegration(caller.organizationId, "sms", merged, body.sms.enabled !== false);
+    }
+
+    if (body.telegram) {
+      const prev = before.find((i) => i.provider === "telegram")?.config || {};
+      const token = body.telegram.botToken;
+      const merged = {
+        ...prev,
+        ...body.telegram,
+        botToken: !token || token === MASK ? prev.botToken : token,
+      };
+      delete merged.enabled;
+      await upsertIntegration(caller.organizationId, "telegram", merged, body.telegram.enabled !== false);
     }
 
     if (body.storage) {
@@ -310,12 +377,32 @@ export function registerAdminRoutes(app: Express): void {
       userId: caller.userId,
       eventType: "INTEGRATION_UPDATED",
       summary: "Integrations updated",
-      before: { smtp: !!before.find((i) => i.provider === "smtp"), storage: !!before.find((i) => i.provider === "storage") },
-      after: { smtp: !!body.smtp, storage: !!body.storage },
+      before: {
+        resend: !!before.find((i) => i.provider === "resend"),
+        smtp: !!before.find((i) => i.provider === "smtp"),
+        sms: !!before.find((i) => i.provider === "sms"),
+        telegram: !!before.find((i) => i.provider === "telegram"),
+        storage: !!before.find((i) => i.provider === "storage"),
+      },
+      after: {
+        resend: !!body.resend,
+        smtp: !!body.smtp,
+        sms: !!body.sms,
+        telegram: !!body.telegram,
+        storage: !!body.storage,
+      },
     });
 
     const list = await listIntegrations(caller.organizationId);
     res.json({ success: true, integrations: list.map((i) => i.provider) });
+  }));
+
+  app.post("/api/admin/integrations/test-resend", asyncRoute(async (req, res) => {
+    const caller = requireAdminPermission(req, res, "manage_integrations");
+    if (!caller) return;
+    const resend = req.body?.resend;
+    const result = await testResendConfiguration(resend);
+    res.status(result.ok ? 200 : 400).json(result);
   }));
 
   app.post("/api/admin/integrations/test-smtp", asyncRoute(async (req, res) => {
