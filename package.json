@@ -42,7 +42,7 @@
     "verify:security": "bash scripts/security-rbac-smoke.sh",
     "dev": "docker compose up -d --wait postgres && tsx server.ts",
     "dev:app": "tsx server.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && esbuild scripts/migrate-cli.ts --bundle --platform=node --format=cjs --packages=external --outfile=dist/migrate.cjs",
     "start": "node dist/server.cjs",
     "nx": "nx",
     "build:web": "nx build web",
@@ -50,6 +50,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
+    "test:sql": "tsx --test scripts/sql-split.test.ts",
     "release:enterprise": "bash scripts/build-enterprise-release.sh"
   },
   "dependencies": {

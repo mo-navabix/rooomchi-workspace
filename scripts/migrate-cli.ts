@@ -78,10 +78,27 @@ async function applyMigration(name: string): Promise<void> {
     await markApplied(name);
     return;
   }
+
+  const pool = getDbPool();
+  if (!pool) throw new Error("Database pool unavailable");
+
   logger.info({ migration: name }, "migration_apply");
-  await runSqlFile(name);
-  await markApplied(name);
-  logger.info({ migration: name }, "migration_done");
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await runSqlFile(name, client);
+    await client.query("INSERT INTO schema_migrations (name) VALUES ($1) ON CONFLICT DO NOTHING", [
+      name,
+    ]);
+    await client.query("COMMIT");
+    logger.info({ migration: name }, "migration_done");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    logger.error({ migration: name, err }, "migration_rollback");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 async function main(): Promise<void> {

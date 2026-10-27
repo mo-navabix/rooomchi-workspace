@@ -1,32 +1,27 @@
 import fs from "fs";
 import path from "path";
+import type { PoolClient } from "pg";
 import { query } from "./db";
+import { splitPostgresSql } from "./sql-split";
 
-/** Split SQL file into executable statements (skips empty lines and line comments). */
-function stripLeadingComments(sql: string): string {
-  return sql
-    .split("\n")
-    .filter((line) => !line.trim().startsWith("--"))
-    .join("\n")
-    .trim();
-}
+export { splitPostgresSql } from "./sql-split";
 
-function splitSqlStatements(sql: string): string[] {
-  return sql
-    .split(";")
-    .map((s) => stripLeadingComments(s.trim()))
-    .filter((s) => s.length > 0);
-}
-
-export async function runSqlFile(relativePath: string): Promise<number> {
+export async function runSqlFile(
+  relativePath: string,
+  client?: PoolClient,
+): Promise<number> {
   const filePath = path.join(process.cwd(), relativePath);
   if (!fs.existsSync(filePath)) {
     throw new Error(`SQL file not found: ${filePath}`);
   }
   const sql = fs.readFileSync(filePath, "utf8");
-  const statements = splitSqlStatements(sql);
+  const statements = splitPostgresSql(sql);
+  const exec = client
+    ? (text: string) => client.query(text)
+    : (text: string) => query(text);
+
   for (const statement of statements) {
-    await query(`${statement};`);
+    await exec(`${statement};`);
   }
   return statements.length;
 }
