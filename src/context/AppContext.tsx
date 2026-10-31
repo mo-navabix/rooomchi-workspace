@@ -46,6 +46,13 @@ import {
   readLoginRoute,
   readSetupRoute,
 } from "../utils/appNavigation";
+import {
+  extractTenantSlugFromHostname,
+  findOrganizationByHostname,
+  isOrgPortalHost,
+  isPlatformLandingHost,
+  normalizeBrowserHostname,
+} from "../utils/orgPortalHost";
 
 interface ToastInfo {
   id: string;
@@ -222,9 +229,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     try {
       const route = readLoginRoute();
       if (route.onLoginPage) return "login";
+      if (readSetupRoute()) return "setup";
+      const host = normalizeBrowserHostname();
+      if (host && !isPlatformLandingHost(host) && extractTenantSlugFromHostname(host)) {
+        return "login";
+      }
       const saved = localStorage.getItem(LOCAL_STORAGE_VIEW_KEY);
-      if (saved === "landing" || saved === "app" || saved === "login") {
+      if (saved === "app" || saved === "login") {
         return saved;
+      }
+      if (saved === "landing" && isPlatformLandingHost(host)) {
+        return "landing";
       }
     } catch {}
     return "landing";
@@ -315,9 +330,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   const goToLanding = useCallback(() => {
+    if (
+      organizations.length > 0 &&
+      isOrgPortalHost(organizations) &&
+      !isPlatformLandingHost(normalizeBrowserHostname())
+    ) {
+      setViewMode("login");
+      return;
+    }
     setViewMode("landing");
     navigateToLandingPath();
-  }, []);
+  }, [organizations]);
 
   // If currentUser exists, use their role, else fallback to 'employee'
   const userRole: UserRole = normalizeUserRole(currentUser?.role);
@@ -351,17 +374,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       setIsLoading(true);
       const orgs = await ApiService.getOrganizations();
       setOrganizations(orgs);
+      const hostOrg = findOrganizationByHostname(orgs);
       if (
         orgs.length > 0 &&
         (!currentOrg || !orgs.some((o) => o.id === currentOrg.id))
       ) {
-        // If current user is tied to a specific org, select that org
-        if (currentUser?.orgId) {
+        if (hostOrg) {
+          setCurrentOrg(hostOrg);
+        } else if (currentUser?.orgId) {
           const matching = orgs.find((o) => o.id === currentUser.orgId);
           setCurrentOrg(matching || orgs[0]);
         } else {
           setCurrentOrg(orgs[0]);
         }
+      } else if (hostOrg && currentOrg?.id !== hostOrg.id) {
+        setCurrentOrg(hostOrg);
       }
     } catch (err: any) {
       console.error(err);
@@ -449,7 +476,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, [currentOrg?.id, currentOrg?.settings]);
 
-  // Deep-link: /login?org=... or legacy ?auth=login&org=...
+  // Deep-link: /login?org=... — or org-branded host (custom domain / tenant subdomain)
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (organizations.length === 0) return;
@@ -459,6 +486,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       const searchParams = new URLSearchParams(window.location.search);
       const authParam = searchParams.get("auth") || route.auth;
       const orgParam = searchParams.get("org") || route.org;
+      const path = window.location.pathname.replace(/\/+$/, "") || "/";
 
       const resolveOrg = (raw: string) => {
         const decodedOrg = decodeURIComponent(raw).toLowerCase().trim();
@@ -470,6 +498,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         );
       };
 
+      const hostOrg = findOrganizationByHostname(organizations);
+      if (hostOrg) {
+        setCurrentOrg(hostOrg);
+      }
+
       if (orgParam) {
         const matched = resolveOrg(orgParam);
         if (matched) {
@@ -477,21 +510,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         }
       }
 
+      const onOrgPortal = isOrgPortalHost(organizations);
       const wantsLogin =
         route.onLoginPage ||
         authParam === "login" ||
-        authParam === "register";
+        authParam === "register" ||
+        (onOrgPortal && !currentUser && (path === "/" || route.onLoginPage));
 
-      if (wantsLogin) {
+      if (wantsLogin && !currentUser) {
         setViewMode("login");
         if (orgParam) {
           const matched = resolveOrg(orgParam);
           navigateToLoginPath(matched?.slug || matched?.id || orgParam, true);
-          if (matched) {
+          if (matched && (route.onLoginPage || authParam)) {
             showToast(`صفحه ورود «${matched.name}»`, "info");
           }
         } else if (route.onLoginPage) {
-          navigateToLoginPath(null, true);
+          navigateToLoginPath(hostOrg?.slug || hostOrg?.id || null, true);
         }
         if (authParam === "register") {
           setAuthModalView("register");
@@ -501,7 +536,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     } catch (e) {
       console.error("Failed to parse URL query params", e);
     }
-  }, [organizations, showToast]);
+  }, [organizations, showToast, currentUser]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -514,12 +549,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       if (readSetupRoute()) setViewMode("setup");
       else if (route.onLoginPage) setViewMode("login");
       else if (window.location.pathname === "/" || window.location.pathname === "") {
-        setViewMode("landing");
+        const onOrgPortal =
+          organizations.length > 0 &&
+          isOrgPortalHost(organizations) &&
+          !isPlatformLandingHost(normalizeBrowserHostname());
+        setViewMode(onOrgPortal && !currentUser ? "login" : "landing");
       }
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+  }, [installationInitialized, organizations, currentUser]);
 
   // Sync user state with localStorage
   const saveUserSession = (user: User, token: string) => {

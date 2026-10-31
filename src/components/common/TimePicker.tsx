@@ -42,22 +42,58 @@ const SingleWheel: React.FC<SingleWheelProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const isInternalScroll = useRef(false);
   const debounceTimer = useRef<number | null>(null);
+  const selectedIndex = items.indexOf(selectedValue);
 
-  // Scroll to selected value on mount or change
+  const snapToIndex = useCallback(
+    (index: number, fromUser = false) => {
+      const el = scrollRef.current;
+      if (!el || items.length === 0) return;
+      const clamped = Math.max(0, Math.min(items.length - 1, index));
+      const top = clamped * ITEM_HEIGHT;
+      isInternalScroll.current = true;
+      el.scrollTo({ top, behavior: 'auto' });
+      const chosen = items[clamped];
+      if (fromUser && chosen !== undefined && chosen !== selectedValue) {
+        onSelect(chosen);
+      }
+      window.requestAnimationFrame(() => {
+        isInternalScroll.current = false;
+      });
+    },
+    [items, onSelect, selectedValue],
+  );
+
+  // Align wheel when value changes from outside (not mid-gesture)
   useEffect(() => {
     const idx = items.indexOf(selectedValue);
-    if (idx !== -1 && scrollRef.current) {
-      isInternalScroll.current = true;
-      scrollRef.current.scrollTo({
-        top: idx * ITEM_HEIGHT,
-        behavior: 'smooth',
-      });
-      const timer = window.setTimeout(() => {
-        isInternalScroll.current = false;
-      }, 250);
-      return () => clearTimeout(timer);
-    }
+    const el = scrollRef.current;
+    if (idx === -1 || !el) return;
+    const target = idx * ITEM_HEIGHT;
+    if (Math.abs(el.scrollTop - target) < 0.5) return;
+    isInternalScroll.current = true;
+    el.scrollTo({ top: target, behavior: 'auto' });
+    window.requestAnimationFrame(() => {
+      isInternalScroll.current = false;
+    });
   }, [selectedValue, items]);
+
+  // Mouse wheel: exactly one row per notch (no native multi-line scroll)
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isInternalScroll.current) return;
+      const idx = items.indexOf(selectedValue);
+      if (idx < 0) return;
+      const next = e.deltaY > 0 ? idx + 1 : idx - 1;
+      if (next < 0 || next >= items.length) return;
+      snapToIndex(next, true);
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [items, selectedValue, snapToIndex]);
 
   const handleScroll = useCallback(() => {
     if (isInternalScroll.current) return;
@@ -70,26 +106,12 @@ const SingleWheel: React.FC<SingleWheelProps> = ({
       if (!scrollRef.current) return;
       const top = scrollRef.current.scrollTop;
       const rawIndex = Math.round(top / ITEM_HEIGHT);
-      const clampedIndex = Math.max(0, Math.min(items.length - 1, rawIndex));
-      const chosen = items[clampedIndex];
-      if (chosen !== undefined && chosen !== selectedValue) {
-        onSelect(chosen);
-      }
-    }, 60);
-  }, [items, onSelect, selectedValue]);
+      snapToIndex(rawIndex, true);
+    }, 80);
+  }, [snapToIndex]);
 
-  const handleClickItem = (itemVal: number, index: number) => {
-    if (scrollRef.current) {
-      isInternalScroll.current = true;
-      scrollRef.current.scrollTo({
-        top: index * ITEM_HEIGHT,
-        behavior: 'smooth',
-      });
-      onSelect(itemVal);
-      setTimeout(() => {
-        isInternalScroll.current = false;
-      }, 250);
-    }
+  const handleClickItem = (_itemVal: number, index: number) => {
+    snapToIndex(index, true);
   };
 
   return (
@@ -109,7 +131,7 @@ const SingleWheel: React.FC<SingleWheelProps> = ({
       >
         {items.map((item, index) => {
           const isSelected = item === selectedValue;
-          const diff = Math.abs(items.indexOf(selectedValue) - index);
+          const diff = Math.abs(selectedIndex - index);
           // English (Latin) formatted digits
           const str = padZero ? item.toString().padStart(2, '0') : item.toString();
 
@@ -136,6 +158,7 @@ const SingleWheel: React.FC<SingleWheelProps> = ({
               style={{
                 height: `${ITEM_HEIGHT}px`,
                 scrollSnapAlign: 'center',
+                scrollSnapStop: 'always',
                 opacity,
                 transform: `scale(${scale})`,
               }}
@@ -225,14 +248,26 @@ export const TimePicker: React.FC<TimePickerProps> = ({
     return list.length > 0 ? list : [minH];
   }, [minH, maxH, isEndTime, refStart]);
 
-  // Allowed minutes (5-minute step increments: 0, 5, 10, ..., 55)
+  // Allowed minutes (1-minute steps), scoped to min/max for the selected hour
   const allowedMinutes = useMemo(() => {
+    let startM = 0;
+    let endM = 59;
+    if (tempH === minH) startM = minM;
+    if (tempH === maxH) endM = maxM;
+
+    if (isEndTime && refStart) {
+      const [sh, sm] = refStart.split(':').map(Number);
+      if (!isNaN(sh) && !isNaN(sm) && tempH === sh) {
+        startM = Math.max(startM, sm + 1);
+      }
+    }
+
     const list: number[] = [];
-    for (let m = 0; m < 60; m += 5) {
+    for (let m = startM; m <= endM; m++) {
       list.push(m);
     }
-    return list;
-  }, []);
+    return list.length > 0 ? list : [Math.min(startM, 59)];
+  }, [tempH, minH, minM, maxH, maxM, isEndTime, refStart]);
 
   // Ensure initial temp values are within bounds
   useEffect(() => {
@@ -240,6 +275,12 @@ export const TimePicker: React.FC<TimePickerProps> = ({
       setTempH(allowedHours[0]);
     }
   }, [allowedHours, tempH]);
+
+  useEffect(() => {
+    if (allowedMinutes.length > 0 && !allowedMinutes.includes(tempM)) {
+      setTempM(allowedMinutes[0]);
+    }
+  }, [allowedMinutes, tempM]);
 
   // Confirm selection
   const handleConfirm = () => {
@@ -257,7 +298,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
     if (isEndTime && refStart) {
       const [sh, sm] = refStart.split(':').map(Number);
       if (finalH === sh && finalM <= sm) {
-        finalM = Math.min(55, sm + 15);
+        finalM = Math.min(59, sm + 1);
       }
     }
 

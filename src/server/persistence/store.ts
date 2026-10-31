@@ -1,6 +1,14 @@
 import fs from "fs";
 import path from "path";
-import type { Booking, Organization, Room, TeamMemberRecord, TeamRecord, User, VerificationPurpose } from "../types";
+import type {
+  Booking,
+  Organization,
+  Room,
+  TeamMemberRecord,
+  TeamRecord,
+  User,
+  VerificationPurpose,
+} from "../types";
 import { query } from "./db";
 import { runSqlFile } from "./sql-runner";
 import { formatGregorianIsoLocal } from "../../utils/jalali";
@@ -40,7 +48,11 @@ async function organizationsTableExists(): Promise<boolean> {
 export async function ensureBaseSchema(): Promise<void> {
   if (await usersTableExists()) return;
 
-  const repairPath = path.join(process.cwd(), "schema", "01-repair-core-tables.sql");
+  const repairPath = path.join(
+    process.cwd(),
+    "schema",
+    "01-repair-core-tables.sql",
+  );
   if ((await organizationsTableExists()) && fs.existsSync(repairPath)) {
     console.log("📦 Repairing missing core tables (users, rooms, bookings)…");
     await runSqlFile("schema/01-repair-core-tables.sql");
@@ -69,11 +81,19 @@ export async function ensureOrgLogoColumnIsText(): Promise<void> {
 
 export async function ensureServerSchema(): Promise<void> {
   await ensureOrgLogoColumnIsText();
-  const extensionsPath = path.join(process.cwd(), "schema", "02-server-extensions.sql");
+  const extensionsPath = path.join(
+    process.cwd(),
+    "schema",
+    "02-server-extensions.sql",
+  );
   if (fs.existsSync(extensionsPath)) {
     await runSqlFile("schema/02-server-extensions.sql");
   }
-  const installPath = path.join(process.cwd(), "schema", "03-installation-setup.sql");
+  const installPath = path.join(
+    process.cwd(),
+    "schema",
+    "03-installation-setup.sql",
+  );
   if (fs.existsSync(installPath)) {
     await runSqlFile("schema/03-installation-setup.sql");
   }
@@ -81,7 +101,11 @@ export async function ensureServerSchema(): Promise<void> {
   if (fs.existsSync(adminPath)) {
     await runSqlFile("schema/04-admin-settings.sql");
   }
-  const notifPath = path.join(process.cwd(), "schema", "05-user-notifications.sql");
+  const notifPath = path.join(
+    process.cwd(),
+    "schema",
+    "05-user-notifications.sql",
+  );
   if (fs.existsSync(notifPath)) {
     await runSqlFile("schema/05-user-notifications.sql");
   }
@@ -89,11 +113,19 @@ export async function ensureServerSchema(): Promise<void> {
   if (fs.existsSync(logoPath)) {
     await runSqlFile("schema/06-org-logo-text.sql");
   }
-  const campusPath = path.join(process.cwd(), "schema", "07-campus-hierarchy.sql");
+  const campusPath = path.join(
+    process.cwd(),
+    "schema",
+    "07-campus-hierarchy.sql",
+  );
   if (fs.existsSync(campusPath)) {
     await runSqlFile("schema/07-campus-hierarchy.sql");
   }
-  const apiDataPath = path.join(process.cwd(), "schema", "07-support-tickets-and-notifications.sql");
+  const apiDataPath = path.join(
+    process.cwd(),
+    "schema",
+    "07-support-tickets-and-notifications.sql",
+  );
   if (fs.existsSync(apiDataPath)) {
     await runSqlFile("schema/07-support-tickets-and-notifications.sql");
     await runSqlFile("schema/08-verification-org.sql");
@@ -103,16 +135,24 @@ export async function ensureServerSchema(): Promise<void> {
 // --- Organizations ---
 
 export async function listOrganizations(): Promise<Organization[]> {
-  const { rows } = await query("SELECT * FROM organizations ORDER BY created_at ASC");
+  const { rows } = await query(
+    "SELECT * FROM organizations ORDER BY created_at ASC",
+  );
   return rows.map((r) => mapOrganizationRow(r));
 }
 
-export async function getOrganizationById(id: string): Promise<Organization | null> {
-  const { rows } = await query("SELECT * FROM organizations WHERE id = $1", [id]);
+export async function getOrganizationById(
+  id: string,
+): Promise<Organization | null> {
+  const { rows } = await query("SELECT * FROM organizations WHERE id = $1", [
+    id,
+  ]);
   return rows[0] ? mapOrganizationRow(rows[0]) : null;
 }
 
-export async function findOrganizationBySlugOrCode(slugOrCode: string): Promise<Organization | null> {
+export async function findOrganizationBySlugOrCode(
+  slugOrCode: string,
+): Promise<Organization | null> {
   const key = slugOrCode.trim().toLowerCase();
   const { rows } = await query(
     `SELECT * FROM organizations
@@ -122,10 +162,23 @@ export async function findOrganizationBySlugOrCode(slugOrCode: string): Promise<
   return rows[0] ? mapOrganizationRow(rows[0]) : null;
 }
 
+export async function findOrganizationByDomain(
+  domain: string,
+): Promise<Organization | null> {
+  const key = domain.split(":")[0].trim().toLowerCase();
+  if (!key) return null;
+  const { rows } = await query(
+    `SELECT * FROM organizations WHERE LOWER(domain) = $1 LIMIT 1`,
+    [key],
+  );
+  return rows[0] ? mapOrganizationRow(rows[0]) : null;
+}
+
 export async function organizationCodeExists(code: string): Promise<boolean> {
-  const { rows } = await query("SELECT 1 FROM organizations WHERE UPPER(code) = $1 LIMIT 1", [
-    code.trim().toUpperCase(),
-  ]);
+  const { rows } = await query(
+    "SELECT 1 FROM organizations WHERE UPPER(code) = $1 LIMIT 1",
+    [code.trim().toUpperCase()],
+  );
   return rows.length > 0;
 }
 
@@ -152,7 +205,13 @@ export async function createOrganization(
       JSON.stringify(org.buildings || []),
       JSON.stringify(org.departments || []),
       JSON.stringify(org.workHours || { start: "08:00", end: "19:00" }),
-      JSON.stringify(org.settings || { autoApprove: true, maxBookingHours: 4, allowWeekend: false }),
+      JSON.stringify(
+        org.settings || {
+          autoApprove: true,
+          maxBookingHours: 4,
+          allowWeekend: false,
+        },
+      ),
       org.createdAt,
       org.updatedAt,
     ],
@@ -181,7 +240,10 @@ export async function createOrganization(
   return org;
 }
 
-export async function patchOrganization(id: string, patch: Partial<Organization>): Promise<Organization | null> {
+export async function patchOrganization(
+  id: string,
+  patch: Partial<Organization>,
+): Promise<Organization | null> {
   if (patch.logo !== undefined && patch.logo !== null) {
     await ensureOrgLogoColumnIsText();
   }
@@ -269,7 +331,10 @@ export async function listRooms(filters: {
     params.push(filters.status);
   }
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
-  const { rows } = await query(`SELECT * FROM rooms ${where} ORDER BY name ASC`, params);
+  const { rows } = await query(
+    `SELECT * FROM rooms ${where} ORDER BY name ASC`,
+    params,
+  );
   let rooms = rows.map((r) => mapRoomRow(r));
   if (filters.amenity) {
     rooms = rooms.filter((r) => r.amenities.includes(String(filters.amenity)));
@@ -308,7 +373,10 @@ export async function createRoom(room: Room): Promise<Room> {
   return room;
 }
 
-export async function updateRoom(id: string, patch: Partial<Room>): Promise<Room | null> {
+export async function updateRoom(
+  id: string,
+  patch: Partial<Room>,
+): Promise<Room | null> {
   const existing = await getRoomById(id);
   if (!existing) return null;
   const merged = { ...existing, ...patch };
@@ -407,7 +475,9 @@ export async function listBookings(filters: {
      ORDER BY b.date ASC, b.start_time ASC`,
     params,
   );
-  return rows.map((r) => mapBookingRow(r, r.room_name ? String(r.room_name) : undefined));
+  return rows.map((r) =>
+    mapBookingRow(r, r.room_name ? String(r.room_name) : undefined),
+  );
 }
 
 export async function hasBookingConflict(
@@ -461,7 +531,10 @@ export async function createBooking(
   return booking;
 }
 
-export async function updateBookingStatus(id: string, status: Booking["status"]): Promise<Booking | null> {
+export async function updateBookingStatus(
+  id: string,
+  status: Booking["status"],
+): Promise<Booking | null> {
   const { rows } = await query(
     `UPDATE bookings SET status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $1
      RETURNING *`,
@@ -508,7 +581,9 @@ export async function listUsers(filters: { orgId?: string }): Promise<User[]> {
   const { rows } = await query(sql, params);
   const users: User[] = [];
   for (const row of rows) {
-    const orgName = row.organization_id ? await orgNameFor(String(row.organization_id)) : undefined;
+    const orgName = row.organization_id
+      ? await orgNameFor(String(row.organization_id))
+      : undefined;
     users.push(mapUserRow(row, orgName));
   }
   return users;
@@ -524,9 +599,10 @@ export async function getUserById(id: string): Promise<User | null> {
 }
 
 export async function findUserByEmail(email: string): Promise<User | null> {
-  const { rows } = await query("SELECT * FROM users WHERE LOWER(email) = $1 LIMIT 1", [
-    email.trim().toLowerCase(),
-  ]);
+  const { rows } = await query(
+    "SELECT * FROM users WHERE LOWER(email) = $1 LIMIT 1",
+    [email.trim().toLowerCase()],
+  );
   if (!rows[0]) return null;
   const orgName = rows[0].organization_id
     ? await orgNameFor(String(rows[0].organization_id))
@@ -534,7 +610,10 @@ export async function findUserByEmail(email: string): Promise<User | null> {
   return mapUserRow(rows[0], orgName);
 }
 
-export async function findUserByEmployeeNumber(orgId: string, employeeNumber: string): Promise<User | null> {
+export async function findUserByEmployeeNumber(
+  orgId: string,
+  employeeNumber: string,
+): Promise<User | null> {
   const { rows } = await query(
     `SELECT * FROM users WHERE organization_id = $1
      AND LOWER(TRIM(employee_number)) = $2 LIMIT 1`,
@@ -546,13 +625,17 @@ export async function findUserByEmployeeNumber(orgId: string, employeeNumber: st
 }
 
 export async function emailExists(email: string): Promise<boolean> {
-  const { rows } = await query("SELECT 1 FROM users WHERE LOWER(email) = $1 LIMIT 1", [
-    email.trim().toLowerCase(),
-  ]);
+  const { rows } = await query(
+    "SELECT 1 FROM users WHERE LOWER(email) = $1 LIMIT 1",
+    [email.trim().toLowerCase()],
+  );
   return rows.length > 0;
 }
 
-export async function employeeNumberExistsInOrg(orgId: string, employeeNumber: string): Promise<boolean> {
+export async function employeeNumberExistsInOrg(
+  orgId: string,
+  employeeNumber: string,
+): Promise<boolean> {
   const { rows } = await query(
     `SELECT 1 FROM users WHERE organization_id = $1 AND LOWER(TRIM(employee_number)) = $2 LIMIT 1`,
     [orgId, employeeNumber.trim().toLowerCase()],
@@ -590,7 +673,10 @@ export async function insertUser(user: User): Promise<User> {
   return (await getUserById(user.id))!;
 }
 
-export async function updateUser(id: string, patch: Partial<User>): Promise<User | null> {
+export async function updateUser(
+  id: string,
+  patch: Partial<User>,
+): Promise<User | null> {
   const existing = await getUserById(id);
   if (!existing) return null;
   const merged = { ...existing, ...patch, updatedAt: new Date().toISOString() };
@@ -660,7 +746,10 @@ export async function getTeamById(id: string): Promise<TeamRecord | null> {
   };
 }
 
-export async function createTeam(team: TeamRecord, memberIds: string[] = []): Promise<TeamRecord> {
+export async function createTeam(
+  team: TeamRecord,
+  memberIds: string[] = [],
+): Promise<TeamRecord> {
   await query(
     `INSERT INTO teams (id, organization_id, name, description, created_by, created_at, updated_at)
      VALUES ($1,$2,$3,$4,$5,$6,$7)`,
@@ -678,7 +767,10 @@ export async function createTeam(team: TeamRecord, memberIds: string[] = []): Pr
   return team;
 }
 
-export async function updateTeam(id: string, patch: { name?: string; description?: string }): Promise<TeamRecord | null> {
+export async function updateTeam(
+  id: string,
+  patch: { name?: string; description?: string },
+): Promise<TeamRecord | null> {
   const team = await getTeamById(id);
   if (!team) return null;
   await query(
@@ -695,8 +787,13 @@ export async function deleteTeam(id: string): Promise<boolean> {
   return (rowCount ?? 0) > 0;
 }
 
-export async function listTeamMembers(teamId: string): Promise<TeamMemberRecord[]> {
-  const { rows } = await query("SELECT * FROM team_members WHERE team_id = $1", [teamId]);
+export async function listTeamMembers(
+  teamId: string,
+): Promise<TeamMemberRecord[]> {
+  const { rows } = await query(
+    "SELECT * FROM team_members WHERE team_id = $1",
+    [teamId],
+  );
   return rows.map((r) => ({
     id: String(r.id),
     teamId: String(r.team_id),
@@ -705,7 +802,10 @@ export async function listTeamMembers(teamId: string): Promise<TeamMemberRecord[
   }));
 }
 
-export async function addTeamMembers(teamId: string, userIds: string[]): Promise<void> {
+export async function addTeamMembers(
+  teamId: string,
+  userIds: string[],
+): Promise<void> {
   for (const userId of userIds) {
     const exists = await query(
       "SELECT 1 FROM team_members WHERE team_id = $1 AND user_id = $2",
@@ -714,19 +814,31 @@ export async function addTeamMembers(teamId: string, userIds: string[]): Promise
     if (exists.rows.length) continue;
     await query(
       `INSERT INTO team_members (id, team_id, user_id) VALUES ($1, $2, $3)`,
-      [`tm-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, teamId, userId],
+      [
+        `tm-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        teamId,
+        userId,
+      ],
     );
   }
-  await query("UPDATE teams SET updated_at = CURRENT_TIMESTAMP WHERE id = $1", [teamId]);
+  await query("UPDATE teams SET updated_at = CURRENT_TIMESTAMP WHERE id = $1", [
+    teamId,
+  ]);
 }
 
-export async function removeTeamMember(teamId: string, userId: string): Promise<boolean> {
+export async function removeTeamMember(
+  teamId: string,
+  userId: string,
+): Promise<boolean> {
   const { rowCount } = await query(
     "DELETE FROM team_members WHERE team_id = $1 AND user_id = $2",
     [teamId, userId],
   );
   if ((rowCount ?? 0) > 0) {
-    await query("UPDATE teams SET updated_at = CURRENT_TIMESTAMP WHERE id = $1", [teamId]);
+    await query(
+      "UPDATE teams SET updated_at = CURRENT_TIMESTAMP WHERE id = $1",
+      [teamId],
+    );
     return true;
   }
   return false;
@@ -798,11 +910,10 @@ export async function deleteVerificationCode(
   organizationId = "",
 ): Promise<void> {
   const orgId = organizationId || "";
-  await query("DELETE FROM verification_codes WHERE email = $1 AND purpose = $2 AND organization_id = $3", [
-    email.trim().toLowerCase(),
-    purpose,
-    orgId,
-  ]);
+  await query(
+    "DELETE FROM verification_codes WHERE email = $1 AND purpose = $2 AND organization_id = $3",
+    [email.trim().toLowerCase(), purpose, orgId],
+  );
 }
 
 // --- Stats ---
@@ -823,7 +934,8 @@ const MONTHLY_GOAL_TARGETS: Record<MeetingGoalCategory, number> = {
 
 function meetingGoalCategory(title: string): MeetingGoalCategory {
   if (/مشتری|کارفرما|فروش|قرارداد|vip/i.test(title)) return "client";
-  if (/تیم|اسپرینت|محصول|هماهنگی|مارکتینگ|استنداپ|داخلی/i.test(title)) return "team";
+  if (/تیم|اسپرینت|محصول|هماهنگی|مارکتینگ|استنداپ|داخلی/i.test(title))
+    return "team";
   return "planning";
 }
 
@@ -848,7 +960,10 @@ function isoDateParts(d: Date): string {
 
 type StatsRange = "week" | "month" | "quarter";
 
-function filterBookingsForRange(bookings: Booking[], range: StatsRange): Booking[] {
+function filterBookingsForRange(
+  bookings: Booking[],
+  range: StatsRange,
+): Booking[] {
   const end = new Date();
   const start = new Date();
   start.setHours(0, 0, 0, 0);
@@ -869,7 +984,11 @@ function buildQuarterlyUsageBuckets(
   todayStr: string,
   currentHourStr: string,
 ) {
-  const buckets: { day: string; date: string; match: (b: Booking) => boolean }[] = [];
+  const buckets: {
+    day: string;
+    date: string;
+    match: (b: Booking) => boolean;
+  }[] = [];
   for (let w = 12; w >= 0; w--) {
     const start = new Date();
     start.setDate(start.getDate() - w * 7);
@@ -919,16 +1038,18 @@ function buildMonthlyGoals(monthBookings: Booking[]) {
   monthBookings.forEach((b) => {
     counts[meetingGoalCategory(b.title)] += 1;
   });
-  return (["planning", "client", "team"] as MeetingGoalCategory[]).map((key) => {
-    const count = counts[key];
-    const target = MONTHLY_GOAL_TARGETS[key];
-    return {
-      label: MONTHLY_GOAL_LABELS[key],
-      count,
-      target,
-      pct: Math.min(100, Math.round((count / target) * 100)),
-    };
-  });
+  return (["planning", "client", "team"] as MeetingGoalCategory[]).map(
+    (key) => {
+      const count = counts[key];
+      const target = MONTHLY_GOAL_TARGETS[key];
+      return {
+        label: MONTHLY_GOAL_LABELS[key],
+        count,
+        target,
+        pct: Math.min(100, Math.round((count / target) * 100)),
+      };
+    },
+  );
 }
 
 export async function getStatsData(options?: {
@@ -947,7 +1068,9 @@ export async function getStatsData(options?: {
     ? filterBookingsForRange(orgBookings, options.range)
     : orgBookings;
   const orgUsers = orgId ? await listUsers({ orgId }) : [];
-  const deptByUserId = new Map(orgUsers.map((u) => [u.id, u.department || "عمومی"]));
+  const deptByUserId = new Map(
+    orgUsers.map((u) => [u.id, u.department || "عمومی"]),
+  );
   const deptByEmail = new Map(
     orgUsers
       .filter((u) => u.email)
@@ -960,7 +1083,9 @@ export async function getStatsData(options?: {
   const activeNow = todayBookings.filter(
     (b) => b.startTime <= currentHourStr && b.endTime >= currentHourStr,
   );
-  const pendingApprovals = orgBookings.filter((b) => b.status === "pending_approval").length;
+  const pendingApprovals = orgBookings.filter(
+    (b) => b.status === "pending_approval",
+  ).length;
   const roomBookingCounts: Record<string, number> = {};
   analyticsBookings.forEach((b) => {
     const roomName = b.roomName?.trim() || "اتاق نامشخص";
@@ -981,7 +1106,15 @@ export async function getStatsData(options?: {
     }
     departmentCounts[dept] = (departmentCounts[dept] || 0) + 1;
   });
-  const dayNames = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"];
+  const dayNames = [
+    "یکشنبه",
+    "دوشنبه",
+    "سه‌شنبه",
+    "چهارشنبه",
+    "پنج‌شنبه",
+    "جمعه",
+    "شنبه",
+  ];
 
   const weeklyBuckets = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
@@ -1004,9 +1137,15 @@ export async function getStatsData(options?: {
   const month = now.getMonth();
   const lastDay = new Date(year, month + 1, 0).getDate();
   const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
-  const monthBookings = orgBookings.filter((b) => b.date.startsWith(monthPrefix));
+  const monthBookings = orgBookings.filter((b) =>
+    b.date.startsWith(monthPrefix),
+  );
 
-  const monthlyBuckets: { day: string; date: string; match: (b: Booking) => boolean }[] = [];
+  const monthlyBuckets: {
+    day: string;
+    date: string;
+    match: (b: Booking) => boolean;
+  }[] = [];
   for (let start = 1; start <= lastDay; start += 7) {
     const end = Math.min(start + 6, lastDay);
     const startIso = `${monthPrefix}-${String(start).padStart(2, "0")}`;
@@ -1051,13 +1190,18 @@ export async function getStatsData(options?: {
   const utilizationDenominator = personalScope
     ? Math.max(1, 16)
     : capacitySlots;
-  const utilizationNumerator = personalScope ? analyticsBookings.length : monthBookings.length;
+  const utilizationNumerator = personalScope
+    ? analyticsBookings.length
+    : monthBookings.length;
   const utilizationRate = Math.min(
     100,
     Math.round((utilizationNumerator / utilizationDenominator) * 100),
   );
 
-  const topRoomObj = popularRooms[0] || { name: rooms[0]?.name || "—", count: 0 };
+  const topRoomObj = popularRooms[0] || {
+    name: rooms[0]?.name || "—",
+    count: 0,
+  };
   const topRoomShare =
     analyticsBookings.length > 0
       ? Math.round((topRoomObj.count / analyticsBookings.length) * 100)

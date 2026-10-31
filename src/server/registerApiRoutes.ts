@@ -18,7 +18,7 @@ import { registerSetupRoutes } from "./installation/setup.routes";
 import { registerAdminRoutes } from "./admin/admin.routes";
 import { registerEnterpriseRoutes } from "./enterprise/enterprise.routes";
 import { normalizePasswordForStorage } from "./auth/password.service";
-import { validateBookingTimes } from "../utils/bookingRules";
+import { validateBookingSchedule } from "../utils/bookingRules";
 
 async function populateTeamResponse(team: TeamRecord) {
   const members = await store.getTeamMembersPopulated(team.id);
@@ -326,13 +326,14 @@ export function registerApiRoutes(app: Express): void {
       const workStart = org.workHours?.start || "08:00";
       const workEnd = org.workHours?.end || "19:00";
       const maxH = org.settings?.maxBookingHours ?? 4;
-      const rulesError = validateBookingTimes(
-        String(startTime),
-        String(endTime),
+      const rulesError = validateBookingSchedule({
+        date: String(date),
+        startTime: String(startTime),
+        endTime: String(endTime),
         workStart,
         workEnd,
-        maxH,
-      );
+        maxBookingHours: maxH,
+      });
       if (rulesError) {
         return res.status(400).json({ error: rulesError });
       }

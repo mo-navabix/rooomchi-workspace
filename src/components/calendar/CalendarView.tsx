@@ -25,6 +25,8 @@ import {
 import {
   minutesToTime,
   parseTimeToMinutes,
+  isCalendarSlotBookable,
+  minBookableDateIso,
 } from '../../utils/bookingRules';
 
 function useMatchMedia(query: string): boolean {
@@ -124,6 +126,9 @@ export const CalendarView: React.FC = () => {
   };
 
   const handleCalendarSlotClick = (isoDate: string, startTime: string) => {
+    if (!isCalendarSlotBookable(isoDate, startTime)) {
+      return;
+    }
     const workEnd = currentOrg?.workHours?.end ?? '18:00';
     const oneHourEnd = minutesToTime(parseTimeToMinutes(startTime) + 60);
     const endTime =
@@ -151,6 +156,7 @@ export const CalendarView: React.FC = () => {
                 id="calendar-focus-date"
                 label={orgLocale.t('selectDay')}
                 value={focusDateIso}
+                minDate={minBookableDateIso()}
                 onChange={setFocusDateIso}
                 className="w-full"
               />

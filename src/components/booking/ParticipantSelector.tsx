@@ -200,12 +200,12 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
   return (
     <div ref={containerRef} className="space-y-2.5">
       {/* Header & Capacity */}
-      <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
-          <Users className="w-3.5 h-3.5 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
-          <span>حاضرین و مدعوین جلسه</span>
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-xs">
+        <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300 min-w-0">
+          <Users className="w-3.5 h-3.5 shrink-0 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
+          <span className="truncate">حاضرین و مدعوین جلسه</span>
           {inviteeEmails.length > 0 && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] border border-brand-soft/50">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] border border-brand-soft/50 shrink-0">
               {toPersianDigits(inviteeEmails.length)} نفر
             </span>
           )}
@@ -213,7 +213,7 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
 
         {roomCapacity && roomCapacity > 0 && (
           <div
-            className={`text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 ${
+            className={`text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0 ${
               isOverCapacity
                 ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200'
                 : 'text-slate-500 dark:text-slate-400'
@@ -229,31 +229,33 @@ export const ParticipantSelector: React.FC<ParticipantSelectorProps> = ({
 
       {/* Smart Search & Invite Field */}
       <div className="relative">
-        <div className="relative">
-          <input
-            type="text"
-            id="input-booking-invite"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setIsDropdownOpen(true);
-            }}
-            onFocus={() => setIsDropdownOpen(true)}
-            onKeyDown={handleKeyDown}
-            placeholder="جستجو بر اساس نام یا ایمیل همکار (یا تایپ ایمیل و فشردن Enter)..."
-            className="w-full text-xs pr-8 pl-16 py-2.5 rounded-xl border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] transition-all"
-          />
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="flex items-stretch gap-2">
+          <div className="relative flex-1 min-w-0">
+            <input
+              type="text"
+              id="input-booking-invite"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setIsDropdownOpen(true);
+              }}
+              onFocus={() => setIsDropdownOpen(true)}
+              onKeyDown={handleKeyDown}
+              placeholder="جستجو بر اساس نام یا ایمیل همکار (یا Enter برای افزودن ایمیل)..."
+              className="w-full text-xs pr-9 pl-3 py-2.5 rounded-xl border border-slate-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] transition-all"
+            />
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
 
-          {query.trim() && (
+          {query.trim() ? (
             <button
               type="button"
               onClick={() => addSingleEmail(query)}
-              className="absolute left-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg btn-brand text-white text-[10px] font-bold cursor-pointer transition-colors"
+              className="shrink-0 px-3 py-2.5 rounded-xl btn-brand text-white text-[11px] font-bold cursor-pointer transition-colors self-center"
             >
               افزودن
             </button>
-          )}
+          ) : null}
         </div>
 
         {/* Colleagues Suggestions Dropdown */}

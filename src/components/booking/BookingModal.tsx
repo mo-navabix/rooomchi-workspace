@@ -4,13 +4,15 @@ import { ApiService } from '../../services/apiService';
 import { Room, Booking } from '../../types';
 import { OrgDatePicker } from '../common/OrgDatePicker';
 import { TimePicker } from '../common/TimePicker';
-import { formatGregorianIsoLocal } from '../../utils/jalali';
 import { X, Calendar, AlertTriangle, ChevronDown, UserPlus } from 'lucide-react';
 import { ParticipantSelector } from './ParticipantSelector';
 import { triggerBookingNotifications } from '../../utils/notificationDispatcher';
 import {
+  clampBookingTimesForDate,
+  earliestStartTimeForDate,
   latestEndTimeForStart,
-  validateBookingTimes,
+  minBookableDateIso,
+  validateBookingSchedule,
 } from '../../utils/bookingRules';
 
 interface Props {
@@ -37,7 +39,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const [selectedRoomId, setSelectedRoomId] = useState<string>('');
   const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
 
-  const today = formatGregorianIsoLocal();
+  const today = minBookableDateIso();
   const orgWorkStart = currentOrg?.workHours?.start || '08:00';
   const orgWorkEnd = currentOrg?.workHours?.end || '18:00';
   const maxBookingHours = currentOrg?.settings?.maxBookingHours ?? 4;
@@ -45,6 +47,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   const [date, setDate] = useState<string>(today);
   const [startTime, setStartTime] = useState<string>(orgWorkStart);
   const [endTime, setEndTime] = useState<string>('09:00');
+  const startTimeMin = earliestStartTimeForDate(date, orgWorkStart, orgWorkEnd);
   const endTimeCap = latestEndTimeForStart(startTime, orgWorkEnd, maxBookingHours);
   const [title, setTitle] = useState<string>('');
   const [inviteeEmails, setInviteeEmails] = useState<string[]>([]);
@@ -85,9 +88,17 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       effectiveEnd = endFormatted <= initEndOrg ? endFormatted : initEndOrg;
     }
 
-    setDate(effectiveDate);
-    setStartTime(effectiveStart);
-    setEndTime(effectiveEnd);
+    const clamped = clampBookingTimesForDate(
+      effectiveDate < today ? today : effectiveDate,
+      effectiveStart,
+      effectiveEnd,
+      initStart,
+      initEndOrg,
+      maxBookingHours,
+    );
+    setDate(effectiveDate < today ? today : effectiveDate);
+    setStartTime(clamped.startTime);
+    setEndTime(clamped.endTime);
     setConflictMessage(null);
   }, [
     currentOrg,
@@ -165,13 +176,14 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       return;
     }
 
-    const rulesError = validateBookingTimes(
+    const rulesError = validateBookingSchedule({
+      date,
       startTime,
       endTime,
-      orgWorkStart,
-      orgWorkEnd,
+      workStart: orgWorkStart,
+      workEnd: orgWorkEnd,
       maxBookingHours,
-    );
+    });
     if (rulesError) {
       setConflictMessage(rulesError);
       return;
@@ -206,7 +218,6 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
   if (!isBookingModalOpen) return null;
 
   const activeRoom = availableRooms.find((r) => r.id === selectedRoomId);
-  const roomLocked = Boolean(selectedRoomForBooking);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,13 +241,14 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
       showToast('عنوان جلسه را وارد کنید', 'error');
       return;
     }
-    const rulesError = validateBookingTimes(
+    const rulesError = validateBookingSchedule({
+      date,
       startTime,
       endTime,
-      orgWorkStart,
-      orgWorkEnd,
+      workStart: orgWorkStart,
+      workEnd: orgWorkEnd,
       maxBookingHours,
-    );
+    });
     if (rulesError) {
       showToast(rulesError, 'error');
       return;
@@ -381,41 +393,46 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
 
           <label className="block space-y-1.5">
             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">اتاق</span>
-            {roomLocked && activeRoom ? (
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-100 px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-[#334155]">
-                {activeRoom.name}
-                <span className="text-xs text-slate-500 font-normal mr-2">
-                  · ظرفیت {activeRoom.capacity}
-                </span>
-              </p>
-            ) : (
-              <div className="relative">
-                <select
-                  id="select-booking-room"
-                  value={selectedRoomId}
-                  onChange={(e) => setSelectedRoomId(e.target.value)}
-                  className={selectClass}
-                >
-                  {availableRooms.length === 0 ? (
-                    <option value="">اتاقی موجود نیست</option>
-                  ) : (
-                    availableRooms.map((room) => (
-                      <option key={room.id} value={room.id}>
-                        {room.name} ({room.capacity} نفر)
-                      </option>
-                    ))
-                  )}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            )}
+            <div className="relative">
+              <select
+                id="select-booking-room"
+                value={selectedRoomId}
+                onChange={(e) => setSelectedRoomId(e.target.value)}
+                className={selectClass}
+              >
+                {availableRooms.length === 0 ? (
+                  <option value="">اتاقی موجود نیست</option>
+                ) : (
+                  availableRooms.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.name} ({room.capacity} نفر)
+                    </option>
+                  ))
+                )}
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </label>
 
           <OrgDatePicker
             id="input-booking-date"
             label={orgLocale.language === 'en' ? 'Date' : 'تاریخ'}
             value={date}
-            onChange={setDate}
+            minDate={today}
+            onChange={(nextDate) => {
+              const safeDate = nextDate < today ? today : nextDate;
+              const clamped = clampBookingTimesForDate(
+                safeDate,
+                startTime,
+                endTime,
+                orgWorkStart,
+                orgWorkEnd,
+                maxBookingHours,
+              );
+              setDate(safeDate);
+              setStartTime(clamped.startTime);
+              setEndTime(clamped.endTime);
+            }}
             required
           />
 
@@ -427,7 +444,7 @@ export const BookingModal: React.FC<Props> = ({ onSuccess }) => {
                 label="شروع"
                 value={startTime}
                 onChange={setStartTime}
-                minTime={orgWorkStart}
+                minTime={startTimeMin}
                 maxTime={orgWorkEnd}
                 required
               />

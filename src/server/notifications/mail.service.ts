@@ -1,6 +1,12 @@
 import nodemailer from "nodemailer";
 import { getIntegration } from "../installation/integrations.store";
 import type { SetupSmtpInput } from "../installation/setup.service";
+import {
+  buildPasswordResetMail,
+  buildRegistrationOtpMail,
+  buildTestMail,
+  resolveOrgMailBranding,
+} from "./mail-templates";
 
 export type ResendConfig = {
   apiKey: string;
@@ -132,21 +138,32 @@ async function sendViaSmtp(cfg: SetupSmtpInput, input: MailSendInput): Promise<M
   }
 }
 
+function withOrgSenderName<T extends { fromEmail: string; fromName?: string }>(
+  cfg: T,
+  organizationName?: string,
+): T {
+  if (cfg.fromName?.trim() || !organizationName?.trim()) return cfg;
+  return { ...cfg, fromName: organizationName.trim() };
+}
+
 export async function sendEmail(input: MailSendInput): Promise<MailSendResult> {
   const { resend, smtp } = await resolveMailConfig(input.organizationId);
+  const branding = await resolveOrgMailBranding(input.organizationId);
+  const resendCfg = resend ? withOrgSenderName(resend, branding.organizationName) : null;
+  const smtpCfg = smtp ? withOrgSenderName(smtp, branding.organizationName) : null;
 
-  if (resend) {
-    const result = await sendViaResend(resend, input);
+  if (resendCfg) {
+    const result = await sendViaResend(resendCfg, input);
     if (result.ok) return result;
-    if (smtp) {
-      const fallback = await sendViaSmtp(smtp, input);
+    if (smtpCfg) {
+      const fallback = await sendViaSmtp(smtpCfg, input);
       if (fallback.ok) return fallback;
       return { ok: false, message: `Resend: ${result.message}; SMTP: ${fallback.message}` };
     }
     return result;
   }
 
-  if (smtp) return sendViaSmtp(smtp, input);
+  if (smtpCfg) return sendViaSmtp(smtpCfg, input);
 
   return {
     ok: false,
@@ -165,9 +182,12 @@ export async function sendOtpEmail(params: {
   minutesValid?: number;
 }): Promise<MailSendResult> {
   const minutesValid = params.minutesValid ?? 10;
-  const subject = "کد تأیید ثبت‌نام — روم‌چی";
-  const text = `کد تأیید شما: ${params.code}\nاین کد تا ${minutesValid} دقیقه معتبر است.`;
-  const html = `<p>کد تأیید ثبت‌نام شما در روم‌چی:</p><p style="font-size:24px;font-weight:bold;letter-spacing:4px">${params.code}</p><p>اعتبار: ${minutesValid} دقیقه</p>`;
+  const branding = await resolveOrgMailBranding(params.organizationId);
+  const { subject, html, text } = buildRegistrationOtpMail({
+    branding,
+    code: params.code,
+    minutesValid,
+  });
   return sendEmail({
     to: params.to,
     subject,
@@ -184,9 +204,12 @@ export async function sendPasswordResetEmail(params: {
   minutesValid?: number;
 }): Promise<MailSendResult> {
   const minutesValid = params.minutesValid ?? 15;
-  const subject = "بازنشانی رمز عبور — روم‌چی";
-  const text = `کد بازنشانی رمز عبور: ${params.code}\nاعتبار: ${minutesValid} دقیقه.`;
-  const html = `<p>کد بازنشانی رمز عبور روم‌چی:</p><p style="font-size:24px;font-weight:bold;letter-spacing:4px">${params.code}</p><p>اعتبار: ${minutesValid} دقیقه</p>`;
+  const branding = await resolveOrgMailBranding(params.organizationId);
+  const { subject, html, text } = buildPasswordResetMail({
+    branding,
+    code: params.code,
+    minutesValid,
+  });
   return sendEmail({
     to: params.to,
     subject,
@@ -202,9 +225,11 @@ export async function sendTestEmail(params: {
   resend?: ResendConfig | null;
   smtp?: SetupSmtpInput | null;
 }): Promise<MailSendResult> {
-  const subject = "تست ارسال ایمیل — روم‌چی";
-  const text = "این یک ایمیل آزمایشی از سامانه روم‌چی است.";
-  const html = "<p>این یک <strong>ایمیل آزمایشی</strong> از سامانه روم‌چی است.</p>";
+  const branding = await resolveOrgMailBranding(params.organizationId);
+  const testMail = buildTestMail(branding);
+  const subject = testMail.subject;
+  const text = testMail.text;
+  const html = testMail.html;
 
   if (params.resend?.apiKey && params.resend.fromEmail) {
     const result = await sendViaResend(params.resend, {

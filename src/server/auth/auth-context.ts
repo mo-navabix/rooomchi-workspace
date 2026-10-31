@@ -33,21 +33,42 @@ export async function resolveOrganizationFromRequest(
     return (await store.getOrganizationById(body.organizationId)) ?? null;
   }
 
-  let detectedSlug: string | null = null;
-  const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "";
+  const host =
+    (req.headers["x-forwarded-host"] as string) || req.headers.host || "";
   const cleanHost = host.split(":")[0].trim().toLowerCase();
 
   if (req.headers["x-organization-slug"]) {
-    detectedSlug = String(req.headers["x-organization-slug"]).trim().toLowerCase();
-  } else if (body.organizationSlug) {
-    detectedSlug = body.organizationSlug.trim().toLowerCase();
-  } else if (cleanHost.includes(".")) {
+    const slug = String(req.headers["x-organization-slug"]).trim().toLowerCase();
+    return (await store.findOrganizationBySlugOrCode(slug)) ?? null;
+  }
+
+  if (body.organizationSlug) {
+    return (
+      (await store.findOrganizationBySlugOrCode(body.organizationSlug.trim())) ??
+      null
+    );
+  }
+
+  if (body.organizationCode) {
+    return (
+      (await store.findOrganizationBySlugOrCode(body.organizationCode.trim())) ??
+      null
+    );
+  }
+
+  if (cleanHost) {
+    const byDomain = await store.findOrganizationByDomain(cleanHost);
+    if (byDomain) return byDomain;
+  }
+
+  let detectedSlug: string | null = null;
+  if (cleanHost.includes(".")) {
     const parts = cleanHost.split(".");
-    if (parts.length >= 2 && !RESERVED_SUBDOMAINS.has(parts[0])) {
+    if (parts.length === 2 && parts[1] === "localhost") {
+      detectedSlug = parts[0];
+    } else if (parts.length >= 3 && !RESERVED_SUBDOMAINS.has(parts[0])) {
       detectedSlug = parts[0];
     }
-  } else if (body.organizationCode) {
-    return (await store.findOrganizationBySlugOrCode(body.organizationCode.trim())) ?? null;
   }
 
   if (detectedSlug) {

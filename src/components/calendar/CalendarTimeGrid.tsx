@@ -1,6 +1,7 @@
 import React from "react";
 import { Booking, Room } from "../../types";
 import { formatToJalali } from "../../utils/jalali";
+import { isCalendarSlotBookable, minBookableDateIso } from "../../utils/bookingRules";
 
 export type CalendarDayInfo = {
   dayIndex: number;
@@ -112,11 +113,15 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
         <div className="p-2.5 sm:p-3.5 border-l border-slate-200/80 dark:border-[#334155] text-slate-400 text-[10px] sm:text-xs">
           ساعت
         </div>
-        {days.map((d) => (
+        {days.map((d) => {
+          const isPastDay = d.isoDate < minBookableDateIso();
+          return (
           <div
             key={d.isoDate}
             className={`p-2.5 sm:p-3.5 border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 ${
-              d.isToday
+              isPastDay
+                ? "opacity-45 text-slate-400 dark:text-slate-500"
+                : d.isToday
                 ? "bg-[rgb(var(--brand-primary-rgb)/0.14)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] font-black ring-1 ring-inset ring-[rgb(var(--brand-primary-rgb)/0.22)] dark:ring-[rgb(var(--brand-primary-rgb)/0.28)]"
                 : ""
             }`}
@@ -139,7 +144,8 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
               </span>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="grid text-xs" style={{ gridTemplateColumns: colTemplate }}>
@@ -160,12 +166,15 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
 
         {days.map((d, dayIndex) => {
           const placed = layoutDayBookings(bookingsByDay[dayIndex] ?? []);
+          const isPastDay = d.isoDate < minBookableDateIso();
 
           return (
             <div
               key={d.isoDate}
               className={`relative border-l border-slate-200/80 dark:border-[#334155] last:border-l-0 ${
-                d.isToday
+                isPastDay
+                  ? "bg-slate-100/80 dark:bg-[#0F172A]/60 opacity-60"
+                  : d.isToday
                   ? "bg-[rgb(var(--brand-primary-rgb)/0.07)] dark:bg-[rgb(var(--brand-primary-rgb)/0.08)] shadow-[inset_0_0_0_1px_rgb(var(--brand-primary-rgb)/0.12)] dark:shadow-[inset_0_0_0_1px_rgb(var(--brand-primary-rgb)/0.18)]"
                   : "bg-white dark:bg-[#1E293B]"
               }`}
@@ -183,7 +192,11 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
               />
 
               {onSlotClick &&
-                HOUR_LABELS.map((hour, index) => (
+                HOUR_LABELS.map((hour, index) => {
+                  if (!isCalendarSlotBookable(d.isoDate, hour)) {
+                    return null;
+                  }
+                  return (
                   <button
                     key={`slot-${d.isoDate}-${hour}`}
                     type="button"
@@ -195,7 +208,8 @@ export const CalendarTimeGrid: React.FC<CalendarTimeGridProps> = ({
                     onClick={() => onSlotClick(d.isoDate, hour)}
                     aria-label={`رزرو ${d.name} ساعت ${hour}`}
                   />
-                ))}
+                  );
+                })}
 
               {placed.map(({ booking: bk, column, columnCount }, bkIdx) => {
                 const gridStartMin = DAY_START_HOUR * 60;

@@ -51,6 +51,7 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "test:sql": "tsx --test scripts/sql-split.test.ts",
+    "test:booking": "tsx --test scripts/booking-rules.test.ts",
     "release:enterprise": "bash scripts/build-enterprise-release.sh"
   },
   "dependencies": {

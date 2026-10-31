@@ -14,7 +14,10 @@ export function readSetupRoute(): boolean {
   return path === SETUP_PATH || path === INSTALL_PATH;
 }
 
-export function navigateToSetupPath(replace = false, useInstallAlias = false): void {
+export function navigateToSetupPath(
+  replace = false,
+  useInstallAlias = false,
+): void {
   if (typeof window === "undefined") return;
   const target = useInstallAlias ? INSTALL_PATH : SETUP_PATH;
   if (replace) window.history.replaceState({}, "", target);
