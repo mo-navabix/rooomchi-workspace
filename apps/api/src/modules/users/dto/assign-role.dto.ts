@@ -4,7 +4,8 @@ import { RoleEnum } from '../../../common/enums/role.enum';
 export class AssignRoleDto {
   @IsNotEmpty({ message: 'Role is required' })
   @IsEnum(RoleEnum, {
-    message: 'Role must be one of: SUPER_ADMIN, ORGANIZATION_ADMIN, MANAGER, EMPLOYEE',
+    message:
+      'Role must be one of: SUPER_ADMIN, ORGANIZATION_ADMIN, MANAGER, SUPERVISOR, EMPLOYEE',
   })
   role!: RoleEnum;
 }

@@ -25,7 +25,7 @@ export const ProfileView: React.FC = () => {
     userRole,
     isAuthenticated,
     openAuthModal,
-    completeAuthLogin,
+    updateCurrentUser,
     showToast,
   } = useApp();
 
@@ -61,7 +61,7 @@ export const ProfileView: React.FC = () => {
         jobTitle: jobTitle.trim() || undefined,
         phone: phone.trim() || undefined,
       });
-      completeAuthLogin({ user: res.user, message: res.message });
+      updateCurrentUser(res.user);
       showToast(
         res.message || "اطلاعات پروفایل با موفقیت ذخیره شد.",
         "success",

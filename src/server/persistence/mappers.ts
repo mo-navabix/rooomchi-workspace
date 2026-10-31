@@ -40,6 +40,7 @@ export function toApiRole(role: string): string {
     organization_admin: "ORGANIZATION_ADMIN",
     room_manager: "MANAGER",
     manager: "MANAGER",
+    supervisor: "SUPERVISOR",
     employee: "EMPLOYEE",
   };
   return map[r] || role.toUpperCase();
@@ -53,6 +54,7 @@ export function toDbRole(role: string): string {
     ORG_ADMIN: "org_admin",
     MANAGER: "manager",
     ROOM_MANAGER: "room_manager",
+    SUPERVISOR: "supervisor",
     EMPLOYEE: "employee",
   };
   return map[r] || role.toLowerCase();

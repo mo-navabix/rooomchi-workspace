@@ -1,4 +1,4 @@
-export type UserRole = 'employee' | 'room_manager' | 'org_admin' | 'super_admin';
+export type UserRole = 'employee' | 'supervisor' | 'room_manager' | 'org_admin' | 'super_admin';
 
 export type Permission =
   | 'MANAGE_ORGANIZATIONS'

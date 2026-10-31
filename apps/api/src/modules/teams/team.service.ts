@@ -37,7 +37,12 @@ export class TeamService {
   }
 
   private assertManagePermission(currentUser: JwtPayload, action = 'مدیریت تیم‌ها'): void {
-    const allowed = [RoleEnum.SUPER_ADMIN, RoleEnum.ORGANIZATION_ADMIN, RoleEnum.MANAGER];
+    const allowed = [
+      RoleEnum.SUPER_ADMIN,
+      RoleEnum.ORGANIZATION_ADMIN,
+      RoleEnum.MANAGER,
+      RoleEnum.SUPERVISOR,
+    ];
     if (!allowed.includes(currentUser.role as RoleEnum)) {
       throw new ForbiddenException(`عدم دسترسی: نقش ${currentUser.role} مجوز ${action} را ندارد`);
     }

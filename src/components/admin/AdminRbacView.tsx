@@ -179,7 +179,7 @@ export const AdminRbacView: React.FC = () => {
     return true;
   });
 
-  const rolesList: UserRole[] = ['super_admin', 'org_admin', 'room_manager', 'employee'];
+  const rolesList: UserRole[] = ['super_admin', 'org_admin', 'room_manager', 'supervisor', 'employee'];
 
   if (isLoading) {
     return <AdminRbacSkeleton />;
@@ -292,6 +292,7 @@ export const AdminRbacView: React.FC = () => {
                   <option value="super_admin">مدیر کل روم‌چی</option>
                   <option value="org_admin">مدیر سازمان</option>
                   <option value="room_manager">مدیر تشریفات</option>
+                  <option value="supervisor">سرپرست</option>
                   <option value="employee">کارمند عادی</option>
                 </select>
                 <ChevronDown className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -380,6 +381,7 @@ export const AdminRbacView: React.FC = () => {
                                 className="w-full text-xs pr-3 pl-8 py-2 appearance-none rounded-xl border border-slate-200 dark:border-[#334155] bg-slate-50 dark:bg-[#0F172A] font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[var(--brand-primary-light)] cursor-pointer hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors"
                               >
                                 <option value="employee">کارمند عادی (Employee)</option>
+                                <option value="supervisor">سرپرست (Supervisor)</option>
                                 <option value="room_manager">مدیر تشریفات (Room Manager)</option>
                                 <option value="org_admin">مدیر ارشد سازمان (Org Admin)</option>
                                 <option value="super_admin">مدیر کل سیستم (Super Admin)</option>
@@ -605,6 +607,7 @@ export const AdminRbacView: React.FC = () => {
                       className="w-full appearance-none pr-3.5 pl-9 py-2.5 text-xs font-semibold border border-slate-200 dark:border-[#334155] rounded-xl bg-white dark:bg-[#0F172A] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[rgb(var(--brand-primary-rgb)/0.40)] focus:border-[var(--brand-primary)] transition-all cursor-pointer shadow-xs"
                     >
                       <option value="employee">کارمند عادی</option>
+                      <option value="supervisor">سرپرست</option>
                       <option value="room_manager">مدیر تشریفات</option>
                       <option value="org_admin">مدیر سازمان</option>
                       <option value="super_admin">مدیر کل سیستم</option>

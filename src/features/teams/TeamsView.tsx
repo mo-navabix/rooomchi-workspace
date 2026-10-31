@@ -12,7 +12,6 @@ export const TeamsView: React.FC = () => {
   const {
     currentOrg,
     can,
-    userRole,
     currentUser,
     showToast,
     openBookingModal,
@@ -29,11 +28,7 @@ export const TeamsView: React.FC = () => {
   // Delete modal state
   const [teamToDelete, setTeamToDelete] = useState<Team | null>(null);
 
-  const canManage =
-    can('MANAGE_TEAMS') ||
-    userRole === 'super_admin' ||
-    userRole === 'org_admin' ||
-    userRole === 'room_manager';
+  const canManage = can('MANAGE_TEAMS');
 
   const fetchTeamsData = useCallback(async () => {
     if (!currentOrg) return;

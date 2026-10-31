@@ -179,7 +179,7 @@ export const OrgLoginPage: React.FC = () => {
               </div>
             </div>
             <p className="relative z-10 text-[11px] text-white/70">
-              پشتیبانی: support@rooomchi.ir
+              پشتیبانی: mohammad.navabi.2025@gmail.com
             </p>
             <div
               className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl"

@@ -206,6 +206,9 @@ export class AuthService {
     if (r === 'room_manager' || r === 'manager') {
       return RoleEnum.MANAGER;
     }
+    if (r === 'supervisor') {
+      return RoleEnum.SUPERVISOR;
+    }
     return RoleEnum.EMPLOYEE;
   }
 

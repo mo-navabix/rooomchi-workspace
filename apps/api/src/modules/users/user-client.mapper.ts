@@ -45,6 +45,8 @@ function mapRoleToClient(role: RoleEnum | string): string {
       return 'org_admin';
     case RoleEnum.MANAGER:
       return 'room_manager';
+    case RoleEnum.SUPERVISOR:
+      return 'supervisor';
     case RoleEnum.EMPLOYEE:
     default:
       return 'employee';

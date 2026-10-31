@@ -37,7 +37,8 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsEnum(RoleEnum, {
-    message: 'Role must be one of: SUPER_ADMIN, ORGANIZATION_ADMIN, MANAGER, EMPLOYEE',
+    message:
+      'Role must be one of: SUPER_ADMIN, ORGANIZATION_ADMIN, MANAGER, SUPERVISOR, EMPLOYEE',
   })
   role?: RoleEnum;
 

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Headphones, Mail, Phone, Ticket, X } from 'lucide-react';
 
-const SUPPORT_EMAIL = 'support@rooomchi.ir';
-const SUPPORT_PHONE = '021-9100-0000';
+const SUPPORT_EMAIL = 'mohammad.navabi.2025@gmail.com';
+const SUPPORT_PHONE = '09908624033';
 
 export const SupportChipsBar: React.FC = () => {
   const { setActiveTab } = useApp();

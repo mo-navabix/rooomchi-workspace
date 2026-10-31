@@ -63,7 +63,8 @@ export function canManageTeams(role?: string): boolean {
     upper === "SUPER_ADMIN" ||
     upper === "ORGANIZATION_ADMIN" ||
     upper === "MANAGER" ||
-    upper === "ROOM_MANAGER"
+    upper === "ROOM_MANAGER" ||
+    upper === "SUPERVISOR"
   );
 }
 

@@ -33,6 +33,10 @@ export class RolesService implements OnModuleInit {
         name: RoleEnum.EMPLOYEE,
         description: 'Company Employee with room discovery, booking, and personal calendar access',
       },
+      {
+        name: RoleEnum.SUPERVISOR,
+        description: 'Supervisor with employee booking access plus team creation for group reservations',
+      },
     ];
 
     for (const item of rolesToSeed) {

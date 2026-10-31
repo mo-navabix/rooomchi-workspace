@@ -81,6 +81,16 @@ export const ROLE_DEFINITIONS: Record<UserRole, RoleMeta> = {
     description: 'مشاهده اتاق‌های آزاد، ثبت رزرو جلسات کاری، دعوت از همکاران و مدیریت جلسات شخصی خود',
     permissions: ['BOOK_ROOM'],
   },
+  supervisor: {
+    role: 'supervisor',
+    titleFa: 'سرپرست',
+    titleEn: 'Supervisor',
+    badgeClass: 'bg-sky-50 text-sky-800 border-sky-200',
+    bgLight: 'bg-sky-50/80',
+    description:
+      'همان دسترسی کارمند، به‌علاوهٔ ایجاد و مدیریت تیم‌ها برای رزرو گروهی جلسات',
+    permissions: ['BOOK_ROOM', 'MANAGE_TEAMS'],
+  },
 };
 
 export interface PermissionMeta {
@@ -189,6 +199,7 @@ export function normalizeUserRole(role: string | undefined | null): UserRole {
     ORG_ADMIN: 'org_admin',
     MANAGER: 'room_manager',
     ROOM_MANAGER: 'room_manager',
+    SUPERVISOR: 'supervisor',
     EMPLOYEE: 'employee',
   };
   if (apiMap[upper]) return apiMap[upper];

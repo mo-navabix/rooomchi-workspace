@@ -121,16 +121,11 @@ export const UnifiedDashboardView: React.FC = () => {
     openCompleteProfileModal,
     openBookingModal,
     can,
-    userRole,
     notifications: appNotifications,
     bookingsDataVersion,
   } = useApp();
 
-  const canManageTeams =
-    can("MANAGE_TEAMS") ||
-    userRole === "super_admin" ||
-    userRole === "org_admin" ||
-    userRole === "room_manager";
+  const canManageTeams = can("MANAGE_TEAMS");
   const [stats, setStats] = useState<Stats | null>(null);
   const [, setRooms] = useState<Room[]>([]);
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
