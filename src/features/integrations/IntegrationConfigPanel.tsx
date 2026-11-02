@@ -58,6 +58,7 @@ export const IntegrationConfigPanel: React.FC<{
           sms={(integrations.sms || {}) as Record<string, unknown>}
           integrations={integrations}
           setIntegrations={setIntegrations}
+          showToast={showToast}
         />
       ) : null}
 

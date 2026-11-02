@@ -18,6 +18,7 @@ import {
   testResendConfiguration,
   testSmtpConfiguration,
 } from "../installation/setup.service";
+import { testSmsConfigurationWithDeadline } from "../notifications/sms.service";
 import { listIntegrations, upsertIntegration } from "../installation/integrations.store";
 import { requireAdminPermission } from "./admin-guard";
 import { writeConfigAudit, listConfigAuditLogs } from "./config-audit.service";
@@ -410,6 +411,18 @@ export function registerAdminRoutes(app: Express): void {
     if (!caller) return;
     const smtp = req.body?.smtp;
     const result = await testSmtpConfiguration(smtp);
+    res.status(result.ok ? 200 : 400).json(result);
+  }));
+
+  app.post("/api/admin/integrations/test-sms", asyncRoute(async (req, res) => {
+    const caller = requireAdminPermission(req, res, "manage_integrations");
+    if (!caller) return;
+    const result = await testSmsConfigurationWithDeadline({
+      organizationId: caller.organizationId,
+      sms: req.body?.sms,
+      receptor: req.body?.receptor,
+      message: req.body?.message,
+    });
     res.status(result.ok ? 200 : 400).json(result);
   }));
 

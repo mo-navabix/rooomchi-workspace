@@ -1,24 +1,14 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 import { ApiService } from "../../services/apiService";
-import { Booking, Room, Stats, Team, User } from "../../types";
+import { Booking, Room, Stats, User } from "../../types";
 import {
-  Activity,
-  Bell,
   Calendar,
   CalendarDays,
-  DoorOpen,
-  Handshake,
-  Megaphone,
-  Palette,
   Plus,
-  UserRound,
-  Users,
   AlertTriangle,
   ArrowLeft,
-  Code2,
-  Package,
-  type LucideIcon,
+  Table2,
 } from "lucide-react";
 import { UserAvatar } from "../common/UserAvatar";
 import {
@@ -27,36 +17,6 @@ import {
   toPersianDigits,
 } from "../../utils/jalali";
 import { UnifiedDashboardSkeleton } from "../common/Skeletons";
-
-const MEETING_ICON_STYLES = [
-  "bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)]",
-  "bg-sky-100 text-sky-600 dark:bg-sky-950/50 dark:text-sky-400",
-  "bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400",
-  "bg-violet-100 text-violet-600 dark:bg-violet-950/50 dark:text-violet-400",
-];
-
-const TEAM_ICONS = [Megaphone, Palette, Package, Code2];
-
-function meetingVisualForTitle(title: string, index: number): {
-  Icon: LucideIcon;
-  iconStyle: string;
-} {
-  const styles = MEETING_ICON_STYLES;
-  const style = styles[index % styles.length];
-  if (/مشتری|کارفرما|فروش/i.test(title)) {
-    return { Icon: Handshake, iconStyle: style };
-  }
-  if (/مارکتینگ|بازاریابی/i.test(title)) {
-    return { Icon: Megaphone, iconStyle: style };
-  }
-  if (/مصاحبه|استخدام/i.test(title)) {
-    return { Icon: UserRound, iconStyle: style };
-  }
-  if (/تیم|اسپرینت|محصول|هماهنگی/i.test(title)) {
-    return { Icon: Users, iconStyle: style };
-  }
-  return { Icon: DoorOpen, iconStyle: style };
-}
 
 function resolveAttendeesForBooking(
   booking: Pick<
@@ -115,26 +75,27 @@ function resolveAttendeesForBooking(
 export const UnifiedDashboardView: React.FC = () => {
   const {
     currentOrg,
+    orgLocale,
     setActiveTab,
     currentUser,
     isRegistrationComplete,
     openCompleteProfileModal,
     openBookingModal,
-    can,
-    notifications: appNotifications,
     bookingsDataVersion,
   } = useApp();
 
-  const canManageTeams = can("MANAGE_TEAMS");
   const [stats, setStats] = useState<Stats | null>(null);
   const [, setRooms] = useState<Room[]>([]);
   const [todayBookings, setTodayBookings] = useState<Booking[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [orgUsers, setOrgUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [chartRange, setChartRange] = useState<"week" | "month">("week");
 
   const todayStr = formatGregorianIsoLocal();
+  const todayDateLabel = useMemo(
+    () => formatToJalaliDescriptive(todayStr),
+    [todayStr],
+  );
   const firstName = currentUser?.name?.split(" ")[0] || "کاربر";
 
   useEffect(() => {
@@ -142,18 +103,20 @@ export const UnifiedDashboardView: React.FC = () => {
     const loadData = async (silent = false) => {
       try {
         if (!silent) setIsLoading(true);
-        const [statsData, roomsData, bookingsData, teamsData, usersData] =
+        const [statsData, roomsData, bookingsData, allBookingsData, usersData] =
           await Promise.all([
             ApiService.getStats(currentOrg.id),
             ApiService.getRooms({ orgId: currentOrg.id }),
             ApiService.getBookings({ orgId: currentOrg.id, date: todayStr }),
-            ApiService.getTeams(currentOrg.id).catch(() => [] as Team[]),
+            ApiService.getBookings({ orgId: currentOrg.id, scope: "all" }).catch(
+              () => [] as Booking[],
+            ),
             ApiService.getUsers(currentOrg.id).catch(() => [] as User[]),
           ]);
         setStats(statsData);
         setRooms(roomsData);
         setTodayBookings(bookingsData.filter((b) => b.status !== "cancelled"));
-        setTeams(teamsData);
+        setRecentBookings(allBookingsData);
         setOrgUsers(usersData.filter((u) => u.status === "active"));
       } catch (err) {
         console.error("Error loading dashboard data:", err);
@@ -164,12 +127,16 @@ export const UnifiedDashboardView: React.FC = () => {
     loadData(bookingsDataVersion > 0);
   }, [currentOrg, todayStr, currentUser?.id, bookingsDataVersion]);
 
-  const chartData =
-    chartRange === "week"
-      ? stats?.weeklyUsage ?? []
-      : stats?.monthlyUsage ?? [];
-
-  const monthlyGoals = stats?.monthlyGoals ?? [];
+  const lastTenReservations = useMemo(() => {
+    return [...recentBookings]
+      .filter((b) => b.status !== "cancelled")
+      .sort((a, b) => {
+        const ta = new Date(a.createdAt || `${a.date}T${a.startTime || "00:00"}`).getTime();
+        const tb = new Date(b.createdAt || `${b.date}T${b.startTime || "00:00"}`).getTime();
+        return tb - ta;
+      })
+      .slice(0, 10);
+  }, [recentBookings]);
 
   const usersByEmail = useMemo(() => {
     const map = new Map<string, User>();
@@ -180,57 +147,16 @@ export const UnifiedDashboardView: React.FC = () => {
   }, [orgUsers]);
 
   const displayMeetings = useMemo(() => {
-    return todayBookings.slice(0, 4).map((b, idx) => {
-      const { Icon, iconStyle } = meetingVisualForTitle(b.title, idx);
-      return {
-        id: b.id,
-        title: b.title,
-        room: b.roomName,
-        time: `${toPersianDigits(b.startTime)} - ${toPersianDigits(b.endTime)}`,
-        Icon,
-        iconStyle,
-        attendees: resolveAttendeesForBooking(b, usersByEmail, orgUsers, idx),
-      };
-    });
+    return todayBookings.slice(0, 4).map((b, idx) => ({
+      id: b.id,
+      title: b.title,
+      room: b.roomName,
+      time: `${toPersianDigits(b.startTime)} - ${toPersianDigits(b.endTime)}`,
+      attendees: resolveAttendeesForBooking(b, usersByEmail, orgUsers, idx),
+    }));
   }, [todayBookings, orgUsers, usersByEmail]);
 
-  const teamCards = teams.slice(0, 3);
-
-  const memberCount = useMemo(() => {
-    const ids = new Set<string>();
-    for (const t of teams) {
-      for (const m of t.members ?? []) ids.add(m.userId);
-    }
-    return ids.size;
-  }, [teams]);
-
-  const formatNotifTime = (iso: string) => {
-    const diffMs = Date.now() - new Date(iso).getTime();
-    const mins = Math.floor(diffMs / 60000);
-    if (mins < 1) return "اکنون";
-    if (mins < 60) return `${toPersianDigits(mins)} دقیقه پیش`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${toPersianDigits(hours)} ساعت پیش`;
-    const days = Math.floor(hours / 24);
-    return `${toPersianDigits(days)} روز پیش`;
-  };
-
-  const dashboardNotifications = appNotifications.slice(0, 5).map((n) => ({
-    id: n.id,
-    text: n.title,
-    time: formatNotifTime(n.createdAt),
-    tone:
-      n.type === "meeting_booked"
-        ? "emerald"
-        : n.type === "meeting_reminder"
-          ? "amber"
-          : "sky",
-  }));
-
-  const utilization = stats?.utilizationRate ?? 0;
-  const todayCount = todayBookings.length || stats?.todayBookingsCount || 0;
   const monthlyBookings = stats?.thisMonthBookingsCount ?? 0;
-  const teamCount = teams.length;
 
   if (isLoading) {
     return <UnifiedDashboardSkeleton />;
@@ -258,7 +184,7 @@ export const UnifiedDashboardView: React.FC = () => {
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-right min-w-0">
+        <div className="text-right min-w-0 flex-1">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
             سلام، {firstName} عزیز
           </h1>
@@ -278,173 +204,138 @@ export const UnifiedDashboardView: React.FC = () => {
         </button>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500">میزان استفاده</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                {toPersianDigits(utilization)}٪
-              </p>
-              <span className="inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[rgb(var(--brand-primary-rgb)/0.12)] text-brand dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] dark:text-[var(--brand-primary-on-dark)]">
-                فعالیت بهینه
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center text-violet-600">
-              <Activity className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500">جلسات این ماه</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                {toPersianDigits(monthlyBookings)}
-              </p>
-              <p className="text-[11px] text-slate-500 mt-2">
-                جلسات مرتبط با حساب شما در این ماه
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] flex items-center justify-center text-brand">
-              <CalendarDays className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500">تیم‌های من</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                {toPersianDigits(teamCount)}
-              </p>
-              <p className="text-[11px] text-slate-500 mt-2">
-                {toPersianDigits(memberCount)} عضو
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950/40 flex items-center justify-center text-sky-600">
-              <Users className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-4 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500">جلسات امروز</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                {toPersianDigits(todayCount)}
-              </p>
-              <p className="text-[11px] text-slate-500 mt-2">نسبت به دیروز</p>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-600">
-              <Calendar className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Chart + today's meetings */}
+      {/* Recent reservations table + today's meetings */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
-        <div className="xl:col-span-7 space-y-4">
-          <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-3 mb-4 min-h-8">
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white leading-8 m-0">
-                فعالیت جلسات
+        <div className="xl:col-span-7 flex flex-col rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                ده جلسهٔ آخر رزرو شده
               </h2>
-              <select
-                value={chartRange}
-                onChange={(e) => setChartRange(e.target.value as "week" | "month")}
-                className="portal-select-compact"
-                aria-label="بازه نمایش نمودار"
-              >
-                <option value="week">هفتگی</option>
-                <option value="month">ماهانه</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-4 text-[10px] text-slate-500 mb-3">
-              <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-sm bg-[var(--brand-primary)]" />
-                برگزار شده
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-sm bg-[rgb(var(--brand-primary-rgb)/0.25)] dark:bg-[rgb(var(--brand-primary-rgb)/0.4)]" />
-                برنامه‌ریزی شده
-              </span>
-            </div>
-            <div className="h-48 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
-              {chartData.length === 0 && (
-                <p className="text-xs text-slate-500 w-full text-center py-10">
-                  هنوز داده‌ای برای نمایش نمودار ثبت نشده است.
-                </p>
-              )}
-              {chartData.map((w) => {
-                const planned = w.percentage;
-                const done = w.completedPercentage ?? 0;
-                return (
-                  <div
-                    key={`${w.date}-${w.day}`}
-                    className="flex-1 flex flex-col items-center gap-2 h-full justify-end min-w-0"
-                  >
-                    <div
-                      className="w-full max-w-[32px] h-full flex flex-col justify-end rounded-t-lg overflow-hidden bg-[rgb(var(--brand-primary-rgb)/0.12)]/80 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)]"
-                    >
-                      <div
-                        className="w-full bg-[rgb(var(--brand-primary-rgb)/0.35)] dark:bg-[rgb(var(--brand-primary-rgb)/0.18)]"
-                        style={{ height: `${Math.max(0, planned - done)}%` }}
-                      />
-                      <div
-                        className="w-full bg-[var(--brand-primary)]"
-                        style={{ height: `${done}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] text-slate-500 font-medium truncate w-full text-center">
-                      {w.day}
-                    </span>
-                  </div>
-                );
-              })}
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                {lastTenReservations.length > 0
+                  ? `${orgLocale.formatDigits(lastTenReservations.length)} رزرو اخیر سازمان`
+                  : "لیست به‌روز رزروهای ثبت‌شده"}
+              </p>
             </div>
           </div>
-
-          <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
-              اهداف ماهانه
-            </h2>
-            <div className="space-y-4">
-              {monthlyGoals.length === 0 && (
-                <p className="text-xs text-slate-500 text-center py-4">
-                  برای این ماه هنوز جلسه‌ای ثبت نشده است.
-                </p>
-              )}
-              {monthlyGoals.map((g) => (
-                <div key={g.label}>
-                  <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
-                    <span>{g.label}</span>
-                    <span>
-                      {toPersianDigits(g.pct)}٪ ({toPersianDigits(g.count)} از{" "}
-                      {toPersianDigits(g.target)})
-                    </span>
-                  </div>
-                  <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-l from-[var(--brand-primary)] to-[var(--brand-primary-lighter)]"
-                      style={{ width: `${g.pct}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="overflow-x-auto rounded-xl border border-slate-200/90 dark:border-slate-700/70">
+            <table className="w-full min-w-[480px] text-right text-sm leading-snug border-collapse">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-[#0D1527] text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-[#334155]">
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap w-9 text-center border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">#</th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">تاریخ</th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">ساعت</th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">رزروکننده</th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">نام اتاق</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                {lastTenReservations.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-slate-500 dark:text-slate-400">
+                      <p className="text-sm font-medium">هنوز رزروی ثبت نشده است.</p>
+                    </td>
+                  </tr>
+                )}
+                {lastTenReservations.map((b, index) => {
+                  const organizer = b.organizerName || b.organizerEmail || "—";
+                  return (
+                    <tr
+                      key={b.id}
+                      className={`transition-colors hover:bg-[rgb(var(--brand-primary-rgb)/0.06)] dark:hover:bg-[rgb(var(--brand-primary-rgb)/0.1)] ${
+                        index % 2 === 1
+                          ? "bg-slate-50/95 dark:bg-slate-800/35"
+                          : "bg-white dark:bg-[#1a2438]/40"
+                      }`}
+                    >
+                      <td className="py-2.5 px-3 text-center tabular-nums text-xs text-slate-400 dark:text-slate-500 border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                        {orgLocale.formatDigits(index + 1)}
+                      </td>
+                      <td className="py-2.5 px-3 whitespace-nowrap font-semibold text-slate-800 dark:text-slate-100 border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                        {orgLocale.formatDate(b.date)}
+                      </td>
+                      <td className="py-2.5 px-3 whitespace-nowrap text-slate-600 dark:text-slate-300 tabular-nums border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0" dir="ltr">
+                        {orgLocale.formatDigits(b.startTime)}
+                        <span className="text-slate-300 dark:text-slate-600 mx-1.5">–</span>
+                        {orgLocale.formatDigits(b.endTime)}
+                      </td>
+                      <td className="py-2.5 px-3 max-w-[11rem] font-medium text-slate-700 dark:text-slate-200 truncate border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                        {organizer}
+                      </td>
+                      <td className="py-2.5 px-3 max-w-[12rem] text-slate-700 dark:text-slate-200 truncate border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                        {b.roomName || "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/60">
+            <button
+              type="button"
+              onClick={() => setActiveTab("meetings-table")}
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold border border-slate-200/90 dark:border-slate-600 bg-white dark:bg-[#1a2438] text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-[#0f172a]/80 transition-colors cursor-pointer shadow-xs"
+            >
+              <Table2 className="w-4 h-4 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
+              جدول جلسات
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("calendar")}
+              className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold border border-slate-200/90 dark:border-slate-600 bg-white dark:bg-[#1a2438] text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-[#0f172a]/80 transition-colors cursor-pointer shadow-xs"
+            >
+              <Calendar className="w-4 h-4 text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)]" />
+              تقویم جلسات
+            </button>
           </div>
         </div>
 
-        <div className="xl:col-span-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-              جلسات امروز
+        <div className="xl:col-span-5 flex flex-col gap-3 xl:min-h-0">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] px-3 py-3 sm:px-4 sm:py-3.5 shadow-sm">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[rgb(var(--brand-primary-rgb)/0.12)] dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] flex items-center justify-center text-brand shrink-0">
+                <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <div className="text-right min-w-0 flex-1">
+                <p className="text-[10px] sm:text-xs font-semibold text-slate-500 leading-tight truncate">
+                  جلسات این ماه
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight mt-0.5">
+                  {toPersianDigits(monthlyBookings)}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] px-3 py-3 sm:px-4 sm:py-3.5 shadow-sm">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-600 shrink-0">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <div className="text-right min-w-0 flex-1">
+                <p className="text-[10px] sm:text-xs font-semibold text-slate-500 leading-tight truncate">
+                  جلسات امروز
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight mt-0.5">
+                  {toPersianDigits(todayBookings.length || stats?.todayBookingsCount || 0)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col flex-1 min-h-[18rem] rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white min-w-0 truncate">
+              <span>جلسات امروز</span>
+              {todayDateLabel ? (
+                <>
+                  <span className="text-slate-300 dark:text-slate-600 font-normal mx-1.5" aria-hidden="true">
+                    ·
+                  </span>
+                  <span className="font-medium text-slate-500 dark:text-slate-400 text-xs sm:text-[13px]">
+                    {todayDateLabel}
+                  </span>
+                </>
+              ) : null}
             </h2>
             <button
               type="button"
@@ -454,7 +345,7 @@ export const UnifiedDashboardView: React.FC = () => {
               مشاهده همه
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-3 flex-1 min-h-0">
             {displayMeetings.length === 0 && (
               <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-6">
                 برای امروز جلسه‌ای در تقویم شما ثبت نشده است.
@@ -465,10 +356,19 @@ export const UnifiedDashboardView: React.FC = () => {
                 key={m.id}
                 className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50"
               >
-                <div className="text-left shrink-0 text-xs font-bold text-slate-500 dark:text-slate-400 min-w-[72px]">
+                <div className="shrink-0 text-xs font-bold text-slate-500 dark:text-slate-400 min-w-[4.5rem] text-left tabular-nums">
                   {m.time}
                 </div>
-                <div className="flex items-center -space-x-2 -space-x-reverse shrink-0 min-w-[4.5rem] justify-end">
+                <div className="flex-1 min-w-0 text-center px-1">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                    <span>{m.title}</span>
+                    <span className="text-slate-400 dark:text-slate-500 font-normal mx-1.5" aria-hidden="true">
+                      ·
+                    </span>
+                    <span className="text-slate-600 dark:text-slate-300 font-medium">{m.room}</span>
+                  </p>
+                </div>
+                <div className="flex items-center -space-x-2 -space-x-reverse shrink-0">
                   {m.attendees.length > 0
                     ? m.attendees.map((u, i) => (
                         <UserAvatar
@@ -477,7 +377,7 @@ export const UnifiedDashboardView: React.FC = () => {
                           size="xs"
                           shape="circle"
                           showBorder
-                          className="!w-7 !h-7 ring-2 ring-white dark:ring-slate-800"
+                          className="!w-8 !h-8 ring-2 ring-white dark:ring-slate-800"
                         />
                       ))
                     : (
@@ -486,142 +386,14 @@ export const UnifiedDashboardView: React.FC = () => {
                           size="xs"
                           shape="circle"
                           showBorder
-                          className="!w-7 !h-7 ring-2 ring-white dark:ring-slate-800"
+                          className="!w-8 !h-8 ring-2 ring-white dark:ring-slate-800"
                         />
                       )}
-                </div>
-                <div className="flex-1 min-w-0 text-right">
-                  <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
-                    {m.title}
-                  </p>
-                  <p className="text-xs text-slate-500 truncate">{m.room}</p>
-                </div>
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${m.iconStyle}`}
-                  title={m.room}
-                >
-                  <m.Icon className="w-5 h-5" strokeWidth={2} />
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* Bottom row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">تیم‌های من</h2>
-            {canManageTeams && (
-              <button
-                type="button"
-                onClick={() => setActiveTab("teams")}
-                className="text-xs font-bold text-[var(--brand-primary)] cursor-pointer"
-              >
-                مدیریت
-              </button>
-            )}
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {teamCards.length === 0 && (
-              <p className="text-xs text-slate-500 py-4 w-full text-center">
-                هنوز تیمی ثبت نشده است.
-              </p>
-            )}
-            {teamCards.map((t, idx) => {
-              const Icon = TEAM_ICONS[idx % TEAM_ICONS.length];
-              const count =
-                "memberCount" in t && typeof t.memberCount === "number"
-                  ? t.memberCount
-                  : (t as Team).members?.length ?? 0;
-              return (
-                <div
-                  key={t.id}
-                  className="min-w-[100px] flex-1 rounded-xl border border-slate-200 dark:border-slate-600 p-3 bg-slate-50/50 dark:bg-slate-800/30"
-                >
-                  <Icon className="w-5 h-5 text-[var(--brand-primary)] mb-2" />
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
-                    {t.name}
-                  </p>
-                  <p className="text-[10px] text-slate-500 mt-1">
-                    {toPersianDigits(count)} نفر
-                  </p>
-                </div>
-              );
-            })}
-            {canManageTeams && (
-              <button
-                type="button"
-                onClick={() => setActiveTab("teams")}
-                className="min-w-[72px] rounded-xl border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center text-slate-400 cursor-pointer"
-              >
-                <Plus className="w-5 h-5" />
-                <span className="text-[10px] font-bold mt-1">تیم</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-          <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
-            اعضای فعال
-          </h2>
-          <ul className="divide-y divide-slate-200/90 dark:divide-slate-700/60">
-            {(orgUsers.length > 0 ? orgUsers : []).slice(0, 4).map((u) => (
-              <li key={u.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                <UserAvatar
-                  user={u as User}
-                  name={(u as User).name}
-                  size="sm"
-                  shape="circle"
-                  className="shrink-0"
-                />
-                <div className="text-right min-w-0">
-                  <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
-                    {u.name}
-                  </p>
-                  <p className="text-xs text-slate-500 truncate">
-                    {(u as User).jobTitle || "عضو تیم"}
-                  </p>
-                </div>
-              </li>
-            ))}
-            {orgUsers.length === 0 && (
-              <li className="py-6 text-center text-xs text-slate-500">عضو فعالی ثبت نشده است.</li>
-            )}
-          </ul>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <Bell className="w-4 h-4 text-slate-500" />
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">اعلان‌ها</h2>
-          </div>
-          <ul className="divide-y divide-slate-200/90 dark:divide-slate-700/60">
-            {dashboardNotifications.length === 0 && (
-              <li className="py-6 text-center text-xs text-slate-500">اعلانی نیست</li>
-            )}
-            {dashboardNotifications.map((n) => (
-              <li key={n.id} className="flex gap-3 py-3.5 first:pt-0 last:pb-0">
-                <span
-                  className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
-                    n.tone === "emerald"
-                      ? "bg-[var(--brand-primary)]"
-                      : n.tone === "sky"
-                        ? "bg-sky-500"
-                        : "bg-amber-500"
-                  }`}
-                />
-                <div className="text-right flex-1">
-                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
-                    {n.text}
-                  </p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">{n.time}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </div>

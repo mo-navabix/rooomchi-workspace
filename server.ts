@@ -1,4 +1,6 @@
 import "dotenv/config";
+import { ensureOutboundTlsTrustStore } from "./src/server/http/outbound-https";
+ensureOutboundTlsTrustStore();
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -41,6 +43,12 @@ async function startServer() {
   registerRequestLogger(app);
   registerSecurityMiddleware(app);
   registerApiRoutes(app);
+  if (pool) {
+    const { startMeetingReminderScheduler } = await import(
+      "./src/server/notifications/meeting-reminder.service"
+    );
+    startMeetingReminderScheduler();
+  }
 
   if (!apiOnly && process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -56,9 +64,12 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
     logger.info({ port: PORT, apiOnly }, "server_listening");
   });
+  // Avoid Node closing long-running admin tests with HTTP 408 before our handler responds.
+  server.requestTimeout = 0;
+  server.headersTimeout = 0;
 }
 
 startServer();

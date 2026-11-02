@@ -2,12 +2,14 @@ import React from 'react';
 import { ToggleSwitch } from '../../components/admin/AccessControlView';
 import { FormField, FormGrid, adminInputClass } from '../enterprise-admin/adminSettingsLayout';
 import { SMS_PROVIDERS } from '../../constants/notifications';
+import { ApiService } from '../../services/apiService';
 
 export const SmsIntegrationForm: React.FC<{
   sms: Record<string, unknown>;
   setIntegrations: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
   integrations: Record<string, unknown>;
-}> = ({ sms, setIntegrations, integrations }) => {
+  showToast?: (message: string, type: 'success' | 'error' | 'info') => void;
+}> = ({ sms, setIntegrations, integrations, showToast }) => {
   const enabled = sms.enabled !== false && sms.enabled !== 'false';
   return (
     <div className="space-y-4">
@@ -82,6 +84,21 @@ export const SmsIntegrationForm: React.FC<{
           />
         </FormField>
       </FormGrid>
+      {showToast ? (
+        <button
+          type="button"
+          className="text-sm font-bold text-brand cursor-pointer mt-2"
+          onClick={async () => {
+            const r = await ApiService.postAdminTest('integrations/test-sms', {
+              sms: integrations.sms,
+              receptor: String(sms.managerPhone || ''),
+            });
+            showToast(r.message, r.ok ? 'success' : 'error');
+          }}
+        >
+          ارسال پیامک آزمایشی
+        </button>
+      ) : null}
     </div>
   );
 };

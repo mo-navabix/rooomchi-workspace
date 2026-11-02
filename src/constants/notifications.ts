@@ -102,8 +102,41 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
     toastPopupEnabled: true,
     retentionDays: 14,
   },
+  meetingReminders: {
+    enabled: true,
+    minutesBefore: 15,
+    channels: {
+      sms: true,
+      telegram: false,
+      inApp: true,
+    },
+    notifyOrganizer: true,
+    notifyParticipants: true,
+  },
   rules: DEFAULT_NOTIFICATION_RULES,
 };
+
+export function mergeNotificationSettings(
+  partial: Partial<NotificationSettings> | Record<string, unknown>,
+): NotificationSettings {
+  const s = partial as Partial<NotificationSettings>;
+  return {
+    ...DEFAULT_NOTIFICATION_SETTINGS,
+    ...s,
+    sms: { ...DEFAULT_NOTIFICATION_SETTINGS.sms, ...s.sms },
+    telegram: { ...DEFAULT_NOTIFICATION_SETTINGS.telegram, ...s.telegram },
+    inApp: { ...DEFAULT_NOTIFICATION_SETTINGS.inApp, ...s.inApp },
+    meetingReminders: {
+      ...DEFAULT_NOTIFICATION_SETTINGS.meetingReminders,
+      ...s.meetingReminders,
+      channels: {
+        ...DEFAULT_NOTIFICATION_SETTINGS.meetingReminders.channels,
+        ...s.meetingReminders?.channels,
+      },
+    },
+    rules: Array.isArray(s.rules) ? s.rules : DEFAULT_NOTIFICATION_SETTINGS.rules,
+  };
+}
 
 export const INITIAL_NOTIFICATION_LOGS: NotificationLogEntry[] = [
   {

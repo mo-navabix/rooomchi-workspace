@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Bell,
-  BellRing,
   Smartphone,
   Send,
   CheckCircle2,
@@ -35,6 +34,7 @@ import {
   DEFAULT_NOTIFICATION_SETTINGS,
   INITIAL_NOTIFICATION_LOGS,
   SMS_PROVIDERS,
+  mergeNotificationSettings,
 } from '../../constants/notifications';
 import { toPersianDigits } from '../../utils/jalali';
 import { TimePicker } from '../common/TimePicker';
@@ -44,6 +44,7 @@ import {
   isSmsIntegrationConfigured,
   isTelegramIntegrationConfigured,
 } from '../../features/integrations/integrationStatus';
+import { MeetingReminderSettingsPanel } from './MeetingReminderSettingsPanel';
 
 // Custom Accessible RTL-safe Toggle Switch
 interface SwitchToggleProps {
@@ -130,7 +131,7 @@ export const AdminNotificationsView: React.FC = () => {
         if (cancelled) return;
         const s = bundle.settings;
         if (s && typeof s === 'object' && Object.keys(s).length > 0) {
-          setSettings({ ...DEFAULT_NOTIFICATION_SETTINGS, ...s });
+          setSettings(mergeNotificationSettings(s));
         }
         if (Array.isArray(bundle.logs) && bundle.logs.length) {
           setLogs(bundle.logs as NotificationLogEntry[]);
@@ -149,6 +150,7 @@ export const AdminNotificationsView: React.FC = () => {
   }, [currentOrg?.id]);
 
   const [activeTab, setActiveInternalTab] = useState<'channels' | 'rules' | 'logs'>('channels');
+  const [channelSubTab, setChannelSubTab] = useState<'sms' | 'telegram' | 'inapp'>('sms');
   const [showApiKey, setShowApiKey] = useState(false);
   const [showBotToken, setShowBotToken] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -232,19 +234,30 @@ export const AdminNotificationsView: React.FC = () => {
   };
 
   // Handle Dispatch Test
-  const handleExecuteTest = () => {
+  const handleExecuteTest = async () => {
     setIsSendingTest(true);
 
-    setTimeout(() => {
+    try {
       let previewMsg = '';
       let targetRecipient = '';
       let logTitle = '';
+      let deliveryStatus: NotificationLogEntry['status'] = 'delivered';
 
       if (testChannel === 'sms') {
         previewMsg =
           testCustomMessage.trim() ||
           `روم‌چی: جلسه تست «بررسی هماهنگی فنی» در سالن کنفرانس برای ساعت ۱۰:۰۰ با موفقیت ثبت شد.`;
         targetRecipient = testPhone;
+        logTitle = 'پیامک تست';
+        const r = await ApiService.postAdminTest('integrations/test-sms', {
+          receptor: testPhone,
+          message: previewMsg,
+        });
+        deliveryStatus = r.ok ? 'delivered' : 'failed';
+        if (!r.ok) {
+          showToast(r.message, 'error');
+          return;
+        }
         logTitle = 'پیامک تست ارسال شد';
       } else if (testChannel === 'telegram') {
         previewMsg =
@@ -275,7 +288,7 @@ export const AdminNotificationsView: React.FC = () => {
         title: logTitle,
         preview: previewMsg,
         timestamp: 'همین الان',
-        status: 'delivered',
+        status: deliveryStatus,
         eventType: testEvent,
       };
 
@@ -283,13 +296,16 @@ export const AdminNotificationsView: React.FC = () => {
       setLogs(updatedLogs);
       void ApiService.putAdminNotificationSettings({ settings, logs: updatedLogs }).catch(() => undefined);
 
-      setIsSendingTest(false);
       setIsTestModalOpen(false);
       showToast(
-        `تست کانال ${testChannel === 'sms' ? 'پیامک' : testChannel === 'telegram' ? 'تلگرام' : 'درون‌برنامه‌ای'} با موفقیت انجام شد`,
+        testChannel === 'sms'
+          ? 'پیامک آزمایشی ارسال شد'
+          : `تست کانال ${testChannel === 'telegram' ? 'تلگرام' : 'درون‌برنامه‌ای'} با موفقیت انجام شد`,
         'success'
       );
-    }, 700);
+    } finally {
+      setIsSendingTest(false);
+    }
   };
 
   // Clear Logs
@@ -343,23 +359,13 @@ export const AdminNotificationsView: React.FC = () => {
       {/* ======================================================== */}
       {/* EXECUTIVE COMMAND HEADER BANNER                          */}
       {/* ======================================================== */}
-      <div className="bg-white dark:bg-[#1E293B] p-5 sm:p-6 lg:p-7 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-[#334155] shadow-xs transition-colors space-y-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5 text-right">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] border border-brand-soft/80 dark:border-[rgb(var(--brand-primary-rgb)/0.35)] text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)]">
-              <BellRing className="w-3.5 h-3.5 text-[var(--brand-primary)] dark:text-[var(--brand-primary-lighter)]" />
-              <span>مرکز فرماندهی نوتیفیکیشن‌ها و کانال‌های ارتباطی</span>
-            </div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              مدیریت و کنترل اعلان‌های {currentOrg?.name || 'روم‌چی'}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
-              پیکربندی هوشمند و یکپارچه ارسال هشدارها از طریق پیامک (SMS)، ربات تلگرام و نوتیفیکیشن‌های درون‌برنامه‌ای به دست مدیر
-            </p>
-          </div>
+      <div className="bg-white dark:bg-[#1E293B] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs transition-colors space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+            اعلان‌ها — {currentOrg?.name || 'روم‌چی'}
+          </h2>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={() => setIsTestModalOpen(true)}
@@ -381,8 +387,8 @@ export const AdminNotificationsView: React.FC = () => {
           </div>
         </div>
 
-        {/* Live Channel Status Bar (Clean unboxed typography with typographic separators) */}
-        <div className="pt-4 border-t border-slate-100 dark:border-[#334155] flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-600 dark:text-slate-300">
+        {/* Live Channel Status Bar */}
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs text-slate-600 dark:text-slate-300">
           <div className="flex items-center gap-2">
             <span
               className={`w-2.5 h-2.5 rounded-full ${
@@ -442,7 +448,7 @@ export const AdminNotificationsView: React.FC = () => {
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            کانال‌های اطلاع‌رسانی (SMS، تلگرام، درون‌برنامه‌ای)
+            کانال‌ها
           </button>
           <button
             type="button"
@@ -473,28 +479,39 @@ export const AdminNotificationsView: React.FC = () => {
       {/* TAB 1: 3 CHANNELS CONFIGURATION (Spacious, Elegant Cards) */}
       {/* ======================================================== */}
       {activeTab === 'channels' && (
-        <>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-stretch">
-          {/* ---------------- CHANNEL 1: SMS GATEWAY ---------------- */}
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-[#334155] p-5 sm:p-6 shadow-xs flex flex-col justify-between transition-colors">
-            <div className="space-y-5 text-right">
-              {/* Card Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[#334155] gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-[var(--brand-primary-light)] flex items-center justify-center shrink-0 border border-brand-soft/60 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)]">
-                    <Smartphone className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
-                      درگاه پیامک سازمانی (SMS)
-                    </h3>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-400 truncate">
-                      ارسال بلادرنگ پیامک به موبایل پرسنل و مدیران
-                    </p>
-                  </div>
-                </div>
+        <div className="max-w-2xl mx-auto w-full bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-[#334155] shadow-xs overflow-hidden">
+        <div className="flex flex-wrap gap-1.5 p-3 border-b border-slate-100 dark:border-[#334155] bg-slate-50/50 dark:bg-[#0F172A]/30">
+          {(
+            [
+              { id: 'sms' as const, label: 'پیامک', icon: Smartphone },
+              { id: 'telegram' as const, label: 'تلگرام', icon: Send },
+              { id: 'inapp' as const, label: 'درون‌برنامه‌ای', icon: Bell },
+            ] as const
+          ).map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setChannelSubTab(id)}
+              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                channelSubTab === id
+                  ? 'bg-white dark:bg-[#1E293B] text-brand dark:text-[var(--brand-primary-on-dark)] shadow-xs ring-1 ring-slate-200/80 dark:ring-[#334155]'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
+            >
+              <Icon className={`w-3.5 h-3.5 ${id === 'telegram' ? '-rotate-45' : ''}`} />
+              {label}
+            </button>
+          ))}
+        </div>
 
-                {/* Master Switch */}
+        <MeetingReminderSettingsPanel settings={settings} onChange={setSettings} embedded />
+
+        <div className="p-5 sm:p-6">
+          {channelSubTab === 'sms' && (
+          <div className="flex flex-col justify-between transition-colors">
+            <div className="space-y-5 text-right">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">ارسال پیامک</span>
                 <SwitchToggle
                   checked={settings.sms.enabled}
                   onChange={(checked) =>
@@ -638,6 +655,10 @@ export const AdminNotificationsView: React.FC = () => {
                 />
 
                 {/* Smartphone Realistic Bubble Preview */}
+                <details className="rounded-xl border border-slate-100 dark:border-[#334155] open:p-1">
+                  <summary className="text-[11px] font-bold text-slate-500 dark:text-slate-400 cursor-pointer py-2 px-1 list-none">
+                    پیش‌نمایش پیام دریافتی
+                  </summary>
                 <div className="bg-brand-soft/60 dark:bg-[rgb(var(--brand-primary-rgb)/0.12)] border border-brand-soft/70 dark:dark:border-[rgb(var(--brand-primary-rgb)/0.35)] p-3.5 rounded-xl space-y-1.5">
                   <div className="text-[10px] text-brand dark:text-[var(--brand-primary-on-dark)] font-bold flex items-center justify-between">
                     <span>پیش‌نمایش پیام دریافتی (خط {settings.sms.lineNumber})</span>
@@ -651,6 +672,7 @@ export const AdminNotificationsView: React.FC = () => {
                       .replace('{ساعت}', '۱۰:۳۰')}
                   </p>
                 </div>
+                </details>
               </div>
             </div>
 
@@ -669,27 +691,13 @@ export const AdminNotificationsView: React.FC = () => {
               </button>
             </div>
           </div>
+          )}
 
-          {/* ---------------- CHANNEL 2: TELEGRAM BOT ---------------- */}
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-[#334155] p-5 sm:p-6 shadow-xs flex flex-col justify-between transition-colors">
+          {channelSubTab === 'telegram' && (
+          <div className="flex flex-col justify-between transition-colors">
             <div className="space-y-5 text-right">
-              {/* Card Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[#334155] gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-200/60 dark:border-sky-900/50">
-                    <Send className="w-5 h-5 -rotate-45" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
-                      ربات و کانال تلگرام (Telegram)
-                    </h3>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-400 truncate">
-                      ارسال اعلان‌های تصویری، شیشه‌ای و گزارش‌های روزانه
-                    </p>
-                  </div>
-                </div>
-
-                {/* Master Switch */}
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">ارسال تلگرام</span>
                 <SwitchToggle
                   checked={settings.telegram.enabled}
                   onChange={(checked) =>
@@ -876,27 +884,13 @@ export const AdminNotificationsView: React.FC = () => {
               </button>
             </div>
           </div>
+          )}
 
-          {/* ---------------- CHANNEL 3: IN-APP PLATFORM ---------------- */}
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-[#334155] p-5 sm:p-6 shadow-xs flex flex-col justify-between transition-colors">
+          {channelSubTab === 'inapp' && (
+          <div className="flex flex-col justify-between transition-colors">
             <div className="space-y-5 text-right">
-              {/* Card Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[#334155] gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)] text-brand dark:text-[var(--brand-primary-on-dark)] flex items-center justify-center shrink-0 border border-brand-soft/60 dark:border-[rgb(var(--brand-primary-rgb)/0.35)]">
-                    <Bell className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
-                      اعلان‌های درون‌برنامه‌ای (In-App)
-                    </h3>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-400 truncate">
-                      زنگوله بالای صفحه و هشدارهای صوتی لحظه‌ای
-                    </p>
-                  </div>
-                </div>
-
-                {/* Master Switch */}
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">اعلان درون‌برنامه‌ای</span>
                 <SwitchToggle
                   checked={settings.inApp.enabled}
                   onChange={(checked) =>
@@ -1034,8 +1028,9 @@ export const AdminNotificationsView: React.FC = () => {
               </button>
             </div>
           </div>
+          )}
         </div>
-        </>
+        </div>
       )}
 
       {/* ======================================================== */}

@@ -233,14 +233,14 @@ export const OrgLoginPage: React.FC = () => {
             </div>
 
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-              {authMode === "ldap" ? "ورود با حساب سازمانی" : "ورود با ایمیل سازمانی"}
+              {authMode === "ldap" ? "ورود با حساب دایرکتوری" : "ورود به حساب کاربری"}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">
               {showAuthMethodPicker
-                ? "بین ورود با ایمیل یا دایرکتوری سازمان یکی را انتخاب کنید."
+                ? "روش ورود خود را انتخاب کنید."
                 : authMode === "ldap"
-                  ? "نام کاربری و رمز دایرکتوری سازمان را وارد کنید."
-                  : "ایمیل و رمز عبور حساب سازمانی خود را وارد کنید."}
+                  ? "نام کاربری و رمز عبور Active Directory / LDAP را وارد کنید."
+                  : "ایمیل و رمز عبور خود را وارد کنید."}
             </p>
 
             {showAuthMethodPicker && (
@@ -255,7 +255,7 @@ export const OrgLoginPage: React.FC = () => {
                         : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                     }`}
                   >
-                    ایمیل سازمانی
+                    ایمیل و رمز عبور
                   </button>
                 )}
                 {orgAuth.ldapEnabled && (
@@ -353,7 +353,7 @@ export const OrgLoginPage: React.FC = () => {
                   disabled={isSubmitting}
                   className="w-full py-2.5 btn-brand text-white rounded-xl text-sm font-bold"
                 >
-                  ورود با حساب سازمانی
+                  ورود با دایرکتوری
                 </button>
               </form>
             ) : orgAuth && !orgAuth.localEnabled && !orgAuth.ldapEnabled && !orgAuth.googleEnabled ? (
@@ -362,7 +362,7 @@ export const OrgLoginPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  آدرس ایمیل
+                  ایمیل
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />

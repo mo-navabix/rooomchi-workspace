@@ -6,6 +6,7 @@ type PageMeta = { title: string; subtitle: string };
 const FA: Partial<Record<ActiveTab, PageMeta>> = {
   dashboard: { title: 'داشبورد', subtitle: 'نمایی از وضعیت جلسات و فعالیت‌های شما' },
   calendar: { title: 'تقویم جلسات', subtitle: 'برنامه زمانی اتاق‌ها و جلسات' },
+  'meetings-table': { title: 'جدول جلسات', subtitle: 'فهرست کامل رزروها و جلسات سازمان' },
   rooms: { title: 'اتاق‌ها', subtitle: 'جستجو و رزرو سالن‌های جلسه' },
   'my-bookings': { title: 'جلسات من', subtitle: 'رزروها و جلسات شما' },
   teams: { title: 'تیم‌ها', subtitle: 'مدیریت تیم‌ها و اعضا' },

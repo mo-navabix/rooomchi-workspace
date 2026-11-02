@@ -130,6 +130,14 @@ export async function ensureServerSchema(): Promise<void> {
     await runSqlFile("schema/07-support-tickets-and-notifications.sql");
     await runSqlFile("schema/08-verification-org.sql");
   }
+  const reminderPath = path.join(
+    process.cwd(),
+    "schema",
+    "09-meeting-reminder-dispatch.sql",
+  );
+  if (fs.existsSync(reminderPath)) {
+    await runSqlFile("schema/09-meeting-reminder-dispatch.sql");
+  }
 }
 
 // --- Organizations ---

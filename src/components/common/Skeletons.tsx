@@ -96,20 +96,12 @@ export const TableSkeleton: React.FC<{
  */
 export const UnifiedDashboardSkeleton: React.FC = () => (
   <PageSkeletonShell id="unified-dashboard-skeleton">
-    <div className="flex justify-end">
-      <Skeleton className="h-10 w-36" rounded="xl" />
-    </div>
-
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="dark-surface-card rounded-2xl p-4 sm:p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-3.5 w-20" />
-            <Skeleton className="w-8 h-8" rounded="xl" />
-          </div>
-          <Skeleton className="h-8 w-16" />
-        </div>
-      ))}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="space-y-2 flex-1">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-4 w-64" />
+      </div>
+      <Skeleton className="h-11 w-44" rounded="xl" />
     </div>
 
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -122,21 +114,18 @@ export const UnifiedDashboardSkeleton: React.FC = () => (
           <Skeleton key={i} className="h-[4.5rem] w-full" rounded="2xl" />
         ))}
       </div>
-      <div className="lg:col-span-6 space-y-6">
-        <div className="dark-surface-card rounded-3xl p-5 sm:p-6 space-y-4">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-44 w-full" rounded="2xl" />
+      <div className="lg:col-span-6 space-y-3">
+        <div className="grid grid-cols-2 gap-2.5">
+          <Skeleton className="h-[4.5rem] w-full" rounded="xl" />
+          <Skeleton className="h-[4.5rem] w-full" rounded="xl" />
         </div>
-        <div className="dark-surface-card rounded-3xl p-5 sm:p-6 space-y-3">
-          <Skeleton className="h-5 w-32" />
+        <div className="dark-surface-card rounded-3xl p-5 sm:p-6 space-y-4 flex-1">
+          <div className="flex justify-between">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-4 w-20" />
+          </div>
           {[1, 2, 3].map((i) => (
-            <div key={i} className="space-y-2">
-              <div className="flex justify-between">
-                <Skeleton className="h-3.5 w-32" />
-                <Skeleton className="h-3.5 w-10" />
-              </div>
-              <Skeleton className="h-2 w-full" rounded="full" />
-            </div>
+            <Skeleton key={i} className="h-[4.5rem] w-full" rounded="2xl" />
           ))}
         </div>
       </div>
@@ -605,6 +594,8 @@ export const AppLoadingSkeleton: React.FC<{ tab: string }> = ({ tab }) => {
       return <UnifiedDashboardSkeleton />;
     case 'calendar':
       return <CalendarSkeleton />;
+    case 'meetings-table':
+      return <UnifiedDashboardSkeleton />;
     case 'rooms':
       return <RoomBrowserSkeleton />;
     case 'my-bookings':

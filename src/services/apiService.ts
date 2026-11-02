@@ -871,7 +871,19 @@ export class ApiService {
       method: 'POST',
       body: JSON.stringify(body),
     });
-    return res.json() as Promise<{ ok: boolean; message: string }>;
+    if (res.status === 408) {
+      return {
+        ok: false,
+        message:
+          'مهلت درخواست تمام شد (408). سرور را ری‌استارت کنید و دسترسی outbound به کاوه‌نگار را بررسی کنید.',
+      };
+    }
+    const text = await res.text();
+    try {
+      return JSON.parse(text) as { ok: boolean; message: string };
+    } catch {
+      return { ok: false, message: text || `خطای HTTP ${res.status}` };
+    }
   }
 
   static async getNotifications(): Promise<AppNotification[]> {

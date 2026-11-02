@@ -9,6 +9,7 @@ import { CalendarView } from "./components/calendar/CalendarView";
 import { AnalyticsView } from "./components/analytics/AnalyticsView";
 import { RoomBrowser } from "./components/booking/RoomBrowser";
 import { MyBookingsView } from "./components/booking/MyBookingsView";
+import { MeetingsTableView } from "./components/booking/MeetingsTableView";
 import { AdminRoomsView } from "./components/admin/AdminRoomsView";
 import { AdminBookingsView } from "./components/admin/AdminBookingsView";
 import { AdminRbacView } from "./components/admin/AdminRbacView";
@@ -75,6 +76,7 @@ const MainContent: React.FC = () => {
                   >
                     {activeTab === "dashboard" && <UnifiedDashboardView />}
                     {activeTab === "calendar" && <CalendarView />}
+                    {activeTab === "meetings-table" && <MeetingsTableView />}
                     {activeTab === "rooms" && <RoomBrowser />}
                     {activeTab === "my-bookings" && <MyBookingsView />}
                     {activeTab === "analytics" && <AnalyticsView />}

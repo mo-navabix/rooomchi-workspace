@@ -18,6 +18,7 @@ import {
   Users,
   User,
   Sliders,
+  Table2,
 } from "lucide-react";
 import type { ActiveTab, Permission } from "../types";
 
@@ -81,6 +82,7 @@ export function buildPortalSidebarNav(can: CanFn): PortalSidebarModel {
       items: [
         { id: "rooms", label: "رزرو اتاق‌ها و سالن‌ها", icon: DoorOpen, permission: "BOOK_ROOM" },
         { id: "calendar", label: "تقویم جلسات", icon: Calendar, permission: "BOOK_ROOM" },
+        { id: "meetings-table", label: "جدول جلسات", icon: Table2, permission: "BOOK_ROOM" },
         { id: "my-bookings", label: "جلسات من", icon: CalendarCheck, permission: "BOOK_ROOM" },
       ],
     },

@@ -38,6 +38,7 @@ export type ActiveTab =
   | 'landing'
   | 'dashboard'
   | 'calendar'
+  | 'meetings-table'
   | 'rooms'
   | 'my-bookings'
   | 'admin-rooms'
@@ -282,6 +283,19 @@ export interface InAppNotificationConfig {
   retentionDays: number;
 }
 
+/** Scheduled meeting reminders (minutes before start). */
+export interface MeetingReminderConfig {
+  enabled: boolean;
+  minutesBefore: number;
+  channels: {
+    sms: boolean;
+    telegram: boolean;
+    inApp: boolean;
+  };
+  notifyOrganizer: boolean;
+  notifyParticipants: boolean;
+}
+
 export interface NotificationChannelRule {
   id: string;
   eventKey:
@@ -304,6 +318,7 @@ export interface NotificationSettings {
   sms: SmsNotificationConfig;
   telegram: TelegramNotificationConfig;
   inApp: InAppNotificationConfig;
+  meetingReminders: MeetingReminderConfig;
   rules: NotificationChannelRule[];
 }
 
