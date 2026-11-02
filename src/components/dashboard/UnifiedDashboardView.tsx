@@ -108,9 +108,10 @@ export const UnifiedDashboardView: React.FC = () => {
             ApiService.getStats(currentOrg.id),
             ApiService.getRooms({ orgId: currentOrg.id }),
             ApiService.getBookings({ orgId: currentOrg.id, date: todayStr }),
-            ApiService.getBookings({ orgId: currentOrg.id, scope: "all" }).catch(
-              () => [] as Booking[],
-            ),
+            ApiService.getBookings({
+              orgId: currentOrg.id,
+              scope: "all",
+            }).catch(() => [] as Booking[]),
             ApiService.getUsers(currentOrg.id).catch(() => [] as User[]),
           ]);
         setStats(statsData);
@@ -164,7 +165,10 @@ export const UnifiedDashboardView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-5 sm:space-y-6 select-none pb-4" id="unified-dashboard-view">
+    <div
+      className="space-y-5 sm:space-y-6 select-none pb-4"
+      id="unified-dashboard-view"
+    >
       {currentUser && !isRegistrationComplete() && (
         <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start gap-3">
@@ -196,7 +200,9 @@ export const UnifiedDashboardView: React.FC = () => {
         <button
           type="button"
           onClick={() =>
-            isRegistrationComplete() ? openBookingModal() : openCompleteProfileModal()
+            isRegistrationComplete()
+              ? openBookingModal()
+              : openCompleteProfileModal()
           }
           className="portal-btn-primary flex items-center justify-center gap-2 h-11 px-5 rounded-xl text-sm font-bold cursor-pointer shadow-sm shadow-[rgb(var(--brand-primary-rgb)/0.15)] dark:shadow-black/30 shrink-0 w-full sm:w-auto"
         >
@@ -224,18 +230,33 @@ export const UnifiedDashboardView: React.FC = () => {
             <table className="w-full min-w-[480px] text-right text-sm leading-snug border-collapse">
               <thead>
                 <tr className="bg-slate-50 dark:bg-[#0D1527] text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-[#334155]">
-                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap w-9 text-center border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">#</th>
-                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">تاریخ</th>
-                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">ساعت</th>
-                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">رزروکننده</th>
-                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">نام اتاق</th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap w-9 text-center border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                    #
+                  </th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                    تاریخ
+                  </th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                    ساعت
+                  </th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                    رزروکننده
+                  </th>
+                  <th className="py-2.5 px-3 text-xs font-bold whitespace-nowrap border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
+                    نام اتاق
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
                 {lastTenReservations.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center text-slate-500 dark:text-slate-400">
-                      <p className="text-sm font-medium">هنوز رزروی ثبت نشده است.</p>
+                    <td
+                      colSpan={5}
+                      className="py-12 text-center text-slate-500 dark:text-slate-400"
+                    >
+                      <p className="text-sm font-medium">
+                        هنوز رزروی ثبت نشده است.
+                      </p>
                     </td>
                   </tr>
                 )}
@@ -256,9 +277,14 @@ export const UnifiedDashboardView: React.FC = () => {
                       <td className="py-2.5 px-3 whitespace-nowrap font-semibold text-slate-800 dark:text-slate-100 border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
                         {orgLocale.formatDate(b.date)}
                       </td>
-                      <td className="py-2.5 px-3 whitespace-nowrap text-slate-600 dark:text-slate-300 tabular-nums border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0" dir="ltr">
+                      <td
+                        className="py-2.5 px-3 whitespace-nowrap text-slate-600 dark:text-slate-300 tabular-nums border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0"
+                        dir="ltr"
+                      >
                         {orgLocale.formatDigits(b.startTime)}
-                        <span className="text-slate-300 dark:text-slate-600 mx-1.5">–</span>
+                        <span className="text-slate-300 dark:text-slate-600 mx-1.5">
+                          –
+                        </span>
                         {orgLocale.formatDigits(b.endTime)}
                       </td>
                       <td className="py-2.5 px-3 max-w-[11rem] font-medium text-slate-700 dark:text-slate-200 truncate border-l border-slate-200/90 dark:border-slate-700/70 first:border-l-0">
@@ -317,61 +343,71 @@ export const UnifiedDashboardView: React.FC = () => {
                   جلسات امروز
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight mt-0.5">
-                  {toPersianDigits(todayBookings.length || stats?.todayBookingsCount || 0)}
+                  {toPersianDigits(
+                    todayBookings.length || stats?.todayBookingsCount || 0,
+                  )}
                 </p>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col flex-1 min-h-[18rem] rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-[#1a2438] p-5 shadow-sm">
-          <div className="flex items-center justify-between gap-3 mb-4">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white min-w-0 truncate">
-              <span>جلسات امروز</span>
-              {todayDateLabel ? (
-                <>
-                  <span className="text-slate-300 dark:text-slate-600 font-normal mx-1.5" aria-hidden="true">
-                    ·
-                  </span>
-                  <span className="font-medium text-slate-500 dark:text-slate-400 text-xs sm:text-[13px]">
-                    {todayDateLabel}
-                  </span>
-                </>
-              ) : null}
-            </h2>
-            <button
-              type="button"
-              onClick={() => setActiveTab("calendar")}
-              className="text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] cursor-pointer"
-            >
-              مشاهده همه
-            </button>
-          </div>
-          <div className="space-y-3 flex-1 min-h-0">
-            {displayMeetings.length === 0 && (
-              <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-6">
-                برای امروز جلسه‌ای در تقویم شما ثبت نشده است.
-              </p>
-            )}
-            {displayMeetings.map((m) => (
-              <div
-                key={m.id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50"
-              >
-                <div className="shrink-0 text-xs font-bold text-slate-500 dark:text-slate-400 min-w-[4.5rem] text-left tabular-nums">
-                  {m.time}
-                </div>
-                <div className="flex-1 min-w-0 text-center px-1">
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
-                    <span>{m.title}</span>
-                    <span className="text-slate-400 dark:text-slate-500 font-normal mx-1.5" aria-hidden="true">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white min-w-0 truncate">
+                <span>جلسات امروز</span>
+                {todayDateLabel ? (
+                  <>
+                    <span
+                      className="text-slate-300 dark:text-slate-600 font-normal mx-1.5"
+                      aria-hidden="true"
+                    >
                       ·
                     </span>
-                    <span className="text-slate-600 dark:text-slate-300 font-medium">{m.room}</span>
-                  </p>
-                </div>
-                <div className="flex items-center -space-x-2 -space-x-reverse shrink-0">
-                  {m.attendees.length > 0
-                    ? m.attendees.map((u, i) => (
+                    <span className="font-medium text-slate-500 dark:text-slate-400 text-xs sm:text-[13px]">
+                      {todayDateLabel}
+                    </span>
+                  </>
+                ) : null}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setActiveTab("calendar")}
+                className="text-xs font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] cursor-pointer"
+              >
+                مشاهده همه
+              </button>
+            </div>
+            <div className="space-y-3 flex-1 min-h-0">
+              {displayMeetings.length === 0 && (
+                <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-6">
+                  برای امروز جلسه‌ای در تقویم شما ثبت نشده است.
+                </p>
+              )}
+              {displayMeetings.map((m) => (
+                <div
+                  key={m.id}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50"
+                >
+                  <div className="shrink-0 text-xs font-bold text-slate-500 dark:text-slate-400 min-w-[4.5rem] text-left tabular-nums">
+                    {m.time}
+                  </div>
+                  <div className="flex-1 min-w-0 text-center px-1">
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                      <span>{m.title}</span>
+                      <span
+                        className="text-slate-400 dark:text-slate-500 font-normal mx-1.5"
+                        aria-hidden="true"
+                      >
+                        ·
+                      </span>
+                      <span className="text-slate-600 dark:text-slate-300 font-medium">
+                        {m.room}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex items-center -space-x-2 -space-x-reverse shrink-0">
+                    {m.attendees.length > 0 ? (
+                      m.attendees.map((u, i) => (
                         <UserAvatar
                           key={u.id || `${m.id}-av-${i}`}
                           user={u}
@@ -381,19 +417,19 @@ export const UnifiedDashboardView: React.FC = () => {
                           className="!w-8 !h-8 ring-2 ring-white dark:ring-slate-800"
                         />
                       ))
-                    : (
-                        <UserAvatar
-                          name={m.title}
-                          size="xs"
-                          shape="circle"
-                          showBorder
-                          className="!w-8 !h-8 ring-2 ring-white dark:ring-slate-800"
-                        />
-                      )}
+                    ) : (
+                      <UserAvatar
+                        name={m.title}
+                        size="xs"
+                        shape="circle"
+                        showBorder
+                        className="!w-8 !h-8 ring-2 ring-white dark:ring-slate-800"
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
