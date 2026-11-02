@@ -128,14 +128,15 @@ export const UnifiedDashboardView: React.FC = () => {
   }, [currentOrg, todayStr, currentUser?.id, bookingsDataVersion]);
 
   const lastTenReservations = useMemo(() => {
+    const sessionStartMs = (b: Booking) => {
+      const datePart = String(b.date).slice(0, 10);
+      const timePart = (b.startTime || "00:00").slice(0, 5);
+      return new Date(`${datePart}T${timePart}:00`).getTime();
+    };
     return [...recentBookings]
       .filter((b) => b.status !== "cancelled")
-      .sort((a, b) => {
-        const ta = new Date(a.createdAt || `${a.date}T${a.startTime || "00:00"}`).getTime();
-        const tb = new Date(b.createdAt || `${b.date}T${b.startTime || "00:00"}`).getTime();
-        return tb - ta;
-      })
-      .slice(0, 10);
+      .sort((a, b) => sessionStartMs(a) - sessionStartMs(b))
+      .slice(-10);
   }, [recentBookings]);
 
   const usersByEmail = useMemo(() => {

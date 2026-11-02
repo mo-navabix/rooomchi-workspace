@@ -24,7 +24,7 @@ import { toPersianDigits } from '../../utils/jalali';
 import { triggerBookingNotifications } from '../../utils/notificationDispatcher';
 
 export const AdminBookingsView: React.FC = () => {
-  const { currentOrg, showToast, addNotification, bookingsDataVersion, notifyBookingsChanged } =
+  const { currentOrg, showToast, addNotification, bookingsDataVersion, notifyBookingsChanged, orgLocale } =
     useApp();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -390,10 +390,10 @@ export const AdminBookingsView: React.FC = () => {
                     </span>
                     <div className="flex flex-wrap items-center justify-between gap-1">
                       <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">
-                        {b.date}
+                        {orgLocale.formatDate(b.date)}
                       </span>
                       <span className="text-[11px] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] font-bold px-2 py-0.5 rounded-md bg-brand-soft dark:bg-[rgb(var(--brand-primary-rgb)/0.15)]">
-                        {b.startTime} الی {b.endTime}
+                        {orgLocale.formatDigits(b.startTime)} الی {orgLocale.formatDigits(b.endTime)}
                       </span>
                     </div>
                   </div>
@@ -506,11 +506,11 @@ export const AdminBookingsView: React.FC = () => {
                       {b.roomName}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200" dir="ltr">
-                        {b.date}
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">
+                        {orgLocale.formatDate(b.date)}
                       </div>
-                      <div className="text-[11px] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] mt-0.5">
-                        {b.startTime} الی {b.endTime}
+                      <div className="text-[11px] text-[var(--brand-primary-light)] dark:text-[var(--brand-primary-lighter)] mt-0.5" dir="ltr">
+                        {orgLocale.formatDigits(b.startTime)} الی {orgLocale.formatDigits(b.endTime)}
                       </div>
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
@@ -518,7 +518,7 @@ export const AdminBookingsView: React.FC = () => {
                       <div className="text-[10px] text-slate-400 mt-0.5">{b.department || 'عمومی'}</div>
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap font-medium text-slate-600 dark:text-slate-300">
-                      {b.attendeesCount} نفر
+                      {orgLocale.formatDigits(b.attendeesCount)} نفر
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
                       {renderStatusBadge(b.status)}

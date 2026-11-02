@@ -135,11 +135,37 @@ export const OrgLoginPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex flex-col bg-[#F8FAF9] dark:bg-[#0b1220] text-slate-900 dark:text-slate-100"
+      className="min-h-[100dvh] flex flex-col bg-[#F8FAF9] dark:bg-[#0b1220] text-slate-900 dark:text-slate-100"
       dir="rtl"
     >
-      <main className="flex-1 flex items-center justify-center min-h-screen p-4 sm:p-8">
-        <div className="w-full max-w-[920px] grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-3xl overflow-hidden border border-slate-200/90 dark:border-slate-700/70 shadow-xl bg-white dark:bg-[#1a2438]">
+      <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between gap-3 px-4 h-14 border-b border-slate-200/80 dark:border-slate-800/80 bg-[#F8FAF9]/95 dark:bg-[#0b1220]/95 backdrop-blur-md pt-[env(safe-area-inset-top,0px)]">
+        <button
+          type="button"
+          onClick={() => goToLanding()}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 min-h-10 min-w-10 -mr-2 px-2 cursor-pointer"
+        >
+          <ArrowRight className="w-4 h-4 shrink-0" />
+          <span className="sr-only sm:not-sr-only">صفحه معرفی</span>
+        </button>
+        <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate flex-1 text-center">
+          {currentOrg?.name || "ورود سازمانی"}
+        </p>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-600/80 cursor-pointer shrink-0"
+          aria-label="تغییر تم"
+        >
+          {theme === "dark" ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4" />
+          )}
+        </button>
+      </header>
+
+      <main className="flex-1 flex flex-col lg:items-center lg:justify-center lg:min-h-0 min-h-0 p-0 sm:p-4 lg:p-8">
+        <div className="w-full flex-1 lg:flex-none max-w-[920px] grid grid-cols-1 lg:grid-cols-2 gap-0 lg:rounded-3xl lg:overflow-hidden lg:border lg:border-slate-200/90 dark:lg:border-slate-700/70 lg:shadow-xl bg-white dark:bg-[#1a2438] max-lg:shadow-none max-lg:border-0">
           <div
             className="hidden lg:flex flex-col justify-between p-8 sm:p-10 text-white relative overflow-hidden"
             style={{
@@ -187,11 +213,11 @@ export const OrgLoginPage: React.FC = () => {
             />
           </div>
 
-          <div className="relative p-6 sm:p-8 lg:p-10 pt-14 sm:pt-14">
+          <div className="relative flex flex-col flex-1 px-5 sm:px-6 py-6 sm:py-8 lg:p-10 lg:pt-14 max-lg:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
             <button
               type="button"
               onClick={toggleTheme}
-              className="absolute top-4 left-4 z-10 w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-slate-600/80 cursor-pointer transition-colors"
+              className="hidden lg:flex absolute top-4 left-4 z-10 w-9 h-9 rounded-xl items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-slate-600/80 cursor-pointer transition-colors"
               aria-label="تغییر تم"
               title={theme === "dark" ? "تم روشن" : "تم تاریک"}
             >
@@ -205,13 +231,35 @@ export const OrgLoginPage: React.FC = () => {
             <button
               type="button"
               onClick={() => goToLanding()}
-              className="absolute top-4 right-4 z-10 inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-on-dark)] cursor-pointer"
+              className="hidden lg:inline-flex absolute top-4 right-4 z-10 items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-[var(--brand-primary)] dark:hover:text-[var(--brand-primary-on-dark)] cursor-pointer"
             >
               <ArrowRight className="w-3.5 h-3.5" />
               صفحه معرفی
             </button>
 
-            <div className="lg:hidden mb-6 flex items-center gap-3">
+            <div className="lg:hidden mb-8 flex flex-col items-center text-center gap-3 pt-2">
+              {currentOrg ? (
+                <>
+                  <OrgLogoBadge
+                    logo={currentOrg.logo}
+                    logoDark={currentOrg.settings?.logoDark}
+                    name={currentOrg.name}
+                    size="lg"
+                  />
+                  <div>
+                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">سازمان</p>
+                    <p className="text-base font-bold text-slate-900 dark:text-white">{currentOrg.name}</p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
+                  <Building2 className="w-5 h-5 text-[var(--brand-primary)]" />
+                  <span className="text-sm font-bold">ورود پرسنل سازمان</span>
+                </div>
+              )}
+            </div>
+
+            <div className="hidden lg:flex mb-6 items-center gap-3">
               {currentOrg ? (
                 <>
                   <OrgLogoBadge
@@ -232,10 +280,10 @@ export const OrgLoginPage: React.FC = () => {
               )}
             </div>
 
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
+            <h2 className="text-xl max-lg:text-center font-bold text-slate-900 dark:text-white mb-1">
               {authMode === "ldap" ? "ورود با حساب دایرکتوری" : "ورود به حساب کاربری"}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 max-lg:text-center">
               {showAuthMethodPicker
                 ? "روش ورود خود را انتخاب کنید."
                 : authMode === "ldap"
@@ -359,19 +407,19 @@ export const OrgLoginPage: React.FC = () => {
             ) : orgAuth && !orgAuth.localEnabled && !orgAuth.ldapEnabled && !orgAuth.googleEnabled ? (
               <p className="text-sm text-rose-600">هیچ روش ورودی برای این سازمان فعال نیست.</p>
             ) : (!orgAuth || orgAuth.localEnabled) && authMode === "local" ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 max-w-md max-lg:mx-auto w-full">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   ایمیل
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="email"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="name@company.ir"
-                    className="portal-auth-input pr-10 pl-3 py-2.5 text-left"
+                    className="portal-auth-input pr-10 pl-3 py-3 sm:py-2.5 text-base sm:text-sm text-left"
                     dir="ltr"
                     autoComplete="email"
                     required
@@ -385,13 +433,13 @@ export const OrgLoginPage: React.FC = () => {
                   رمز عبور
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="portal-auth-input pr-10 pl-10 py-2.5 text-left"
+                    className="portal-auth-input pr-10 pl-11 py-3 sm:py-2.5 text-base sm:text-sm text-left"
                     dir="ltr"
                     autoComplete="current-password"
                     required
@@ -399,8 +447,9 @@ export const OrgLoginPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                     tabIndex={-1}
+                    aria-label={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
                   >
                     {showPassword ? (
                       <EyeOff className="w-4 h-4" />
@@ -414,7 +463,7 @@ export const OrgLoginPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 btn-brand text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-3.5 sm:py-2.5 btn-brand text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-sm max-lg:mt-2"
               >
                 {isSubmitting ? (
                   "در حال ورود..."
@@ -450,12 +499,12 @@ export const OrgLoginPage: React.FC = () => {
               </>
             )}
 
-            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="mt-8 pt-5 border-t border-slate-100 dark:border-slate-700 flex flex-col max-lg:items-center max-lg:text-center lg:flex-row lg:items-center lg:justify-between gap-4 text-xs max-w-md max-lg:mx-auto w-full">
               {orgAuth?.localEnabled && orgAuth.authPolicies.selfRegistrationEnabled && (
               <button
                 type="button"
                 onClick={() => openAuthModal("register")}
-                className="font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                className="font-bold text-[var(--brand-primary)] dark:text-[var(--brand-primary-on-dark)] hover:underline inline-flex items-center justify-center gap-1.5 cursor-pointer min-h-10 px-2"
               >
                 <UserPlus className="w-4 h-4" />
                 ساخت حساب کاربری
@@ -464,7 +513,7 @@ export const OrgLoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openAuthModal("forgot")}
-                className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:underline cursor-pointer"
+                className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:underline cursor-pointer min-h-10 px-2"
               >
                 فراموشی رمز عبور
               </button>
@@ -473,7 +522,7 @@ export const OrgLoginPage: React.FC = () => {
         </div>
       </main>
 
-      <footer className="py-4 text-center text-[11px] text-slate-400">
+      <footer className="hidden lg:block py-4 text-center text-[11px] text-slate-400">
         <button
           type="button"
           onClick={() => goToLanding()}
