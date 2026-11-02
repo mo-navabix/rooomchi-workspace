@@ -1,5 +1,10 @@
 import { mergeNotificationSettings } from "../../constants/notifications";
-import type { Booking, NotificationLogEntry, NotificationSettings } from "../types";
+import type {
+  NotificationChannelRule,
+  NotificationLogEntry,
+  NotificationSettings,
+} from "../../../libs/shared-types/src/index";
+import type { Booking } from "../types";
 import { getOrgNotificationBundle, saveOrgNotificationBundle } from "../admin/system-settings.store";
 import { query } from "../persistence/db";
 import * as store from "../persistence/store";
@@ -77,7 +82,9 @@ async function dispatchMeetingReminder(
   minutesBefore: number,
 ): Promise<void> {
   const mr = settings.meetingReminders;
-  const rule = settings.rules.find((r) => r.eventKey === "meeting_reminder_15m");
+  const rule = settings.rules.find(
+    (r: NotificationChannelRule) => r.eventKey === "meeting_reminder_15m",
+  );
   const smsAllowed = mr.channels.sms && settings.sms.enabled && (!rule || rule.sms);
   const telegramAllowed =
     mr.channels.telegram && settings.telegram.enabled && (!rule || rule.telegram);
